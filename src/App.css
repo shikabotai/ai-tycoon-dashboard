@@ -245,7 +245,7 @@ h1 {
   overflow: hidden;
   width: 100%;
   max-width: 100%;
-  touch-action: pan-y;
+  touch-action: none;
 }
 
 .ship-stage-shell.dragging-map {
@@ -267,6 +267,7 @@ h1 {
   position: absolute;
   inset: 0;
   z-index: 0;
+  touch-action: none;
 }
 
 .ship-stage-stars {
