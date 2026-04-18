@@ -223,6 +223,8 @@ h1 {
 .map-viewport.interactive {
   cursor: grab;
   touch-action: none;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .map-viewport.interactive:active {
@@ -249,6 +251,7 @@ h1 {
   min-height: 980px;
   padding: 120px 140px;
   transform-origin: center top;
+  will-change: transform;
 }
 
 .ship-hull {

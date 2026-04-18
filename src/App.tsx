@@ -11,6 +11,8 @@ const LAYOUT: Array<Array<string | null>> = [
 ]
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
+const MIN_ZOOM = 0.45
+const MAX_ZOOM = 1.8
 
 export default function App() {
   const { queueHealth, pipeline, watchdog, loading, error, agentChambers } = useDashboardData()
@@ -31,7 +33,7 @@ export default function App() {
 
   const applyZoom = (nextZoom: number, clientX?: number, clientY?: number) => {
     const viewport = viewportRef.current
-    const clamped = clamp(nextZoom, 0.8, 1.8)
+    const clamped = clamp(nextZoom, MIN_ZOOM, MAX_ZOOM)
     if (!viewport) {
       setZoom(clamped)
       return
@@ -55,7 +57,7 @@ export default function App() {
   const onWheel: React.WheelEventHandler<HTMLDivElement> = (event) => {
     if (!event.ctrlKey && Math.abs(event.deltaY) < Math.abs(event.deltaX)) return
     event.preventDefault()
-    const factor = event.deltaY < 0 ? 1.08 : 0.92
+    const factor = event.deltaY < 0 ? 1.12 : 0.88
     applyZoom(zoom * factor, event.clientX, event.clientY)
   }
 
