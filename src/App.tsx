@@ -292,15 +292,23 @@ export default function App() {
                 <h2>{selectedIdentity.name}</h2>
                 <p className="subcopy">{selectedIdentity.subtitle}</p>
               </div>
-              <div className={`agent-avatar-zone modal-avatar ${selectedIdentity.avatarClass}`}>
-                <div className="avatar-hair" />
-                <div className="avatar-hair back" />
-                <div className="avatar-face">
-                  <div className="avatar-eye" />
-                  <div className="avatar-eye right" />
-                  <div className="avatar-mouth" />
+              <div className={`agent-avatar-zone modal-avatar ${selectedIdentity.avatarClass} mood-${selectedIdentity.mood}`}>
+                <div className="agent-character">
+                  <div className="avatar-hair" />
+                  <div className="avatar-hair back" />
+                  <div className="avatar-face">
+                    <div className="avatar-eye" />
+                    <div className="avatar-eye right" />
+                    <div className="avatar-mouth" />
+                  </div>
+                  <div className="avatar-body">
+                    <div className="avatar-jacket" />
+                    <div className="avatar-arm left" />
+                    <div className="avatar-arm right" />
+                    <div className="avatar-leg left" />
+                    <div className="avatar-leg right" />
+                  </div>
                 </div>
-                <div className="avatar-collar" />
                 <div className="agent-orbit orbit-one" />
                 <div className="agent-orbit orbit-two" />
               </div>
@@ -367,7 +375,8 @@ function AgentRoom({ chamber, onOpen }: { chamber?: AgentChamber; onOpen?: () =>
     name: chamber.displayName,
     subtitle: chamber.role,
     roomTheme: 'default-room',
-    palette: { primary: '#7dd3fc', secondary: '#22d3ee', glow: 'rgba(34, 211, 238, 0.35)' },
+    mood: 'neutral',
+    palette: { primary: '#7dd3fc', secondary: '#22d3ee', glow: 'rgba(34, 211, 238, 0.35)', accent: '#e0f2fe' },
     avatarClass: 'avatar-generic',
   }
 
@@ -383,15 +392,24 @@ function AgentRoom({ chamber, onOpen }: { chamber?: AgentChamber; onOpen?: () =>
     >
       <div className="room-glow" />
       <div className="room-stars" />
-      <div className={`agent-avatar-zone ${identity.avatarClass}`}>
-        <div className="avatar-hair" />
-        <div className="avatar-hair back" />
-        <div className="avatar-face">
-          <div className="avatar-eye" />
-          <div className="avatar-eye right" />
-          <div className="avatar-mouth" />
+      <div className={`agent-avatar-zone ${identity.avatarClass} mood-${identity.mood}`}>
+        <div className="agent-walk-path" />
+        <div className="agent-character">
+          <div className="avatar-hair" />
+          <div className="avatar-hair back" />
+          <div className="avatar-face">
+            <div className="avatar-eye" />
+            <div className="avatar-eye right" />
+            <div className="avatar-mouth" />
+          </div>
+          <div className="avatar-body">
+            <div className="avatar-jacket" />
+            <div className="avatar-arm left" />
+            <div className="avatar-arm right" />
+            <div className="avatar-leg left" />
+            <div className="avatar-leg right" />
+          </div>
         </div>
-        <div className="avatar-collar" />
         <div className="agent-orbit orbit-one" />
         <div className="agent-orbit orbit-two" />
       </div>

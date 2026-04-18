@@ -351,11 +351,29 @@ h1 {
 .agent-avatar-zone {
   position: absolute;
   top: 12px;
-  right: 16px;
-  width: 96px;
-  height: 108px;
+  right: 10px;
+  width: 122px;
+  height: 132px;
   pointer-events: none;
-  animation: bob 3.2s ease-in-out infinite;
+}
+
+.agent-walk-path {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 16px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+}
+
+.agent-character {
+  position: absolute;
+  left: 18px;
+  top: 8px;
+  width: 86px;
+  height: 112px;
+  animation: roomWalk 6.4s ease-in-out infinite;
 }
 
 .avatar-face {
@@ -416,16 +434,46 @@ h1 {
   z-index: 1;
 }
 
-.avatar-collar {
+.avatar-body {
   position: absolute;
-  left: 20px;
-  bottom: 8px;
-  width: 56px;
-  height: 24px;
-  border-radius: 18px 18px 10px 10px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.04));
-  border: 1px solid rgba(255,255,255,0.1);
+  left: 18px;
+  top: 58px;
+  width: 50px;
+  height: 42px;
 }
+
+.avatar-jacket {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px 16px 12px 12px;
+  background: linear-gradient(180deg, var(--agent-primary), var(--agent-secondary));
+  box-shadow: 0 0 14px var(--agent-glow);
+}
+
+.avatar-arm,
+.avatar-leg {
+  position: absolute;
+  background: var(--agent-accent, #fff);
+  border-radius: 999px;
+}
+
+.avatar-arm {
+  top: 10px;
+  width: 10px;
+  height: 24px;
+}
+
+.avatar-arm.left { left: -6px; transform: rotate(18deg); }
+.avatar-arm.right { right: -6px; transform: rotate(-18deg); }
+
+.avatar-leg {
+  bottom: -12px;
+  width: 10px;
+  height: 24px;
+}
+
+.avatar-leg.left { left: 10px; animation: walkLeft 0.8s ease-in-out infinite; }
+.avatar-leg.right { right: 10px; animation: walkRight 0.8s ease-in-out infinite; }
 
 .agent-orbit {
   position: absolute;
@@ -873,6 +921,33 @@ th {
 .theme-control-room.agent-modal,
 .theme-control-room.agent-room { background-image: radial-gradient(circle at 20% 20%, rgba(248,113,113,0.10), transparent 36%); }
 
+.avatar-senku .avatar-hair {
+  clip-path: polygon(8% 78%, 0 36%, 18% 0, 42% 30%, 62% 0, 80% 28%, 100% 12%, 92% 76%);
+}
+
+.avatar-senku .avatar-jacket {
+  background: linear-gradient(180deg, var(--agent-accent), var(--agent-secondary));
+}
+
+.avatar-robin .avatar-hair,
+.avatar-robin .avatar-hair.back {
+  border-radius: 18px 18px 30px 30px;
+}
+
+.avatar-robin .avatar-mouth {
+  width: 16px;
+  left: 15px;
+}
+
+.avatar-gateway .avatar-face,
+.avatar-reviewer .avatar-face {
+  border-radius: 18px;
+}
+
+.avatar-content .avatar-jacket {
+  border-radius: 22px 22px 10px 10px;
+}
+
 .agent-modal-close {
   float: right;
   border-radius: 999px;
@@ -915,6 +990,21 @@ th {
 @keyframes helperBot {
   0%, 100% { transform: translate(0, 0); }
   50% { transform: translate(16px, -6px); }
+}
+
+@keyframes roomWalk {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(18px); }
+}
+
+@keyframes walkLeft {
+  0%, 100% { transform: rotate(18deg); }
+  50% { transform: rotate(-12deg); }
+}
+
+@keyframes walkRight {
+  0%, 100% { transform: rotate(-18deg); }
+  50% { transform: rotate(12deg); }
 }
 
 @media (max-width: 480px) {
