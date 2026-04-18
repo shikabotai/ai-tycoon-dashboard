@@ -427,51 +427,49 @@ export default function App() {
           </div>
         </section>
 
-        <section className="safe-mode-card chamber-section-card chamber-command-card map-stage-card">
+        <section className="safe-mode-card chamber-section-card chamber-command-card map-stage-card ship-stage-card">
           <div className="section-heading-row">
             <div>
               <p className="eyebrow">Agent chambers</p>
-              <h2>Living deck map</h2>
+              <h2>Living ship</h2>
             </div>
-            <p className="section-note">Tap a chamber task for drill-down, or open a side drawer when you need more detail.</p>
+            <p className="section-note">Tap a chamber task for drill-down, or open a drawer only when you need details.</p>
           </div>
 
-          <div className="chamber-deck-grid command-chamber-grid map-style-grid">
-            {DECK_LAYOUT.flat().map((id, index) => {
-              if (!id) return <div key={`empty-${index}`} className="chamber-placeholder" />
-              const chamber = chamberCards.find((agent) => agent.id === id)
-              if (!chamber) return <div key={id} className="chamber-card chamber-placeholder">Offline</div>
-              const identity = agentIdentities[chamber.id] ?? agentIdentities.gateway
-              return (
-                <div key={chamber.id} className={`chamber-card command-chamber-card theme-${identity.roomTheme} ${chamber.activeTasks.length > 0 ? 'has-work' : ''}`} style={{ ['--agent-primary' as string]: identity.palette.primary, ['--agent-secondary' as string]: identity.palette.secondary, ['--agent-glow' as string]: identity.palette.glow }}>
-                  <div className="chamber-card-topline">
-                    <div className="chamber-glyph">{identity.name.slice(0, 1)}</div>
-                    <span className="chamber-task-count">{chamber.activeTasks.length} active</span>
+          <div className="ship-stage-shell">
+            <div className="ship-stage-stars" />
+            <div className="ship-stage-hull" />
+            <div className="ship-stage-bridge" />
+
+            <div className="ship-stage-grid">
+              {DECK_LAYOUT.flat().map((id, index) => {
+                if (!id) return <div key={`empty-${index}`} className="ship-stage-empty" />
+                const chamber = chamberCards.find((agent) => agent.id === id)
+                if (!chamber) return <div key={id} className="chamber-card chamber-placeholder">Offline</div>
+                const identity = agentIdentities[chamber.id] ?? agentIdentities.gateway
+                return (
+                  <div key={chamber.id} className={`chamber-card command-chamber-card ship-chamber-card theme-${identity.roomTheme} ${chamber.activeTasks.length > 0 ? 'has-work' : ''} ${chamber.id === 'manager' ? 'manager-hub-card' : ''}`} style={{ ['--agent-primary' as string]: identity.palette.primary, ['--agent-secondary' as string]: identity.palette.secondary, ['--agent-glow' as string]: identity.palette.glow }}>
+                    <div className="chamber-card-topline">
+                      <div className="chamber-glyph">{identity.name.slice(0, 1)}</div>
+                      <span className="chamber-task-count">{chamber.activeTasks.length} active</span>
+                    </div>
+                    <strong>{identity.name}</strong>
+                    <span>{identity.subtitle}</span>
+                    <div className="chamber-task-stack">
+                      {chamber.activeTasks.length === 0 ? (
+                        <p className="empty">Quiet chamber</p>
+                      ) : (
+                        chamber.activeTasks.slice(0, 2).map((task) => (
+                          <button key={task.id} className="mini-task-button" onClick={async () => {
+                            setSelectedTaskId(task.id)
+                          }}>{task.title}</button>
+                        ))
+                      )}
+                    </div>
                   </div>
-                  <strong>{identity.name}</strong>
-                  <span>{identity.subtitle}</span>
-                  <div className="chamber-task-stack">
-                    {chamber.activeTasks.length === 0 ? (
-                      <p className="empty">Quiet chamber</p>
-                    ) : (
-                      chamber.activeTasks.slice(0, 2).map((task) => (
-                        <button key={task.id} className="mini-task-button" onClick={async () => {
-                          if (!activityLoaded) {
-                            setActivityLoaded(false)
-                            setOpenPanel('activity')
-                          }
-                          if (!reviewLoaded) {
-                            setReviewLoaded(false)
-                            setOpenPanel('review')
-                          }
-                          setSelectedTaskId(task.id)
-                        }}>{task.title}</button>
-                      ))
-                    )}
-                  </div>
-                </div>
-              )
-            })}
+                )
+              })}
+            </div>
           </div>
         </section>
 
