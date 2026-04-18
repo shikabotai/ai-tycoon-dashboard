@@ -1,12 +1,12 @@
 import { createAvatar } from '@dicebear/core'
-import { adventurerNeutral } from '@dicebear/collection'
+import { openPeeps } from '@dicebear/collection'
 
 export function buildAvatar(seed: string, backgroundColor: string) {
-  return createAvatar(adventurerNeutral, {
+  return createAvatar(openPeeps, {
     seed,
     radius: 16,
     backgroundColor: [backgroundColor.replace('#', '')],
     backgroundType: ['solid'],
-    scale: 90,
+    scale: 105,
   }).toDataUri()
 }
