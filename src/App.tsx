@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import './App.css'
 import type { AgentChamber } from './types'
 import { useDashboardData } from './hooks/useDashboardData'
@@ -10,6 +10,8 @@ const LAYOUT: Array<Array<string | null>> = [
   ['worker-1', null, 'worker-2'],
 ]
 
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
+
 export default function App() {
   const { queueHealth, pipeline, watchdog, loading, error, agentChambers } = useDashboardData()
   const chamberMap = useMemo(() => new Map(agentChambers.map((agent) => [agent.id, agent])), [agentChambers])
@@ -17,10 +19,103 @@ export default function App() {
   const [topOpen, setTopOpen] = useState(false)
   const [leftOpen, setLeftOpen] = useState(false)
   const [rightOpen, setRightOpen] = useState(false)
+  const viewportRef = useRef<HTMLDivElement | null>(null)
+  const gestureRef = useRef<{ startDistance: number; startZoom: number } | null>(null)
+  const dragRef = useRef<{ active: boolean; startX: number; startY: number; startScrollLeft: number; startScrollTop: number }>({
+    active: false,
+    startX: 0,
+    startY: 0,
+    startScrollLeft: 0,
+    startScrollTop: 0,
+  })
 
-  const zoomIn = () => setZoom((value) => Math.min(1.5, Number((value + 0.1).toFixed(2))))
-  const zoomOut = () => setZoom((value) => Math.max(0.8, Number((value - 0.1).toFixed(2))))
-  const resetZoom = () => setZoom(1)
+  const applyZoom = (nextZoom: number, clientX?: number, clientY?: number) => {
+    const viewport = viewportRef.current
+    const clamped = clamp(nextZoom, 0.8, 1.8)
+    if (!viewport) {
+      setZoom(clamped)
+      return
+    }
+
+    const rect = viewport.getBoundingClientRect()
+    const anchorX = clientX ?? rect.left + rect.width / 2
+    const anchorY = clientY ?? rect.top + rect.height / 2
+    const offsetX = anchorX - rect.left + viewport.scrollLeft
+    const offsetY = anchorY - rect.top + viewport.scrollTop
+    const scaleRatio = clamped / zoom
+
+    setZoom(clamped)
+
+    requestAnimationFrame(() => {
+      viewport.scrollLeft = offsetX * scaleRatio - (anchorX - rect.left)
+      viewport.scrollTop = offsetY * scaleRatio - (anchorY - rect.top)
+    })
+  }
+
+  const onWheel: React.WheelEventHandler<HTMLDivElement> = (event) => {
+    if (!event.ctrlKey && Math.abs(event.deltaY) < Math.abs(event.deltaX)) return
+    event.preventDefault()
+    const factor = event.deltaY < 0 ? 1.08 : 0.92
+    applyZoom(zoom * factor, event.clientX, event.clientY)
+  }
+
+  const onPointerDown: React.PointerEventHandler<HTMLDivElement> = (event) => {
+    const viewport = viewportRef.current
+    if (!viewport) return
+    dragRef.current = {
+      active: true,
+      startX: event.clientX,
+      startY: event.clientY,
+      startScrollLeft: viewport.scrollLeft,
+      startScrollTop: viewport.scrollTop,
+    }
+    viewport.setPointerCapture(event.pointerId)
+  }
+
+  const onPointerMove: React.PointerEventHandler<HTMLDivElement> = (event) => {
+    const viewport = viewportRef.current
+    const drag = dragRef.current
+    if (!viewport || !drag.active) return
+    const dx = event.clientX - drag.startX
+    const dy = event.clientY - drag.startY
+    viewport.scrollLeft = drag.startScrollLeft - dx
+    viewport.scrollTop = drag.startScrollTop - dy
+  }
+
+  const endPointer: React.PointerEventHandler<HTMLDivElement> = (event) => {
+    const viewport = viewportRef.current
+    dragRef.current.active = false
+    if (viewport?.hasPointerCapture(event.pointerId)) {
+      viewport.releasePointerCapture(event.pointerId)
+    }
+  }
+
+  const onTouchStart: React.TouchEventHandler<HTMLDivElement> = (event) => {
+    if (event.touches.length === 2) {
+      const a = event.touches[0]
+      const b = event.touches[1]
+      const distance = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY)
+      gestureRef.current = { startDistance: distance, startZoom: zoom }
+    }
+  }
+
+  const onTouchMove: React.TouchEventHandler<HTMLDivElement> = (event) => {
+    if (event.touches.length !== 2 || !gestureRef.current) return
+    event.preventDefault()
+    const a = event.touches[0]
+    const b = event.touches[1]
+    const distance = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY)
+    const midpointX = (a.clientX + b.clientX) / 2
+    const midpointY = (a.clientY + b.clientY) / 2
+    const nextZoom = gestureRef.current.startZoom * (distance / gestureRef.current.startDistance)
+    applyZoom(nextZoom, midpointX, midpointY)
+  }
+
+  const onTouchEnd: React.TouchEventHandler<HTMLDivElement> = (event) => {
+    if (event.touches.length < 2) {
+      gestureRef.current = null
+    }
+  }
 
   return (
     <div className="app-shell">
@@ -118,17 +213,19 @@ export default function App() {
       </aside>
 
       <main className="map-stage compact-ship">
-        <div className="map-toolbar">
-          <button onClick={zoomOut}>-</button>
-          <span>{Math.round(zoom * 100)}%</span>
-          <button onClick={zoomIn}>+</button>
-          <button onClick={resetZoom}>Reset</button>
-          <span className="toolbar-note">
-            {loading ? 'Loading telemetry...' : error ? `Error: ${error}` : `Observed ${queueHealth?.observed_at ?? 'unknown'}`}
-          </span>
-        </div>
-
-        <div className="map-viewport">
+        <div className="map-hint">Pinch or scroll to zoom. Drag to pan.</div>
+        <div
+          ref={viewportRef}
+          className="map-viewport interactive"
+          onWheel={onWheel}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={endPointer}
+          onPointerLeave={endPointer}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
           <div className="starfield" />
           <div className="map-canvas compact" style={{ transform: `scale(${zoom})` }}>
             <div className="ship-hull" />
@@ -147,6 +244,9 @@ export default function App() {
               ))}
             </div>
           </div>
+        </div>
+        <div className="map-status-pill">
+          {loading ? 'Loading telemetry...' : error ? `Error: ${error}` : `${Math.round(zoom * 100)}% zoom • observed ${queueHealth?.observed_at ?? 'unknown'}`}
         </div>
       </main>
     </div>

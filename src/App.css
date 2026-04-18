@@ -189,34 +189,28 @@ h1 {
   padding: 72px 24px 24px;
 }
 
-.map-toolbar {
+.map-hint,
+.map-status-pill {
   position: fixed;
-  bottom: 18px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 15;
-  display: flex;
-  align-items: center;
-  gap: 10px;
   background: rgba(8, 14, 28, 0.88);
   border: 1px solid rgba(125, 211, 252, 0.14);
   border-radius: 999px;
   padding: 10px 14px;
   box-shadow: 0 10px 36px rgba(0, 0, 0, 0.3);
+  color: #dce8ff;
 }
 
-.map-toolbar button {
-  border-radius: 999px;
-  border: 1px solid rgba(125, 211, 252, 0.18);
-  background: rgba(125, 211, 252, 0.08);
-  color: #eaf4ff;
-  padding: 8px 12px;
+.map-hint {
+  top: 18px;
 }
 
-.toolbar-note {
+.map-status-pill {
+  bottom: 18px;
   color: #9dafcb;
   font-size: 0.86rem;
-  margin-left: 8px;
 }
 
 .map-viewport {
@@ -224,6 +218,15 @@ h1 {
   inset: 0;
   overflow: auto;
   border-radius: 22px;
+}
+
+.map-viewport.interactive {
+  cursor: grab;
+  touch-action: none;
+}
+
+.map-viewport.interactive:active {
+  cursor: grabbing;
 }
 
 .starfield {
@@ -658,20 +661,20 @@ th {
     padding: 110px 12px 88px;
   }
 
-  .map-toolbar {
+  .map-hint,
+  .map-status-pill {
     width: calc(100vw - 24px);
-    justify-content: center;
-    flex-wrap: wrap;
-    bottom: 12px;
+    text-align: center;
     border-radius: 22px;
-    gap: 8px;
     padding: 10px;
   }
 
-  .toolbar-note {
-    width: 100%;
-    text-align: center;
-    margin-left: 0;
+  .map-hint {
+    top: 10px;
+  }
+
+  .map-status-pill {
+    bottom: 12px;
   }
 }
 
