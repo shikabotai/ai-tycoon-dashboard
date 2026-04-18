@@ -140,7 +140,10 @@ export default function App() {
 
   const selectedChamber = selectedAgentId ? chamberMap.get(selectedAgentId) : undefined
   const selectedIdentity = selectedChamber ? agentIdentities[selectedChamber.id] : undefined
-  const selectedArtifact = selectedArtifactId ? artifactReviewItems.find((item) => item.artifactId === selectedArtifactId) : artifactReviewItems[0]
+  const pendingArtifactReviewItems = artifactReviewItems.filter((item) => item.approvalStatus === 'pending' || item.approvalStatus === 'none')
+  const selectedArtifact = selectedArtifactId
+    ? artifactReviewItems.find((item) => item.artifactId === selectedArtifactId)
+    : pendingArtifactReviewItems[0] ?? artifactReviewItems[0]
 
   return (
     <div className="app-shell">
@@ -217,15 +220,15 @@ export default function App() {
               <h2>Review dock</h2>
               <p className="subcopy">Open artifacts, inspect final work, and approve or decline before shipping.</p>
             </div>
-            <span className="badge">{artifactReviewItems.length} items</span>
+            <span className="badge">{pendingArtifactReviewItems.length} pending</span>
           </div>
 
           <div className="artifact-review-panel">
             <div className="artifact-review-list">
-              {artifactReviewItems.length === 0 ? (
-                <p className="empty">No reviewable artifacts yet.</p>
+              {pendingArtifactReviewItems.length === 0 ? (
+                <p className="empty">No pending approvals right now.</p>
               ) : (
-                artifactReviewItems.map((item) => (
+                pendingArtifactReviewItems.map((item) => (
                   <button
                     key={item.artifactId}
                     className={`artifact-list-item ${selectedArtifact?.artifactId === item.artifactId ? 'active' : ''}`}
@@ -249,6 +252,7 @@ export default function App() {
                   try {
                     setApprovalBusy(true)
                     await decideApproval(item, 'approved')
+                    setSelectedArtifactId(null)
                   } finally {
                     setApprovalBusy(false)
                   }
@@ -258,6 +262,7 @@ export default function App() {
                   try {
                     setApprovalBusy(true)
                     await decideApproval(item, 'rejected', reason)
+                    setSelectedArtifactId(null)
                   } finally {
                     setApprovalBusy(false)
                   }
