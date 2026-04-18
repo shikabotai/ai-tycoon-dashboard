@@ -104,8 +104,8 @@ export default function App() {
   const [approvalBusy, setApprovalBusy] = useState(false)
   const [taskBusy, setTaskBusy] = useState(false)
   const [openPanel, setOpenPanel] = useState<PanelKey | null>(null)
-  const [mapScale, setMapScale] = useState(0.68)
-  const [mapOffset, setMapOffset] = useState({ x: 0, y: -24 })
+  const [mapScale, setMapScale] = useState(0.56)
+  const [mapOffset, setMapOffset] = useState({ x: 0, y: -8 })
   const dragState = useRef<{ x: number; y: number; originX: number; originY: number; pinchDistance?: number; pinchScale?: number } | null>(null)
 
   const [metricsLoaded, setMetricsLoaded] = useState(false)

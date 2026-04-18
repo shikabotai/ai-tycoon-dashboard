@@ -243,6 +243,8 @@ h1 {
   margin-top: 10px;
   border-radius: 30px;
   overflow: hidden;
+  width: 100%;
+  max-width: 100%;
   touch-action: pan-y;
 }
 
@@ -1694,7 +1696,7 @@ th {
   }
 
   .ship-stage-grid {
-    padding: 82px 28px 34px;
+    padding: 76px 18px 28px;
     min-height: 0;
   }
 
