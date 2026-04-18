@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
 import './App.css'
-import type { AgentChamber } from './types'
+import type { AgentChamber, ArtifactReviewItem } from './types'
 import { agentIdentities } from './agentIdentities'
 import { buildAvatar } from './lib/avatars'
 import { useDashboardData } from './hooks/useDashboardData'
@@ -18,7 +18,7 @@ const MAX_ZOOM = 1.8
 const INITIAL_CAMERA = { x: 0, y: 0 }
 
 export default function App() {
-  const { queueHealth, pipeline, watchdog, loading, error, agentChambers } = useDashboardData()
+  const { queueHealth, pipeline, watchdog, loading, error, agentChambers, artifactReviewItems } = useDashboardData()
   const chamberMap = useMemo(() => new Map(agentChambers.map((agent) => [agent.id, agent])), [agentChambers])
   const [zoom, setZoom] = useState(0.72)
   const [camera, setCamera] = useState(INITIAL_CAMERA)
@@ -26,6 +26,7 @@ export default function App() {
   const [leftOpen, setLeftOpen] = useState(false)
   const [rightOpen, setRightOpen] = useState(false)
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null)
+  const [selectedArtifactId, setSelectedArtifactId] = useState<string | null>(null)
   const viewportRef = useRef<HTMLDivElement | null>(null)
   const gestureRef = useRef<{ startDistance: number; startZoom: number; midpointX: number; midpointY: number } | null>(null)
   const dragRef = useRef<{ active: boolean; startX: number; startY: number; startCameraX: number; startCameraY: number }>({
@@ -138,6 +139,7 @@ export default function App() {
 
   const selectedChamber = selectedAgentId ? chamberMap.get(selectedAgentId) : undefined
   const selectedIdentity = selectedChamber ? agentIdentities[selectedChamber.id] : undefined
+  const selectedArtifact = selectedArtifactId ? artifactReviewItems.find((item) => item.artifactId === selectedArtifactId) : artifactReviewItems[0]
 
   return (
     <div className="app-shell">
@@ -148,7 +150,7 @@ export default function App() {
         {leftOpen ? 'Hide queue' : 'Show queue'}
       </button>
       <button className={`drawer-toggle right ${rightOpen ? 'open' : ''}`} onClick={() => setRightOpen((v) => !v)}>
-        {rightOpen ? 'Hide alerts' : 'Show alerts'}
+        {rightOpen ? 'Hide review dock' : 'Show review dock'}
       </button>
 
       <header className={`top-drawer ${topOpen ? 'open' : ''}`}>
@@ -208,7 +210,47 @@ export default function App() {
       </aside>
 
       <aside className={`side-drawer right ${rightOpen ? 'open' : ''}`}>
-        <div className="drawer-inner">
+        <div className="drawer-inner review-drawer">
+          <div className="review-drawer-header">
+            <div>
+              <h2>Review dock</h2>
+              <p className="subcopy">Open artifacts, inspect final work, and approve or decline before shipping.</p>
+            </div>
+            <span className="badge">{artifactReviewItems.length} items</span>
+          </div>
+
+          <div className="artifact-review-panel">
+            <div className="artifact-review-list">
+              {artifactReviewItems.length === 0 ? (
+                <p className="empty">No reviewable artifacts yet.</p>
+              ) : (
+                artifactReviewItems.map((item) => (
+                  <button
+                    key={item.artifactId}
+                    className={`artifact-list-item ${selectedArtifact?.artifactId === item.artifactId ? 'active' : ''}`}
+                    onClick={() => setSelectedArtifactId(item.artifactId)}
+                  >
+                    <div className="artifact-list-topline">
+                      <span className="badge">{item.artifactType}</span>
+                      <span className={`approval-pill approval-${item.approvalStatus}`}>{item.approvalStatus}</span>
+                    </div>
+                    <strong>{item.taskTitle}</strong>
+                    <span>{item.projectTitle || 'Unassigned project'}</span>
+                    <small>{item.filename || item.storagePath || item.createdAt}</small>
+                  </button>
+                ))
+              )}
+            </div>
+
+            <div className="artifact-preview-card">
+              {selectedArtifact ? (
+                <ArtifactPreview item={selectedArtifact} />
+              ) : (
+                <p className="empty">Select an artifact to review.</p>
+              )}
+            </div>
+          </div>
+
           <h2>Watchdog</h2>
           {watchdog.length === 0 ? (
             <p className="empty">No active alerts. The ship is running clean.</p>
@@ -399,6 +441,51 @@ function AgentRoom({ chamber, onOpen }: { chamber?: AgentChamber; onOpen?: () =>
       <div className="room-desk" />
       <div className="room-helper-bot" />
     </button>
+  )
+}
+
+function ArtifactPreview({ item }: { item: ArtifactReviewItem }) {
+  const previewText = item.content?.trim() || 'No inline artifact content stored yet. Open the file path when available.'
+
+  return (
+    <div className="artifact-preview-inner">
+      <div className="artifact-preview-topline">
+        <div>
+          <p className="eyebrow">{item.projectTitle || 'Artifact review'}</p>
+          <h3>{item.taskTitle}</h3>
+        </div>
+        <span className={`approval-pill approval-${item.approvalStatus}`}>{item.approvalStatus}</span>
+      </div>
+
+      <div className="artifact-meta-grid">
+        <div className="metric-card">
+          <span>Agent</span>
+          <strong>{item.assignedAgentId || 'unknown'}</strong>
+        </div>
+        <div className="metric-card">
+          <span>Type</span>
+          <strong>{item.artifactType}</strong>
+        </div>
+        <div className="metric-card">
+          <span>File</span>
+          <strong>{item.filename || 'inline artifact'}</strong>
+        </div>
+      </div>
+
+      <div className="artifact-actions">
+        <button className="action-button primary">Approve to ship</button>
+        <button className="action-button danger">Decline</button>
+        {item.storagePath && (
+          <button className="action-button secondary" onClick={() => window.alert(`Open artifact path: ${item.storagePath}`)}>
+            Open file path
+          </button>
+        )}
+      </div>
+
+      <div className="artifact-preview-body">
+        <pre>{previewText}</pre>
+      </div>
+    </div>
   )
 }
 

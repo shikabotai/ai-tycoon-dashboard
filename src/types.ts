@@ -85,3 +85,37 @@ export type AgentChamber = {
     projectTitle?: string
   }>
 }
+
+export type ArtifactRow = {
+  id: string
+  task_id: string
+  artifact_type: string
+  content: string | null
+  mime_type: string | null
+  filename: string | null
+  storage_path: string | null
+  created_at: string
+}
+
+export type ApprovalRow = {
+  id: string
+  task_id: string
+  status: string
+  decided_at: string | null
+  created_at: string
+}
+
+export type ArtifactReviewItem = {
+  artifactId: string
+  taskId: string
+  taskTitle: string
+  projectTitle?: string
+  assignedAgentId?: string | null
+  artifactType: string
+  filename?: string | null
+  mimeType?: string | null
+  content?: string | null
+  storagePath?: string | null
+  createdAt: string
+  approvalStatus: 'pending' | 'approved' | 'rejected' | 'none'
+}
