@@ -18,7 +18,7 @@ const INITIAL_CAMERA = { x: 0, y: 0 }
 
 export default function App() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null)
-  const { queueHealth, pipeline, watchdog, loading, error, agentChambers, artifactReviewItems, decideApproval, summary, activityFeed, projects, projectSummary, getTaskDetail, patchTask, decideTaskApproval } = useDashboardData(selectedProjectId)
+  const { queueHealth, loading, error, agentChambers, artifactReviewItems, decideApproval, summary, activityFeed, projects } = useDashboardData(selectedProjectId)
   const chamberMap = useMemo(() => new Map(agentChambers.map((agent) => [agent.id, agent])), [agentChambers])
   const [zoom, setZoom] = useState(0.72)
   const [camera, setCamera] = useState(INITIAL_CAMERA)
@@ -28,8 +28,6 @@ export default function App() {
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null)
   const [selectedArtifactId, setSelectedArtifactId] = useState<string | null>(null)
   const [approvalBusy, setApprovalBusy] = useState(false)
-  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null)
-  const [taskActionBusy, setTaskActionBusy] = useState(false)
   const viewportRef = useRef<HTMLDivElement | null>(null)
   const gestureRef = useRef<{ startDistance: number; startZoom: number; midpointX: number; midpointY: number } | null>(null)
   const dragRef = useRef<{ active: boolean; startX: number; startY: number; startCameraX: number; startCameraY: number }>({
@@ -132,18 +130,12 @@ export default function App() {
   }
 
   const onTouchEnd: React.TouchEventHandler<HTMLDivElement> = (event) => {
-    if (event.touches.length < 2) {
-      gestureRef.current = null
-    }
-    if (event.touches.length === 0) {
-      cancelDrag()
-    }
+    if (event.touches.length < 2) gestureRef.current = null
+    if (event.touches.length === 0) cancelDrag()
   }
 
   const selectedChamber = selectedAgentId ? chamberMap.get(selectedAgentId) : undefined
   const selectedIdentity = selectedChamber ? agentIdentities[selectedChamber.id] : undefined
-  const selectedTaskDetail = selectedTaskId ? getTaskDetail(selectedTaskId) : undefined
-  const safeProjectSummary = projectSummary ?? { activeDestinations: [], recentPublications: [], deliveryFailures: [] }
   const pendingArtifactReviewItems = (artifactReviewItems || []).filter((item) => item.approvalStatus === 'pending' || item.approvalStatus === 'none')
   const selectedArtifact = selectedArtifactId
     ? artifactReviewItems.find((item) => item.artifactId === selectedArtifactId)
@@ -165,9 +157,7 @@ export default function App() {
         <div>
           <p className="eyebrow">AI Tycoon Starship</p>
           <h1>Interior Agent Deck</h1>
-          <p className="subcopy">
-            A single connected ship layout, with the manager chamber at the command hub and the rest of the crew linked through internal corridors.
-          </p>
+          <p className="subcopy">A single connected ship layout, with the manager chamber at the command hub and the rest of the crew linked through internal corridors.</p>
           <label className="project-switcher">
             <span>Business focus</span>
             <select value={selectedProjectId ?? ''} onChange={(event) => setSelectedProjectId(event.target.value || null)}>
@@ -188,82 +178,6 @@ export default function App() {
           <StatCard label="Active" value={queueHealth?.in_progress_count ?? 0} />
           <StatCard label="Alerts" value={queueHealth?.flagged_count ?? 0} danger />
         </div>
-
-        <div className="project-summary-strip">
-          <div className="metric-card">
-            <span>Active destinations</span>
-            <strong>{safeProjectSummary.activeDestinations.length}</strong>
-          </div>
-          <div className="metric-card">
-            <span>Recent publications</span>
-            <strong>{safeProjectSummary.recentPublications.length}</strong>
-          </div>
-          <div className="metric-card">
-            <span>Delivery failures</span>
-            <strong>{safeProjectSummary.deliveryFailures.length}</strong>
-          </div>
-        </div>
-        {(safeProjectSummary.activeDestinations.length > 0 || safeProjectSummary.recentPublications.length > 0 || safeProjectSummary.deliveryFailures.length > 0) && (
-          <div className="project-summary-panels">
-            <section className="summary-panel">
-              <h3>Destinations</h3>
-              {safeProjectSummary.activeDestinations.length === 0 ? (
-                <p className="empty">No active destinations.</p>
-              ) : (
-                <div className="summary-list">
-                  {safeProjectSummary.activeDestinations.map((item) => (
-                    <div key={item.id} className="summary-item">
-                      <strong>{item.destination}</strong>
-                      <span>{item.is_active ? 'active' : 'inactive'}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </section>
-
-            <section className="summary-panel">
-              <h3>Delivery health</h3>
-              {safeProjectSummary.deliveryFailures.length === 0 ? (
-                <p className="empty">No recent delivery failures.</p>
-              ) : (
-                <div className="summary-list">
-                  {safeProjectSummary.deliveryFailures.map((item) => (
-                    <div key={item.id} className="summary-item">
-                      <strong>{item.destination}</strong>
-                      <span>{item.error || item.status}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </section>
-          </div>
-        )}
-
-        <section className="outbound-history-panel">
-          <div className="outbound-history-header">
-            <div>
-              <p className="eyebrow">Outbound</p>
-              <h3>Publication history</h3>
-            </div>
-            <span className="badge">{safeProjectSummary.recentPublications.length} recent</span>
-          </div>
-          {safeProjectSummary.recentPublications.length === 0 ? (
-            <p className="empty">No shipped outputs yet.</p>
-          ) : (
-            <div className="outbound-history-list">
-              {safeProjectSummary.recentPublications.map((item) => (
-                <div key={item.id} className="outbound-card task-button" role="button" tabIndex={0} onClick={() => item.task_id && setSelectedTaskId(item.task_id)} onKeyDown={(event) => { if ((event.key === 'Enter' || event.key === ' ') && item.task_id) setSelectedTaskId(item.task_id) }}>
-                  <div className="outbound-card-topline">
-                    <span className="badge">{item.destination}</span>
-                    <span>{new Date(item.published_at).toLocaleString()}</span>
-                  </div>
-                  <strong>{item.external_url || 'Published artifact'}</strong>
-                  <small>{item.task_id || 'No task id'}</small>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
       </header>
 
       <aside className={`side-drawer left ${leftOpen ? 'open' : ''}`}>
@@ -274,7 +188,7 @@ export default function App() {
           ) : (
             <div className="activity-feed">
               {activityFeed.slice(0, 12).map((item) => (
-                <div key={item.id} className="activity-card task-button" role="button" tabIndex={0} onClick={() => setSelectedTaskId(item.taskId)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') setSelectedTaskId(item.taskId) }}>
+                <div key={item.id} className="activity-card">
                   <div className="activity-topline">
                     <span className="badge">{item.eventType}</span>
                     <span className="severity">{item.actorAgentId || 'system'}</span>
@@ -295,33 +209,6 @@ export default function App() {
             <Metric label="Stale active" value={queueHealth?.stale_active_count} />
             <Metric label="Awaiting approval" value={queueHealth?.awaiting_approval_count} />
             <Metric label="Delivery failed" value={queueHealth?.delivery_failed_count} />
-          </div>
-
-          <h2>Pipeline</h2>
-          <div className="table-shell slim">
-            <table>
-              <thead>
-                <tr>
-                  <th>Project</th>
-                  <th>Status</th>
-                  <th>Count</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pipeline.map((row) => (
-                  <tr key={`${row.project}-${row.status}`}>
-                    <td>{row.project}</td>
-                    <td>{row.status}</td>
-                    <td>{row.count}</td>
-                  </tr>
-                ))}
-                {pipeline.length === 0 && (
-                  <tr>
-                    <td colSpan={3} className="empty">No live pipeline rows.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
           </div>
         </div>
       </aside>
@@ -385,29 +272,6 @@ export default function App() {
               )}
             </div>
           </div>
-
-          <h2>Watchdog</h2>
-          {watchdog.length === 0 ? (
-            <p className="empty">No active alerts. The ship is running clean.</p>
-          ) : (
-            <div className="alerts-list compact-list">
-              {watchdog.map((item) => (
-                <article key={item.id} className="alert-card compact-card">
-                  <div className="alert-topline">
-                    <span className="badge">{item.watchdog_reason}</span>
-                    <span className="severity">S{item.severity}</span>
-                  </div>
-                  <h3>{item.task_title}</h3>
-                  <p>{item.project}</p>
-                  <ul>
-                    <li>Status: {item.status}</li>
-                    <li>Assigned: {item.assigned_agent_id || 'unassigned'}</li>
-                    <li>Attempts: {item.attempt_count}</li>
-                  </ul>
-                </article>
-              ))}
-            </div>
-          )}
         </div>
       </aside>
 
@@ -426,10 +290,7 @@ export default function App() {
           onTouchEnd={onTouchEnd}
         >
           <div className="starfield" />
-          <div
-            className="map-canvas compact camera-canvas"
-            style={{ transform: `translate(${camera.x}px, ${camera.y}px) scale(${zoom})` }}
-          >
+          <div className="map-canvas compact camera-canvas" style={{ transform: `translate(${camera.x}px, ${camera.y}px) scale(${zoom})` }}>
             <div className="ship-hull" />
             <div className="ship-spine" />
             <div className="ship-grid connected">
@@ -451,146 +312,6 @@ export default function App() {
           {loading ? 'Loading telemetry...' : error ? `Error: ${error}` : `${Math.round(zoom * 100)}% zoom • observed ${queueHealth?.observed_at ?? 'unknown'}`}
         </div>
       </main>
-
-      {selectedTaskDetail && (
-        <div className="agent-modal-backdrop" onClick={() => setSelectedTaskId(null)}>
-          <div className="agent-modal task-detail-modal" onClick={(event) => event.stopPropagation()}>
-            <button className="agent-modal-close" onClick={() => setSelectedTaskId(null)}>Close</button>
-            <div className="agent-modal-header">
-              <div>
-                <p className="eyebrow">Task drill-down</p>
-                <h2>{selectedTaskDetail.task.title}</h2>
-                <p className="subcopy">{selectedTaskDetail.projectTitle || 'Unknown project'} • {selectedTaskDetail.task.status}</p>
-              </div>
-            </div>
-
-            <div className="agent-modal-grid">
-              <div className="metric-card">
-                <span>Approvals</span>
-                <strong>{selectedTaskDetail.approvals.length}</strong>
-              </div>
-              <div className="metric-card">
-                <span>Artifacts</span>
-                <strong>{selectedTaskDetail.artifacts.length}</strong>
-              </div>
-              <div className="metric-card">
-                <span>Events</span>
-                <strong>{selectedTaskDetail.events.length}</strong>
-              </div>
-              <div className="metric-card">
-                <span>Deliveries</span>
-                <strong>{selectedTaskDetail.deliveries.length}</strong>
-              </div>
-              <div className="metric-card">
-                <span>Publications</span>
-                <strong>{selectedTaskDetail.publications.length}</strong>
-              </div>
-            </div>
-
-            <div className="artifact-actions task-detail-actions">
-              <button className="action-button secondary" disabled={taskActionBusy} onClick={async () => {
-                try {
-                  setTaskActionBusy(true)
-                  await patchTask(selectedTaskDetail.task.id, { status: 'assigned' })
-                } finally {
-                  setTaskActionBusy(false)
-                }
-              }}>
-                {taskActionBusy ? 'Saving...' : 'Reset to assigned'}
-              </button>
-              <button className="action-button danger" disabled={taskActionBusy} onClick={async () => {
-                const reason = window.prompt('Cancel this task? Add an optional reason.', 'cancelled from dashboard')
-                if (reason === null) return
-                try {
-                  setTaskActionBusy(true)
-                  await patchTask(selectedTaskDetail.task.id, { status: 'cancelled', last_error: reason || null })
-                  setSelectedTaskId(null)
-                } finally {
-                  setTaskActionBusy(false)
-                }
-              }}>
-                {taskActionBusy ? 'Saving...' : 'Cancel task'}
-              </button>
-              {selectedTaskDetail.approvals.some((item) => item.status === 'pending') && (
-                <>
-                  <button className="action-button primary" disabled={taskActionBusy} onClick={async () => {
-                    try {
-                      setTaskActionBusy(true)
-                      await decideTaskApproval(selectedTaskDetail.task.id, 'approved')
-                    } finally {
-                      setTaskActionBusy(false)
-                    }
-                  }}>
-                    {taskActionBusy ? 'Saving...' : 'Approve task'}
-                  </button>
-                  <button className="action-button danger" disabled={taskActionBusy} onClick={async () => {
-                    const reason = window.prompt('Why are you rejecting this task?', 'Needs revision')
-                    if (reason === null) return
-                    try {
-                      setTaskActionBusy(true)
-                      await decideTaskApproval(selectedTaskDetail.task.id, 'rejected', reason)
-                    } finally {
-                      setTaskActionBusy(false)
-                    }
-                  }}>
-                    {taskActionBusy ? 'Saving...' : 'Reject task'}
-                  </button>
-                </>
-              )}
-            </div>
-
-            <div className="task-detail-sections">
-              <section className="summary-panel">
-                <h3>Artifacts</h3>
-                {selectedTaskDetail.artifacts.length === 0 ? <p className="empty">No artifacts.</p> : (
-                  <div className="summary-list">
-                    {selectedTaskDetail.artifacts.map((item) => (
-                      <div key={item.id} className="summary-item">
-                        <strong>{item.filename || item.artifact_type}</strong>
-                        <span>{item.created_at}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </section>
-
-              <section className="summary-panel">
-                <h3>Approvals</h3>
-                {selectedTaskDetail.approvals.length === 0 ? <p className="empty">No approvals.</p> : (
-                  <div className="summary-list">
-                    {selectedTaskDetail.approvals.map((item) => (
-                      <div key={item.id} className="summary-item">
-                        <strong>{item.status}</strong>
-                        <span>{item.comment || item.created_at}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </section>
-
-              <section className="summary-panel">
-                <h3>Delivery trail</h3>
-                {selectedTaskDetail.deliveries.length === 0 && selectedTaskDetail.publications.length === 0 ? <p className="empty">No delivery history.</p> : (
-                  <div className="summary-list">
-                    {selectedTaskDetail.deliveries.map((item) => (
-                      <div key={item.id} className="summary-item">
-                        <strong>{item.destination} • {item.status}</strong>
-                        <span>{item.destination_ref || item.error || item.delivered_at || 'No detail'}</span>
-                      </div>
-                    ))}
-                    {selectedTaskDetail.publications.map((item) => (
-                      <div key={item.id} className="summary-item">
-                        <strong>Published to {item.destination}</strong>
-                        <span>{item.external_url || item.published_at}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </section>
-            </div>
-          </div>
-        </div>
-      )}
 
       {selectedChamber && selectedIdentity && (
         <div className="agent-modal-backdrop" onClick={() => setSelectedAgentId(null)}>
@@ -670,7 +391,7 @@ export default function App() {
               ) : (
                 <div className="task-stack modal-stack">
                   {selectedChamber.tasks.map((task) => (
-                    <div key={task.id} className="task-pill task-button" role="button" tabIndex={0} onClick={() => setSelectedTaskId(task.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') setSelectedTaskId(task.id) }}>
+                    <div key={task.id} className="task-pill">
                       <strong>{task.title}</strong>
                       <span>{task.projectTitle || task.status}</span>
                     </div>
