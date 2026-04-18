@@ -529,6 +529,19 @@ function AgentRoom({ chamber, onOpen }: { chamber?: AgentChamber; onOpen?: () =>
   )
 }
 
+function downloadInlineArtifact(item: ArtifactReviewItem) {
+  if (!item.content) return
+  const blob = new Blob([item.content], { type: item.mimeType || 'text/plain;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const anchor = document.createElement('a')
+  anchor.href = url
+  anchor.download = item.filename || `${item.taskTitle.replace(/\s+/g, '_').toLowerCase()}-${item.artifactType}.txt`
+  document.body.appendChild(anchor)
+  anchor.click()
+  document.body.removeChild(anchor)
+  URL.revokeObjectURL(url)
+}
+
 function renderArtifactContent(content?: string | null) {
   if (!content?.trim()) {
     return <p className="empty">No inline artifact content stored yet. Open the file path when available.</p>
@@ -593,9 +606,14 @@ function ArtifactPreview({ item, approvalBusy, onApprove, onReject }: { item: Ar
         <button className="action-button danger" disabled={approvalBusy} onClick={() => void onReject(item)}>
           {approvalBusy ? 'Saving...' : 'Decline'}
         </button>
+        {item.content && (
+          <button className="action-button secondary" disabled={approvalBusy} onClick={() => downloadInlineArtifact(item)}>
+            Download text
+          </button>
+        )}
         {item.storagePath && (
-          <button className="action-button secondary" disabled={approvalBusy} onClick={() => window.alert(`Open artifact path: ${item.storagePath}`)}>
-            Open file path
+          <button className="action-button secondary" disabled={approvalBusy} onClick={() => window.alert(`Storage path: ${item.storagePath}`)}>
+            View storage path
           </button>
         )}
       </div>
