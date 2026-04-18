@@ -24,6 +24,7 @@ export default function App() {
   const [topOpen, setTopOpen] = useState(false)
   const [leftOpen, setLeftOpen] = useState(false)
   const [rightOpen, setRightOpen] = useState(false)
+  const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null)
   const viewportRef = useRef<HTMLDivElement | null>(null)
   const gestureRef = useRef<{ startDistance: number; startZoom: number; midpointX: number; midpointY: number } | null>(null)
   const dragRef = useRef<{ active: boolean; startX: number; startY: number; startCameraX: number; startCameraY: number }>({
@@ -133,6 +134,9 @@ export default function App() {
       cancelDrag()
     }
   }
+
+  const selectedChamber = selectedAgentId ? chamberMap.get(selectedAgentId) : undefined
+  const selectedIdentity = selectedChamber ? agentIdentities[selectedChamber.id] : undefined
 
   return (
     <div className="app-shell">
@@ -255,7 +259,7 @@ export default function App() {
                 <div className="ship-row connected" key={rowIndex}>
                   {row.map((cell, cellIndex) =>
                     cell ? (
-                      <AgentRoom key={cell} chamber={chamberMap.get(cell)} />
+                      <AgentRoom key={cell} chamber={chamberMap.get(cell)} onOpen={() => setSelectedAgentId(cell)} />
                     ) : (
                       <Connector key={`${rowIndex}-${cellIndex}`} rowIndex={rowIndex} cellIndex={cellIndex} />
                     ),
@@ -269,6 +273,72 @@ export default function App() {
           {loading ? 'Loading telemetry...' : error ? `Error: ${error}` : `${Math.round(zoom * 100)}% zoom • observed ${queueHealth?.observed_at ?? 'unknown'}`}
         </div>
       </main>
+
+      {selectedChamber && selectedIdentity && (
+        <div className="agent-modal-backdrop" onClick={() => setSelectedAgentId(null)}>
+          <div
+            className="agent-modal"
+            onClick={(event) => event.stopPropagation()}
+            style={{
+              ['--agent-primary' as string]: selectedIdentity.palette.primary,
+              ['--agent-secondary' as string]: selectedIdentity.palette.secondary,
+              ['--agent-glow' as string]: selectedIdentity.palette.glow,
+            }}
+          >
+            <button className="agent-modal-close" onClick={() => setSelectedAgentId(null)}>Close</button>
+            <div className="agent-modal-header">
+              <div>
+                <p className="eyebrow">{selectedChamber.chamberLabel}</p>
+                <h2>{selectedIdentity.name}</h2>
+                <p className="subcopy">{selectedIdentity.subtitle}</p>
+              </div>
+              <div className={`agent-avatar-zone modal-avatar ${selectedIdentity.avatarClass}`}>
+                <div className="avatar-hair" />
+                <div className="avatar-hair back" />
+                <div className="avatar-face">
+                  <div className="avatar-eye" />
+                  <div className="avatar-eye right" />
+                  <div className="avatar-mouth" />
+                </div>
+                <div className="avatar-collar" />
+                <div className="agent-orbit orbit-one" />
+                <div className="agent-orbit orbit-two" />
+              </div>
+            </div>
+
+            <div className="agent-modal-grid">
+              <div className="metric-card">
+                <span>Status</span>
+                <strong>{selectedChamber.status}</strong>
+              </div>
+              <div className="metric-card">
+                <span>Role</span>
+                <strong>{selectedChamber.role}</strong>
+              </div>
+              <div className="metric-card">
+                <span>Active tasks</span>
+                <strong>{selectedChamber.taskCount}</strong>
+              </div>
+            </div>
+
+            <section className="agent-task-section">
+              <h3>Current work</h3>
+              {selectedChamber.tasks.length === 0 ? (
+                <p className="empty">No active tasks right now.</p>
+              ) : (
+                <div className="task-stack modal-stack">
+                  {selectedChamber.tasks.map((task) => (
+                    <div key={task.id} className="task-pill">
+                      <strong>{task.title}</strong>
+                      <span>{task.projectTitle || task.status}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -288,7 +358,7 @@ function Connector({ rowIndex, cellIndex }: { rowIndex: number; cellIndex: numbe
   )
 }
 
-function AgentRoom({ chamber }: { chamber?: AgentChamber }) {
+function AgentRoom({ chamber, onOpen }: { chamber?: AgentChamber; onOpen?: () => void }) {
   if (!chamber) {
     return <div className="agent-room empty-room">Offline chamber</div>
   }
@@ -301,8 +371,9 @@ function AgentRoom({ chamber }: { chamber?: AgentChamber }) {
   }
 
   return (
-    <article
+    <button
       className={`agent-room role-${chamber.role}`}
+      onClick={onOpen}
       style={{
         ['--agent-primary' as string]: identity.palette.primary,
         ['--agent-secondary' as string]: identity.palette.secondary,
@@ -323,26 +394,15 @@ function AgentRoom({ chamber }: { chamber?: AgentChamber }) {
         <div className="agent-orbit orbit-one" />
         <div className="agent-orbit orbit-two" />
       </div>
-      <div className="room-topline">
-        <span className="room-label">{chamber.chamberLabel}</span>
-        <span className={`status-dot ${chamber.status}`}>{chamber.status}</span>
+      <div className="room-scene-label">Tap to inspect</div>
+      <div className="room-console-lights">
+        <span />
+        <span />
+        <span />
       </div>
-      <h3>{identity.name}</h3>
-      <p className="room-role">{identity.subtitle}</p>
-      <div className="room-task-count">{chamber.taskCount} active tasks</div>
-      <div className="task-stack">
-        {chamber.tasks.length === 0 ? (
-          <div className="task-pill idle">Idle</div>
-        ) : (
-          chamber.tasks.slice(0, 3).map((task) => (
-            <div key={task.id} className="task-pill">
-              <strong>{task.title}</strong>
-              <span>{task.projectTitle || task.status}</span>
-            </div>
-          ))
-        )}
-      </div>
-    </article>
+      <div className="room-desk" />
+      <div className="room-helper-bot" />
+    </button>
   )
 }
 
