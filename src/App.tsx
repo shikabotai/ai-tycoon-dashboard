@@ -104,9 +104,9 @@ export default function App() {
   const [approvalBusy, setApprovalBusy] = useState(false)
   const [taskBusy, setTaskBusy] = useState(false)
   const [openPanel, setOpenPanel] = useState<PanelKey | null>(null)
-  const [mapScale, setMapScale] = useState(0.72)
-  const [mapOffset, setMapOffset] = useState({ x: 0, y: -80 })
-  const dragState = useRef<{ x: number; y: number; originX: number; originY: number } | null>(null)
+  const [mapScale, setMapScale] = useState(0.68)
+  const [mapOffset, setMapOffset] = useState({ x: 0, y: -24 })
+  const dragState = useRef<{ x: number; y: number; originX: number; originY: number; pinchDistance?: number; pinchScale?: number } | null>(null)
 
   const [metricsLoaded, setMetricsLoaded] = useState(false)
   const [activityLoaded, setActivityLoaded] = useState(false)
@@ -422,16 +422,6 @@ export default function App() {
         </section>
 
         <section className="safe-mode-card chamber-section-card chamber-command-card map-stage-card ship-stage-card minimal-map-card">
-
-          <div className="map-camera-controls">
-            <button className="panel-refresh-button" onClick={() => zoomMap(0.12)}>Zoom in</button>
-            <button className="panel-refresh-button" onClick={() => zoomMap(-0.12)}>Zoom out</button>
-            <button className="panel-refresh-button" onClick={() => {
-              setMapScale(0.72)
-              setMapOffset({ x: 0, y: -80 })
-            }}>Reset view</button>
-          </div>
-
           <div className={`ship-stage-shell ${dragState.current ? 'dragging-map' : ''}`} onWheel={(event) => {
             event.preventDefault()
             zoomMap(event.deltaY > 0 ? -0.08 : 0.08)
@@ -443,6 +433,28 @@ export default function App() {
           }} onPointerUp={() => {
             dragState.current = null
           }} onPointerLeave={() => {
+            dragState.current = null
+          }} onTouchStart={(event) => {
+            if (event.touches.length === 2) {
+              const dx = event.touches[0].clientX - event.touches[1].clientX
+              const dy = event.touches[0].clientY - event.touches[1].clientY
+              dragState.current = {
+                x: 0,
+                y: 0,
+                originX: mapOffset.x,
+                originY: mapOffset.y,
+                pinchDistance: Math.hypot(dx, dy),
+                pinchScale: mapScale,
+              }
+            }
+          }} onTouchMove={(event) => {
+            if (!dragState.current || event.touches.length !== 2 || !dragState.current.pinchDistance || !dragState.current.pinchScale) return
+            const dx = event.touches[0].clientX - event.touches[1].clientX
+            const dy = event.touches[0].clientY - event.touches[1].clientY
+            const nextDistance = Math.hypot(dx, dy)
+            const ratio = nextDistance / dragState.current.pinchDistance
+            setMapScale(clampScale(dragState.current.pinchScale * ratio))
+          }} onTouchEnd={() => {
             dragState.current = null
           }}>
             <div className="ship-stage-pan-zone" onPointerDown={(event) => {
