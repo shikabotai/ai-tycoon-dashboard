@@ -601,29 +601,128 @@ th {
     min-width: 0;
   }
 
+  .drawer-toggle {
+    z-index: 32;
+    padding: 9px 12px;
+    font-size: 0.85rem;
+  }
+
+  .drawer-toggle.top {
+    top: 10px;
+    width: calc(100vw - 24px);
+    text-align: center;
+  }
+
   .drawer-toggle.left,
   .drawer-toggle.right {
-    top: auto;
-    bottom: 78px;
+    top: 58px;
+    bottom: auto;
   }
 
   .drawer-toggle.left {
-    left: 14px;
+    left: 12px;
+    right: auto;
   }
 
   .drawer-toggle.right {
-    right: 14px;
+    right: 12px;
+    left: auto;
+  }
+
+  .top-drawer {
+    top: 56px;
+    width: calc(100vw - 24px);
+    max-height: calc(100vh - 180px);
+    overflow: auto;
   }
 
   .side-drawer {
-    top: 90px;
-    bottom: 90px;
-    width: calc(100vw - 28px);
+    top: 104px;
+    bottom: 94px;
+    width: calc(100vw - 24px);
+    left: 12px;
+    right: 12px;
+    border-radius: 22px;
+  }
+
+  .side-drawer.left,
+  .side-drawer.right {
+    transform: translateY(115%);
+  }
+
+  .side-drawer.open {
+    transform: translateY(0);
+  }
+
+  .map-stage {
+    padding: 110px 12px 88px;
   }
 
   .map-toolbar {
     width: calc(100vw - 24px);
     justify-content: center;
     flex-wrap: wrap;
+    bottom: 12px;
+    border-radius: 22px;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .toolbar-note {
+    width: 100%;
+    text-align: center;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .drawer-toggle {
+    font-size: 0.78rem;
+    padding: 8px 10px;
+  }
+
+  .drawer-toggle.left,
+  .drawer-toggle.right {
+    top: 54px;
+  }
+
+  .top-drawer {
+    top: 52px;
+    padding: 16px;
+  }
+
+  .side-drawer {
+    top: 96px;
+    bottom: 88px;
+    padding: 14px;
+  }
+
+  .map-stage {
+    padding: 104px 10px 84px;
+  }
+
+  .map-canvas.compact {
+    width: 760px;
+    min-height: 820px;
+    padding: 84px 70px;
+  }
+
+  .ship-row.connected {
+    grid-template-columns: repeat(3, minmax(150px, 1fr));
+    gap: 18px;
+  }
+
+  .agent-room,
+  .connector-node {
+    min-height: 180px;
+  }
+
+  .room-task-count {
+    font-size: 1.35rem;
+  }
+
+  .agent-avatar-zone {
+    width: 68px;
+    height: 68px;
   }
 }
