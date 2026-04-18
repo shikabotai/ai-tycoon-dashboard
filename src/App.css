@@ -220,6 +220,51 @@ h1 {
   font-size: 0.85rem;
 }
 
+.outbound-history-panel {
+  margin-top: 18px;
+  border-radius: 22px;
+  padding: 18px;
+  background: rgba(8, 14, 28, 0.82);
+  border: 1px solid rgba(125, 211, 252, 0.14);
+}
+
+.outbound-history-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.outbound-history-list {
+  display: grid;
+  gap: 12px;
+}
+
+.outbound-card {
+  border-radius: 18px;
+  padding: 14px;
+  background: rgba(125, 211, 252, 0.06);
+  border: 1px solid rgba(125, 211, 252, 0.12);
+}
+
+.outbound-card-topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.outbound-card strong,
+.outbound-card small {
+  display: block;
+}
+
+.outbound-card small {
+  margin-top: 8px;
+  color: #aebbd4;
+}
+
 .stat-card,
 .metric-card,
 .alert-card,

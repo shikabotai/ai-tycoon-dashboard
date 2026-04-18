@@ -219,22 +219,6 @@ export default function App() {
             </section>
 
             <section className="summary-panel">
-              <h3>Recent publications</h3>
-              {projectSummary.recentPublications.length === 0 ? (
-                <p className="empty">No publications yet.</p>
-              ) : (
-                <div className="summary-list">
-                  {projectSummary.recentPublications.map((item) => (
-                    <div key={item.id} className="summary-item">
-                      <strong>{item.destination}</strong>
-                      <span>{new Date(item.published_at).toLocaleString()}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </section>
-
-            <section className="summary-panel">
               <h3>Delivery health</h3>
               {projectSummary.deliveryFailures.length === 0 ? (
                 <p className="empty">No recent delivery failures.</p>
@@ -251,6 +235,32 @@ export default function App() {
             </section>
           </div>
         )}
+
+        <section className="outbound-history-panel">
+          <div className="outbound-history-header">
+            <div>
+              <p className="eyebrow">Outbound</p>
+              <h3>Publication history</h3>
+            </div>
+            <span className="badge">{projectSummary.recentPublications.length} recent</span>
+          </div>
+          {projectSummary.recentPublications.length === 0 ? (
+            <p className="empty">No shipped outputs yet.</p>
+          ) : (
+            <div className="outbound-history-list">
+              {projectSummary.recentPublications.map((item) => (
+                <article key={item.id} className="outbound-card">
+                  <div className="outbound-card-topline">
+                    <span className="badge">{item.destination}</span>
+                    <span>{new Date(item.published_at).toLocaleString()}</span>
+                  </div>
+                  <strong>{item.external_url || 'Published artifact'}</strong>
+                  <small>{item.task_id || 'No task id'}</small>
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
       </header>
 
       <aside className={`side-drawer left ${leftOpen ? 'open' : ''}`}>

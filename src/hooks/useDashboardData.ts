@@ -254,8 +254,8 @@ export function useDashboardData(selectedProjectId?: string | null) {
 
   const projectSummary = useMemo(() => {
     const activeDestinations = destinations.filter((item) => item.is_active && (!selectedProjectId || item.project_id === selectedProjectId))
-    const recentPublications = filteredPublications.slice(0, 5)
-    const deliveryFailures = deliveries.filter((item) => item.status !== 'sent' && filteredTaskIds.has(item.task_id)).slice(0, 5)
+    const recentPublications = filteredPublications.slice(0, 8)
+    const deliveryFailures = deliveries.filter((item) => item.status !== 'sent' && filteredTaskIds.has(item.task_id)).slice(0, 8)
 
     return {
       activeDestinations,
