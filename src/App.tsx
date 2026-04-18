@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import './App.css'
 import { supabase } from './lib/supabase'
 
@@ -21,12 +21,29 @@ type ProjectRow = {
   title: string
 }
 
+type TaskRow = {
+  id: string
+  title: string
+  project_id: string | null
+}
+
+type EventRow = {
+  id: string
+  task_id: string
+  event_type: string
+  actor_agent_id: string | null
+  created_at: string
+  payload: Record<string, unknown> | null
+}
+
 export default function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [queueHealth, setQueueHealth] = useState<QueueHealth | null>(null)
   const [summary, setSummary] = useState<Summary>({ revenueUsd: 0, costUsd: 0, marginUsd: 0, publishedToday: 0 })
   const [projects, setProjects] = useState<ProjectRow[]>([])
+  const [tasks, setTasks] = useState<TaskRow[]>([])
+  const [events, setEvents] = useState<EventRow[]>([])
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -36,16 +53,18 @@ export default function App() {
       setLoading(true)
       setError(null)
 
-      const [queueRes, pnlRes, publicationsRes, projectsRes] = await Promise.all([
+      const [queueRes, pnlRes, publicationsRes, projectsRes, tasksRes, eventsRes] = await Promise.all([
         supabase.from('v_queue_health').select('observed_at,runnable_count,in_progress_count,flagged_count').limit(1).maybeSingle(),
         supabase.from('v_project_pnl').select('project_id,revenue_usd,cost_usd,margin_usd').order('month', { ascending: false }).limit(50),
         supabase.from('publications').select('project_id,published_at').order('published_at', { ascending: false }).limit(100),
         supabase.from('projects').select('id,title').order('title'),
+        supabase.from('tasks').select('id,title,project_id').order('updated_at', { ascending: false }).limit(120),
+        supabase.from('task_events').select('id,task_id,event_type,actor_agent_id,created_at,payload').order('created_at', { ascending: false }).limit(40),
       ])
 
       if (cancelled) return
 
-      const firstError = queueRes.error || pnlRes.error || publicationsRes.error || projectsRes.error
+      const firstError = queueRes.error || pnlRes.error || publicationsRes.error || projectsRes.error || tasksRes.error || eventsRes.error
       if (firstError) {
         setError(firstError.message)
         setLoading(false)
@@ -56,9 +75,13 @@ export default function App() {
       const pnlRows = (pnlRes.data ?? []) as Array<{ project_id: string; revenue_usd: number; cost_usd: number; margin_usd: number }>
       const publicationRows = (publicationsRes.data ?? []) as Array<{ project_id: string | null; published_at: string }>
       const projectRows = (projectsRes.data ?? []) as ProjectRow[]
+      const taskRows = (tasksRes.data ?? []) as TaskRow[]
+      const eventRows = (eventsRes.data ?? []) as EventRow[]
 
       setQueueHealth(queue)
       setProjects(projectRows)
+      setTasks(taskRows)
+      setEvents(eventRows)
 
       const latestPnlByProject = new Map<string, { revenue_usd: number; cost_usd: number; margin_usd: number }>()
       for (const row of pnlRows) {
@@ -91,13 +114,43 @@ export default function App() {
     }
   }, [selectedProjectId])
 
+  const filteredActivity = useMemo(() => {
+    const projectMap = new Map(projects.map((project) => [project.id, project.title]))
+    const taskMap = new Map(tasks.map((task) => [task.id, task]))
+    const items: Array<{ id: string; eventType: string; actor: string; taskTitle: string; projectTitle?: string; detail?: string; createdAt: string }> = []
+
+    for (const event of events) {
+      const task = taskMap.get(event.task_id)
+      if (!task) continue
+      if (selectedProjectId && task.project_id !== selectedProjectId) continue
+
+      let detail: string | undefined
+      const payload = event.payload || {}
+      if (typeof payload.comment === 'string') detail = payload.comment
+      else if (typeof payload.reason === 'string') detail = payload.reason
+      else if (typeof payload.decision === 'string') detail = payload.decision
+
+      items.push({
+        id: event.id,
+        eventType: event.event_type,
+        actor: event.actor_agent_id || 'system',
+        taskTitle: task.title,
+        projectTitle: task.project_id ? projectMap.get(task.project_id) : undefined,
+        detail,
+        createdAt: event.created_at,
+      })
+    }
+
+    return items.slice(0, 12)
+  }, [events, projects, selectedProjectId, tasks])
+
   return (
     <div className="app-shell safe-mode-shell">
       <main className="safe-mode-main">
         <div className="safe-mode-card">
           <p className="eyebrow">AI Sensei Dashboard</p>
-          <h1>Stability Rebuild, Phase 1</h1>
-          <p className="subcopy">Rebuilding from the safe version in small stable layers. This phase restores top-level business metrics and queue health.</p>
+          <h1>Stability Rebuild, Phase 2</h1>
+          <p className="subcopy">We’re rebuilding carefully from the stable base. This phase restores top-level metrics plus a friendlier live activity feed.</p>
 
           <label className="project-switcher">
             <span>Business focus</span>
@@ -137,6 +190,24 @@ export default function App() {
               <li>Margin: ${summary.marginUsd.toFixed(2)}</li>
               <li>Published today: {summary.publishedToday}</li>
             </ul>
+          </section>
+
+          <section className="safe-mode-card">
+            <h2>Live Activity</h2>
+            {filteredActivity.length === 0 ? (
+              <p className="empty">No recent activity yet.</p>
+            ) : (
+              <div className="safe-list-blocks">
+                {filteredActivity.map((item) => (
+                  <div key={item.id} className="safe-item">
+                    <strong>{item.eventType}</strong>
+                    <span>{item.taskTitle}</span>
+                    <small>{item.projectTitle || 'Unknown project'} • {item.actor}</small>
+                    {item.detail && <small>{item.detail}</small>}
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
         </div>
       </main>
