@@ -19,7 +19,7 @@ const INITIAL_CAMERA = { x: 0, y: 0 }
 
 export default function App() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null)
-  const { queueHealth, pipeline, watchdog, loading, error, agentChambers, artifactReviewItems, decideApproval, summary, activityFeed, projects, projectSummary, getTaskDetail } = useDashboardData(selectedProjectId)
+  const { queueHealth, pipeline, watchdog, loading, error, agentChambers, artifactReviewItems, decideApproval, summary, activityFeed, projects, projectSummary, getTaskDetail, patchTask, decideTaskApproval } = useDashboardData(selectedProjectId)
   const chamberMap = useMemo(() => new Map(agentChambers.map((agent) => [agent.id, agent])), [agentChambers])
   const [zoom, setZoom] = useState(0.72)
   const [camera, setCamera] = useState(INITIAL_CAMERA)
@@ -30,6 +30,7 @@ export default function App() {
   const [selectedArtifactId, setSelectedArtifactId] = useState<string | null>(null)
   const [approvalBusy, setApprovalBusy] = useState(false)
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null)
+  const [taskActionBusy, setTaskActionBusy] = useState(false)
   const viewportRef = useRef<HTMLDivElement | null>(null)
   const gestureRef = useRef<{ startDistance: number; startZoom: number; midpointX: number; midpointY: number } | null>(null)
   const dragRef = useRef<{ active: boolean; startX: number; startY: number; startCameraX: number; startCameraY: number }>({
@@ -484,6 +485,58 @@ export default function App() {
                 <span>Publications</span>
                 <strong>{selectedTaskDetail.publications.length}</strong>
               </div>
+            </div>
+
+            <div className="artifact-actions task-detail-actions">
+              <button className="action-button secondary" disabled={taskActionBusy} onClick={async () => {
+                try {
+                  setTaskActionBusy(true)
+                  await patchTask(selectedTaskDetail.task.id, { status: 'assigned' })
+                } finally {
+                  setTaskActionBusy(false)
+                }
+              }}>
+                {taskActionBusy ? 'Saving...' : 'Reset to assigned'}
+              </button>
+              <button className="action-button danger" disabled={taskActionBusy} onClick={async () => {
+                const reason = window.prompt('Cancel this task? Add an optional reason.', 'cancelled from dashboard')
+                if (reason === null) return
+                try {
+                  setTaskActionBusy(true)
+                  await patchTask(selectedTaskDetail.task.id, { status: 'cancelled', last_error: reason || null })
+                  setSelectedTaskId(null)
+                } finally {
+                  setTaskActionBusy(false)
+                }
+              }}>
+                {taskActionBusy ? 'Saving...' : 'Cancel task'}
+              </button>
+              {selectedTaskDetail.approvals.some((item) => item.status === 'pending') && (
+                <>
+                  <button className="action-button primary" disabled={taskActionBusy} onClick={async () => {
+                    try {
+                      setTaskActionBusy(true)
+                      await decideTaskApproval(selectedTaskDetail.task.id, 'approved')
+                    } finally {
+                      setTaskActionBusy(false)
+                    }
+                  }}>
+                    {taskActionBusy ? 'Saving...' : 'Approve task'}
+                  </button>
+                  <button className="action-button danger" disabled={taskActionBusy} onClick={async () => {
+                    const reason = window.prompt('Why are you rejecting this task?', 'Needs revision')
+                    if (reason === null) return
+                    try {
+                      setTaskActionBusy(true)
+                      await decideTaskApproval(selectedTaskDetail.task.id, 'rejected', reason)
+                    } finally {
+                      setTaskActionBusy(false)
+                    }
+                  }}>
+                    {taskActionBusy ? 'Saving...' : 'Reject task'}
+                  </button>
+                </>
+              )}
             </div>
 
             <div className="task-detail-sections">

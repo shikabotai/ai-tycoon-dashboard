@@ -344,6 +344,30 @@ export function useDashboardData(selectedProjectId?: string | null) {
     }
   }, [approvals, artifacts, deliveries, events, projects, publications, tasks])
 
+  const patchTask = useCallback(async (taskId: string, patch: Record<string, unknown>) => {
+    const { error: patchError } = await supabase.from('tasks').update(patch).eq('id', taskId)
+    if (patchError) throw patchError
+    await load()
+  }, [load])
+
+  const decideTaskApproval = useCallback(async (taskId: string, status: 'approved' | 'rejected', comment?: string) => {
+    const existingApproval = approvals.find((approval) => approval.task_id === taskId && approval.status === 'pending')
+    if (!existingApproval) throw new Error('No pending approval exists for this task')
+
+    const { error: updateError } = await supabase
+      .from('approvals')
+      .update({
+        status,
+        comment: comment || null,
+        decided_by: 'dashboard',
+        decided_at: new Date().toISOString(),
+      })
+      .eq('id', existingApproval.id)
+
+    if (updateError) throw updateError
+    await load()
+  }, [approvals, load])
+
   return {
     queueHealth,
     pipeline: filteredPipeline,
@@ -358,5 +382,7 @@ export function useDashboardData(selectedProjectId?: string | null) {
     projects,
     projectSummary,
     getTaskDetail,
+    patchTask,
+    decideTaskApproval,
   }
 }
