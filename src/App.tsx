@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react'
 import './App.css'
 import type { AgentChamber } from './types'
 import { agentIdentities } from './agentIdentities'
+import { buildAvatar } from './lib/avatars'
 import { useDashboardData } from './hooks/useDashboardData'
 
 const LAYOUT: Array<Array<string | null>> = [
@@ -292,22 +293,9 @@ export default function App() {
                 <h2>{selectedIdentity.name}</h2>
                 <p className="subcopy">{selectedIdentity.subtitle}</p>
               </div>
-              <div className={`agent-avatar-zone modal-avatar ${selectedIdentity.avatarClass} mood-${selectedIdentity.mood}`}>
-                <div className="agent-character">
-                  <div className="avatar-hair" />
-                  <div className="avatar-hair back" />
-                  <div className="avatar-face">
-                    <div className="avatar-eye" />
-                    <div className="avatar-eye right" />
-                    <div className="avatar-mouth" />
-                  </div>
-                  <div className="avatar-body">
-                    <div className="avatar-jacket" />
-                    <div className="avatar-arm left" />
-                    <div className="avatar-arm right" />
-                    <div className="avatar-leg left" />
-                    <div className="avatar-leg right" />
-                  </div>
+              <div className="agent-avatar-zone modal-avatar">
+                <div className="agent-character modal-character">
+                  <img src={buildAvatar(selectedIdentity.avatarSeed, selectedIdentity.palette.background)} alt={selectedIdentity.name} className="agent-portrait" />
                 </div>
                 <div className="agent-orbit orbit-one" />
                 <div className="agent-orbit orbit-two" />
@@ -375,10 +363,11 @@ function AgentRoom({ chamber, onOpen }: { chamber?: AgentChamber; onOpen?: () =>
     name: chamber.displayName,
     subtitle: chamber.role,
     roomTheme: 'default-room',
-    mood: 'neutral',
-    palette: { primary: '#7dd3fc', secondary: '#22d3ee', glow: 'rgba(34, 211, 238, 0.35)', accent: '#e0f2fe' },
-    avatarClass: 'avatar-generic',
+    palette: { primary: '#7dd3fc', secondary: '#22d3ee', glow: 'rgba(34, 211, 238, 0.35)', accent: '#e0f2fe', background: '#10263a' },
+    avatarSeed: chamber.id,
   }
+
+  const avatarUri = buildAvatar(identity.avatarSeed, identity.palette.background)
 
   return (
     <button
@@ -392,23 +381,10 @@ function AgentRoom({ chamber, onOpen }: { chamber?: AgentChamber; onOpen?: () =>
     >
       <div className="room-glow" />
       <div className="room-stars" />
-      <div className={`agent-avatar-zone ${identity.avatarClass} mood-${identity.mood}`}>
+      <div className="agent-avatar-zone">
         <div className="agent-walk-path" />
         <div className="agent-character">
-          <div className="avatar-hair" />
-          <div className="avatar-hair back" />
-          <div className="avatar-face">
-            <div className="avatar-eye" />
-            <div className="avatar-eye right" />
-            <div className="avatar-mouth" />
-          </div>
-          <div className="avatar-body">
-            <div className="avatar-jacket" />
-            <div className="avatar-arm left" />
-            <div className="avatar-arm right" />
-            <div className="avatar-leg left" />
-            <div className="avatar-leg right" />
-          </div>
+          <img src={avatarUri} alt={identity.name} className="agent-portrait" />
         </div>
         <div className="agent-orbit orbit-one" />
         <div className="agent-orbit orbit-two" />
