@@ -18,7 +18,8 @@ const MAX_ZOOM = 1.8
 const INITIAL_CAMERA = { x: 0, y: 0 }
 
 export default function App() {
-  const { queueHealth, pipeline, watchdog, loading, error, agentChambers, artifactReviewItems, decideApproval, summary, activityFeed } = useDashboardData()
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null)
+  const { queueHealth, pipeline, watchdog, loading, error, agentChambers, artifactReviewItems, decideApproval, summary, activityFeed, projects } = useDashboardData(selectedProjectId)
   const chamberMap = useMemo(() => new Map(agentChambers.map((agent) => [agent.id, agent])), [agentChambers])
   const [zoom, setZoom] = useState(0.72)
   const [camera, setCamera] = useState(INITIAL_CAMERA)
@@ -164,6 +165,15 @@ export default function App() {
           <p className="subcopy">
             A single connected ship layout, with the manager chamber at the command hub and the rest of the crew linked through internal corridors.
           </p>
+          <label className="project-switcher">
+            <span>Business focus</span>
+            <select value={selectedProjectId ?? ''} onChange={(event) => setSelectedProjectId(event.target.value || null)}>
+              <option value="">All businesses</option>
+              {projects.map((project) => (
+                <option key={project.id} value={project.id}>{project.title}</option>
+              ))}
+            </select>
+          </label>
         </div>
         <div className="hero-stats compact command-center-grid">
           <StatCard label="Revenue" value={`$${summary.revenueUsd.toFixed(2)}`} />

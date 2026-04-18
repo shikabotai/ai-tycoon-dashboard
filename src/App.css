@@ -143,6 +143,28 @@ h1 {
   line-height: 1.5;
 }
 
+.project-switcher {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+  max-width: 320px;
+}
+
+.project-switcher span {
+  color: #8ca3c7;
+  font-size: 0.84rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.project-switcher select {
+  border-radius: 14px;
+  border: 1px solid rgba(125, 211, 252, 0.14);
+  background: rgba(8, 14, 28, 0.9);
+  color: #eaf4ff;
+  padding: 12px 14px;
+}
+
 .hero-stats.compact {
   display: grid;
   grid-template-columns: repeat(3, minmax(110px, 1fr));

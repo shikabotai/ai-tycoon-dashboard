@@ -12,7 +12,7 @@ const CHAMBER_LABELS: Record<string, string> = {
   reviewer: 'Control E1',
 }
 
-export function useDashboardData() {
+export function useDashboardData(selectedProjectId?: string | null) {
   const [queueHealth, setQueueHealth] = useState<QueueHealth | null>(null)
   const [pipeline, setPipeline] = useState<PipelineRow[]>([])
   const [watchdog, setWatchdog] = useState<WatchdogRow[]>([])
@@ -36,13 +36,13 @@ export function useDashboardData() {
       supabase.from('v_pipeline_now').select('*').order('project').order('status'),
       supabase.from('v_task_watchdog').select('*').order('severity', { ascending: false }).order('updated_at', { ascending: true }).limit(12),
       supabase.from('agents').select('id,role,display_name,status,capabilities').order('id'),
-      supabase.from('tasks').select('id,title,status,assigned_agent_id,current_step_index,project_id,updated_at').order('updated_at', { ascending: false }).limit(80),
-      supabase.from('projects').select('id,title').limit(50),
-      supabase.from('artifacts').select('id,task_id,artifact_type,content,mime_type,filename,storage_path,created_at').in('artifact_type', ['draft', 'draft_file', 'delivery_note', 'package']).order('created_at', { ascending: false }).limit(60),
-      supabase.from('approvals').select('id,task_id,status,decided_at,created_at,comment').order('created_at', { ascending: false }).limit(60),
-      supabase.from('v_project_pnl').select('project_id,title,business_type,month,revenue_usd,cost_usd,margin_usd').order('month', { ascending: false }).limit(50),
-      supabase.from('publications').select('id,project_id,task_id,destination,published_at').order('published_at', { ascending: false }).limit(100),
-      supabase.from('task_events').select('id,task_id,event_type,actor_agent_id,payload,created_at').order('created_at', { ascending: false }).limit(40),
+      supabase.from('tasks').select('id,title,status,assigned_agent_id,current_step_index,project_id,updated_at').order('updated_at', { ascending: false }).limit(120),
+      supabase.from('projects').select('id,title').order('title'),
+      supabase.from('artifacts').select('id,task_id,artifact_type,content,mime_type,filename,storage_path,created_at').in('artifact_type', ['draft', 'draft_file', 'delivery_note', 'package']).order('created_at', { ascending: false }).limit(120),
+      supabase.from('approvals').select('id,task_id,status,decided_at,created_at,comment').order('created_at', { ascending: false }).limit(120),
+      supabase.from('v_project_pnl').select('project_id,title,business_type,month,revenue_usd,cost_usd,margin_usd').order('month', { ascending: false }).limit(80),
+      supabase.from('publications').select('id,project_id,task_id,destination,published_at').order('published_at', { ascending: false }).limit(120),
+      supabase.from('task_events').select('id,task_id,event_type,actor_agent_id,payload,created_at').order('created_at', { ascending: false }).limit(80),
     ])
 
     const firstError =
@@ -91,13 +91,24 @@ export function useDashboardData() {
     }
   }, [load])
 
+  const filteredTasks = useMemo(
+    () => (selectedProjectId ? tasks.filter((task) => task.project_id === selectedProjectId) : tasks),
+    [selectedProjectId, tasks],
+  )
+
+  const filteredTaskIds = useMemo(() => new Set(filteredTasks.map((task) => task.id)), [filteredTasks])
+  const filteredProjects = useMemo(
+    () => (selectedProjectId ? projects.filter((project) => project.id === selectedProjectId) : projects),
+    [projects, selectedProjectId],
+  )
+
   const agentChambers = useMemo(() => {
     const projectMap = new Map(projects.map((project) => [project.id, project.title]))
 
     return agents
       .filter((agent) => ['gateway', 'manager', 'researcher', 'content', 'worker-1', 'worker-2', 'reviewer'].includes(agent.id))
       .map((agent) => {
-        const agentTasks = tasks.filter((task) => task.assigned_agent_id === agent.id && !['done', 'published', 'cancelled'].includes(task.status))
+        const agentTasks = filteredTasks.filter((task) => task.assigned_agent_id === agent.id && !['done', 'published', 'cancelled'].includes(task.status))
         const decoratedTasks = agentTasks.map((task) => ({
           id: task.id,
           title: task.title,
@@ -115,20 +126,30 @@ export function useDashboardData() {
           tasks: decoratedTasks,
         } satisfies AgentChamber
       })
-  }, [agents, tasks, projects])
+  }, [agents, filteredTasks, projects])
+
+  const filteredApprovals = useMemo(
+    () => approvals.filter((approval) => filteredTaskIds.has(approval.task_id)),
+    [approvals, filteredTaskIds],
+  )
+
+  const filteredArtifacts = useMemo(
+    () => artifacts.filter((artifact) => filteredTaskIds.has(artifact.task_id)),
+    [artifacts, filteredTaskIds],
+  )
 
   const artifactReviewItems = useMemo(() => {
     const projectMap = new Map(projects.map((project) => [project.id, project.title]))
     const taskMap = new Map(tasks.map((task) => [task.id, task]))
     const latestApprovalByTask = new Map<string, ApprovalRow>()
 
-    for (const approval of approvals) {
+    for (const approval of filteredApprovals) {
       if (!latestApprovalByTask.has(approval.task_id)) {
         latestApprovalByTask.set(approval.task_id, approval)
       }
     }
 
-    return artifacts
+    return filteredArtifacts
       .map((artifact) => {
         const task = taskMap.get(artifact.task_id)
         const approval = latestApprovalByTask.get(artifact.task_id)
@@ -148,13 +169,14 @@ export function useDashboardData() {
         } satisfies ArtifactReviewItem
       })
       .filter((item) => item.taskTitle !== 'Unknown task')
-  }, [artifacts, approvals, projects, tasks])
+  }, [filteredArtifacts, filteredApprovals, projects, tasks])
 
   const activityFeed = useMemo(() => {
     const projectMap = new Map(projects.map((project) => [project.id, project.title]))
     const taskMap = new Map(tasks.map((task) => [task.id, task]))
 
     return events
+      .filter((event) => filteredTaskIds.has(event.task_id))
       .map((event) => {
         const task = taskMap.get(event.task_id)
         const payload = event.payload || {}
@@ -176,18 +198,39 @@ export function useDashboardData() {
         } satisfies ActivityFeedItem
       })
       .filter((item) => item.taskTitle !== 'Unknown task')
-  }, [events, projects, tasks])
+  }, [events, filteredTaskIds, projects, tasks])
+
+  const filteredPipeline = useMemo(
+    () => (selectedProjectId ? pipeline.filter((row) => row.project === filteredProjects[0]?.title) : pipeline),
+    [filteredProjects, pipeline, selectedProjectId],
+  )
+
+  const filteredWatchdog = useMemo(() => {
+    if (!selectedProjectId) return watchdog
+    const selectedTitle = filteredProjects[0]?.title
+    return watchdog.filter((item) => item.project === selectedTitle)
+  }, [filteredProjects, selectedProjectId, watchdog])
+
+  const filteredPnl = useMemo(
+    () => (selectedProjectId ? pnl.filter((row) => row.project_id === selectedProjectId) : pnl),
+    [pnl, selectedProjectId],
+  )
+
+  const filteredPublications = useMemo(
+    () => (selectedProjectId ? publications.filter((item) => item.project_id === selectedProjectId) : publications),
+    [publications, selectedProjectId],
+  )
 
   const summary = useMemo(() => {
     const latestPnlByProject = new Map<string, ProjectPnlRow>()
-    for (const row of pnl) {
+    for (const row of filteredPnl) {
       if (!latestPnlByProject.has(row.project_id)) {
         latestPnlByProject.set(row.project_id, row)
       }
     }
 
     const today = new Date().toISOString().slice(0, 10)
-    const publishedToday = publications.filter((item) => item.published_at?.slice(0, 10) === today).length
+    const publishedToday = filteredPublications.filter((item) => item.published_at?.slice(0, 10) === today).length
 
     let revenueUsd = 0
     let costUsd = 0
@@ -206,7 +249,7 @@ export function useDashboardData() {
       publishedToday,
       approvalsPending: artifactReviewItems.filter((item) => item.approvalStatus === 'pending' || item.approvalStatus === 'none').length,
     } satisfies DashboardSummary
-  }, [artifactReviewItems, pnl, publications])
+  }, [artifactReviewItems, filteredPnl, filteredPublications])
 
   const decideApproval = useCallback(async (item: ArtifactReviewItem, status: 'approved' | 'rejected', comment?: string) => {
     const existingApproval = approvals.find((approval) => approval.task_id === item.taskId && approval.status === 'pending')
@@ -242,5 +285,17 @@ export function useDashboardData() {
     await load()
   }, [approvals, load])
 
-  return { queueHealth, pipeline, watchdog, loading, error, agentChambers, artifactReviewItems, decideApproval, summary, activityFeed }
+  return {
+    queueHealth,
+    pipeline: filteredPipeline,
+    watchdog: filteredWatchdog,
+    loading,
+    error,
+    agentChambers,
+    artifactReviewItems,
+    decideApproval,
+    summary,
+    activityFeed,
+    projects,
+  }
 }
