@@ -22,7 +22,7 @@ The app currently reads from these Supabase views:
 
 ## Deploy
 
-Recommended: Netlify or Vercel
+Recommended: Cloudflare Pages or Vercel
 
 ### Netlify
 
@@ -50,6 +50,20 @@ Optional CLI path once Netlify CLI is installed and logged in:
 
 Optional CLI path once `vercel` is installed and logged in:
 - `npm run deploy:vercel`
+
+### Cloudflare Pages
+
+- Framework preset: Vite
+- Production branch: `main`
+- Root directory: `dashboard`
+- Build command: `npm run build`
+- Build output directory: `dist`
+- Environment variables:
+  - `VITE_SUPABASE_URL`
+  - `VITE_SUPABASE_ANON_KEY`
+- Node.js version: `20`
+
+Connect the GitHub repo `shikabotai/ai-tycoon-dashboard` and deploy the `main` branch.
 
 ## Important security note
 
