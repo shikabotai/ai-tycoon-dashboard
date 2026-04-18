@@ -756,9 +756,40 @@ th {
   height: 8px;
 }
 
+.activity-feed,
 .alerts-list.compact-list {
   display: grid;
   gap: 12px;
+}
+
+.activity-card {
+  border-radius: 18px;
+  padding: 14px;
+  background: rgba(8, 14, 28, 0.78);
+  border: 1px solid rgba(125, 211, 252, 0.12);
+}
+
+.activity-topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.activity-card h3 {
+  margin: 0 0 6px;
+  font-size: 0.98rem;
+}
+
+.activity-card p,
+.activity-card small {
+  display: block;
+  margin: 0;
+  color: #aebbd4;
+}
+
+.activity-card small {
+  margin-top: 8px;
 }
 
 .alert-card.compact-card {

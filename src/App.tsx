@@ -18,7 +18,7 @@ const MAX_ZOOM = 1.8
 const INITIAL_CAMERA = { x: 0, y: 0 }
 
 export default function App() {
-  const { queueHealth, pipeline, watchdog, loading, error, agentChambers, artifactReviewItems, decideApproval, summary } = useDashboardData()
+  const { queueHealth, pipeline, watchdog, loading, error, agentChambers, artifactReviewItems, decideApproval, summary, activityFeed } = useDashboardData()
   const chamberMap = useMemo(() => new Map(agentChambers.map((agent) => [agent.id, agent])), [agentChambers])
   const [zoom, setZoom] = useState(0.72)
   const [camera, setCamera] = useState(INITIAL_CAMERA)
@@ -179,6 +179,25 @@ export default function App() {
 
       <aside className={`side-drawer left ${leftOpen ? 'open' : ''}`}>
         <div className="drawer-inner">
+          <h2>Live activity</h2>
+          {activityFeed.length === 0 ? (
+            <p className="empty">No recent activity yet.</p>
+          ) : (
+            <div className="activity-feed">
+              {activityFeed.slice(0, 12).map((item) => (
+                <article key={item.id} className="activity-card">
+                  <div className="activity-topline">
+                    <span className="badge">{item.eventType}</span>
+                    <span className="severity">{item.actorAgentId || 'system'}</span>
+                  </div>
+                  <h3>{item.taskTitle}</h3>
+                  <p>{item.projectTitle || 'Unknown project'}</p>
+                  {item.detail && <small>{item.detail}</small>}
+                </article>
+              ))}
+            </div>
+          )}
+
           <h2>Queue health</h2>
           <div className="metrics-grid single">
             <Metric label="Terminal failures" value={queueHealth?.terminal_failure_count} />

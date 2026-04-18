@@ -145,3 +145,23 @@ export type DashboardSummary = {
   publishedToday: number
   approvalsPending: number
 }
+
+export type TaskEventRow = {
+  id: string
+  task_id: string
+  event_type: string
+  actor_agent_id: string | null
+  payload: Record<string, unknown> | null
+  created_at: string
+}
+
+export type ActivityFeedItem = {
+  id: string
+  taskId: string
+  taskTitle: string
+  projectTitle?: string
+  eventType: string
+  actorAgentId?: string | null
+  createdAt: string
+  detail?: string
+}
