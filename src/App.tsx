@@ -32,6 +32,12 @@ export default function App() {
     startCameraX: 0,
     startCameraY: 0,
   })
+  const activePointerIdRef = useRef<number | null>(null)
+
+  const cancelDrag = () => {
+    dragRef.current.active = false
+    activePointerIdRef.current = null
+  }
 
   const applyZoom = (nextZoom: number, clientX?: number, clientY?: number) => {
     const viewport = viewportRef.current
@@ -63,6 +69,7 @@ export default function App() {
   }
 
   const onPointerDown: React.PointerEventHandler<HTMLDivElement> = (event) => {
+    if (event.pointerType === 'touch' && event.isPrimary === false) return
     dragRef.current = {
       active: true,
       startX: event.clientX,
@@ -70,26 +77,28 @@ export default function App() {
       startCameraX: camera.x,
       startCameraY: camera.y,
     }
+    activePointerIdRef.current = event.pointerId
     event.currentTarget.setPointerCapture(event.pointerId)
   }
 
   const onPointerMove: React.PointerEventHandler<HTMLDivElement> = (event) => {
     const drag = dragRef.current
-    if (!drag.active) return
+    if (!drag.active || activePointerIdRef.current !== event.pointerId) return
     const dx = event.clientX - drag.startX
     const dy = event.clientY - drag.startY
     setCamera({ x: drag.startCameraX + dx, y: drag.startCameraY + dy })
   }
 
   const endPointer: React.PointerEventHandler<HTMLDivElement> = (event) => {
-    dragRef.current.active = false
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId)
     }
+    cancelDrag()
   }
 
   const onTouchStart: React.TouchEventHandler<HTMLDivElement> = (event) => {
     if (event.touches.length === 2) {
+      cancelDrag()
       const a = event.touches[0]
       const b = event.touches[1]
       const distance = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY)
@@ -107,6 +116,7 @@ export default function App() {
     event.preventDefault()
     const a = event.touches[0]
     const b = event.touches[1]
+    if (!a || !b) return
     const distance = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY)
     const midpointX = (a.clientX + b.clientX) / 2
     const midpointY = (a.clientY + b.clientY) / 2
@@ -117,6 +127,9 @@ export default function App() {
   const onTouchEnd: React.TouchEventHandler<HTMLDivElement> = (event) => {
     if (event.touches.length < 2) {
       gestureRef.current = null
+    }
+    if (event.touches.length === 0) {
+      cancelDrag()
     }
   }
 
