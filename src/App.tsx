@@ -253,14 +253,14 @@ export default function App() {
           ) : (
             <div className="outbound-history-list">
               {safeProjectSummary.recentPublications.map((item) => (
-                <button key={item.id} className="outbound-card task-button" onClick={() => item.task_id && setSelectedTaskId(item.task_id)}>
+                <div key={item.id} className="outbound-card task-button" role="button" tabIndex={0} onClick={() => item.task_id && setSelectedTaskId(item.task_id)} onKeyDown={(event) => { if ((event.key === 'Enter' || event.key === ' ') && item.task_id) setSelectedTaskId(item.task_id) }}>
                   <div className="outbound-card-topline">
                     <span className="badge">{item.destination}</span>
                     <span>{new Date(item.published_at).toLocaleString()}</span>
                   </div>
                   <strong>{item.external_url || 'Published artifact'}</strong>
                   <small>{item.task_id || 'No task id'}</small>
-                </button>
+                </div>
               ))}
             </div>
           )}
@@ -275,7 +275,7 @@ export default function App() {
           ) : (
             <div className="activity-feed">
               {activityFeed.slice(0, 12).map((item) => (
-                <button key={item.id} className="activity-card task-button" onClick={() => setSelectedTaskId(item.taskId)}>
+                <div key={item.id} className="activity-card task-button" role="button" tabIndex={0} onClick={() => setSelectedTaskId(item.taskId)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') setSelectedTaskId(item.taskId) }}>
                   <div className="activity-topline">
                     <span className="badge">{item.eventType}</span>
                     <span className="severity">{item.actorAgentId || 'system'}</span>
@@ -283,7 +283,7 @@ export default function App() {
                   <h3>{item.taskTitle}</h3>
                   <p>{item.projectTitle || 'Unknown project'}</p>
                   {item.detail && <small>{item.detail}</small>}
-                </button>
+                </div>
               ))}
             </div>
           )}
@@ -671,10 +671,10 @@ export default function App() {
               ) : (
                 <div className="task-stack modal-stack">
                   {selectedChamber.tasks.map((task) => (
-                    <button key={task.id} className="task-pill task-button" onClick={() => setSelectedTaskId(task.id)}>
+                    <div key={task.id} className="task-pill task-button" role="button" tabIndex={0} onClick={() => setSelectedTaskId(task.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') setSelectedTaskId(task.id) }}>
                       <strong>{task.title}</strong>
                       <span>{task.projectTitle || task.status}</span>
-                    </button>
+                    </div>
                   ))}
                 </div>
               )}
