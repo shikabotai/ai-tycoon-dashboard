@@ -231,6 +231,10 @@ h1 {
   cursor: grabbing;
 }
 
+.map-viewport.camera-mode {
+  overflow: hidden;
+}
+
 .starfield {
   position: absolute;
   inset: 0;
@@ -246,12 +250,18 @@ h1 {
 }
 
 .map-canvas.compact {
-  position: relative;
+  position: absolute;
+  left: 50%;
+  top: 120px;
   width: 1100px;
   min-height: 980px;
   padding: 120px 140px;
   transform-origin: center top;
   will-change: transform;
+}
+
+.camera-canvas {
+  transform-origin: top center;
 }
 
 .ship-hull {

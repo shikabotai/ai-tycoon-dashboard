@@ -11,24 +11,26 @@ const LAYOUT: Array<Array<string | null>> = [
 ]
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
-const MIN_ZOOM = 0.45
+const MIN_ZOOM = 0.28
 const MAX_ZOOM = 1.8
+const INITIAL_CAMERA = { x: 0, y: 0 }
 
 export default function App() {
   const { queueHealth, pipeline, watchdog, loading, error, agentChambers } = useDashboardData()
   const chamberMap = useMemo(() => new Map(agentChambers.map((agent) => [agent.id, agent])), [agentChambers])
-  const [zoom, setZoom] = useState(1)
+  const [zoom, setZoom] = useState(0.72)
+  const [camera, setCamera] = useState(INITIAL_CAMERA)
   const [topOpen, setTopOpen] = useState(false)
   const [leftOpen, setLeftOpen] = useState(false)
   const [rightOpen, setRightOpen] = useState(false)
   const viewportRef = useRef<HTMLDivElement | null>(null)
-  const gestureRef = useRef<{ startDistance: number; startZoom: number } | null>(null)
-  const dragRef = useRef<{ active: boolean; startX: number; startY: number; startScrollLeft: number; startScrollTop: number }>({
+  const gestureRef = useRef<{ startDistance: number; startZoom: number; midpointX: number; midpointY: number } | null>(null)
+  const dragRef = useRef<{ active: boolean; startX: number; startY: number; startCameraX: number; startCameraY: number }>({
     active: false,
     startX: 0,
     startY: 0,
-    startScrollLeft: 0,
-    startScrollTop: 0,
+    startCameraX: 0,
+    startCameraY: 0,
   })
 
   const applyZoom = (nextZoom: number, clientX?: number, clientY?: number) => {
@@ -40,55 +42,49 @@ export default function App() {
     }
 
     const rect = viewport.getBoundingClientRect()
-    const anchorX = clientX ?? rect.left + rect.width / 2
-    const anchorY = clientY ?? rect.top + rect.height / 2
-    const offsetX = anchorX - rect.left + viewport.scrollLeft
-    const offsetY = anchorY - rect.top + viewport.scrollTop
-    const scaleRatio = clamped / zoom
+    const anchorX = (clientX ?? rect.left + rect.width / 2) - rect.left
+    const anchorY = (clientY ?? rect.top + rect.height / 2) - rect.top
 
-    setZoom(clamped)
-
-    requestAnimationFrame(() => {
-      viewport.scrollLeft = offsetX * scaleRatio - (anchorX - rect.left)
-      viewport.scrollTop = offsetY * scaleRatio - (anchorY - rect.top)
+    setCamera((current) => {
+      const worldX = (anchorX - current.x) / zoom
+      const worldY = (anchorY - current.y) / zoom
+      return {
+        x: anchorX - worldX * clamped,
+        y: anchorY - worldY * clamped,
+      }
     })
+    setZoom(clamped)
   }
 
   const onWheel: React.WheelEventHandler<HTMLDivElement> = (event) => {
-    if (!event.ctrlKey && Math.abs(event.deltaY) < Math.abs(event.deltaX)) return
     event.preventDefault()
-    const factor = event.deltaY < 0 ? 1.12 : 0.88
+    const factor = event.deltaY < 0 ? 1.14 : 0.86
     applyZoom(zoom * factor, event.clientX, event.clientY)
   }
 
   const onPointerDown: React.PointerEventHandler<HTMLDivElement> = (event) => {
-    const viewport = viewportRef.current
-    if (!viewport) return
     dragRef.current = {
       active: true,
       startX: event.clientX,
       startY: event.clientY,
-      startScrollLeft: viewport.scrollLeft,
-      startScrollTop: viewport.scrollTop,
+      startCameraX: camera.x,
+      startCameraY: camera.y,
     }
-    viewport.setPointerCapture(event.pointerId)
+    event.currentTarget.setPointerCapture(event.pointerId)
   }
 
   const onPointerMove: React.PointerEventHandler<HTMLDivElement> = (event) => {
-    const viewport = viewportRef.current
     const drag = dragRef.current
-    if (!viewport || !drag.active) return
+    if (!drag.active) return
     const dx = event.clientX - drag.startX
     const dy = event.clientY - drag.startY
-    viewport.scrollLeft = drag.startScrollLeft - dx
-    viewport.scrollTop = drag.startScrollTop - dy
+    setCamera({ x: drag.startCameraX + dx, y: drag.startCameraY + dy })
   }
 
   const endPointer: React.PointerEventHandler<HTMLDivElement> = (event) => {
-    const viewport = viewportRef.current
     dragRef.current.active = false
-    if (viewport?.hasPointerCapture(event.pointerId)) {
-      viewport.releasePointerCapture(event.pointerId)
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
     }
   }
 
@@ -97,7 +93,12 @@ export default function App() {
       const a = event.touches[0]
       const b = event.touches[1]
       const distance = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY)
-      gestureRef.current = { startDistance: distance, startZoom: zoom }
+      gestureRef.current = {
+        startDistance: distance,
+        startZoom: zoom,
+        midpointX: (a.clientX + b.clientX) / 2,
+        midpointY: (a.clientY + b.clientY) / 2,
+      }
     }
   }
 
@@ -218,7 +219,7 @@ export default function App() {
         <div className="map-hint">Pinch or scroll to zoom. Drag to pan.</div>
         <div
           ref={viewportRef}
-          className="map-viewport interactive"
+          className="map-viewport interactive camera-mode"
           onWheel={onWheel}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
@@ -229,7 +230,10 @@ export default function App() {
           onTouchEnd={onTouchEnd}
         >
           <div className="starfield" />
-          <div className="map-canvas compact" style={{ transform: `scale(${zoom})` }}>
+          <div
+            className="map-canvas compact camera-canvas"
+            style={{ transform: `translate(${camera.x}px, ${camera.y}px) scale(${zoom})` }}
+          >
             <div className="ship-hull" />
             <div className="ship-spine" />
             <div className="ship-grid connected">
