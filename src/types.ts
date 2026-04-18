@@ -108,6 +108,7 @@ export type ApprovalRow = {
   status: string
   decided_at: string | null
   created_at: string
+  comment?: string | null
 }
 
 export type ArtifactReviewItem = {
@@ -160,6 +161,16 @@ export type DeliveryRow = {
   destination_ref?: string | null
   error?: string | null
   delivered_at?: string | null
+}
+
+export type TaskDetail = {
+  task: TaskRow
+  projectTitle?: string
+  approvals: ApprovalRow[]
+  artifacts: ArtifactRow[]
+  events: TaskEventRow[]
+  deliveries: DeliveryRow[]
+  publications: PublicationRow[]
 }
 
 export type DashboardSummary = {

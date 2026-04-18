@@ -19,7 +19,7 @@ const INITIAL_CAMERA = { x: 0, y: 0 }
 
 export default function App() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null)
-  const { queueHealth, pipeline, watchdog, loading, error, agentChambers, artifactReviewItems, decideApproval, summary, activityFeed, projects, projectSummary } = useDashboardData(selectedProjectId)
+  const { queueHealth, pipeline, watchdog, loading, error, agentChambers, artifactReviewItems, decideApproval, summary, activityFeed, projects, projectSummary, getTaskDetail } = useDashboardData(selectedProjectId)
   const chamberMap = useMemo(() => new Map(agentChambers.map((agent) => [agent.id, agent])), [agentChambers])
   const [zoom, setZoom] = useState(0.72)
   const [camera, setCamera] = useState(INITIAL_CAMERA)
@@ -29,6 +29,7 @@ export default function App() {
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null)
   const [selectedArtifactId, setSelectedArtifactId] = useState<string | null>(null)
   const [approvalBusy, setApprovalBusy] = useState(false)
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null)
   const viewportRef = useRef<HTMLDivElement | null>(null)
   const gestureRef = useRef<{ startDistance: number; startZoom: number; midpointX: number; midpointY: number } | null>(null)
   const dragRef = useRef<{ active: boolean; startX: number; startY: number; startCameraX: number; startCameraY: number }>({
@@ -141,6 +142,7 @@ export default function App() {
 
   const selectedChamber = selectedAgentId ? chamberMap.get(selectedAgentId) : undefined
   const selectedIdentity = selectedChamber ? agentIdentities[selectedChamber.id] : undefined
+  const selectedTaskDetail = selectedTaskId ? getTaskDetail(selectedTaskId) : undefined
   const pendingArtifactReviewItems = artifactReviewItems.filter((item) => item.approvalStatus === 'pending' || item.approvalStatus === 'none')
   const selectedArtifact = selectedArtifactId
     ? artifactReviewItems.find((item) => item.artifactId === selectedArtifactId)
@@ -249,14 +251,14 @@ export default function App() {
           ) : (
             <div className="outbound-history-list">
               {projectSummary.recentPublications.map((item) => (
-                <article key={item.id} className="outbound-card">
+                <button key={item.id} className="outbound-card task-button" onClick={() => item.task_id && setSelectedTaskId(item.task_id)}>
                   <div className="outbound-card-topline">
                     <span className="badge">{item.destination}</span>
                     <span>{new Date(item.published_at).toLocaleString()}</span>
                   </div>
                   <strong>{item.external_url || 'Published artifact'}</strong>
                   <small>{item.task_id || 'No task id'}</small>
-                </article>
+                </button>
               ))}
             </div>
           )}
@@ -271,7 +273,7 @@ export default function App() {
           ) : (
             <div className="activity-feed">
               {activityFeed.slice(0, 12).map((item) => (
-                <article key={item.id} className="activity-card">
+                <button key={item.id} className="activity-card task-button" onClick={() => setSelectedTaskId(item.taskId)}>
                   <div className="activity-topline">
                     <span className="badge">{item.eventType}</span>
                     <span className="severity">{item.actorAgentId || 'system'}</span>
@@ -279,7 +281,7 @@ export default function App() {
                   <h3>{item.taskTitle}</h3>
                   <p>{item.projectTitle || 'Unknown project'}</p>
                   {item.detail && <small>{item.detail}</small>}
-                </article>
+                </button>
               ))}
             </div>
           )}
@@ -449,6 +451,94 @@ export default function App() {
         </div>
       </main>
 
+      {selectedTaskDetail && (
+        <div className="agent-modal-backdrop" onClick={() => setSelectedTaskId(null)}>
+          <div className="agent-modal task-detail-modal" onClick={(event) => event.stopPropagation()}>
+            <button className="agent-modal-close" onClick={() => setSelectedTaskId(null)}>Close</button>
+            <div className="agent-modal-header">
+              <div>
+                <p className="eyebrow">Task drill-down</p>
+                <h2>{selectedTaskDetail.task.title}</h2>
+                <p className="subcopy">{selectedTaskDetail.projectTitle || 'Unknown project'} • {selectedTaskDetail.task.status}</p>
+              </div>
+            </div>
+
+            <div className="agent-modal-grid">
+              <div className="metric-card">
+                <span>Approvals</span>
+                <strong>{selectedTaskDetail.approvals.length}</strong>
+              </div>
+              <div className="metric-card">
+                <span>Artifacts</span>
+                <strong>{selectedTaskDetail.artifacts.length}</strong>
+              </div>
+              <div className="metric-card">
+                <span>Events</span>
+                <strong>{selectedTaskDetail.events.length}</strong>
+              </div>
+              <div className="metric-card">
+                <span>Deliveries</span>
+                <strong>{selectedTaskDetail.deliveries.length}</strong>
+              </div>
+              <div className="metric-card">
+                <span>Publications</span>
+                <strong>{selectedTaskDetail.publications.length}</strong>
+              </div>
+            </div>
+
+            <div className="task-detail-sections">
+              <section className="summary-panel">
+                <h3>Artifacts</h3>
+                {selectedTaskDetail.artifacts.length === 0 ? <p className="empty">No artifacts.</p> : (
+                  <div className="summary-list">
+                    {selectedTaskDetail.artifacts.map((item) => (
+                      <div key={item.id} className="summary-item">
+                        <strong>{item.filename || item.artifact_type}</strong>
+                        <span>{item.created_at}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </section>
+
+              <section className="summary-panel">
+                <h3>Approvals</h3>
+                {selectedTaskDetail.approvals.length === 0 ? <p className="empty">No approvals.</p> : (
+                  <div className="summary-list">
+                    {selectedTaskDetail.approvals.map((item) => (
+                      <div key={item.id} className="summary-item">
+                        <strong>{item.status}</strong>
+                        <span>{item.comment || item.created_at}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </section>
+
+              <section className="summary-panel">
+                <h3>Delivery trail</h3>
+                {selectedTaskDetail.deliveries.length === 0 && selectedTaskDetail.publications.length === 0 ? <p className="empty">No delivery history.</p> : (
+                  <div className="summary-list">
+                    {selectedTaskDetail.deliveries.map((item) => (
+                      <div key={item.id} className="summary-item">
+                        <strong>{item.destination} • {item.status}</strong>
+                        <span>{item.destination_ref || item.error || item.delivered_at || 'No detail'}</span>
+                      </div>
+                    ))}
+                    {selectedTaskDetail.publications.map((item) => (
+                      <div key={item.id} className="summary-item">
+                        <strong>Published to {item.destination}</strong>
+                        <span>{item.external_url || item.published_at}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </section>
+            </div>
+          </div>
+        </div>
+      )}
+
       {selectedChamber && selectedIdentity && (
         <div className="agent-modal-backdrop" onClick={() => setSelectedAgentId(null)}>
           <div
@@ -527,10 +617,10 @@ export default function App() {
               ) : (
                 <div className="task-stack modal-stack">
                   {selectedChamber.tasks.map((task) => (
-                    <div key={task.id} className="task-pill">
+                    <button key={task.id} className="task-pill task-button" onClick={() => setSelectedTaskId(task.id)}>
                       <strong>{task.title}</strong>
                       <span>{task.projectTitle || task.status}</span>
-                    </div>
+                    </button>
                   ))}
                 </div>
               )}

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import type { ActivityFeedItem, AgentChamber, AgentRow, AgentRunRow, ApprovalRow, ArtifactReviewItem, ArtifactRow, DashboardSummary, DeliveryRow, PipelineRow, ProjectDestinationRow, ProjectPnlRow, ProjectRow, ProjectSummary, PublicationRow, QueueHealth, TaskEventRow, TaskRow, WatchdogRow } from '../types'
+import type { ActivityFeedItem, AgentChamber, AgentRow, AgentRunRow, ApprovalRow, ArtifactReviewItem, ArtifactRow, DashboardSummary, DeliveryRow, PipelineRow, ProjectDestinationRow, ProjectPnlRow, ProjectRow, ProjectSummary, PublicationRow, QueueHealth, TaskDetail, TaskEventRow, TaskRow, WatchdogRow } from '../types'
 
 const CHAMBER_LABELS: Record<string, string> = {
   gateway: 'Dock A1',
@@ -328,6 +328,22 @@ export function useDashboardData(selectedProjectId?: string | null) {
     await load()
   }, [approvals, load])
 
+  const getTaskDetail = useCallback((taskId: string): TaskDetail | undefined => {
+    const task = tasks.find((item) => item.id === taskId)
+    if (!task) return undefined
+    const projectTitle = task.project_id ? projects.find((project) => project.id === task.project_id)?.title : undefined
+
+    return {
+      task,
+      projectTitle,
+      approvals: approvals.filter((item) => item.task_id === taskId),
+      artifacts: artifacts.filter((item) => item.task_id === taskId),
+      events: events.filter((item) => item.task_id === taskId),
+      deliveries: deliveries.filter((item) => item.task_id === taskId),
+      publications: publications.filter((item) => item.task_id === taskId),
+    }
+  }, [approvals, artifacts, deliveries, events, projects, publications, tasks])
+
   return {
     queueHealth,
     pipeline: filteredPipeline,
@@ -341,5 +357,6 @@ export function useDashboardData(selectedProjectId?: string | null) {
     activityFeed,
     projects,
     projectSummary,
+    getTaskDetail,
   }
 }
