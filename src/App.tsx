@@ -1,48 +1,71 @@
 import './App.css'
-import { SpaceScene } from './components/SpaceScene'
+import type { AgentChamber } from './types'
 import { useDashboardData } from './hooks/useDashboardData'
 
+const LAYOUT: Array<Array<string | null>> = [
+  ['gateway', 'manager', 'reviewer'],
+  ['researcher', null, 'content'],
+  ['worker-1', null, 'worker-2'],
+]
+
 function App() {
-  const { queueHealth, pipeline, watchdog, loading, error, activeAgents } = useDashboardData()
+  const { queueHealth, pipeline, watchdog, loading, error, agentChambers } = useDashboardData()
+  const chamberMap = new Map(agentChambers.map((agent) => [agent.id, agent]))
 
   return (
     <div className="app-shell">
       <header className="hero-shell">
         <div>
-          <p className="eyebrow">AI Tycoon Command Deck</p>
-          <h1>Space Ops Dashboard</h1>
+          <p className="eyebrow">AI Tycoon Starship</p>
+          <h1>Agent Ship Interior</h1>
           <p className="subcopy">
-            Live view of agent activity, queue pressure, and operational alerts across your business system.
+            Seven chambers, connected by ship corridors, each showing one agent and the work currently routed through it.
           </p>
         </div>
         <div className="hero-stats">
           <div className="stat-card">
             <span>Runnable</span>
-            <strong>{queueHealth?.runnable_count ?? '...'}</strong>
+            <strong>{queueHealth?.runnable_count ?? 0}</strong>
           </div>
           <div className="stat-card">
-            <span>In progress</span>
-            <strong>{queueHealth?.in_progress_count ?? '...'}</strong>
+            <span>Active</span>
+            <strong>{queueHealth?.in_progress_count ?? 0}</strong>
           </div>
           <div className="stat-card danger">
             <span>Alerts</span>
-            <strong>{queueHealth?.flagged_count ?? '...'}</strong>
+            <strong>{queueHealth?.flagged_count ?? 0}</strong>
           </div>
         </div>
       </header>
 
-      <section className="scene-panel panel">
+      <section className="panel ship-panel">
         <div className="panel-head">
           <div>
-            <h2>Fleet activity</h2>
-            <p>Each ship represents active or runnable agent work. Alert pulses reflect operational pressure.</p>
+            <h2>Ship map</h2>
+            <p>Each room is an agent chamber. Hallways show how the agents connect inside the ship.</p>
           </div>
           <div className="scene-meta">
-            <span>Agents visualized: {activeAgents}</span>
+            <span>Agents online: {agentChambers.length}</span>
             <span>Max severity: {queueHealth?.max_watchdog_severity ?? 0}</span>
           </div>
         </div>
-        <SpaceScene activeAgents={activeAgents} flaggedCount={queueHealth?.flagged_count ?? 0} />
+
+        <div className="ship-grid">
+          {LAYOUT.map((row, rowIndex) => (
+            <div className="ship-row" key={rowIndex}>
+              {row.map((cell, cellIndex) =>
+                cell ? (
+                  <AgentRoom key={cell} chamber={chamberMap.get(cell)} />
+                ) : (
+                  <div key={`${rowIndex}-${cellIndex}`} className="hallway hub">
+                    <div className="hallway-vertical" />
+                    <div className="hallway-horizontal" />
+                  </div>
+                ),
+              )}
+            </div>
+          ))}
+        </div>
       </section>
 
       <main className="grid">
@@ -74,7 +97,7 @@ function App() {
                   <tr key={`${row.project}-${row.status}`}>
                     <td>{row.project}</td>
                     <td>{row.status}</td>
-                    <td>{row.task_count}</td>
+                    <td>{row.count}</td>
                   </tr>
                 ))}
                 {pipeline.length === 0 && (
@@ -90,7 +113,7 @@ function App() {
         <section className="panel full-width">
           <h2>Watchdog alerts</h2>
           {watchdog.length === 0 ? (
-            <p className="empty">No active alerts. The fleet is calm.</p>
+            <p className="empty">No active alerts. The ship is running clean.</p>
           ) : (
             <div className="alerts-list">
               {watchdog.map((item) => (
@@ -119,6 +142,37 @@ function App() {
         {loading ? 'Loading live telemetry...' : error ? `Data error: ${error}` : `Observed at ${queueHealth?.observed_at ?? 'unknown time'}`}
       </footer>
     </div>
+  )
+}
+
+function AgentRoom({ chamber }: { chamber?: AgentChamber }) {
+  if (!chamber) {
+    return <div className="agent-room empty-room">Offline chamber</div>
+  }
+
+  return (
+    <article className="agent-room">
+      <div className="room-glow" />
+      <div className="room-topline">
+        <span className="room-label">{chamber.chamberLabel}</span>
+        <span className={`status-dot ${chamber.status}`}>{chamber.status}</span>
+      </div>
+      <h3>{chamber.displayName}</h3>
+      <p className="room-role">{chamber.role}</p>
+      <div className="room-task-count">{chamber.taskCount} active tasks</div>
+      <div className="task-stack">
+        {chamber.tasks.length === 0 ? (
+          <div className="task-pill idle">Idle</div>
+        ) : (
+          chamber.tasks.slice(0, 3).map((task) => (
+            <div key={task.id} className="task-pill">
+              <strong>{task.title}</strong>
+              <span>{task.projectTitle || task.status}</span>
+            </div>
+          ))
+        )}
+      </div>
+    </article>
   )
 }
 

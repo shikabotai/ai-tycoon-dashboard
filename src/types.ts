@@ -28,7 +28,7 @@ export type QueueHealth = {
 export type PipelineRow = {
   project: string
   status: string
-  task_count: number
+  count: number
 }
 
 export type WatchdogRow = {
@@ -46,4 +46,42 @@ export type WatchdogRow = {
   watchdog_reason: string
   severity: number
   updated_at: string
+}
+
+export type AgentRow = {
+  id: string
+  role: string
+  display_name: string
+  status: string
+  capabilities: Record<string, boolean> | null
+}
+
+export type TaskRow = {
+  id: string
+  title: string
+  status: string
+  assigned_agent_id: string | null
+  current_step_index: number | null
+  project_id: string | null
+  updated_at: string
+}
+
+export type ProjectRow = {
+  id: string
+  title: string
+}
+
+export type AgentChamber = {
+  id: string
+  displayName: string
+  role: string
+  chamberLabel: string
+  status: string
+  taskCount: number
+  tasks: Array<{
+    id: string
+    title: string
+    status: string
+    projectTitle?: string
+  }>
 }
