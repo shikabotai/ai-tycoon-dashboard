@@ -308,6 +308,9 @@ h1 {
   padding: 18px;
   overflow: hidden;
   z-index: 2;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .connector-node {
@@ -337,6 +340,7 @@ h1 {
     radial-gradient(circle at 78% 20%, rgba(255,255,255,0.4) 0 1px, transparent 1.6px),
     radial-gradient(circle at 70% 74%, rgba(255,255,255,0.5) 0 1px, transparent 1.6px);
   opacity: 0.35;
+  pointer-events: none;
 }
 
 .agent-avatar-zone {
@@ -345,6 +349,7 @@ h1 {
   right: 18px;
   width: 82px;
   height: 82px;
+  pointer-events: none;
 }
 
 .agent-core {
@@ -420,6 +425,7 @@ h1 {
 .task-stack {
   display: grid;
   gap: 10px;
+  pointer-events: none;
 }
 
 .task-pill {
