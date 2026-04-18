@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react'
 import './App.css'
 import type { AgentChamber } from './types'
+import { agentIdentities } from './agentIdentities'
 import { useDashboardData } from './hooks/useDashboardData'
 
 const LAYOUT: Array<Array<string | null>> = [
@@ -292,24 +293,42 @@ function AgentRoom({ chamber }: { chamber?: AgentChamber }) {
     return <div className="agent-room empty-room">Offline chamber</div>
   }
 
+  const identity = agentIdentities[chamber.id] ?? {
+    name: chamber.displayName,
+    subtitle: chamber.role,
+    palette: { primary: '#7dd3fc', secondary: '#22d3ee', glow: 'rgba(34, 211, 238, 0.35)' },
+    avatarClass: 'avatar-generic',
+  }
+
   return (
-    <article className={`agent-room role-${chamber.role}`}>
+    <article
+      className={`agent-room role-${chamber.role}`}
+      style={{
+        ['--agent-primary' as string]: identity.palette.primary,
+        ['--agent-secondary' as string]: identity.palette.secondary,
+        ['--agent-glow' as string]: identity.palette.glow,
+      }}
+    >
       <div className="room-glow" />
       <div className="room-stars" />
-      <div className="agent-avatar-zone">
+      <div className={`agent-avatar-zone ${identity.avatarClass}`}>
+        <div className="avatar-hair" />
+        <div className="avatar-hair back" />
+        <div className="avatar-face">
+          <div className="avatar-eye" />
+          <div className="avatar-eye right" />
+          <div className="avatar-mouth" />
+        </div>
+        <div className="avatar-collar" />
         <div className="agent-orbit orbit-one" />
         <div className="agent-orbit orbit-two" />
-        <div className="agent-core">
-          <div className="agent-eye" />
-          <div className="agent-eye right" />
-        </div>
       </div>
       <div className="room-topline">
         <span className="room-label">{chamber.chamberLabel}</span>
         <span className={`status-dot ${chamber.status}`}>{chamber.status}</span>
       </div>
-      <h3>{chamber.displayName}</h3>
-      <p className="room-role">{chamber.role}</p>
+      <h3>{identity.name}</h3>
+      <p className="room-role">{identity.subtitle}</p>
       <div className="room-task-count">{chamber.taskCount} active tasks</div>
       <div className="task-stack">
         {chamber.tasks.length === 0 ? (
