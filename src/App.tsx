@@ -309,7 +309,7 @@ export default function App() {
           </div>
         </div>
         <div className="map-status-pill">
-          {loading ? 'Loading telemetry...' : error ? `Error: ${error}` : `${Math.round(zoom * 100)}% zoom • observed ${queueHealth?.observed_at ?? 'unknown'}`}
+          {loading ? 'AI SENSEI DASHBOARD LOADING...' : error ? `Error: ${error}` : `${Math.round(zoom * 100)}% zoom • observed ${queueHealth?.observed_at ?? 'unknown'}`}
         </div>
       </main>
 
