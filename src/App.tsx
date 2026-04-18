@@ -426,7 +426,7 @@ export default function App() {
             event.preventDefault()
             zoomMap(event.deltaY > 0 ? -0.08 : 0.08)
           }} onPointerMove={(event) => {
-            if (!dragState.current) return
+            if (!dragState.current || dragState.current.pinchDistance) return
             const deltaX = event.clientX - dragState.current.x
             const deltaY = event.clientY - dragState.current.y
             setMapOffset({ x: dragState.current.originX + deltaX, y: dragState.current.originY + deltaY })
@@ -435,6 +435,15 @@ export default function App() {
           }} onPointerLeave={() => {
             dragState.current = null
           }} onTouchStart={(event) => {
+            if (event.touches.length === 1) {
+              dragState.current = {
+                x: event.touches[0].clientX,
+                y: event.touches[0].clientY,
+                originX: mapOffset.x,
+                originY: mapOffset.y,
+              }
+              return
+            }
             if (event.touches.length === 2) {
               const dx = event.touches[0].clientX - event.touches[1].clientX
               const dy = event.touches[0].clientY - event.touches[1].clientY
@@ -448,12 +457,20 @@ export default function App() {
               }
             }
           }} onTouchMove={(event) => {
-            if (!dragState.current || event.touches.length !== 2 || !dragState.current.pinchDistance || !dragState.current.pinchScale) return
-            const dx = event.touches[0].clientX - event.touches[1].clientX
-            const dy = event.touches[0].clientY - event.touches[1].clientY
-            const nextDistance = Math.hypot(dx, dy)
-            const ratio = nextDistance / dragState.current.pinchDistance
-            setMapScale(clampScale(dragState.current.pinchScale * ratio))
+            if (!dragState.current) return
+            if (event.touches.length === 1 && !dragState.current.pinchDistance) {
+              const deltaX = event.touches[0].clientX - dragState.current.x
+              const deltaY = event.touches[0].clientY - dragState.current.y
+              setMapOffset({ x: dragState.current.originX + deltaX, y: dragState.current.originY + deltaY })
+              return
+            }
+            if (event.touches.length === 2 && dragState.current.pinchDistance && dragState.current.pinchScale) {
+              const dx = event.touches[0].clientX - event.touches[1].clientX
+              const dy = event.touches[0].clientY - event.touches[1].clientY
+              const nextDistance = Math.hypot(dx, dy)
+              const ratio = nextDistance / dragState.current.pinchDistance
+              setMapScale(clampScale(dragState.current.pinchScale * ratio))
+            }
           }} onTouchEnd={() => {
             dragState.current = null
           }}>
@@ -461,6 +478,14 @@ export default function App() {
               dragState.current = {
                 x: event.clientX,
                 y: event.clientY,
+                originX: mapOffset.x,
+                originY: mapOffset.y,
+              }
+            }} onTouchStart={(event) => {
+              if (event.touches.length !== 1) return
+              dragState.current = {
+                x: event.touches[0].clientX,
+                y: event.touches[0].clientY,
                 originX: mapOffset.x,
                 originY: mapOffset.y,
               }
