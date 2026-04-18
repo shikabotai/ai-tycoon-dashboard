@@ -270,6 +270,10 @@ export default function App() {
     } satisfies TaskDetail
   }, [approvals, artifacts, events, projectMap, selectedTaskId, taskMap])
 
+  const focusProject = selectedProjectId ? projects.find((project) => project.id === selectedProjectId) : undefined
+  const activeChambers = chamberCards.filter((agent) => agent.activeTasks.length > 0).length
+  const headlineStatus = error ? 'Needs attention' : loading ? 'Refreshing' : 'Stable orbit'
+
   async function reloadPageData() {
     window.location.reload()
   }
@@ -291,64 +295,133 @@ export default function App() {
   }
 
   return (
-    <div className="app-shell safe-mode-shell">
-      <main className="safe-mode-main">
-        <div className="safe-mode-card">
-          <p className="eyebrow">AI Sensei Dashboard</p>
-          <h1>Stability Rebuild, Phase 5</h1>
-          <p className="subcopy">Task drill-down is back in a simpler modal path. We’re restoring useful control without bringing back the old brittle UI layers.</p>
+    <div className="app-shell safe-mode-shell command-deck-shell">
+      <main className="safe-mode-main command-deck-main">
+        <section className="command-hero-card">
+          <div className="command-hero-copy">
+            <p className="eyebrow">AI Sensei Command Deck</p>
+            <h1>{focusProject ? focusProject.title : 'Fleet overview'}</h1>
+            <p className="subcopy">The control deck is back in a friendlier form. Agents lead the view now, while operations stay close at hand instead of dominating the whole screen.</p>
 
-          <label className="project-switcher">
-            <span>Business focus</span>
-            <select value={selectedProjectId ?? ''} onChange={(event) => setSelectedProjectId(event.target.value || null)}>
-              <option value="">All businesses</option>
-              {projects.map((project) => (
-                <option key={project.id} value={project.id}>{project.title}</option>
-              ))}
-            </select>
-          </label>
-        </div>
+            <label className="project-switcher">
+              <span>Business focus</span>
+              <select value={selectedProjectId ?? ''} onChange={(event) => setSelectedProjectId(event.target.value || null)}>
+                <option value="">All businesses</option>
+                {projects.map((project) => (
+                  <option key={project.id} value={project.id}>{project.title}</option>
+                ))}
+              </select>
+            </label>
+          </div>
 
-        <div className="safe-mode-grid">
-          <section className="safe-mode-card">
-            <h2>App Status</h2>
-            <ul className="safe-list">
-              <li>Loading: {loading ? 'yes' : 'no'}</li>
-              <li>Error: {error || 'none'}</li>
-              <li>Observed at: {queueHealth?.observed_at || 'none'}</li>
-            </ul>
+          <div className="hero-status-cluster">
+            <div className="hero-status-pill">
+              <span className="status-dot" />
+              <strong>{headlineStatus}</strong>
+            </div>
+            <div className="hero-mini-stats">
+              <div className="hero-mini-card">
+                <span>Agents carrying work</span>
+                <strong>{activeChambers}</strong>
+              </div>
+              <div className="hero-mini-card">
+                <span>Pending reviews</span>
+                <strong>{reviewItems.length}</strong>
+              </div>
+              <div className="hero-mini-card">
+                <span>Published today</span>
+                <strong>{summary.publishedToday}</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="safe-mode-card chamber-section-card chamber-command-card">
+          <div className="section-heading-row">
+            <div>
+              <p className="eyebrow">Agent chambers</p>
+              <h2>Living deck</h2>
+            </div>
+            <p className="section-note">Tap a live task in a chamber to open its drill-down.</p>
+          </div>
+
+          <div className="chamber-deck-grid command-chamber-grid">
+            {DECK_LAYOUT.flat().map((id, index) => {
+              if (!id) return <div key={`empty-${index}`} className="chamber-placeholder" />
+              const chamber = chamberCards.find((agent) => agent.id === id)
+              if (!chamber) return <div key={id} className="chamber-card chamber-placeholder">Offline</div>
+              const identity = agentIdentities[chamber.id] ?? agentIdentities.gateway
+              return (
+                <div key={chamber.id} className={`chamber-card command-chamber-card theme-${identity.roomTheme} ${chamber.activeTasks.length > 0 ? 'has-work' : ''}`} style={{ ['--agent-primary' as string]: identity.palette.primary, ['--agent-secondary' as string]: identity.palette.secondary, ['--agent-glow' as string]: identity.palette.glow }}>
+                  <div className="chamber-card-topline">
+                    <div className="chamber-glyph">{identity.name.slice(0, 1)}</div>
+                    <span className="chamber-task-count">{chamber.activeTasks.length} active</span>
+                  </div>
+                  <strong>{identity.name}</strong>
+                  <span>{identity.subtitle}</span>
+                  <div className="chamber-task-stack">
+                    {chamber.activeTasks.length === 0 ? (
+                      <p className="empty">Quiet chamber</p>
+                    ) : (
+                      chamber.activeTasks.slice(0, 2).map((task) => (
+                        <button key={task.id} className="mini-task-button" onClick={() => setSelectedTaskId(task.id)}>{task.title}</button>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </section>
+
+        <div className="command-lower-grid">
+          <section className="safe-mode-card command-metrics-card">
+            <div className="section-heading-row compact">
+              <div>
+                <p className="eyebrow">Business pulse</p>
+                <h2>At a glance</h2>
+              </div>
+            </div>
+            <div className="friendly-metrics-grid">
+              <div className="friendly-metric-card revenue">
+                <span>Revenue</span>
+                <strong>${summary.revenueUsd.toFixed(2)}</strong>
+              </div>
+              <div className="friendly-metric-card cost">
+                <span>Cost</span>
+                <strong>${summary.costUsd.toFixed(2)}</strong>
+              </div>
+              <div className="friendly-metric-card margin">
+                <span>Margin</span>
+                <strong>${summary.marginUsd.toFixed(2)}</strong>
+              </div>
+              <div className="friendly-metric-card queue">
+                <span>Queue pressure</span>
+                <strong>{queueHealth?.runnable_count ?? 0}/{queueHealth?.in_progress_count ?? 0}</strong>
+                <small>runnable / active</small>
+              </div>
+            </div>
           </section>
 
-          <section className="safe-mode-card">
-            <h2>Queue Health</h2>
-            <ul className="safe-list">
-              <li>Runnable: {queueHealth?.runnable_count ?? 0}</li>
-              <li>Active: {queueHealth?.in_progress_count ?? 0}</li>
-              <li>Alerts: {queueHealth?.flagged_count ?? 0}</li>
-            </ul>
-          </section>
-
-          <section className="safe-mode-card">
-            <h2>Business Metrics</h2>
-            <ul className="safe-list">
-              <li>Revenue: ${summary.revenueUsd.toFixed(2)}</li>
-              <li>Cost: ${summary.costUsd.toFixed(2)}</li>
-              <li>Margin: ${summary.marginUsd.toFixed(2)}</li>
-              <li>Published today: {summary.publishedToday}</li>
-            </ul>
-          </section>
-
-          <section className="safe-mode-card">
-            <h2>Live Activity</h2>
+          <section className="safe-mode-card command-activity-card">
+            <div className="section-heading-row compact">
+              <div>
+                <p className="eyebrow">Recent motion</p>
+                <h2>Live activity</h2>
+              </div>
+            </div>
             {filteredActivity.length === 0 ? (
               <p className="empty">No recent activity yet.</p>
             ) : (
-              <div className="safe-list-blocks">
+              <div className="safe-list-blocks activity-feed-friendly">
                 {filteredActivity.map((item) => (
-                  <div key={item.id} className="safe-item">
-                    <strong>{item.eventType}</strong>
+                  <div key={item.id} className="safe-item activity-friendly-item">
+                    <div className="activity-friendly-topline">
+                      <strong>{item.eventType}</strong>
+                      <span>{item.actor}</span>
+                    </div>
                     <span>{item.taskTitle}</span>
-                    <small>{item.projectTitle || 'Unknown project'} • {item.actor}</small>
+                    <small>{item.projectTitle || 'Unknown project'}</small>
                     {item.detail && <small>{item.detail}</small>}
                   </div>
                 ))}
@@ -357,32 +430,15 @@ export default function App() {
           </section>
         </div>
 
-        <section className="safe-mode-card chamber-section-card">
-          <h2>Agent Deck</h2>
-          <div className="chamber-deck-grid">
-            {DECK_LAYOUT.flat().map((id, index) => {
-              if (!id) return <div key={`empty-${index}`} className="chamber-placeholder" />
-              const chamber = chamberCards.find((agent) => agent.id === id)
-              if (!chamber) return <div key={id} className="chamber-card chamber-placeholder">Offline</div>
-              const identity = agentIdentities[chamber.id] ?? agentIdentities.gateway
-              return (
-                <div key={chamber.id} className={`chamber-card theme-${identity.roomTheme}`} style={{ ['--agent-primary' as string]: identity.palette.primary, ['--agent-secondary' as string]: identity.palette.secondary }}>
-                  <div className="chamber-glyph">{identity.name.slice(0, 1)}</div>
-                  <strong>{identity.name}</strong>
-                  <span>{identity.subtitle}</span>
-                  <small>{chamber.activeTasks.length} active task{chamber.activeTasks.length === 1 ? '' : 's'}</small>
-                  {chamber.activeTasks.slice(0, 2).map((task) => (
-                    <button key={task.id} className="mini-task-button" onClick={() => setSelectedTaskId(task.id)}>{task.title}</button>
-                  ))}
-                </div>
-              )
-            })}
-          </div>
-        </section>
-
         <div className="safe-mode-grid single-column-grid">
-          <section className="safe-mode-card">
-            <h2>Review Dock</h2>
+          <section className="safe-mode-card command-review-card">
+            <div className="section-heading-row compact">
+              <div>
+                <p className="eyebrow">Human gate</p>
+                <h2>Review dock</h2>
+              </div>
+              <p className="section-note">Real approvals are still live here.</p>
+            </div>
             {reviewItems.length === 0 ? (
               <p className="empty">No pending review items right now.</p>
             ) : (
