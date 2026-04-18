@@ -188,6 +188,47 @@ h1 {
   gap: 20px;
 }
 
+.map-first-main {
+  gap: 16px;
+}
+
+.map-first-hero {
+  padding-bottom: 20px;
+}
+
+.map-stage-card {
+  margin-top: 0;
+}
+
+.map-style-grid {
+  min-height: 520px;
+  align-items: stretch;
+}
+
+.drawer-toggle-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.drawer-tab,
+.panel-refresh-button {
+  border: 1px solid rgba(125, 211, 252, 0.16);
+  background: rgba(8, 14, 28, 0.84);
+  color: #eaf4ff;
+  border-radius: 999px;
+  padding: 10px 14px;
+}
+
+.drawer-tab.active {
+  background: rgba(125, 211, 252, 0.16);
+  border-color: rgba(125, 211, 252, 0.32);
+}
+
+.lazy-panel-card {
+  animation: fadeUp 160ms ease;
+}
+
 .command-hero-card {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.9fr);
@@ -1427,6 +1468,11 @@ th {
   border-radius: 16px;
 }
 
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @keyframes bob {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
@@ -1496,6 +1542,11 @@ th {
   .command-hero-card,
   .friendly-metrics-grid,
   .section-heading-row {
+    grid-template-columns: 1fr;
+  }
+
+  .drawer-toggle-row {
+    display: grid;
     grid-template-columns: 1fr;
   }
 
