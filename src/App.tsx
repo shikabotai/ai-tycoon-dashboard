@@ -379,7 +379,6 @@ function AgentRoom({ chamber, onOpen }: { chamber?: AgentChamber; onOpen?: () =>
         ['--agent-glow' as string]: identity.palette.glow,
       }}
     >
-      {chamber.id === 'manager' && <div className="deploy-debug-banner">LATEST BUILD ACTIVE</div>}
       <div className="room-glow" />
       <div className="room-stars" />
       <div className="agent-avatar-zone">

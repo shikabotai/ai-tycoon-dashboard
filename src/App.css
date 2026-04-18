@@ -329,23 +329,6 @@ h1 {
   background: transparent;
 }
 
-.deploy-debug-banner {
-  position: absolute;
-  top: -18px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: rgba(250, 204, 21, 0.95);
-  color: #1f2937;
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  box-shadow: 0 8px 20px rgba(250, 204, 21, 0.28);
-  z-index: 8;
-}
-
 .role-gateway .room-glow,
 .role-manager .room-glow,
 .role-researcher .room-glow,
@@ -684,7 +667,7 @@ th {
   max-height: 88vh;
   overflow: auto;
   border-radius: 28px;
-  background: rgba(8, 14, 28, 0.94);
+  background: rgba(8, 14, 28, 0.96);
   border: 1px solid rgba(125, 211, 252, 0.16);
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
   padding: 24px;
@@ -704,25 +687,37 @@ th {
 .theme-control-room.agent-room { background-image: radial-gradient(circle at 20% 20%, rgba(248,113,113,0.10), transparent 36%); }
 
 .agent-modal-close {
-  float: right;
+  position: sticky;
+  top: 0;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 999px;
   border: 1px solid rgba(125, 211, 252, 0.18);
-  background: rgba(125, 211, 252, 0.08);
+  background: rgba(9, 16, 30, 0.92);
   color: #eaf4ff;
-  padding: 8px 12px;
+  padding: 10px 14px;
+  z-index: 3;
 }
 
 .agent-modal-header {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 132px;
   gap: 18px;
   align-items: center;
+  margin-top: 8px;
+}
+
+.agent-modal-header .subcopy {
+  max-width: 32ch;
 }
 
 .modal-avatar {
   position: relative;
   top: auto;
   right: auto;
+  justify-self: end;
   width: 118px;
   height: 132px;
 }
@@ -731,15 +726,31 @@ th {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
-  margin: 18px 0;
+  margin: 20px 0;
+}
+
+.agent-modal-grid .metric-card {
+  min-height: 86px;
+  justify-content: center;
 }
 
 .agent-task-section {
   margin-top: 18px;
 }
 
+.agent-task-section h3 {
+  margin-bottom: 12px;
+}
+
 .modal-stack {
   pointer-events: auto;
+  display: grid;
+  gap: 12px;
+}
+
+.modal-stack .task-pill {
+  padding: 14px 16px;
+  border-radius: 16px;
 }
 
 @keyframes bob {
@@ -938,5 +949,54 @@ th {
 
   .room-task-count {
     font-size: 1.35rem;
+  }
+
+  .agent-modal-backdrop {
+    padding: 10px;
+    align-items: flex-end;
+  }
+
+  .agent-modal {
+    width: 100%;
+    max-height: 92vh;
+    border-radius: 24px 24px 18px 18px;
+    padding: 16px;
+  }
+
+  .agent-modal-close {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+
+  .agent-modal-header {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .agent-modal-header .subcopy {
+    max-width: none;
+  }
+
+  .modal-avatar {
+    justify-self: start;
+    width: 84px;
+    height: 96px;
+  }
+
+  .agent-modal-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .agent-modal-grid .metric-card {
+    min-height: 0;
+  }
+
+  .agent-task-section {
+    margin-top: 14px;
+  }
+
+  .modal-stack .task-pill {
+    padding: 12px 14px;
   }
 }
