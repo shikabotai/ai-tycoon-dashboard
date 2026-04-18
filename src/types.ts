@@ -84,6 +84,11 @@ export type AgentChamber = {
     status: string
     projectTitle?: string
   }>
+  runCount: number
+  totalCostUsd: number
+  lastRunAt?: string
+  lastError?: string | null
+  lastArtifactTitle?: string
 }
 
 export type ArtifactRow = {
@@ -164,4 +169,16 @@ export type ActivityFeedItem = {
   actorAgentId?: string | null
   createdAt: string
   detail?: string
+}
+
+export type AgentRunRow = {
+  id: string
+  task_id: string
+  agent_id: string
+  agent_role: string | null
+  status: string
+  cost_usd: number | null
+  error_message: string | null
+  started_at: string
+  completed_at: string | null
 }

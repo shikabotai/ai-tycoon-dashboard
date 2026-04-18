@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import type { ActivityFeedItem, AgentChamber, AgentRow, ApprovalRow, ArtifactReviewItem, ArtifactRow, DashboardSummary, PipelineRow, ProjectPnlRow, ProjectRow, PublicationRow, QueueHealth, TaskEventRow, TaskRow, WatchdogRow } from '../types'
+import type { ActivityFeedItem, AgentChamber, AgentRow, AgentRunRow, ApprovalRow, ArtifactReviewItem, ArtifactRow, DashboardSummary, PipelineRow, ProjectPnlRow, ProjectRow, PublicationRow, QueueHealth, TaskEventRow, TaskRow, WatchdogRow } from '../types'
 
 const CHAMBER_LABELS: Record<string, string> = {
   gateway: 'Dock A1',
@@ -24,6 +24,7 @@ export function useDashboardData(selectedProjectId?: string | null) {
   const [pnl, setPnl] = useState<ProjectPnlRow[]>([])
   const [publications, setPublications] = useState<PublicationRow[]>([])
   const [events, setEvents] = useState<TaskEventRow[]>([])
+  const [agentRuns, setAgentRuns] = useState<AgentRunRow[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -31,7 +32,7 @@ export function useDashboardData(selectedProjectId?: string | null) {
     setLoading(true)
     setError(null)
 
-    const [queueHealthRes, pipelineRes, watchdogRes, agentsRes, tasksRes, projectsRes, artifactsRes, approvalsRes, pnlRes, publicationsRes, eventsRes] = await Promise.all([
+    const [queueHealthRes, pipelineRes, watchdogRes, agentsRes, tasksRes, projectsRes, artifactsRes, approvalsRes, pnlRes, publicationsRes, eventsRes, agentRunsRes] = await Promise.all([
       supabase.from('v_queue_health').select('*').limit(1).maybeSingle(),
       supabase.from('v_pipeline_now').select('*').order('project').order('status'),
       supabase.from('v_task_watchdog').select('*').order('severity', { ascending: false }).order('updated_at', { ascending: true }).limit(12),
@@ -43,6 +44,7 @@ export function useDashboardData(selectedProjectId?: string | null) {
       supabase.from('v_project_pnl').select('project_id,title,business_type,month,revenue_usd,cost_usd,margin_usd').order('month', { ascending: false }).limit(80),
       supabase.from('publications').select('id,project_id,task_id,destination,published_at').order('published_at', { ascending: false }).limit(120),
       supabase.from('task_events').select('id,task_id,event_type,actor_agent_id,payload,created_at').order('created_at', { ascending: false }).limit(80),
+      supabase.from('agent_runs').select('id,task_id,agent_id,agent_role,status,cost_usd,error_message,started_at,completed_at').order('started_at', { ascending: false }).limit(120),
     ])
 
     const firstError =
@@ -56,7 +58,8 @@ export function useDashboardData(selectedProjectId?: string | null) {
       approvalsRes.error ||
       pnlRes.error ||
       publicationsRes.error ||
-      eventsRes.error
+      eventsRes.error ||
+      agentRunsRes.error
 
     if (firstError) {
       setError(firstError.message)
@@ -72,6 +75,7 @@ export function useDashboardData(selectedProjectId?: string | null) {
       setPnl((pnlRes.data as ProjectPnlRow[] | null) ?? [])
       setPublications((publicationsRes.data as PublicationRow[] | null) ?? [])
       setEvents((eventsRes.data as TaskEventRow[] | null) ?? [])
+      setAgentRuns((agentRunsRes.data as AgentRunRow[] | null) ?? [])
     }
 
     setLoading(false)
@@ -102,8 +106,14 @@ export function useDashboardData(selectedProjectId?: string | null) {
     [projects, selectedProjectId],
   )
 
+  const filteredAgentRuns = useMemo(
+    () => agentRuns.filter((run) => filteredTaskIds.has(run.task_id)),
+    [agentRuns, filteredTaskIds],
+  )
+
   const agentChambers = useMemo(() => {
     const projectMap = new Map(projects.map((project) => [project.id, project.title]))
+    const taskMap = new Map(tasks.map((task) => [task.id, task]))
 
     return agents
       .filter((agent) => ['gateway', 'manager', 'researcher', 'content', 'worker-1', 'worker-2', 'reviewer'].includes(agent.id))
@@ -116,6 +126,14 @@ export function useDashboardData(selectedProjectId?: string | null) {
           projectTitle: task.project_id ? projectMap.get(task.project_id) : undefined,
         }))
 
+        const runs = filteredAgentRuns.filter((run) => run.agent_id === agent.id)
+        const totalCostUsd = runs.reduce((sum, run) => sum + Number(run.cost_usd || 0), 0)
+        const lastRun = runs[0]
+        const lastArtifactTask = [...filteredArtifacts].find((artifact) => {
+          const task = taskMap.get(artifact.task_id)
+          return task?.assigned_agent_id === agent.id
+        })
+
         return {
           id: agent.id,
           displayName: agent.display_name,
@@ -124,6 +142,11 @@ export function useDashboardData(selectedProjectId?: string | null) {
           status: agent.status,
           taskCount: decoratedTasks.length,
           tasks: decoratedTasks,
+          runCount: runs.length,
+          totalCostUsd,
+          lastRunAt: lastRun?.started_at,
+          lastError: runs.find((run) => run.error_message)?.error_message ?? null,
+          lastArtifactTitle: lastArtifactTask?.filename || lastArtifactTask?.artifact_type,
         } satisfies AgentChamber
       })
   }, [agents, filteredTasks, projects])

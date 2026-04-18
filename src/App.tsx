@@ -413,7 +413,36 @@ export default function App() {
                 <span>Active tasks</span>
                 <strong>{selectedChamber.taskCount}</strong>
               </div>
+              <div className="metric-card">
+                <span>Recent runs</span>
+                <strong>{selectedChamber.runCount}</strong>
+              </div>
+              <div className="metric-card">
+                <span>Total cost</span>
+                <strong>${selectedChamber.totalCostUsd.toFixed(2)}</strong>
+              </div>
+              <div className="metric-card">
+                <span>Last run</span>
+                <strong>{selectedChamber.lastRunAt ? new Date(selectedChamber.lastRunAt).toLocaleString() : 'No runs yet'}</strong>
+              </div>
             </div>
+
+            {(selectedChamber.lastError || selectedChamber.lastArtifactTitle) && (
+              <section className="agent-detail-strip">
+                {selectedChamber.lastArtifactTitle && (
+                  <div className="metric-card">
+                    <span>Last artifact</span>
+                    <strong>{selectedChamber.lastArtifactTitle}</strong>
+                  </div>
+                )}
+                {selectedChamber.lastError && (
+                  <div className="metric-card danger-card">
+                    <span>Last error</span>
+                    <strong>{selectedChamber.lastError}</strong>
+                  </div>
+                )}
+              </section>
+            )}
 
             <section className="agent-task-section">
               <h3>Current work</h3>
