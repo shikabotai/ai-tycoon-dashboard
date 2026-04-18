@@ -253,9 +253,9 @@ export function useDashboardData(selectedProjectId?: string | null) {
   )
 
   const projectSummary = useMemo(() => {
-    const activeDestinations = destinations.filter((item) => item.is_active && (!selectedProjectId || item.project_id === selectedProjectId))
-    const recentPublications = filteredPublications.slice(0, 8)
-    const deliveryFailures = deliveries.filter((item) => item.status !== 'sent' && filteredTaskIds.has(item.task_id)).slice(0, 8)
+    const activeDestinations = (destinations || []).filter((item) => item.is_active && (!selectedProjectId || item.project_id === selectedProjectId))
+    const recentPublications = (filteredPublications || []).slice(0, 8)
+    const deliveryFailures = (deliveries || []).filter((item) => item.status !== 'sent' && filteredTaskIds.has(item.task_id)).slice(0, 8)
 
     return {
       activeDestinations,
@@ -329,7 +329,7 @@ export function useDashboardData(selectedProjectId?: string | null) {
   }, [approvals, load])
 
   const getTaskDetail = useCallback((taskId: string): TaskDetail | undefined => {
-    const task = tasks.find((item) => item.id === taskId)
+    const task = (tasks || []).find((item) => item.id === taskId)
     if (!task) return undefined
     const projectTitle = task.project_id ? projects.find((project) => project.id === task.project_id)?.title : undefined
 

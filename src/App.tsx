@@ -144,7 +144,8 @@ export default function App() {
   const selectedChamber = selectedAgentId ? chamberMap.get(selectedAgentId) : undefined
   const selectedIdentity = selectedChamber ? agentIdentities[selectedChamber.id] : undefined
   const selectedTaskDetail = selectedTaskId ? getTaskDetail(selectedTaskId) : undefined
-  const pendingArtifactReviewItems = artifactReviewItems.filter((item) => item.approvalStatus === 'pending' || item.approvalStatus === 'none')
+  const safeProjectSummary = projectSummary ?? { activeDestinations: [], recentPublications: [], deliveryFailures: [] }
+  const pendingArtifactReviewItems = (artifactReviewItems || []).filter((item) => item.approvalStatus === 'pending' || item.approvalStatus === 'none')
   const selectedArtifact = selectedArtifactId
     ? artifactReviewItems.find((item) => item.artifactId === selectedArtifactId)
     : pendingArtifactReviewItems[0] ?? artifactReviewItems[0]
@@ -179,11 +180,11 @@ export default function App() {
           </label>
         </div>
         <div className="hero-stats compact command-center-grid">
-          <StatCard label="Revenue" value={`$${summary.revenueUsd.toFixed(2)}`} />
-          <StatCard label="Cost" value={`$${summary.costUsd.toFixed(2)}`} />
-          <StatCard label="Margin" value={`$${summary.marginUsd.toFixed(2)}`} />
-          <StatCard label="Published today" value={summary.publishedToday} />
-          <StatCard label="Pending approvals" value={summary.approvalsPending} />
+          <StatCard label="Revenue" value={`$${(summary?.revenueUsd ?? 0).toFixed(2)}`} />
+          <StatCard label="Cost" value={`$${(summary?.costUsd ?? 0).toFixed(2)}`} />
+          <StatCard label="Margin" value={`$${(summary?.marginUsd ?? 0).toFixed(2)}`} />
+          <StatCard label="Published today" value={summary?.publishedToday ?? 0} />
+          <StatCard label="Pending approvals" value={summary?.approvalsPending ?? 0} />
           <StatCard label="Runnable" value={queueHealth?.runnable_count ?? 0} />
           <StatCard label="Active" value={queueHealth?.in_progress_count ?? 0} />
           <StatCard label="Alerts" value={queueHealth?.flagged_count ?? 0} danger />
@@ -192,26 +193,26 @@ export default function App() {
         <div className="project-summary-strip">
           <div className="metric-card">
             <span>Active destinations</span>
-            <strong>{projectSummary.activeDestinations.length}</strong>
+            <strong>{safeProjectSummary.activeDestinations.length}</strong>
           </div>
           <div className="metric-card">
             <span>Recent publications</span>
-            <strong>{projectSummary.recentPublications.length}</strong>
+            <strong>{safeProjectSummary.recentPublications.length}</strong>
           </div>
           <div className="metric-card">
             <span>Delivery failures</span>
-            <strong>{projectSummary.deliveryFailures.length}</strong>
+            <strong>{safeProjectSummary.deliveryFailures.length}</strong>
           </div>
         </div>
-        {(projectSummary.activeDestinations.length > 0 || projectSummary.recentPublications.length > 0 || projectSummary.deliveryFailures.length > 0) && (
+        {(safeProjectSummary.activeDestinations.length > 0 || safeProjectSummary.recentPublications.length > 0 || safeProjectSummary.deliveryFailures.length > 0) && (
           <div className="project-summary-panels">
             <section className="summary-panel">
               <h3>Destinations</h3>
-              {projectSummary.activeDestinations.length === 0 ? (
+              {safeProjectSummary.activeDestinations.length === 0 ? (
                 <p className="empty">No active destinations.</p>
               ) : (
                 <div className="summary-list">
-                  {projectSummary.activeDestinations.map((item) => (
+                  {safeProjectSummary.activeDestinations.map((item) => (
                     <div key={item.id} className="summary-item">
                       <strong>{item.destination}</strong>
                       <span>{item.is_active ? 'active' : 'inactive'}</span>
@@ -223,11 +224,11 @@ export default function App() {
 
             <section className="summary-panel">
               <h3>Delivery health</h3>
-              {projectSummary.deliveryFailures.length === 0 ? (
+              {safeProjectSummary.deliveryFailures.length === 0 ? (
                 <p className="empty">No recent delivery failures.</p>
               ) : (
                 <div className="summary-list">
-                  {projectSummary.deliveryFailures.map((item) => (
+                  {safeProjectSummary.deliveryFailures.map((item) => (
                     <div key={item.id} className="summary-item">
                       <strong>{item.destination}</strong>
                       <span>{item.error || item.status}</span>
@@ -245,13 +246,13 @@ export default function App() {
               <p className="eyebrow">Outbound</p>
               <h3>Publication history</h3>
             </div>
-            <span className="badge">{projectSummary.recentPublications.length} recent</span>
+            <span className="badge">{safeProjectSummary.recentPublications.length} recent</span>
           </div>
-          {projectSummary.recentPublications.length === 0 ? (
+          {safeProjectSummary.recentPublications.length === 0 ? (
             <p className="empty">No shipped outputs yet.</p>
           ) : (
             <div className="outbound-history-list">
-              {projectSummary.recentPublications.map((item) => (
+              {safeProjectSummary.recentPublications.map((item) => (
                 <button key={item.id} className="outbound-card task-button" onClick={() => item.task_id && setSelectedTaskId(item.task_id)}>
                   <div className="outbound-card-topline">
                     <span className="badge">{item.destination}</span>
