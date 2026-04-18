@@ -480,14 +480,49 @@ h1 {
   pointer-events: none;
 }
 
-.room-scene-label {
+.room-prop {
   position: absolute;
-  left: 18px;
-  top: 18px;
-  color: rgba(236, 244, 255, 0.75);
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.room-prop-a {
+  left: 20px;
+  top: 20px;
+  width: 28px;
+  height: 52px;
+}
+
+.room-prop-b {
+  left: 54px;
+  top: 28px;
+  width: 44px;
+  height: 28px;
+}
+
+.theme-science-lab .room-prop-a,
+.theme-archive-lab .room-prop-a {
+  border-radius: 999px;
+  box-shadow: 0 0 16px var(--agent-glow);
+}
+
+.theme-dock-bay .room-prop-a,
+.theme-forge-bay .room-prop-a {
+  width: 42px;
+  height: 20px;
+  border-radius: 10px;
+}
+
+.theme-studio-bay .room-prop-b {
+  width: 54px;
+  height: 36px;
+  border-radius: 18px;
+}
+
+.theme-control-room .room-prop-a,
+.theme-control-room .room-prop-b {
+  box-shadow: inset 0 0 14px rgba(255,255,255,0.06);
 }
 
 .room-console-lights {
@@ -824,6 +859,19 @@ th {
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
   padding: 24px;
 }
+
+.theme-science-lab.agent-modal,
+.theme-science-lab.agent-room { background-image: radial-gradient(circle at 20% 20%, rgba(34,211,238,0.10), transparent 36%); }
+.theme-archive-lab.agent-modal,
+.theme-archive-lab.agent-room { background-image: radial-gradient(circle at 20% 20%, rgba(129,140,248,0.10), transparent 36%); }
+.theme-dock-bay.agent-modal,
+.theme-dock-bay.agent-room { background-image: radial-gradient(circle at 20% 20%, rgba(56,189,248,0.10), transparent 36%); }
+.theme-studio-bay.agent-modal,
+.theme-studio-bay.agent-room { background-image: radial-gradient(circle at 20% 20%, rgba(251,113,133,0.10), transparent 36%); }
+.theme-forge-bay.agent-modal,
+.theme-forge-bay.agent-room { background-image: radial-gradient(circle at 20% 20%, rgba(245,158,11,0.10), transparent 36%); }
+.theme-control-room.agent-modal,
+.theme-control-room.agent-room { background-image: radial-gradient(circle at 20% 20%, rgba(248,113,113,0.10), transparent 36%); }
 
 .agent-modal-close {
   float: right;

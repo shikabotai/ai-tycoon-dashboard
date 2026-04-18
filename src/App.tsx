@@ -277,7 +277,7 @@ export default function App() {
       {selectedChamber && selectedIdentity && (
         <div className="agent-modal-backdrop" onClick={() => setSelectedAgentId(null)}>
           <div
-            className="agent-modal"
+            className={`agent-modal theme-${selectedIdentity.roomTheme}`}
             onClick={(event) => event.stopPropagation()}
             style={{
               ['--agent-primary' as string]: selectedIdentity.palette.primary,
@@ -366,13 +366,14 @@ function AgentRoom({ chamber, onOpen }: { chamber?: AgentChamber; onOpen?: () =>
   const identity = agentIdentities[chamber.id] ?? {
     name: chamber.displayName,
     subtitle: chamber.role,
+    roomTheme: 'default-room',
     palette: { primary: '#7dd3fc', secondary: '#22d3ee', glow: 'rgba(34, 211, 238, 0.35)' },
     avatarClass: 'avatar-generic',
   }
 
   return (
     <button
-      className={`agent-room role-${chamber.role}`}
+      className={`agent-room role-${chamber.role} theme-${identity.roomTheme}`}
       onClick={onOpen}
       style={{
         ['--agent-primary' as string]: identity.palette.primary,
@@ -394,7 +395,8 @@ function AgentRoom({ chamber, onOpen }: { chamber?: AgentChamber; onOpen?: () =>
         <div className="agent-orbit orbit-one" />
         <div className="agent-orbit orbit-two" />
       </div>
-      <div className="room-scene-label">Tap to inspect</div>
+      <div className="room-prop room-prop-a" />
+      <div className="room-prop room-prop-b" />
       <div className="room-console-lights">
         <span />
         <span />
