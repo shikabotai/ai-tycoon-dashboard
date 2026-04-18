@@ -392,49 +392,25 @@ export default function App() {
   return (
     <div className="app-shell safe-mode-shell command-deck-shell">
       <main className="safe-mode-main command-deck-main map-first-main">
-        <section className="command-hero-card map-first-hero">
-          <div className="command-hero-copy">
-            <p className="eyebrow">AI Sensei Command Deck</p>
-            <h1>{focusProject ? focusProject.title : 'Fleet overview'}</h1>
-            <p className="subcopy">The map leads now. Stats, activity, and review stay collapsed until you actually open them, so the dashboard feels lighter instead of dumping everything at once.</p>
+        <section className="top-control-bar">
+          <label className="project-switcher compact-project-switcher">
+            <span>Business focus</span>
+            <select value={selectedProjectId ?? ''} onChange={(event) => setSelectedProjectId(event.target.value || null)}>
+              <option value="">All businesses</option>
+              {projects.map((project) => (
+                <option key={project.id} value={project.id}>{project.title}</option>
+              ))}
+            </select>
+          </label>
 
-            <label className="project-switcher">
-              <span>Business focus</span>
-              <select value={selectedProjectId ?? ''} onChange={(event) => setSelectedProjectId(event.target.value || null)}>
-                <option value="">All businesses</option>
-                {projects.map((project) => (
-                  <option key={project.id} value={project.id}>{project.title}</option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <div className="hero-status-cluster">
-            <div className="hero-status-pill">
-              <span className="status-dot" />
-              <strong>{headlineStatus}</strong>
-            </div>
-            <div className="hero-mini-stats">
-              <div className="hero-mini-card">
-                <span>Agents carrying work</span>
-                <strong>{activeChambers}</strong>
-              </div>
-              <div className="hero-mini-card">
-                <span>Open panel</span>
-                <strong>{openPanel || 'none'}</strong>
-              </div>
-            </div>
+          <div className="hero-status-pill compact-status-pill">
+            <span className="status-dot" />
+            <strong>{focusProject ? focusProject.title : 'Fleet overview'}</strong>
+            <small>{headlineStatus} • {activeChambers} active chambers</small>
           </div>
         </section>
 
-        <section className="safe-mode-card chamber-section-card chamber-command-card map-stage-card ship-stage-card">
-          <div className="section-heading-row">
-            <div>
-              <p className="eyebrow">Agent chambers</p>
-              <h2>Living ship</h2>
-            </div>
-            <p className="section-note">Tap a chamber task for drill-down, or open a drawer only when you need details.</p>
-          </div>
+        <section className="safe-mode-card chamber-section-card chamber-command-card map-stage-card ship-stage-card minimal-map-card">
 
           <div className="ship-stage-shell">
             <div className="ship-stage-stars" />

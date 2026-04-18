@@ -189,11 +189,31 @@ h1 {
 }
 
 .map-first-main {
-  gap: 16px;
+  gap: 12px;
 }
 
-.map-first-hero {
-  padding-bottom: 20px;
+.top-control-bar {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.compact-project-switcher {
+  margin-top: 0;
+  max-width: 240px;
+}
+
+.compact-project-switcher span {
+  font-size: 0.72rem;
+}
+
+.compact-status-pill {
+  padding: 10px 14px;
+}
+
+.compact-status-pill small {
+  color: #9dafcb;
 }
 
 .map-stage-card {
@@ -202,6 +222,13 @@ h1 {
 
 .ship-stage-card {
   overflow: hidden;
+}
+
+.minimal-map-card {
+  padding: 10px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .map-style-grid {
