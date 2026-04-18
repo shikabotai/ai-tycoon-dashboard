@@ -119,3 +119,29 @@ export type ArtifactReviewItem = {
   createdAt: string
   approvalStatus: 'pending' | 'approved' | 'rejected' | 'none'
 }
+
+export type ProjectPnlRow = {
+  project_id: string
+  title: string
+  business_type: string | null
+  month: string | null
+  revenue_usd: number
+  cost_usd: number
+  margin_usd: number
+}
+
+export type PublicationRow = {
+  id: string
+  project_id: string | null
+  task_id: string | null
+  destination: string
+  published_at: string
+}
+
+export type DashboardSummary = {
+  revenueUsd: number
+  costUsd: number
+  marginUsd: number
+  publishedToday: number
+  approvalsPending: number
+}

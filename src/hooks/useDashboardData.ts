@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import type { AgentChamber, AgentRow, ApprovalRow, ArtifactReviewItem, ArtifactRow, PipelineRow, ProjectRow, QueueHealth, TaskRow, WatchdogRow } from '../types'
+import type { AgentChamber, AgentRow, ApprovalRow, ArtifactReviewItem, ArtifactRow, DashboardSummary, PipelineRow, ProjectPnlRow, ProjectRow, PublicationRow, QueueHealth, TaskRow, WatchdogRow } from '../types'
 
 const CHAMBER_LABELS: Record<string, string> = {
   gateway: 'Dock A1',
@@ -21,6 +21,8 @@ export function useDashboardData() {
   const [projects, setProjects] = useState<ProjectRow[]>([])
   const [artifacts, setArtifacts] = useState<ArtifactRow[]>([])
   const [approvals, setApprovals] = useState<ApprovalRow[]>([])
+  const [pnl, setPnl] = useState<ProjectPnlRow[]>([])
+  const [publications, setPublications] = useState<PublicationRow[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -28,7 +30,7 @@ export function useDashboardData() {
     setLoading(true)
     setError(null)
 
-    const [queueHealthRes, pipelineRes, watchdogRes, agentsRes, tasksRes, projectsRes, artifactsRes, approvalsRes] = await Promise.all([
+    const [queueHealthRes, pipelineRes, watchdogRes, agentsRes, tasksRes, projectsRes, artifactsRes, approvalsRes, pnlRes, publicationsRes] = await Promise.all([
       supabase.from('v_queue_health').select('*').limit(1).maybeSingle(),
       supabase.from('v_pipeline_now').select('*').order('project').order('status'),
       supabase.from('v_task_watchdog').select('*').order('severity', { ascending: false }).order('updated_at', { ascending: true }).limit(12),
@@ -37,6 +39,8 @@ export function useDashboardData() {
       supabase.from('projects').select('id,title').limit(50),
       supabase.from('artifacts').select('id,task_id,artifact_type,content,mime_type,filename,storage_path,created_at').in('artifact_type', ['draft', 'draft_file', 'delivery_note', 'package']).order('created_at', { ascending: false }).limit(60),
       supabase.from('approvals').select('id,task_id,status,decided_at,created_at,comment').order('created_at', { ascending: false }).limit(60),
+      supabase.from('v_project_pnl').select('project_id,title,business_type,month,revenue_usd,cost_usd,margin_usd').order('month', { ascending: false }).limit(50),
+      supabase.from('publications').select('id,project_id,task_id,destination,published_at').order('published_at', { ascending: false }).limit(100),
     ])
 
     const firstError =
@@ -47,7 +51,9 @@ export function useDashboardData() {
       tasksRes.error ||
       projectsRes.error ||
       artifactsRes.error ||
-      approvalsRes.error
+      approvalsRes.error ||
+      pnlRes.error ||
+      publicationsRes.error
 
     if (firstError) {
       setError(firstError.message)
@@ -60,6 +66,8 @@ export function useDashboardData() {
       setProjects((projectsRes.data as ProjectRow[] | null) ?? [])
       setArtifacts((artifactsRes.data as ArtifactRow[] | null) ?? [])
       setApprovals((approvalsRes.data as ApprovalRow[] | null) ?? [])
+      setPnl((pnlRes.data as ProjectPnlRow[] | null) ?? [])
+      setPublications((publicationsRes.data as PublicationRow[] | null) ?? [])
     }
 
     setLoading(false)
@@ -138,6 +146,36 @@ export function useDashboardData() {
       .filter((item) => item.taskTitle !== 'Unknown task')
   }, [artifacts, approvals, projects, tasks])
 
+  const summary = useMemo(() => {
+    const latestPnlByProject = new Map<string, ProjectPnlRow>()
+    for (const row of pnl) {
+      if (!latestPnlByProject.has(row.project_id)) {
+        latestPnlByProject.set(row.project_id, row)
+      }
+    }
+
+    const today = new Date().toISOString().slice(0, 10)
+    const publishedToday = publications.filter((item) => item.published_at?.slice(0, 10) === today).length
+
+    let revenueUsd = 0
+    let costUsd = 0
+    let marginUsd = 0
+
+    for (const row of latestPnlByProject.values()) {
+      revenueUsd += Number(row.revenue_usd || 0)
+      costUsd += Number(row.cost_usd || 0)
+      marginUsd += Number(row.margin_usd || 0)
+    }
+
+    return {
+      revenueUsd,
+      costUsd,
+      marginUsd,
+      publishedToday,
+      approvalsPending: artifactReviewItems.filter((item) => item.approvalStatus === 'pending' || item.approvalStatus === 'none').length,
+    } satisfies DashboardSummary
+  }, [artifactReviewItems, pnl, publications])
+
   const decideApproval = useCallback(async (item: ArtifactReviewItem, status: 'approved' | 'rejected', comment?: string) => {
     const existingApproval = approvals.find((approval) => approval.task_id === item.taskId && approval.status === 'pending')
 
@@ -172,5 +210,5 @@ export function useDashboardData() {
     await load()
   }, [approvals, load])
 
-  return { queueHealth, pipeline, watchdog, loading, error, agentChambers, artifactReviewItems, decideApproval }
+  return { queueHealth, pipeline, watchdog, loading, error, agentChambers, artifactReviewItems, decideApproval, summary }
 }

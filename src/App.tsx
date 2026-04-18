@@ -18,7 +18,7 @@ const MAX_ZOOM = 1.8
 const INITIAL_CAMERA = { x: 0, y: 0 }
 
 export default function App() {
-  const { queueHealth, pipeline, watchdog, loading, error, agentChambers, artifactReviewItems, decideApproval } = useDashboardData()
+  const { queueHealth, pipeline, watchdog, loading, error, agentChambers, artifactReviewItems, decideApproval, summary } = useDashboardData()
   const chamberMap = useMemo(() => new Map(agentChambers.map((agent) => [agent.id, agent])), [agentChambers])
   const [zoom, setZoom] = useState(0.72)
   const [camera, setCamera] = useState(INITIAL_CAMERA)
@@ -165,7 +165,12 @@ export default function App() {
             A single connected ship layout, with the manager chamber at the command hub and the rest of the crew linked through internal corridors.
           </p>
         </div>
-        <div className="hero-stats compact">
+        <div className="hero-stats compact command-center-grid">
+          <StatCard label="Revenue" value={`$${summary.revenueUsd.toFixed(2)}`} />
+          <StatCard label="Cost" value={`$${summary.costUsd.toFixed(2)}`} />
+          <StatCard label="Margin" value={`$${summary.marginUsd.toFixed(2)}`} />
+          <StatCard label="Published today" value={summary.publishedToday} />
+          <StatCard label="Pending approvals" value={summary.approvalsPending} />
           <StatCard label="Runnable" value={queueHealth?.runnable_count ?? 0} />
           <StatCard label="Active" value={queueHealth?.in_progress_count ?? 0} />
           <StatCard label="Alerts" value={queueHealth?.flagged_count ?? 0} danger />
@@ -553,7 +558,7 @@ function Metric({ label, value }: { label: string; value: number | undefined | n
   )
 }
 
-function StatCard({ label, value, danger = false }: { label: string; value: number; danger?: boolean }) {
+function StatCard({ label, value, danger = false }: { label: string; value: number | string; danger?: boolean }) {
   return (
     <div className={`stat-card ${danger ? 'danger' : ''}`}>
       <span>{label}</span>

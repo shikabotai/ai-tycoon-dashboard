@@ -150,6 +150,11 @@ h1 {
   min-width: 340px;
 }
 
+.command-center-grid {
+  grid-template-columns: repeat(4, minmax(110px, 1fr));
+  min-width: min(100%, 720px);
+}
+
 .stat-card,
 .metric-card,
 .alert-card,
@@ -967,6 +972,10 @@ th {
     min-width: 0;
   }
 
+  .command-center-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .drawer-toggle {
     z-index: 32;
     padding: 9px 12px;
@@ -1059,6 +1068,10 @@ th {
   .drawer-toggle {
     font-size: 0.78rem;
     padding: 8px 10px;
+  }
+
+  .command-center-grid {
+    grid-template-columns: 1fr;
   }
 
   .drawer-toggle.left,
