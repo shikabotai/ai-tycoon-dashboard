@@ -100,6 +100,7 @@ export default function App() {
   const [agents, setAgents] = useState<AgentRow[]>([])
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null)
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null)
+  const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null)
   const [selectedArtifactId, setSelectedArtifactId] = useState<string | null>(null)
   const [approvalBusy, setApprovalBusy] = useState(false)
   const [taskBusy, setTaskBusy] = useState(false)
@@ -340,6 +341,17 @@ export default function App() {
     } satisfies TaskDetail
   }, [approvals, artifacts, events, projectMap, selectedTaskId, taskMap])
 
+  const selectedAgentProfile = useMemo(() => {
+    if (!selectedAgentId) return undefined
+    const chamber = chamberCards.find((agent) => agent.id === selectedAgentId)
+    if (!chamber) return undefined
+    const identity = agentIdentities[chamber.id] ?? agentIdentities.gateway
+    return {
+      chamber,
+      identity,
+    }
+  }, [chamberCards, selectedAgentId])
+
   const focusProject = selectedProjectId ? projects.find((project) => project.id === selectedProjectId) : undefined
   const activeChambers = chamberCards.filter((agent) => agent.activeTasks.length > 0).length
   const headlineStatus = error ? 'Needs attention' : loading ? 'Refreshing' : 'Stable orbit'
@@ -502,7 +514,7 @@ export default function App() {
                 if (!chamber) return <div key={id} className="chamber-card chamber-placeholder">Offline</div>
                 const identity = agentIdentities[chamber.id] ?? agentIdentities.gateway
                 return (
-                  <div key={chamber.id} className={`chamber-card command-chamber-card ship-chamber-card theme-${identity.roomTheme} ${chamber.activeTasks.length > 0 ? 'has-work' : ''} ${chamber.id === 'manager' ? 'manager-hub-card' : ''}`} style={{ ['--agent-primary' as string]: identity.palette.primary, ['--agent-secondary' as string]: identity.palette.secondary, ['--agent-glow' as string]: identity.palette.glow }}>
+                  <div key={chamber.id} className={`chamber-card command-chamber-card ship-chamber-card theme-${identity.roomTheme} ${chamber.activeTasks.length > 0 ? 'has-work' : ''} ${chamber.id === 'manager' ? 'manager-hub-card' : ''}`} style={{ ['--agent-primary' as string]: identity.palette.primary, ['--agent-secondary' as string]: identity.palette.secondary, ['--agent-glow' as string]: identity.palette.glow }} onClick={() => setSelectedAgentId(chamber.id)}>
                     <div className="chamber-card-topline">
                       <div className="chamber-glyph">{identity.name.slice(0, 1)}</div>
                       <span className="chamber-task-count">{chamber.activeTasks.length} active</span>
@@ -514,7 +526,8 @@ export default function App() {
                         <p className="empty">Quiet chamber</p>
                       ) : (
                         chamber.activeTasks.slice(0, 2).map((task) => (
-                          <button key={task.id} className="mini-task-button" onClick={async () => {
+                          <button key={task.id} className="mini-task-button" onClick={async (event) => {
+                            event.stopPropagation()
                             setSelectedTaskId(task.id)
                           }}>{task.title}</button>
                         ))
@@ -673,6 +686,74 @@ export default function App() {
               </div>
             )}
           </section>
+        )}
+
+        {selectedAgentProfile && (
+          <div className="agent-modal-backdrop" onClick={() => setSelectedAgentId(null)}>
+            <div className={`agent-modal theme-${selectedAgentProfile.identity.roomTheme}`} onClick={(event) => event.stopPropagation()}>
+              <button className="agent-modal-close" onClick={() => setSelectedAgentId(null)}>Close</button>
+              <div className="agent-modal-header">
+                <div>
+                  <p className="eyebrow">Agent profile</p>
+                  <h2>{selectedAgentProfile.identity.name}</h2>
+                  <p className="subcopy">{selectedAgentProfile.identity.subtitle}</p>
+                </div>
+                <div className="modal-avatar chamber-profile-avatar">
+                  <div className="chamber-glyph">{selectedAgentProfile.identity.name.slice(0, 1)}</div>
+                </div>
+              </div>
+
+              <div className="agent-modal-grid">
+                <div className="metric-card"><span>Agent id</span><strong>{selectedAgentProfile.chamber.id}</strong></div>
+                <div className="metric-card"><span>Status</span><strong>{selectedAgentProfile.chamber.status}</strong></div>
+                <div className="metric-card"><span>Active tasks</span><strong>{selectedAgentProfile.chamber.activeTasks.length}</strong></div>
+              </div>
+
+              <div className="agent-detail-strip">
+                <section className="summary-panel">
+                  <h3>Role</h3>
+                  <p className="empty">{selectedAgentProfile.chamber.role}</p>
+                </section>
+                <section className="summary-panel">
+                  <h3>Room theme</h3>
+                  <p className="empty">{selectedAgentProfile.identity.roomTheme}</p>
+                </section>
+              </div>
+
+              <div className="task-detail-sections">
+                <section className="summary-panel">
+                  <h3>Assigned work</h3>
+                  {selectedAgentProfile.chamber.activeTasks.length === 0 ? <p className="empty">No active tasks right now.</p> : (
+                    <div className="summary-list">
+                      {selectedAgentProfile.chamber.activeTasks.map((task) => (
+                        <button key={task.id} className="summary-item task-button" onClick={() => {
+                          setSelectedAgentId(null)
+                          setSelectedTaskId(task.id)
+                        }}>
+                          <strong>{task.title}</strong>
+                          <span>{task.status || 'unknown'} • {task.project_id ? projectMap.get(task.project_id) || 'Unknown project' : 'No project'}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </section>
+
+                <section className="summary-panel">
+                  <h3>Chamber notes</h3>
+                  <div className="summary-list">
+                    <div className="summary-item">
+                      <strong>Primary color</strong>
+                      <span>{selectedAgentProfile.identity.palette.primary}</span>
+                    </div>
+                    <div className="summary-item">
+                      <strong>Accent color</strong>
+                      <span>{selectedAgentProfile.identity.palette.accent}</span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
         )}
 
         {selectedTaskDetail && (

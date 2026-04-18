@@ -1588,6 +1588,19 @@ th {
   height: 132px;
 }
 
+.chamber-profile-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chamber-profile-avatar .chamber-glyph {
+  width: 88px;
+  height: 88px;
+  border-radius: 24px;
+  font-size: 2rem;
+}
+
 .agent-modal-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
