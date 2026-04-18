@@ -1,12 +1,13 @@
 import { createAvatar } from '@dicebear/core'
-import { openPeeps } from '@dicebear/collection'
+import { create as pixelArt } from '@dicebear/pixel-art'
 
 export function buildAvatar(seed: string, backgroundColor: string) {
-  return createAvatar(openPeeps, {
+  const avatar = createAvatar(pixelArt as never, {
     seed,
-    radius: 16,
     backgroundColor: [backgroundColor.replace('#', '')],
     backgroundType: ['solid'],
-    scale: 105,
-  }).toDataUri()
+    scale: 120,
+  } as never)
+
+  return avatar.toDataUri()
 }
