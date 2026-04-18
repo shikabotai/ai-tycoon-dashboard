@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import './App.css'
 import { supabase } from './lib/supabase'
+import { agentIdentities } from './agentIdentities'
 
 type QueueHealth = {
   observed_at: string | null
@@ -25,6 +26,8 @@ type TaskRow = {
   id: string
   title: string
   project_id: string | null
+  assigned_agent_id?: string | null
+  status?: string
 }
 
 type EventRow = {
@@ -66,6 +69,19 @@ type ReviewItem = {
   approvalStatus: string
 }
 
+type AgentRow = {
+  id: string
+  role: string
+  display_name: string
+  status: string
+}
+
+const DECK_LAYOUT = [
+  ['gateway', 'manager', 'reviewer'],
+  ['researcher', 'content', null],
+  ['worker-1', 'worker-2', null],
+]
+
 export default function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -76,6 +92,7 @@ export default function App() {
   const [events, setEvents] = useState<EventRow[]>([])
   const [artifacts, setArtifacts] = useState<ArtifactRow[]>([])
   const [approvals, setApprovals] = useState<ApprovalRow[]>([])
+  const [agents, setAgents] = useState<AgentRow[]>([])
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null)
   const [selectedArtifactId, setSelectedArtifactId] = useState<string | null>(null)
   const [approvalBusy, setApprovalBusy] = useState(false)
@@ -87,20 +104,21 @@ export default function App() {
       setLoading(true)
       setError(null)
 
-      const [queueRes, pnlRes, publicationsRes, projectsRes, tasksRes, eventsRes, artifactsRes, approvalsRes] = await Promise.all([
+      const [queueRes, pnlRes, publicationsRes, projectsRes, tasksRes, eventsRes, artifactsRes, approvalsRes, agentsRes] = await Promise.all([
         supabase.from('v_queue_health').select('observed_at,runnable_count,in_progress_count,flagged_count').limit(1).maybeSingle(),
         supabase.from('v_project_pnl').select('project_id,revenue_usd,cost_usd,margin_usd').order('month', { ascending: false }).limit(50),
         supabase.from('publications').select('project_id,published_at').order('published_at', { ascending: false }).limit(100),
         supabase.from('projects').select('id,title').order('title'),
-        supabase.from('tasks').select('id,title,project_id').order('updated_at', { ascending: false }).limit(120),
+        supabase.from('tasks').select('id,title,project_id,assigned_agent_id,status').order('updated_at', { ascending: false }).limit(120),
         supabase.from('task_events').select('id,task_id,event_type,actor_agent_id,created_at,payload').order('created_at', { ascending: false }).limit(40),
         supabase.from('artifacts').select('id,task_id,artifact_type,content,filename,storage_path,created_at').in('artifact_type', ['draft', 'draft_file', 'delivery_note', 'package']).order('created_at', { ascending: false }).limit(120),
         supabase.from('approvals').select('id,task_id,status,comment,created_at').order('created_at', { ascending: false }).limit(120),
+        supabase.from('agents').select('id,role,display_name,status').order('id'),
       ])
 
       if (cancelled) return
 
-      const firstError = queueRes.error || pnlRes.error || publicationsRes.error || projectsRes.error || tasksRes.error || eventsRes.error || artifactsRes.error || approvalsRes.error
+      const firstError = queueRes.error || pnlRes.error || publicationsRes.error || projectsRes.error || tasksRes.error || eventsRes.error || artifactsRes.error || approvalsRes.error || agentsRes.error
       if (firstError) {
         setError(firstError.message)
         setLoading(false)
@@ -115,6 +133,7 @@ export default function App() {
       const eventRows = (eventsRes.data ?? []) as EventRow[]
       const artifactRows = (artifactsRes.data ?? []) as ArtifactRow[]
       const approvalRows = (approvalsRes.data ?? []) as ApprovalRow[]
+      const agentRows = (agentsRes.data ?? []) as AgentRow[]
 
       setQueueHealth(queue)
       setProjects(projectRows)
@@ -122,6 +141,7 @@ export default function App() {
       setEvents(eventRows)
       setArtifacts(artifactRows)
       setApprovals(approvalRows)
+      setAgents(agentRows)
 
       const latestPnlByProject = new Map<string, { revenue_usd: number; cost_usd: number; margin_usd: number }>()
       for (const row of pnlRows) {
@@ -216,6 +236,18 @@ export default function App() {
 
   const selectedReviewItem = selectedArtifactId ? reviewItems.find((item) => item.artifactId === selectedArtifactId) : reviewItems[0]
 
+  const chamberCards = useMemo(() => {
+    return agents
+      .filter((agent) => ['gateway', 'manager', 'reviewer', 'researcher', 'content', 'worker-1', 'worker-2'].includes(agent.id))
+      .map((agent) => {
+        const activeTasks = tasks.filter((task) => task.assigned_agent_id === agent.id && (!selectedProjectId || task.project_id === selectedProjectId) && task.status !== 'done' && task.status !== 'published' && task.status !== 'cancelled')
+        return {
+          ...agent,
+          activeTasks,
+        }
+      })
+  }, [agents, selectedProjectId, tasks])
+
   async function decideItem(taskId: string, artifactId: string, status: 'approved' | 'rejected', comment?: string) {
     const pending = approvals.find((item) => item.task_id === taskId && item.status === 'pending')
     if (pending) {
@@ -232,8 +264,8 @@ export default function App() {
       <main className="safe-mode-main">
         <div className="safe-mode-card">
           <p className="eyebrow">AI Sensei Dashboard</p>
-          <h1>Stability Rebuild, Phase 3</h1>
-          <p className="subcopy">This phase restores the review dock using isolated data paths so approvals stay real without reintroducing the old crash pattern.</p>
+          <h1>Stability Rebuild, Phase 4</h1>
+          <p className="subcopy">The chamber deck is back as a simpler static view, no risky camera layer, no gesture system, just a stable command deck.</p>
 
           <label className="project-switcher">
             <span>Business focus</span>
@@ -293,6 +325,26 @@ export default function App() {
             )}
           </section>
         </div>
+
+        <section className="safe-mode-card chamber-section-card">
+          <h2>Agent Deck</h2>
+          <div className="chamber-deck-grid">
+            {DECK_LAYOUT.flat().map((id, index) => {
+              if (!id) return <div key={`empty-${index}`} className="chamber-placeholder" />
+              const chamber = chamberCards.find((agent) => agent.id === id)
+              if (!chamber) return <div key={id} className="chamber-card chamber-placeholder">Offline</div>
+              const identity = agentIdentities[chamber.id] ?? agentIdentities.gateway
+              return (
+                <div key={chamber.id} className={`chamber-card theme-${identity.roomTheme}`} style={{ ['--agent-primary' as string]: identity.palette.primary, ['--agent-secondary' as string]: identity.palette.secondary }}>
+                  <div className="chamber-glyph">{identity.name.slice(0, 1)}</div>
+                  <strong>{identity.name}</strong>
+                  <span>{identity.subtitle}</span>
+                  <small>{chamber.activeTasks.length} active task{chamber.activeTasks.length === 1 ? '' : 's'}</small>
+                </div>
+              )
+            })}
+          </div>
+        </section>
 
         <div className="safe-mode-grid single-column-grid">
           <section className="safe-mode-card">
