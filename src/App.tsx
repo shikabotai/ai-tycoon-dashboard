@@ -18,7 +18,7 @@ const MAX_ZOOM = 1.8
 const INITIAL_CAMERA = { x: 0, y: 0 }
 
 export default function App() {
-  const { queueHealth, pipeline, watchdog, loading, error, agentChambers, artifactReviewItems } = useDashboardData()
+  const { queueHealth, pipeline, watchdog, loading, error, agentChambers, artifactReviewItems, decideApproval } = useDashboardData()
   const chamberMap = useMemo(() => new Map(agentChambers.map((agent) => [agent.id, agent])), [agentChambers])
   const [zoom, setZoom] = useState(0.72)
   const [camera, setCamera] = useState(INITIAL_CAMERA)
@@ -27,6 +27,7 @@ export default function App() {
   const [rightOpen, setRightOpen] = useState(false)
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null)
   const [selectedArtifactId, setSelectedArtifactId] = useState<string | null>(null)
+  const [approvalBusy, setApprovalBusy] = useState(false)
   const viewportRef = useRef<HTMLDivElement | null>(null)
   const gestureRef = useRef<{ startDistance: number; startZoom: number; midpointX: number; midpointY: number } | null>(null)
   const dragRef = useRef<{ active: boolean; startX: number; startY: number; startCameraX: number; startCameraY: number }>({
@@ -244,7 +245,23 @@ export default function App() {
 
             <div className="artifact-preview-card">
               {selectedArtifact ? (
-                <ArtifactPreview item={selectedArtifact} />
+                <ArtifactPreview item={selectedArtifact} approvalBusy={approvalBusy} onApprove={async (item) => {
+                  try {
+                    setApprovalBusy(true)
+                    await decideApproval(item, 'approved')
+                  } finally {
+                    setApprovalBusy(false)
+                  }
+                }} onReject={async (item) => {
+                  const reason = window.prompt('Why are you declining this artifact?', 'Needs revision')
+                  if (reason === null) return
+                  try {
+                    setApprovalBusy(true)
+                    await decideApproval(item, 'rejected', reason)
+                  } finally {
+                    setApprovalBusy(false)
+                  }
+                }} />
               ) : (
                 <p className="empty">Select an artifact to review.</p>
               )}
@@ -444,7 +461,7 @@ function AgentRoom({ chamber, onOpen }: { chamber?: AgentChamber; onOpen?: () =>
   )
 }
 
-function ArtifactPreview({ item }: { item: ArtifactReviewItem }) {
+function ArtifactPreview({ item, approvalBusy, onApprove, onReject }: { item: ArtifactReviewItem; approvalBusy: boolean; onApprove: (item: ArtifactReviewItem) => Promise<void>; onReject: (item: ArtifactReviewItem) => Promise<void> }) {
   const previewText = item.content?.trim() || 'No inline artifact content stored yet. Open the file path when available.'
 
   return (
@@ -473,10 +490,14 @@ function ArtifactPreview({ item }: { item: ArtifactReviewItem }) {
       </div>
 
       <div className="artifact-actions">
-        <button className="action-button primary">Approve to ship</button>
-        <button className="action-button danger">Decline</button>
+        <button className="action-button primary" disabled={approvalBusy} onClick={() => void onApprove(item)}>
+          {approvalBusy ? 'Saving...' : 'Approve to ship'}
+        </button>
+        <button className="action-button danger" disabled={approvalBusy} onClick={() => void onReject(item)}>
+          {approvalBusy ? 'Saving...' : 'Decline'}
+        </button>
         {item.storagePath && (
-          <button className="action-button secondary" onClick={() => window.alert(`Open artifact path: ${item.storagePath}`)}>
+          <button className="action-button secondary" disabled={approvalBusy} onClick={() => window.alert(`Open artifact path: ${item.storagePath}`)}>
             Open file path
           </button>
         )}
