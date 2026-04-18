@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 import { supabase } from './lib/supabase'
 import { agentIdentities } from './agentIdentities'
@@ -104,6 +104,9 @@ export default function App() {
   const [approvalBusy, setApprovalBusy] = useState(false)
   const [taskBusy, setTaskBusy] = useState(false)
   const [openPanel, setOpenPanel] = useState<PanelKey | null>(null)
+  const [mapScale, setMapScale] = useState(0.72)
+  const [mapOffset, setMapOffset] = useState({ x: 0, y: -80 })
+  const dragState = useRef<{ x: number; y: number; originX: number; originY: number } | null>(null)
 
   const [metricsLoaded, setMetricsLoaded] = useState(false)
   const [activityLoaded, setActivityLoaded] = useState(false)
@@ -345,6 +348,14 @@ export default function App() {
     setOpenPanel((current) => (current === panel ? null : panel))
   }
 
+  function clampScale(next: number) {
+    return Math.max(0.55, Math.min(1.4, next))
+  }
+
+  function zoomMap(delta: number) {
+    setMapScale((current) => clampScale(Number((current + delta).toFixed(2))))
+  }
+
   async function reloadLazyPanel(panel: PanelKey) {
     if (panel === 'metrics') setMetricsLoaded(false)
     if (panel === 'activity') setActivityLoaded(false)
@@ -412,19 +423,48 @@ export default function App() {
 
         <section className="safe-mode-card chamber-section-card chamber-command-card map-stage-card ship-stage-card minimal-map-card">
 
-          <div className="ship-stage-shell">
-            <div className="ship-stage-stars" />
-            <div className="ship-stage-hull" />
-            <div className="ship-stage-bridge" />
+          <div className="map-camera-controls">
+            <button className="panel-refresh-button" onClick={() => zoomMap(0.12)}>Zoom in</button>
+            <button className="panel-refresh-button" onClick={() => zoomMap(-0.12)}>Zoom out</button>
+            <button className="panel-refresh-button" onClick={() => {
+              setMapScale(0.72)
+              setMapOffset({ x: 0, y: -80 })
+            }}>Reset view</button>
+          </div>
 
-            <div className="ship-stage-grid">
+          <div className="ship-stage-shell" onWheel={(event) => {
+            event.preventDefault()
+            zoomMap(event.deltaY > 0 ? -0.08 : 0.08)
+          }} onPointerMove={(event) => {
+            if (!dragState.current) return
+            const deltaX = event.clientX - dragState.current.x
+            const deltaY = event.clientY - dragState.current.y
+            setMapOffset({ x: dragState.current.originX + deltaX, y: dragState.current.originY + deltaY })
+          }} onPointerUp={() => {
+            dragState.current = null
+          }} onPointerLeave={() => {
+            dragState.current = null
+          }}>
+            <div className="ship-stage-stars" />
+            <div className="ship-stage-camera" style={{ transform: `translate(${mapOffset.x}px, ${mapOffset.y}px) scale(${mapScale})` }}>
+              <div className="ship-stage-hull" />
+              <div className="ship-stage-bridge" />
+
+              <div className="ship-stage-grid">
               {DECK_LAYOUT.flat().map((id, index) => {
                 if (!id) return <div key={`empty-${index}`} className="ship-stage-empty" />
                 const chamber = chamberCards.find((agent) => agent.id === id)
                 if (!chamber) return <div key={id} className="chamber-card chamber-placeholder">Offline</div>
                 const identity = agentIdentities[chamber.id] ?? agentIdentities.gateway
                 return (
-                  <div key={chamber.id} className={`chamber-card command-chamber-card ship-chamber-card theme-${identity.roomTheme} ${chamber.activeTasks.length > 0 ? 'has-work' : ''} ${chamber.id === 'manager' ? 'manager-hub-card' : ''}`} style={{ ['--agent-primary' as string]: identity.palette.primary, ['--agent-secondary' as string]: identity.palette.secondary, ['--agent-glow' as string]: identity.palette.glow }}>
+                  <div key={chamber.id} className={`chamber-card command-chamber-card ship-chamber-card theme-${identity.roomTheme} ${chamber.activeTasks.length > 0 ? 'has-work' : ''} ${chamber.id === 'manager' ? 'manager-hub-card' : ''}`} style={{ ['--agent-primary' as string]: identity.palette.primary, ['--agent-secondary' as string]: identity.palette.secondary, ['--agent-glow' as string]: identity.palette.glow }} onPointerDown={(event) => {
+                    dragState.current = {
+                      x: event.clientX,
+                      y: event.clientY,
+                      originX: mapOffset.x,
+                      originY: mapOffset.y,
+                    }
+                  }}>
                     <div className="chamber-card-topline">
                       <div className="chamber-glyph">{identity.name.slice(0, 1)}</div>
                       <span className="chamber-task-count">{chamber.activeTasks.length} active</span>
@@ -445,6 +485,7 @@ export default function App() {
                   </div>
                 )
               })}
+              </div>
             </div>
           </div>
         </section>

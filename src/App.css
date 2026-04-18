@@ -236,12 +236,32 @@ h1 {
   align-items: stretch;
 }
 
+.map-camera-controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 0 0 10px;
+}
+
 .ship-stage-shell {
   position: relative;
   min-height: 640px;
   margin-top: 10px;
   border-radius: 30px;
   overflow: hidden;
+  touch-action: none;
+  cursor: grab;
+}
+
+.ship-stage-shell:active {
+  cursor: grabbing;
+}
+
+.ship-stage-camera {
+  position: absolute;
+  inset: 0;
+  transform-origin: center top;
+  transition: transform 120ms ease;
 }
 
 .ship-stage-stars {
