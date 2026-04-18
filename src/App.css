@@ -213,6 +213,16 @@ h1 {
   border: 1px solid rgba(125, 211, 252, 0.14);
 }
 
+.mini-task-button {
+  margin-top: 4px;
+  border: 1px solid rgba(125, 211, 252, 0.16);
+  background: rgba(125, 211, 252, 0.08);
+  color: #eaf4ff;
+  border-radius: 12px;
+  padding: 8px 10px;
+  text-align: left;
+}
+
 .chamber-glyph {
   width: 48px;
   height: 48px;
@@ -378,6 +388,10 @@ h1 {
 
 .task-detail-modal {
   width: min(960px, 100%);
+}
+
+.task-detail-actions {
+  margin-top: 16px;
 }
 
 .task-detail-sections {
@@ -1275,7 +1289,8 @@ th {
 
   .project-summary-strip,
   .project-summary-panels,
-  .task-detail-sections {
+  .task-detail-sections,
+  .agent-modal-grid {
     grid-template-columns: 1fr;
   }
 

@@ -76,6 +76,14 @@ type AgentRow = {
   status: string
 }
 
+type TaskDetail = {
+  task: TaskRow
+  projectTitle?: string
+  approvals: ApprovalRow[]
+  artifacts: ArtifactRow[]
+  events: EventRow[]
+}
+
 const DECK_LAYOUT = [
   ['gateway', 'manager', 'reviewer'],
   ['researcher', 'content', null],
@@ -95,7 +103,9 @@ export default function App() {
   const [agents, setAgents] = useState<AgentRow[]>([])
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null)
   const [selectedArtifactId, setSelectedArtifactId] = useState<string | null>(null)
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null)
   const [approvalBusy, setApprovalBusy] = useState(false)
+  const [taskBusy, setTaskBusy] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -110,7 +120,7 @@ export default function App() {
         supabase.from('publications').select('project_id,published_at').order('published_at', { ascending: false }).limit(100),
         supabase.from('projects').select('id,title').order('title'),
         supabase.from('tasks').select('id,title,project_id,assigned_agent_id,status').order('updated_at', { ascending: false }).limit(120),
-        supabase.from('task_events').select('id,task_id,event_type,actor_agent_id,created_at,payload').order('created_at', { ascending: false }).limit(40),
+        supabase.from('task_events').select('id,task_id,event_type,actor_agent_id,created_at,payload').order('created_at', { ascending: false }).limit(60),
         supabase.from('artifacts').select('id,task_id,artifact_type,content,filename,storage_path,created_at').in('artifact_type', ['draft', 'draft_file', 'delivery_note', 'package']).order('created_at', { ascending: false }).limit(120),
         supabase.from('approvals').select('id,task_id,status,comment,created_at').order('created_at', { ascending: false }).limit(120),
         supabase.from('agents').select('id,role,display_name,status').order('id'),
@@ -171,9 +181,10 @@ export default function App() {
     }
   }, [selectedProjectId])
 
+  const projectMap = useMemo(() => new Map(projects.map((project) => [project.id, project.title])), [projects])
+  const taskMap = useMemo(() => new Map(tasks.map((task) => [task.id, task])), [tasks])
+
   const filteredActivity = useMemo(() => {
-    const projectMap = new Map(projects.map((project) => [project.id, project.title]))
-    const taskMap = new Map(tasks.map((task) => [task.id, task]))
     const items: Array<{ id: string; eventType: string; actor: string; taskTitle: string; projectTitle?: string; detail?: string }> = []
 
     for (const event of events) {
@@ -198,11 +209,9 @@ export default function App() {
     }
 
     return items.slice(0, 12)
-  }, [events, projects, selectedProjectId, tasks])
+  }, [events, projectMap, selectedProjectId, taskMap])
 
   const reviewItems = useMemo(() => {
-    const projectMap = new Map(projects.map((project) => [project.id, project.title]))
-    const taskMap = new Map(tasks.map((task) => [task.id, task]))
     const latestApprovalByTask = new Map<string, ApprovalRow>()
     const items: ReviewItem[] = []
 
@@ -232,7 +241,7 @@ export default function App() {
     }
 
     return items.slice(0, 12)
-  }, [approvals, artifacts, projects, selectedProjectId, tasks])
+  }, [approvals, artifacts, projectMap, selectedProjectId, taskMap])
 
   const selectedReviewItem = selectedArtifactId ? reviewItems.find((item) => item.artifactId === selectedArtifactId) : reviewItems[0]
 
@@ -248,6 +257,23 @@ export default function App() {
       })
   }, [agents, selectedProjectId, tasks])
 
+  const selectedTaskDetail = useMemo(() => {
+    if (!selectedTaskId) return undefined
+    const task = taskMap.get(selectedTaskId)
+    if (!task) return undefined
+    return {
+      task,
+      projectTitle: task.project_id ? projectMap.get(task.project_id) : undefined,
+      approvals: approvals.filter((item) => item.task_id === selectedTaskId),
+      artifacts: artifacts.filter((item) => item.task_id === selectedTaskId),
+      events: events.filter((item) => item.task_id === selectedTaskId),
+    } satisfies TaskDetail
+  }, [approvals, artifacts, events, projectMap, selectedTaskId, taskMap])
+
+  async function reloadPageData() {
+    window.location.reload()
+  }
+
   async function decideItem(taskId: string, artifactId: string, status: 'approved' | 'rejected', comment?: string) {
     const pending = approvals.find((item) => item.task_id === taskId && item.status === 'pending')
     if (pending) {
@@ -259,13 +285,18 @@ export default function App() {
     }
   }
 
+  async function patchTask(taskId: string, patch: Record<string, unknown>) {
+    const { error } = await supabase.from('tasks').update(patch).eq('id', taskId)
+    if (error) throw error
+  }
+
   return (
     <div className="app-shell safe-mode-shell">
       <main className="safe-mode-main">
         <div className="safe-mode-card">
           <p className="eyebrow">AI Sensei Dashboard</p>
-          <h1>Stability Rebuild, Phase 4</h1>
-          <p className="subcopy">The chamber deck is back as a simpler static view, no risky camera layer, no gesture system, just a stable command deck.</p>
+          <h1>Stability Rebuild, Phase 5</h1>
+          <p className="subcopy">Task drill-down is back in a simpler modal path. We’re restoring useful control without bringing back the old brittle UI layers.</p>
 
           <label className="project-switcher">
             <span>Business focus</span>
@@ -340,6 +371,9 @@ export default function App() {
                   <strong>{identity.name}</strong>
                   <span>{identity.subtitle}</span>
                   <small>{chamber.activeTasks.length} active task{chamber.activeTasks.length === 1 ? '' : 's'}</small>
+                  {chamber.activeTasks.slice(0, 2).map((task) => (
+                    <button key={task.id} className="mini-task-button" onClick={() => setSelectedTaskId(task.id)}>{task.title}</button>
+                  ))}
                 </div>
               )
             })}
@@ -382,7 +416,7 @@ export default function App() {
                           try {
                             setApprovalBusy(true)
                             await decideItem(selectedReviewItem.taskId, selectedReviewItem.artifactId, 'approved')
-                            window.location.reload()
+                            await reloadPageData()
                           } finally {
                             setApprovalBusy(false)
                           }
@@ -393,7 +427,7 @@ export default function App() {
                           try {
                             setApprovalBusy(true)
                             await decideItem(selectedReviewItem.taskId, selectedReviewItem.artifactId, 'rejected', reason)
-                            window.location.reload()
+                            await reloadPageData()
                           } finally {
                             setApprovalBusy(false)
                           }
@@ -412,6 +446,94 @@ export default function App() {
             )}
           </section>
         </div>
+
+        {selectedTaskDetail && (
+          <div className="agent-modal-backdrop" onClick={() => setSelectedTaskId(null)}>
+            <div className="agent-modal task-detail-modal" onClick={(event) => event.stopPropagation()}>
+              <button className="agent-modal-close" onClick={() => setSelectedTaskId(null)}>Close</button>
+              <div className="agent-modal-header">
+                <div>
+                  <p className="eyebrow">Task drill-down</p>
+                  <h2>{selectedTaskDetail.task.title}</h2>
+                  <p className="subcopy">{selectedTaskDetail.projectTitle || 'Unknown project'} • {selectedTaskDetail.task.status || 'unknown'}</p>
+                </div>
+              </div>
+
+              <div className="agent-modal-grid">
+                <div className="metric-card"><span>Approvals</span><strong>{selectedTaskDetail.approvals.length}</strong></div>
+                <div className="metric-card"><span>Artifacts</span><strong>{selectedTaskDetail.artifacts.length}</strong></div>
+                <div className="metric-card"><span>Events</span><strong>{selectedTaskDetail.events.length}</strong></div>
+              </div>
+
+              <div className="artifact-actions task-detail-actions">
+                <button className="action-button secondary" disabled={taskBusy} onClick={async () => {
+                  try {
+                    setTaskBusy(true)
+                    await patchTask(selectedTaskDetail.task.id, { status: 'assigned' })
+                    await reloadPageData()
+                  } finally {
+                    setTaskBusy(false)
+                  }
+                }}>{taskBusy ? 'Saving...' : 'Reset to assigned'}</button>
+                <button className="action-button danger" disabled={taskBusy} onClick={async () => {
+                  const reason = window.prompt('Cancel this task? Add an optional reason.', 'cancelled from dashboard')
+                  if (reason === null) return
+                  try {
+                    setTaskBusy(true)
+                    await patchTask(selectedTaskDetail.task.id, { status: 'cancelled' })
+                    await reloadPageData()
+                  } finally {
+                    setTaskBusy(false)
+                  }
+                }}>{taskBusy ? 'Saving...' : 'Cancel task'}</button>
+              </div>
+
+              <div className="task-detail-sections">
+                <section className="summary-panel">
+                  <h3>Artifacts</h3>
+                  {selectedTaskDetail.artifacts.length === 0 ? <p className="empty">No artifacts.</p> : (
+                    <div className="summary-list">
+                      {selectedTaskDetail.artifacts.map((item) => (
+                        <div key={item.id} className="summary-item">
+                          <strong>{item.filename || item.artifact_type}</strong>
+                          <span>{item.created_at}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </section>
+
+                <section className="summary-panel">
+                  <h3>Approvals</h3>
+                  {selectedTaskDetail.approvals.length === 0 ? <p className="empty">No approvals.</p> : (
+                    <div className="summary-list">
+                      {selectedTaskDetail.approvals.map((item) => (
+                        <div key={item.id} className="summary-item">
+                          <strong>{item.status}</strong>
+                          <span>{item.comment || item.created_at}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </section>
+
+                <section className="summary-panel">
+                  <h3>Event trail</h3>
+                  {selectedTaskDetail.events.length === 0 ? <p className="empty">No events.</p> : (
+                    <div className="summary-list">
+                      {selectedTaskDetail.events.slice(0, 12).map((item) => (
+                        <div key={item.id} className="summary-item">
+                          <strong>{item.event_type}</strong>
+                          <span>{item.actor_agent_id || 'system'} • {item.created_at}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </section>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   )
