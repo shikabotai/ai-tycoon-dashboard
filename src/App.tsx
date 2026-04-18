@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import './App.css'
 import type { AgentChamber, ArtifactReviewItem } from './types'
 import { agentIdentities } from './agentIdentities'
@@ -11,129 +11,17 @@ const LAYOUT: Array<Array<string | null>> = [
   ['worker-1', null, 'worker-2'],
 ]
 
-const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
-const MIN_ZOOM = 0.28
-const MAX_ZOOM = 1.8
-const INITIAL_CAMERA = { x: 0, y: 0 }
-
 export default function App() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null)
   const { queueHealth, loading, error, agentChambers, artifactReviewItems, decideApproval, summary, activityFeed, projects } = useDashboardData(selectedProjectId)
   const chamberMap = useMemo(() => new Map(agentChambers.map((agent) => [agent.id, agent])), [agentChambers])
-  const [zoom, setZoom] = useState(0.72)
-  const [camera, setCamera] = useState(INITIAL_CAMERA)
+  const zoom = 0.72
   const [topOpen, setTopOpen] = useState(false)
   const [leftOpen, setLeftOpen] = useState(false)
   const [rightOpen, setRightOpen] = useState(false)
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null)
   const [selectedArtifactId, setSelectedArtifactId] = useState<string | null>(null)
   const [approvalBusy, setApprovalBusy] = useState(false)
-  const viewportRef = useRef<HTMLDivElement | null>(null)
-  const gestureRef = useRef<{ startDistance: number; startZoom: number; midpointX: number; midpointY: number } | null>(null)
-  const dragRef = useRef<{ active: boolean; startX: number; startY: number; startCameraX: number; startCameraY: number }>({
-    active: false,
-    startX: 0,
-    startY: 0,
-    startCameraX: 0,
-    startCameraY: 0,
-  })
-  const activePointerIdRef = useRef<number | null>(null)
-
-  const cancelDrag = () => {
-    dragRef.current.active = false
-    activePointerIdRef.current = null
-  }
-
-  const applyZoom = (nextZoom: number, clientX?: number, clientY?: number) => {
-    const viewport = viewportRef.current
-    const clamped = clamp(nextZoom, MIN_ZOOM, MAX_ZOOM)
-    if (!viewport) {
-      setZoom(clamped)
-      return
-    }
-
-    const rect = viewport.getBoundingClientRect()
-    const anchorX = (clientX ?? rect.left + rect.width / 2) - rect.left
-    const anchorY = (clientY ?? rect.top + rect.height / 2) - rect.top
-
-    setCamera((current) => {
-      const worldX = (anchorX - current.x) / zoom
-      const worldY = (anchorY - current.y) / zoom
-      return {
-        x: anchorX - worldX * clamped,
-        y: anchorY - worldY * clamped,
-      }
-    })
-    setZoom(clamped)
-  }
-
-  const onWheel: React.WheelEventHandler<HTMLDivElement> = (event) => {
-    event.preventDefault()
-    const factor = event.deltaY < 0 ? 1.14 : 0.86
-    applyZoom(zoom * factor, event.clientX, event.clientY)
-  }
-
-  const onPointerDown: React.PointerEventHandler<HTMLDivElement> = (event) => {
-    if (event.pointerType === 'touch' && event.isPrimary === false) return
-    dragRef.current = {
-      active: true,
-      startX: event.clientX,
-      startY: event.clientY,
-      startCameraX: camera.x,
-      startCameraY: camera.y,
-    }
-    activePointerIdRef.current = event.pointerId
-    event.currentTarget.setPointerCapture(event.pointerId)
-  }
-
-  const onPointerMove: React.PointerEventHandler<HTMLDivElement> = (event) => {
-    const drag = dragRef.current
-    if (!drag.active || activePointerIdRef.current !== event.pointerId) return
-    const dx = event.clientX - drag.startX
-    const dy = event.clientY - drag.startY
-    setCamera({ x: drag.startCameraX + dx, y: drag.startCameraY + dy })
-  }
-
-  const endPointer: React.PointerEventHandler<HTMLDivElement> = (event) => {
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId)
-    }
-    cancelDrag()
-  }
-
-  const onTouchStart: React.TouchEventHandler<HTMLDivElement> = (event) => {
-    if (event.touches.length === 2) {
-      cancelDrag()
-      const a = event.touches[0]
-      const b = event.touches[1]
-      const distance = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY)
-      gestureRef.current = {
-        startDistance: distance,
-        startZoom: zoom,
-        midpointX: (a.clientX + b.clientX) / 2,
-        midpointY: (a.clientY + b.clientY) / 2,
-      }
-    }
-  }
-
-  const onTouchMove: React.TouchEventHandler<HTMLDivElement> = (event) => {
-    if (event.touches.length !== 2 || !gestureRef.current) return
-    event.preventDefault()
-    const a = event.touches[0]
-    const b = event.touches[1]
-    if (!a || !b) return
-    const distance = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY)
-    const midpointX = (a.clientX + b.clientX) / 2
-    const midpointY = (a.clientY + b.clientY) / 2
-    const nextZoom = gestureRef.current.startZoom * (distance / gestureRef.current.startDistance)
-    applyZoom(nextZoom, midpointX, midpointY)
-  }
-
-  const onTouchEnd: React.TouchEventHandler<HTMLDivElement> = (event) => {
-    if (event.touches.length < 2) gestureRef.current = null
-    if (event.touches.length === 0) cancelDrag()
-  }
-
   const selectedChamber = selectedAgentId ? chamberMap.get(selectedAgentId) : undefined
   const selectedIdentity = selectedChamber ? agentIdentities[selectedChamber.id] : undefined
   const pendingArtifactReviewItems = (artifactReviewItems || []).filter((item) => item.approvalStatus === 'pending' || item.approvalStatus === 'none')
@@ -276,21 +164,10 @@ export default function App() {
       </aside>
 
       <main className="map-stage compact-ship">
-        <div className="map-hint">Pinch or scroll to zoom. Drag to pan.</div>
-        <div
-          ref={viewportRef}
-          className="map-viewport interactive camera-mode"
-          onWheel={onWheel}
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={endPointer}
-          onPointerLeave={endPointer}
-          onTouchStart={onTouchStart}
-          onTouchMove={onTouchMove}
-          onTouchEnd={onTouchEnd}
-        >
+        <div className="map-hint">Static ship view enabled for stability.</div>
+        <div className="map-viewport camera-mode static-mode">
           <div className="starfield" />
-          <div className="map-canvas compact camera-canvas" style={{ transform: `translate(${camera.x}px, ${camera.y}px) scale(${zoom})` }}>
+          <div className="map-canvas compact camera-canvas" style={{ transform: `scale(${zoom})` }}>
             <div className="ship-hull" />
             <div className="ship-spine" />
             <div className="ship-grid connected">
