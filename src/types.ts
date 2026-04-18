@@ -1,0 +1,49 @@
+export type QueueHealth = {
+  observed_at: string
+  runnable_count: number
+  in_progress_count: number
+  flagged_count: number
+  terminal_failure_count: number
+  review_loop_count: number
+  retry_loop_count: number
+  stale_active_count: number
+  awaiting_approval_count: number
+  delivery_failed_count: number
+  delivery_failure_history_count: number
+  max_watchdog_severity: number | null
+  oldest_stale_task_id: string | null
+  oldest_stale_project: string | null
+  oldest_stale_task_title: string | null
+  oldest_stale_updated_at: string | null
+  hottest_review_loop_task_id: string | null
+  hottest_review_loop_project: string | null
+  hottest_review_loop_task_title: string | null
+  hottest_review_loop_rejected_count: number | null
+  hottest_retry_loop_task_id: string | null
+  hottest_retry_loop_project: string | null
+  hottest_retry_loop_task_title: string | null
+  hottest_retry_loop_retry_count: number | null
+}
+
+export type PipelineRow = {
+  project: string
+  status: string
+  task_count: number
+}
+
+export type WatchdogRow = {
+  id: string
+  project: string
+  task_title: string
+  task_type: string | null
+  status: string
+  assigned_agent_id: string | null
+  current_step_index: number | null
+  attempt_count: number
+  max_attempts: number | null
+  last_error: string | null
+  rejection_reason: string | null
+  watchdog_reason: string
+  severity: number
+  updated_at: string
+}
