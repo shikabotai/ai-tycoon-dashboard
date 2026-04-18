@@ -1,12 +1,17 @@
 import { createAvatar } from '@dicebear/core'
-import { openPeeps } from '@dicebear/collection'
+import * as pixelArtModule from '@dicebear/pixel-art'
 
-export function buildAvatar(seed: string, backgroundColor: string) {
-  return createAvatar(openPeeps, {
+const pixelArtStyle = {
+  meta: pixelArtModule.meta,
+  schema: pixelArtModule.schema,
+  create: pixelArtModule.create,
+}
+
+export function buildAvatar(seed: string) {
+  return createAvatar(pixelArtStyle, {
     seed,
-    radius: 16,
-    backgroundColor: [backgroundColor.replace('#', '')],
+    scale: 120,
     backgroundType: ['solid'],
-    scale: 105,
+    radius: 6,
   }).toDataUri()
 }
