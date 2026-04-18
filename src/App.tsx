@@ -4,11 +4,10 @@ import type { AgentChamber } from './types'
 import { useDashboardData } from './hooks/useDashboardData'
 
 const LAYOUT: Array<Array<string | null>> = [
-  ['gateway', null, 'manager', null, 'reviewer'],
-  [null, null, null, null, null],
-  ['researcher', null, null, null, 'content'],
-  [null, null, null, null, null],
-  ['worker-1', null, null, null, 'worker-2'],
+  [null, 'manager', null],
+  ['gateway', null, 'reviewer'],
+  ['researcher', null, 'content'],
+  ['worker-1', null, 'worker-2'],
 ]
 
 export default function App() {
@@ -19,8 +18,8 @@ export default function App() {
   const [leftOpen, setLeftOpen] = useState(false)
   const [rightOpen, setRightOpen] = useState(false)
 
-  const zoomIn = () => setZoom((value) => Math.min(1.8, Number((value + 0.1).toFixed(2))))
-  const zoomOut = () => setZoom((value) => Math.max(0.7, Number((value - 0.1).toFixed(2))))
+  const zoomIn = () => setZoom((value) => Math.min(1.5, Number((value + 0.1).toFixed(2))))
+  const zoomOut = () => setZoom((value) => Math.max(0.8, Number((value - 0.1).toFixed(2))))
   const resetZoom = () => setZoom(1)
 
   return (
@@ -40,7 +39,7 @@ export default function App() {
           <p className="eyebrow">AI Tycoon Starship</p>
           <h1>Interior Agent Deck</h1>
           <p className="subcopy">
-            Zoom and pan through the ship. Each chamber represents one of your agents, with ambient motion and live task activity.
+            A single connected ship layout, with the manager chamber at the command hub and the rest of the crew linked through internal corridors.
           </p>
         </div>
         <div className="hero-stats compact">
@@ -118,7 +117,7 @@ export default function App() {
         </div>
       </aside>
 
-      <main className="map-stage">
+      <main className="map-stage compact-ship">
         <div className="map-toolbar">
           <button onClick={zoomOut}>-</button>
           <span>{Math.round(zoom * 100)}%</span>
@@ -131,15 +130,17 @@ export default function App() {
 
         <div className="map-viewport">
           <div className="starfield" />
-          <div className="map-canvas" style={{ transform: `scale(${zoom})` }}>
-            <div className="ship-grid giant">
+          <div className="map-canvas compact" style={{ transform: `scale(${zoom})` }}>
+            <div className="ship-hull" />
+            <div className="ship-spine" />
+            <div className="ship-grid connected">
               {LAYOUT.map((row, rowIndex) => (
-                <div className="ship-row giant" key={rowIndex}>
+                <div className="ship-row connected" key={rowIndex}>
                   {row.map((cell, cellIndex) =>
                     cell ? (
                       <AgentRoom key={cell} chamber={chamberMap.get(cell)} />
                     ) : (
-                      <HallwayNode key={`${rowIndex}-${cellIndex}`} rowIndex={rowIndex} cellIndex={cellIndex} />
+                      <Connector key={`${rowIndex}-${cellIndex}`} rowIndex={rowIndex} cellIndex={cellIndex} />
                     ),
                   )}
                 </div>
@@ -152,12 +153,14 @@ export default function App() {
   )
 }
 
-function HallwayNode({ rowIndex, cellIndex }: { rowIndex: number; cellIndex: number }) {
-  const vertical = rowIndex > 0 && rowIndex < LAYOUT.length - 1
-  const horizontal = cellIndex > 0 && cellIndex < LAYOUT[0].length - 1
+function Connector({ rowIndex, cellIndex }: { rowIndex: number; cellIndex: number }) {
+  const vertical = true
+  const horizontal = rowIndex > 0
+  const managerBridge = rowIndex === 0 && cellIndex === 0
+  const managerBridgeRight = rowIndex === 0 && cellIndex === 2
 
   return (
-    <div className="hallway hub">
+    <div className={`connector-node ${managerBridge || managerBridgeRight ? 'manager-bridge' : ''}`}>
       {vertical && <div className="hallway-vertical animated" />}
       {horizontal && <div className="hallway-horizontal animated" />}
       <div className="hallway-core" />
