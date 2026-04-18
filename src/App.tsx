@@ -19,7 +19,7 @@ const INITIAL_CAMERA = { x: 0, y: 0 }
 
 export default function App() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null)
-  const { queueHealth, pipeline, watchdog, loading, error, agentChambers, artifactReviewItems, decideApproval, summary, activityFeed, projects } = useDashboardData(selectedProjectId)
+  const { queueHealth, pipeline, watchdog, loading, error, agentChambers, artifactReviewItems, decideApproval, summary, activityFeed, projects, projectSummary } = useDashboardData(selectedProjectId)
   const chamberMap = useMemo(() => new Map(agentChambers.map((agent) => [agent.id, agent])), [agentChambers])
   const [zoom, setZoom] = useState(0.72)
   const [camera, setCamera] = useState(INITIAL_CAMERA)
@@ -185,6 +185,72 @@ export default function App() {
           <StatCard label="Active" value={queueHealth?.in_progress_count ?? 0} />
           <StatCard label="Alerts" value={queueHealth?.flagged_count ?? 0} danger />
         </div>
+
+        <div className="project-summary-strip">
+          <div className="metric-card">
+            <span>Active destinations</span>
+            <strong>{projectSummary.activeDestinations.length}</strong>
+          </div>
+          <div className="metric-card">
+            <span>Recent publications</span>
+            <strong>{projectSummary.recentPublications.length}</strong>
+          </div>
+          <div className="metric-card">
+            <span>Delivery failures</span>
+            <strong>{projectSummary.deliveryFailures.length}</strong>
+          </div>
+        </div>
+        {(projectSummary.activeDestinations.length > 0 || projectSummary.recentPublications.length > 0 || projectSummary.deliveryFailures.length > 0) && (
+          <div className="project-summary-panels">
+            <section className="summary-panel">
+              <h3>Destinations</h3>
+              {projectSummary.activeDestinations.length === 0 ? (
+                <p className="empty">No active destinations.</p>
+              ) : (
+                <div className="summary-list">
+                  {projectSummary.activeDestinations.map((item) => (
+                    <div key={item.id} className="summary-item">
+                      <strong>{item.destination}</strong>
+                      <span>{item.is_active ? 'active' : 'inactive'}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+
+            <section className="summary-panel">
+              <h3>Recent publications</h3>
+              {projectSummary.recentPublications.length === 0 ? (
+                <p className="empty">No publications yet.</p>
+              ) : (
+                <div className="summary-list">
+                  {projectSummary.recentPublications.map((item) => (
+                    <div key={item.id} className="summary-item">
+                      <strong>{item.destination}</strong>
+                      <span>{new Date(item.published_at).toLocaleString()}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+
+            <section className="summary-panel">
+              <h3>Delivery health</h3>
+              {projectSummary.deliveryFailures.length === 0 ? (
+                <p className="empty">No recent delivery failures.</p>
+              ) : (
+                <div className="summary-list">
+                  {projectSummary.deliveryFailures.map((item) => (
+                    <div key={item.id} className="summary-item">
+                      <strong>{item.destination}</strong>
+                      <span>{item.error || item.status}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+          </div>
+        )}
       </header>
 
       <aside className={`side-drawer left ${leftOpen ? 'open' : ''}`}>

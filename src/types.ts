@@ -140,7 +140,26 @@ export type PublicationRow = {
   project_id: string | null
   task_id: string | null
   destination: string
+  external_url?: string | null
   published_at: string
+}
+
+export type ProjectDestinationRow = {
+  id: string
+  project_id: string
+  destination: string
+  is_active: boolean
+  config: Record<string, unknown> | null
+}
+
+export type DeliveryRow = {
+  id: string
+  task_id: string
+  destination: string
+  status: string
+  destination_ref?: string | null
+  error?: string | null
+  delivered_at?: string | null
 }
 
 export type DashboardSummary = {
@@ -149,6 +168,12 @@ export type DashboardSummary = {
   marginUsd: number
   publishedToday: number
   approvalsPending: number
+}
+
+export type ProjectSummary = {
+  activeDestinations: ProjectDestinationRow[]
+  recentPublications: PublicationRow[]
+  deliveryFailures: DeliveryRow[]
 }
 
 export type TaskEventRow = {

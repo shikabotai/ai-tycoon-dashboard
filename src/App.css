@@ -177,6 +177,49 @@ h1 {
   min-width: min(100%, 720px);
 }
 
+.project-summary-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.project-summary-panels {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.summary-panel {
+  border-radius: 18px;
+  padding: 16px;
+  background: rgba(8, 14, 28, 0.78);
+  border: 1px solid rgba(125, 211, 252, 0.14);
+}
+
+.summary-panel h3 {
+  margin: 0 0 12px;
+}
+
+.summary-list {
+  display: grid;
+  gap: 10px;
+}
+
+.summary-item {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(125, 211, 252, 0.06);
+}
+
+.summary-item span {
+  color: #aebbd4;
+  font-size: 0.85rem;
+}
+
 .stat-card,
 .metric-card,
 .alert-card,
@@ -1039,6 +1082,11 @@ th {
 
   .command-center-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .project-summary-strip,
+  .project-summary-panels {
+    grid-template-columns: 1fr;
   }
 
   .drawer-toggle {
