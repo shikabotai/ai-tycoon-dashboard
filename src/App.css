@@ -525,6 +525,18 @@ h1 {
   filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.28));
 }
 
+.simple-agent-glyph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  background: linear-gradient(180deg, var(--agent-primary), var(--agent-secondary));
+  color: white;
+  font-weight: 800;
+  font-size: 1.4rem;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
+}
+
 .agent-orbit {
   position: absolute;
   inset: 6px;

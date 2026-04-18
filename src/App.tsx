@@ -2,7 +2,6 @@ import { useMemo, useRef, useState } from 'react'
 import './App.css'
 import type { AgentChamber, ArtifactReviewItem } from './types'
 import { agentIdentities } from './agentIdentities'
-import { buildAvatar } from './lib/avatars'
 import { useDashboardData } from './hooks/useDashboardData'
 
 const LAYOUT: Array<Array<string | null>> = [
@@ -612,8 +611,8 @@ export default function App() {
                 <p className="subcopy">{selectedIdentity.subtitle}</p>
               </div>
               <div className="agent-avatar-zone modal-avatar">
-                <div className="agent-character modal-character">
-                  <img src={buildAvatar(selectedIdentity.avatarSeed)} alt={selectedIdentity.name} className="agent-portrait" />
+                <div className="agent-character modal-character simple-agent-glyph" aria-label={selectedIdentity.name}>
+                  <span>{selectedIdentity.name.slice(0, 1)}</span>
                 </div>
                 <div className="agent-orbit orbit-one" />
                 <div className="agent-orbit orbit-two" />
@@ -714,8 +713,6 @@ function AgentRoom({ chamber, onOpen }: { chamber?: AgentChamber; onOpen?: () =>
     avatarSeed: chamber.id,
   }
 
-  const avatarUri = buildAvatar(identity.avatarSeed)
-
   return (
     <button
       className={`agent-room role-${chamber.role} theme-${identity.roomTheme}`}
@@ -730,8 +727,8 @@ function AgentRoom({ chamber, onOpen }: { chamber?: AgentChamber; onOpen?: () =>
       <div className="room-stars" />
       <div className="agent-avatar-zone">
         <div className="agent-walk-path" />
-        <div className="agent-character">
-          <img src={avatarUri} alt={identity.name} className="agent-portrait" />
+        <div className="agent-character simple-agent-glyph" aria-label={identity.name}>
+          <span>{identity.name.slice(0, 1)}</span>
         </div>
         <div className="agent-orbit orbit-one" />
         <div className="agent-orbit orbit-two" />
