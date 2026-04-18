@@ -432,7 +432,7 @@ export default function App() {
             }}>Reset view</button>
           </div>
 
-          <div className="ship-stage-shell" onWheel={(event) => {
+          <div className={`ship-stage-shell ${dragState.current ? 'dragging-map' : ''}`} onWheel={(event) => {
             event.preventDefault()
             zoomMap(event.deltaY > 0 ? -0.08 : 0.08)
           }} onPointerMove={(event) => {
@@ -445,6 +445,14 @@ export default function App() {
           }} onPointerLeave={() => {
             dragState.current = null
           }}>
+            <div className="ship-stage-pan-zone" onPointerDown={(event) => {
+              dragState.current = {
+                x: event.clientX,
+                y: event.clientY,
+                originX: mapOffset.x,
+                originY: mapOffset.y,
+              }
+            }} />
             <div className="ship-stage-stars" />
             <div className="ship-stage-camera" style={{ transform: `translate(${mapOffset.x}px, ${mapOffset.y}px) scale(${mapScale})` }}>
               <div className="ship-stage-hull" />
@@ -457,14 +465,7 @@ export default function App() {
                 if (!chamber) return <div key={id} className="chamber-card chamber-placeholder">Offline</div>
                 const identity = agentIdentities[chamber.id] ?? agentIdentities.gateway
                 return (
-                  <div key={chamber.id} className={`chamber-card command-chamber-card ship-chamber-card theme-${identity.roomTheme} ${chamber.activeTasks.length > 0 ? 'has-work' : ''} ${chamber.id === 'manager' ? 'manager-hub-card' : ''}`} style={{ ['--agent-primary' as string]: identity.palette.primary, ['--agent-secondary' as string]: identity.palette.secondary, ['--agent-glow' as string]: identity.palette.glow }} onPointerDown={(event) => {
-                    dragState.current = {
-                      x: event.clientX,
-                      y: event.clientY,
-                      originX: mapOffset.x,
-                      originY: mapOffset.y,
-                    }
-                  }}>
+                  <div key={chamber.id} className={`chamber-card command-chamber-card ship-chamber-card theme-${identity.roomTheme} ${chamber.activeTasks.length > 0 ? 'has-work' : ''} ${chamber.id === 'manager' ? 'manager-hub-card' : ''}`} style={{ ['--agent-primary' as string]: identity.palette.primary, ['--agent-secondary' as string]: identity.palette.secondary, ['--agent-glow' as string]: identity.palette.glow }}>
                     <div className="chamber-card-topline">
                       <div className="chamber-glyph">{identity.name.slice(0, 1)}</div>
                       <span className="chamber-task-count">{chamber.activeTasks.length} active</span>

@@ -17,7 +17,8 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background: #02040a;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 #root {
@@ -31,7 +32,7 @@ button {
 .app-shell {
   position: relative;
   min-height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 .drawer-toggle {
@@ -249,8 +250,11 @@ h1 {
   margin-top: 10px;
   border-radius: 30px;
   overflow: hidden;
-  touch-action: none;
-  cursor: grab;
+  touch-action: pan-y;
+}
+
+.ship-stage-shell.dragging-map {
+  cursor: grabbing;
 }
 
 .ship-stage-shell:active {
@@ -262,6 +266,12 @@ h1 {
   inset: 0;
   transform-origin: center top;
   transition: transform 120ms ease;
+}
+
+.ship-stage-pan-zone {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
 }
 
 .ship-stage-stars {
