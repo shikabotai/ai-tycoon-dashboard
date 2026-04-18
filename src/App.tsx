@@ -295,7 +295,7 @@ export default function App() {
               </div>
               <div className="agent-avatar-zone modal-avatar">
                 <div className="agent-character modal-character">
-                  <img src={buildAvatar(selectedIdentity.avatarSeed, selectedIdentity.palette.background)} alt={selectedIdentity.name} className="agent-portrait" />
+                  <img src={buildAvatar(selectedIdentity.avatarSeed)} alt={selectedIdentity.name} className="agent-portrait" />
                 </div>
                 <div className="agent-orbit orbit-one" />
                 <div className="agent-orbit orbit-two" />
@@ -367,7 +367,7 @@ function AgentRoom({ chamber, onOpen }: { chamber?: AgentChamber; onOpen?: () =>
     avatarSeed: chamber.id,
   }
 
-  const avatarUri = buildAvatar(identity.avatarSeed, identity.palette.background)
+  const avatarUri = buildAvatar(identity.avatarSeed)
 
   return (
     <button
@@ -379,6 +379,7 @@ function AgentRoom({ chamber, onOpen }: { chamber?: AgentChamber; onOpen?: () =>
         ['--agent-glow' as string]: identity.palette.glow,
       }}
     >
+      {chamber.id === 'manager' && <div className="deploy-debug-banner">LATEST BUILD ACTIVE</div>}
       <div className="room-glow" />
       <div className="room-stars" />
       <div className="agent-avatar-zone">
