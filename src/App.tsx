@@ -466,9 +466,30 @@ function AgentRoom({ chamber, onOpen }: { chamber?: AgentChamber; onOpen?: () =>
   )
 }
 
-function ArtifactPreview({ item, approvalBusy, onApprove, onReject }: { item: ArtifactReviewItem; approvalBusy: boolean; onApprove: (item: ArtifactReviewItem) => Promise<void>; onReject: (item: ArtifactReviewItem) => Promise<void> }) {
-  const previewText = item.content?.trim() || 'No inline artifact content stored yet. Open the file path when available.'
+function renderArtifactContent(content?: string | null) {
+  if (!content?.trim()) {
+    return <p className="empty">No inline artifact content stored yet. Open the file path when available.</p>
+  }
 
+  const lines = content.split('\n')
+
+  return (
+    <div className="artifact-markdown">
+      {lines.map((line, index) => {
+        const trimmed = line.trim()
+        if (!trimmed) return <div key={index} className="artifact-spacer" />
+        if (trimmed.startsWith('### ')) return <h5 key={index}>{trimmed.slice(4)}</h5>
+        if (trimmed.startsWith('## ')) return <h4 key={index}>{trimmed.slice(3)}</h4>
+        if (trimmed.startsWith('# ')) return <h3 key={index}>{trimmed.slice(2)}</h3>
+        if (trimmed.startsWith('- ')) return <li key={index}>{trimmed.slice(2)}</li>
+        if (/^\d+\.\s/.test(trimmed)) return <li key={index}>{trimmed.replace(/^\d+\.\s/, '')}</li>
+        return <p key={index}>{line}</p>
+      })}
+    </div>
+  )
+}
+
+function ArtifactPreview({ item, approvalBusy, onApprove, onReject }: { item: ArtifactReviewItem; approvalBusy: boolean; onApprove: (item: ArtifactReviewItem) => Promise<void>; onReject: (item: ArtifactReviewItem) => Promise<void> }) {
   return (
     <div className="artifact-preview-inner">
       <div className="artifact-preview-topline">
@@ -492,6 +513,14 @@ function ArtifactPreview({ item, approvalBusy, onApprove, onReject }: { item: Ar
           <span>File</span>
           <strong>{item.filename || 'inline artifact'}</strong>
         </div>
+        <div className="metric-card">
+          <span>MIME</span>
+          <strong>{item.mimeType || 'text/plain'}</strong>
+        </div>
+        <div className="metric-card artifact-meta-wide">
+          <span>Storage path</span>
+          <strong>{item.storagePath || 'stored inline in database'}</strong>
+        </div>
       </div>
 
       <div className="artifact-actions">
@@ -509,7 +538,7 @@ function ArtifactPreview({ item, approvalBusy, onApprove, onReject }: { item: Ar
       </div>
 
       <div className="artifact-preview-body">
-        <pre>{previewText}</pre>
+        {renderArtifactContent(item.content)}
       </div>
     </div>
   )

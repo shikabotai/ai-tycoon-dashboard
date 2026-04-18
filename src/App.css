@@ -692,6 +692,10 @@ th {
   gap: 10px;
 }
 
+.artifact-meta-wide {
+  grid-column: span 2;
+}
+
 .artifact-actions {
   display: flex;
   flex-wrap: wrap;
@@ -710,21 +714,41 @@ th {
 .action-button.danger { background: rgba(239, 68, 68, 0.18); }
 
 .artifact-preview-body {
-  max-height: 260px;
+  max-height: 320px;
   overflow: auto;
   border-radius: 16px;
   background: rgba(2, 6, 14, 0.8);
   border: 1px solid rgba(125, 211, 252, 0.08);
-  padding: 14px;
+  padding: 16px;
 }
 
-.artifact-preview-body pre {
-  margin: 0;
-  white-space: pre-wrap;
-  word-break: break-word;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.82rem;
+.artifact-markdown {
   color: #dbeafe;
+}
+
+.artifact-markdown h3,
+.artifact-markdown h4,
+.artifact-markdown h5 {
+  margin: 0 0 10px;
+  color: #f8fbff;
+}
+
+.artifact-markdown h3 { font-size: 1.05rem; }
+.artifact-markdown h4 { font-size: 0.96rem; }
+.artifact-markdown h5 { font-size: 0.9rem; }
+
+.artifact-markdown p,
+.artifact-markdown li {
+  margin: 0 0 10px;
+  line-height: 1.5;
+}
+
+.artifact-markdown li {
+  margin-left: 18px;
+}
+
+.artifact-spacer {
+  height: 8px;
 }
 
 .alerts-list.compact-list {
