@@ -1390,6 +1390,26 @@ th {
 .action-button.secondary { background: rgba(125, 211, 252, 0.08); }
 .action-button.danger { background: rgba(239, 68, 68, 0.18); }
 
+.artifact-image-preview,
+.artifact-inline-thumb {
+  margin-top: 10px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(125, 211, 252, 0.14);
+  background: rgba(255,255,255,0.03);
+}
+
+.artifact-image-preview img,
+.artifact-inline-thumb img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.artifact-inline-thumb {
+  max-width: 220px;
+}
+
 .artifact-preview-body {
   max-height: 320px;
   overflow: auto;

@@ -49,24 +49,21 @@ type ArtifactRow = {
   created_at: string
 }
 
+function isImageArtifact(artifact: { filename?: string | null; storage_path?: string | null }) {
+  const value = `${artifact.filename || ''} ${artifact.storage_path || ''}`.toLowerCase()
+  return ['.png', '.jpg', '.jpeg', '.webp', '.gif'].some((ext) => value.includes(ext))
+}
+
+function storageObjectUrl(storagePath: string) {
+  return `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/artifact-files/${storagePath}`
+}
+
 type ApprovalRow = {
   id: string
   task_id: string
   status: string
   comment?: string | null
   created_at: string
-}
-
-type ReviewItem = {
-  artifactId: string
-  taskId: string
-  taskTitle: string
-  projectTitle?: string
-  artifactType: string
-  content: string | null
-  filename: string | null
-  storagePath: string | null
-  approvalStatus: string
 }
 
 type AgentRow = {
@@ -284,7 +281,7 @@ export default function App() {
 
   const reviewItems = useMemo(() => {
     const latestApprovalByTask = new Map<string, ApprovalRow>()
-    const items: ReviewItem[] = []
+    const bestArtifactByTask = new Map<string, ArtifactRow>()
 
     for (const approval of approvals) {
       if (!latestApprovalByTask.has(approval.task_id)) latestApprovalByTask.set(approval.task_id, approval)
@@ -298,7 +295,18 @@ export default function App() {
       const approvalStatus = approval?.status ?? 'none'
       if (approvalStatus !== 'pending' && approvalStatus !== 'none') continue
 
-      items.push({
+      const current = bestArtifactByTask.get(artifact.task_id)
+      const artifactIsPreferred = artifact.artifact_type === 'draft_file' || isImageArtifact(artifact)
+      const currentIsPreferred = current ? (current.artifact_type === 'draft_file' || isImageArtifact(current)) : false
+      if (!current || (artifactIsPreferred && !currentIsPreferred)) {
+        bestArtifactByTask.set(artifact.task_id, artifact)
+      }
+    }
+
+    return Array.from(bestArtifactByTask.values()).map((artifact) => {
+      const task = taskMap.get(artifact.task_id)!
+      const approval = latestApprovalByTask.get(artifact.task_id)
+      return {
         artifactId: artifact.id,
         taskId: artifact.task_id,
         taskTitle: task.title,
@@ -307,11 +315,9 @@ export default function App() {
         content: artifact.content,
         filename: artifact.filename,
         storagePath: artifact.storage_path,
-        approvalStatus,
-      })
-    }
-
-    return items.slice(0, 12)
+        approvalStatus: approval?.status ?? 'none',
+      }
+    }).slice(0, 12)
   }, [approvals, artifacts, projectMap, selectedProjectId, taskMap])
 
   const selectedReviewItem = selectedArtifactId ? reviewItems.find((item) => item.artifactId === selectedArtifactId) : reviewItems[0]
@@ -676,7 +682,13 @@ export default function App() {
                       </div>
 
                       <div className="artifact-preview-body">
-                        <pre>{selectedReviewItem.content || selectedReviewItem.storagePath || 'No inline artifact content stored yet.'}</pre>
+                        {selectedReviewItem.storagePath && isImageArtifact(selectedReviewItem) ? (
+                          <div className="artifact-image-preview">
+                            <img src={storageObjectUrl(selectedReviewItem.storagePath)} alt={selectedReviewItem.taskTitle} />
+                          </div>
+                        ) : (
+                          <pre>{selectedReviewItem.content || selectedReviewItem.storagePath || 'No inline artifact content stored yet.'}</pre>
+                        )}
                       </div>
                     </div>
                   ) : (
@@ -803,9 +815,14 @@ export default function App() {
                   {selectedTaskDetail.artifacts.length === 0 ? <p className="empty">No artifacts loaded yet.</p> : (
                     <div className="summary-list">
                       {selectedTaskDetail.artifacts.map((item) => (
-                        <div key={item.id} className="summary-item">
+                        <div key={item.id} className="summary-item artifact-summary-item">
                           <strong>{item.filename || item.artifact_type}</strong>
                           <span>{item.created_at}</span>
+                          {item.storage_path && isImageArtifact(item) && (
+                            <div className="artifact-inline-thumb">
+                              <img src={storageObjectUrl(item.storage_path)} alt={item.filename || item.artifact_type} />
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
