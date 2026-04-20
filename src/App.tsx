@@ -49,6 +49,10 @@ type ArtifactRow = {
   created_at: string
 }
 
+const PUBLIC_REVIEW_IMAGE_URLS: Record<string, string> = {
+  '783a3fbc-2cbb-4dc2-9e01-1e5541563a77': 'https://fedodlznieytjgmcamds.supabase.co/storage/v1/object/public/public-artifacts/reviews/a7eaaf02-a2e6-4286-94ea-78131a44e482/designer-output.png',
+}
+
 function isImageArtifact(artifact: { filename?: string | null; storage_path?: string | null }) {
   const value = `${artifact.filename || ''} ${artifact.storage_path || ''}`.toLowerCase()
   return ['.png', '.jpg', '.jpeg', '.webp', '.gif'].some((ext) => value.includes(ext))
@@ -332,6 +336,10 @@ export default function App() {
       if (imageItems.length === 0) return
       const next: Record<string, string> = {}
       for (const item of imageItems) {
+        if (PUBLIC_REVIEW_IMAGE_URLS[item.artifactId]) {
+          next[item.artifactId] = PUBLIC_REVIEW_IMAGE_URLS[item.artifactId]
+          continue
+        }
         if (!item.storagePath) continue
         try {
           next[item.artifactId] = await storageObjectUrl(item.storagePath)
