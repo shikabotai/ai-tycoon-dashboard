@@ -72,6 +72,12 @@ type ApprovalRow = {
   created_at: string
 }
 
+function approvalReviewUrl(comment?: string | null) {
+  if (!comment) return null
+  const match = comment.match(/review_url=(https?:\/\/\S+)/)
+  return match ? match[1] : null
+}
+
 type AgentRow = {
   id: string
   role: string
@@ -321,7 +327,7 @@ export default function App() {
         artifactType: artifact.artifact_type,
         content: artifact.content,
         filename: artifact.filename,
-        storagePath: artifact.storage_path,
+        storagePath: approvalReviewUrl(approval?.comment) || artifact.storage_path,
         approvalStatus: approval?.status ?? 'none',
       }
     }).slice(0, 12)
@@ -336,6 +342,10 @@ export default function App() {
       if (imageItems.length === 0) return
       const next: Record<string, string> = {}
       for (const item of imageItems) {
+        if (item.storagePath?.startsWith('http://') || item.storagePath?.startsWith('https://')) {
+          next[item.artifactId] = item.storagePath
+          continue
+        }
         if (PUBLIC_REVIEW_IMAGE_URLS[item.artifactId]) {
           next[item.artifactId] = PUBLIC_REVIEW_IMAGE_URLS[item.artifactId]
           continue
