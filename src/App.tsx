@@ -54,8 +54,10 @@ function isImageArtifact(artifact: { filename?: string | null; storage_path?: st
   return ['.png', '.jpg', '.jpeg', '.webp', '.gif'].some((ext) => value.includes(ext))
 }
 
-function storageObjectUrl(storagePath: string) {
-  return `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/artifact-files/${storagePath}`
+async function storageObjectUrl(storagePath: string) {
+  const { data, error } = await supabase.storage.from('artifact-files').createSignedUrl(storagePath, 60 * 60)
+  if (error || !data?.signedUrl) throw error || new Error('Unable to create signed URL')
+  return data.signedUrl
 }
 
 type ApprovalRow = {
@@ -102,6 +104,7 @@ export default function App() {
   const [approvalBusy, setApprovalBusy] = useState(false)
   const [taskBusy, setTaskBusy] = useState(false)
   const [openPanel, setOpenPanel] = useState<PanelKey | null>(null)
+  const [signedArtifactUrls, setSignedArtifactUrls] = useState<Record<string, string>>({})
   const [mapScale, setMapScale] = useState(0.56)
   const [mapOffset, setMapOffset] = useState({ x: 0, y: -8 })
   const dragState = useRef<{ x: number; y: number; originX: number; originY: number; pinchDistance?: number; pinchScale?: number } | null>(null)
@@ -321,6 +324,28 @@ export default function App() {
   }, [approvals, artifacts, projectMap, selectedProjectId, taskMap])
 
   const selectedReviewItem = selectedArtifactId ? reviewItems.find((item) => item.artifactId === selectedArtifactId) : reviewItems[0]
+
+  useEffect(() => {
+    let cancelled = false
+    async function loadSignedUrls() {
+      const imageItems = reviewItems.filter((item) => item.storagePath && isImageArtifact(item))
+      if (imageItems.length === 0) return
+      const next: Record<string, string> = {}
+      for (const item of imageItems) {
+        if (!item.storagePath) continue
+        try {
+          next[item.artifactId] = await storageObjectUrl(item.storagePath)
+        } catch {
+          // ignore and leave missing
+        }
+      }
+      if (!cancelled) setSignedArtifactUrls(next)
+    }
+    void loadSignedUrls()
+    return () => {
+      cancelled = true
+    }
+  }, [reviewItems])
 
   const chamberCards = useMemo(() => {
     return agents
@@ -684,7 +709,11 @@ export default function App() {
                       <div className="artifact-preview-body">
                         {selectedReviewItem.storagePath && isImageArtifact(selectedReviewItem) ? (
                           <div className="artifact-image-preview">
-                            <img src={storageObjectUrl(selectedReviewItem.storagePath)} alt={selectedReviewItem.taskTitle} />
+                            {signedArtifactUrls[selectedReviewItem.artifactId] ? (
+                              <img src={signedArtifactUrls[selectedReviewItem.artifactId]} alt={selectedReviewItem.taskTitle} />
+                            ) : (
+                              <p className="empty">Loading image preview...</p>
+                            )}
                           </div>
                         ) : (
                           <pre>{selectedReviewItem.content || selectedReviewItem.storagePath || 'No inline artifact content stored yet.'}</pre>
@@ -818,9 +847,9 @@ export default function App() {
                         <div key={item.id} className="summary-item artifact-summary-item">
                           <strong>{item.filename || item.artifact_type}</strong>
                           <span>{item.created_at}</span>
-                          {item.storage_path && isImageArtifact(item) && (
+                          {item.storage_path && isImageArtifact(item) && signedArtifactUrls[item.id] && (
                             <div className="artifact-inline-thumb">
-                              <img src={storageObjectUrl(item.storage_path)} alt={item.filename || item.artifact_type} />
+                              <img src={signedArtifactUrls[item.id]} alt={item.filename || item.artifact_type} />
                             </div>
                           )}
                         </div>
