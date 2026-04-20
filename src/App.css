@@ -1390,6 +1390,22 @@ th {
 .action-button.secondary { background: rgba(125, 211, 252, 0.08); }
 .action-button.danger { background: rgba(239, 68, 68, 0.18); }
 
+.artifact-review-notes {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.review-notes-input {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  background: rgba(5, 10, 24, 0.72);
+  color: #e8f4ff;
+  padding: 12px 14px;
+  resize: vertical;
+}
+
 .artifact-image-preview,
 .artifact-inline-thumb {
   margin-top: 10px;

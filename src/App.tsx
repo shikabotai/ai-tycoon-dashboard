@@ -115,6 +115,7 @@ export default function App() {
   const [taskBusy, setTaskBusy] = useState(false)
   const [openPanel, setOpenPanel] = useState<PanelKey | null>(null)
   const [signedArtifactUrls, setSignedArtifactUrls] = useState<Record<string, string>>({})
+  const [reviewNotes, setReviewNotes] = useState('')
   const [mapScale, setMapScale] = useState(0.56)
   const [mapOffset, setMapOffset] = useState({ x: 0, y: -8 })
   const dragState = useRef<{ x: number; y: number; originX: number; originY: number; pinchDistance?: number; pinchScale?: number } | null>(null)
@@ -701,27 +702,39 @@ export default function App() {
                         <span className={`approval-pill approval-${selectedReviewItem.approvalStatus}`}>{selectedReviewItem.approvalStatus}</span>
                       </div>
 
+                      <div className="artifact-review-notes">
+                        <label htmlFor="review-notes"><strong>Notes for revision</strong></label>
+                        <textarea
+                          id="review-notes"
+                          className="review-notes-input"
+                          placeholder="Add guidance here if you want the next attempt to improve..."
+                          value={reviewNotes}
+                          onChange={(event) => setReviewNotes(event.target.value)}
+                          rows={4}
+                        />
+                      </div>
+
                       <div className="artifact-actions">
                         <button className="action-button primary" disabled={approvalBusy} onClick={async () => {
                           try {
                             setApprovalBusy(true)
-                            await decideItem(selectedReviewItem.taskId, selectedReviewItem.artifactId, 'approved')
+                            await decideItem(selectedReviewItem.taskId, selectedReviewItem.artifactId, 'approved', reviewNotes || undefined)
+                            setReviewNotes('')
                             await reloadTaskContext()
                           } finally {
                             setApprovalBusy(false)
                           }
                         }}>{approvalBusy ? 'Saving...' : 'Approve to ship'}</button>
-                        <button className="action-button danger" disabled={approvalBusy} onClick={async () => {
-                          const reason = window.prompt('Why are you declining this artifact?', 'Needs revision')
-                          if (reason === null) return
+                        <button className="action-button danger" disabled={approvalBusy || !reviewNotes.trim()} onClick={async () => {
                           try {
                             setApprovalBusy(true)
-                            await decideItem(selectedReviewItem.taskId, selectedReviewItem.artifactId, 'rejected', reason)
+                            await decideItem(selectedReviewItem.taskId, selectedReviewItem.artifactId, 'rejected', reviewNotes.trim())
+                            setReviewNotes('')
                             await reloadTaskContext()
                           } finally {
                             setApprovalBusy(false)
                           }
-                        }}>{approvalBusy ? 'Saving...' : 'Decline'}</button>
+                        }}>{approvalBusy ? 'Saving...' : 'Deny and request changes'}</button>
                       </div>
 
                       <div className="artifact-preview-body">
