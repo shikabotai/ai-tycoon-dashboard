@@ -28,6 +28,7 @@ type TaskRow = {
   project_id: string | null
   assigned_agent_id?: string | null
   status?: string
+  metadata?: Record<string, unknown> | null
 }
 
 type EventRow = {
@@ -139,7 +140,7 @@ export default function App() {
 
       const [projectsRes, tasksRes, agentsRes] = await Promise.all([
         supabase.from('projects').select('id,title').order('title'),
-        supabase.from('tasks').select('id,title,project_id,assigned_agent_id,status').order('updated_at', { ascending: false }).limit(80),
+        supabase.from('tasks').select('id,title,project_id,assigned_agent_id,status,metadata').order('updated_at', { ascending: false }).limit(80),
         supabase.from('agents').select('id,role,display_name,status').order('id'),
       ])
 
@@ -427,7 +428,7 @@ export default function App() {
 
   async function reloadTaskContext() {
     const [tasksRes, eventsRes, artifactsRes, approvalsRes] = await Promise.all([
-      supabase.from('tasks').select('id,title,project_id,assigned_agent_id,status').order('updated_at', { ascending: false }).limit(80),
+      supabase.from('tasks').select('id,title,project_id,assigned_agent_id,status,metadata').order('updated_at', { ascending: false }).limit(80),
       activityLoaded ? supabase.from('task_events').select('id,task_id,event_type,actor_agent_id,created_at,payload').order('created_at', { ascending: false }).limit(40) : Promise.resolve({ data: events, error: null }),
       reviewLoaded ? supabase.from('artifacts').select('id,task_id,artifact_type,content,filename,storage_path,created_at').in('artifact_type', ['draft', 'draft_file', 'delivery_note', 'package']).order('created_at', { ascending: false }).limit(80) : Promise.resolve({ data: artifacts, error: null }),
       reviewLoaded ? supabase.from('approvals').select('id,task_id,status,comment,created_at').order('created_at', { ascending: false }).limit(80) : Promise.resolve({ data: approvals, error: null }),
@@ -453,6 +454,25 @@ export default function App() {
       if (error) throw error
     } else {
       const { error } = await supabase.from('approvals').insert({ task_id: taskId, artifact_id: artifactId, required_role: 'owner', status, comment: comment || null, decided_by: 'dashboard', decided_at: new Date().toISOString() })
+      if (error) throw error
+    }
+
+    if (status === 'rejected') {
+      const task = tasks.find((item) => item.id === taskId)
+      const metadata = {
+        ...((task as unknown as { metadata?: Record<string, unknown> } | undefined)?.metadata || {}),
+        revision_notes: comment || 'Needs revision',
+        last_human_rejection_at: new Date().toISOString(),
+      }
+      const { error } = await supabase
+        .from('tasks')
+        .update({
+          status: 'assigned',
+          current_step_index: 2,
+          rejection_reason: comment || 'Needs revision',
+          metadata,
+        })
+        .eq('id', taskId)
       if (error) throw error
     }
   }
