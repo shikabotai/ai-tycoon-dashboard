@@ -98,8 +98,8 @@ type PanelKey = 'metrics' | 'activity' | 'review'
 
 const DECK_LAYOUT = [
   ['gateway', 'manager', 'reviewer'],
-  ['researcher', 'content', null],
-  ['worker-1', 'worker-2', null],
+  ['researcher', 'content', 'designer'],
+  ['worker-1', 'worker-2', 'packager'],
 ]
 
 export default function App() {
@@ -140,7 +140,7 @@ export default function App() {
 
       const [projectsRes, tasksRes, agentsRes] = await Promise.all([
         supabase.from('projects').select('id,title').order('title'),
-        supabase.from('tasks').select('id,title,project_id,assigned_agent_id,status,metadata').order('updated_at', { ascending: false }).limit(80),
+        supabase.from('tasks').select('id,title,project_id,assigned_agent_id,status,metadata').order('updated_at', { ascending: false }).limit(120),
         supabase.from('agents').select('id,role,display_name,status').order('id'),
       ])
 

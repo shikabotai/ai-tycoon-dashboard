@@ -64,6 +64,7 @@ export type TaskRow = {
   current_step_index: number | null
   project_id: string | null
   updated_at: string
+  metadata?: Record<string, unknown> | null
 }
 
 export type ProjectRow = {

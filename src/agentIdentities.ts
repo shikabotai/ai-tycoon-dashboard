@@ -40,8 +40,8 @@ export const agentIdentities: Record<string, AgentIdentity> = {
   },
   content: {
     id: 'content',
-    name: 'Content',
-    subtitle: 'Story fabricator',
+    name: 'Writer',
+    subtitle: 'Written output specialist',
     roomTheme: 'studio-bay',
     palette: { primary: '#f9a8d4', secondary: '#fb7185', glow: 'rgba(251, 113, 133, 0.28)', accent: '#fde68a', background: '#311325' },
     avatarSeed: 'content-story-engineer',

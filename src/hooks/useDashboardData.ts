@@ -6,9 +6,9 @@ const CHAMBER_LABELS: Record<string, string> = {
   gateway: 'Dock A1',
   manager: 'Bridge B1',
   researcher: 'Lab C1',
-  content: 'Studio C2',
-  'worker-1': 'Bay D1',
-  'worker-2': 'Bay D2',
+  content: 'Writer Studio C2',
+  'worker-1': 'Worker Bay D1',
+  'worker-2': 'Worker Bay D2',
   reviewer: 'Control E1',
 }
 
@@ -39,7 +39,7 @@ export function useDashboardData(selectedProjectId?: string | null) {
       supabase.from('v_pipeline_now').select('*').order('project').order('status'),
       supabase.from('v_task_watchdog').select('*').order('severity', { ascending: false }).order('updated_at', { ascending: true }).limit(12),
       supabase.from('agents').select('id,role,display_name,status,capabilities').order('id'),
-      supabase.from('tasks').select('id,title,status,assigned_agent_id,current_step_index,project_id,updated_at').order('updated_at', { ascending: false }).limit(120),
+      supabase.from('tasks').select('id,title,status,assigned_agent_id,current_step_index,project_id,updated_at,metadata').order('updated_at', { ascending: false }).limit(120),
       supabase.from('projects').select('id,title').order('title'),
       supabase.from('artifacts').select('id,task_id,artifact_type,content,mime_type,filename,storage_path,created_at').in('artifact_type', ['draft', 'draft_file', 'delivery_note', 'package']).order('created_at', { ascending: false }).limit(120),
       supabase.from('approvals').select('id,task_id,status,decided_at,created_at,comment').order('created_at', { ascending: false }).limit(120),
@@ -124,9 +124,9 @@ export function useDashboardData(selectedProjectId?: string | null) {
     const taskMap = new Map(tasks.map((task) => [task.id, task]))
 
     return agents
-      .filter((agent) => ['gateway', 'manager', 'researcher', 'content', 'worker-1', 'worker-2', 'reviewer'].includes(agent.id))
+      .filter((agent) => ['gateway', 'manager', 'researcher', 'content', 'worker-1', 'worker-2', 'reviewer', 'designer', 'packager'].includes(agent.id))
       .map((agent) => {
-        const agentTasks = filteredTasks.filter((task) => task.assigned_agent_id === agent.id && !['done', 'published', 'cancelled'].includes(task.status))
+        const agentTasks = filteredTasks.filter((task) => task.assigned_agent_id === agent.id && !['done', 'published', 'cancelled'].includes(task.status) && !(task.metadata && (task.metadata as Record<string, unknown>).quarantined))
         const decoratedTasks = agentTasks.map((task) => ({
           id: task.id,
           title: task.title,
