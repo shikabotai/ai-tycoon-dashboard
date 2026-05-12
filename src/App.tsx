@@ -496,14 +496,16 @@ export default function App() {
             </select>
           </label>
 
-          <div className="hero-status-pill compact-status-pill">
+          <div className="hero-status-pill compact-status-pill premium-status-pill">
             <span className="status-dot" />
-            <strong>{focusProject ? focusProject.title : 'Fleet overview'}</strong>
-            <small>{headlineStatus} • {activeChambers} active chambers</small>
+            <div className="premium-status-copy">
+              <strong>{focusProject ? focusProject.title : 'Fleet overview'}</strong>
+              <small>{headlineStatus} • {activeChambers} active chambers</small>
+            </div>
           </div>
         </section>
 
-        <section className="safe-mode-card chamber-section-card chamber-command-card map-stage-card ship-stage-card minimal-map-card">
+        <section className="safe-mode-card chamber-section-card chamber-command-card map-stage-card ship-stage-card minimal-map-card premium-hero-stage">
           <div className={`ship-stage-shell ${dragState.current ? 'dragging-map' : ''}`} onWheel={(event) => {
             event.preventDefault()
             zoomMap(event.deltaY > 0 ? -0.08 : 0.08)
@@ -589,8 +591,10 @@ export default function App() {
                       <div className="chamber-glyph">{identity.name.slice(0, 1)}</div>
                       <span className="chamber-task-count">{chamber.activeTasks.length} active</span>
                     </div>
-                    <strong>{identity.name}</strong>
-                    <span>{identity.subtitle}</span>
+                    <div className="chamber-card-copy">
+                      <strong>{identity.name}</strong>
+                      <span>{identity.subtitle}</span>
+                    </div>
                     <div className="chamber-task-stack">
                       {chamber.activeTasks.length === 0 ? (
                         <p className="empty">Quiet chamber</p>
@@ -611,7 +615,7 @@ export default function App() {
           </div>
         </section>
 
-        <section className="drawer-toggle-row">
+        <section className="drawer-toggle-row premium-drawer-toggle-row">
           <button className={`drawer-tab ${openPanel === 'metrics' ? 'active' : ''}`} onClick={() => togglePanel('metrics')}>Business pulse</button>
           <button className={`drawer-tab ${openPanel === 'activity' ? 'active' : ''}`} onClick={() => togglePanel('activity')}>Live activity</button>
           <button className={`drawer-tab ${openPanel === 'review' ? 'active' : ''}`} onClick={() => togglePanel('review')}>Review dock</button>
@@ -722,19 +726,22 @@ export default function App() {
                         <span className={`approval-pill approval-${selectedReviewItem.approvalStatus}`}>{selectedReviewItem.approvalStatus}</span>
                       </div>
 
-                      <div className="artifact-review-notes">
-                        <label htmlFor="review-notes"><strong>Notes for revision</strong></label>
+                      <div className="artifact-review-notes premium-review-notes">
+                        <div className="review-notes-header">
+                          <label htmlFor="review-notes"><strong>Revision guidance</strong></label>
+                          <span>What should change in the next attempt?</span>
+                        </div>
                         <textarea
                           id="review-notes"
                           className="review-notes-input"
-                          placeholder="Add guidance here if you want the next attempt to improve..."
+                          placeholder="Add specific guidance here so the next draft gets sharper..."
                           value={reviewNotes}
                           onChange={(event) => setReviewNotes(event.target.value)}
                           rows={4}
                         />
                       </div>
 
-                      <div className="artifact-actions">
+                      <div className="artifact-actions premium-artifact-actions">
                         <button className="action-button primary" disabled={approvalBusy} onClick={async () => {
                           try {
                             setApprovalBusy(true)
@@ -757,7 +764,7 @@ export default function App() {
                         }}>{approvalBusy ? 'Saving...' : 'Deny and request changes'}</button>
                       </div>
 
-                      <div className="artifact-preview-body">
+                      <div className="artifact-preview-body premium-artifact-preview-body">
                         {selectedReviewItem.storagePath && isImageArtifact(selectedReviewItem) ? (
                           <div className="artifact-image-preview">
                             {signedArtifactUrls[selectedReviewItem.artifactId] ? (

@@ -1,11 +1,15 @@
 :root {
   color: #ecf4ff;
   background:
-    radial-gradient(circle at 15% 10%, rgba(96, 165, 250, 0.34), transparent 22%),
-    radial-gradient(circle at 82% 14%, rgba(168, 85, 247, 0.22), transparent 26%),
-    radial-gradient(circle at 70% 70%, rgba(14, 165, 233, 0.16), transparent 24%),
-    linear-gradient(180deg, #060b18 0%, #030612 52%, #010208 100%);
+    radial-gradient(circle at 18% 12%, rgba(96, 165, 250, 0.26), transparent 20%),
+    radial-gradient(circle at 82% 14%, rgba(168, 85, 247, 0.16), transparent 24%),
+    radial-gradient(circle at 70% 70%, rgba(14, 165, 233, 0.1), transparent 20%),
+    linear-gradient(180deg, #07101d 0%, #040915 46%, #02040b 100%);
   font-family: Inter, system-ui, sans-serif;
+  --panel-bg: rgba(11, 18, 35, 0.8);
+  --panel-border: rgba(138, 194, 255, 0.12);
+  --panel-shadow: 0 20px 70px rgba(0, 0, 0, 0.34);
+  --soft-text: #9fb1cf;
 }
 
 * {
@@ -19,6 +23,7 @@ body {
   background: #02040a;
   overflow-x: hidden;
   overflow-y: auto;
+  letter-spacing: -0.01em;
 }
 
 #root {
@@ -38,12 +43,19 @@ button {
 .drawer-toggle {
   position: fixed;
   z-index: 30;
-  border: 1px solid rgba(125, 211, 252, 0.18);
-  background: rgba(8, 14, 28, 0.92);
+  border: 1px solid rgba(125, 211, 252, 0.16);
+  background: rgba(8, 14, 28, 0.84);
   color: #dce8ff;
   border-radius: 999px;
   padding: 10px 14px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(16px);
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+.drawer-toggle:hover {
+  transform: translateY(-1px);
+  border-color: rgba(125, 211, 252, 0.26);
 }
 
 .drawer-toggle.top {
@@ -173,9 +185,9 @@ h1 {
 
 .command-deck-shell {
   background:
-    radial-gradient(circle at top, rgba(96, 165, 250, 0.12), transparent 28%),
-    radial-gradient(circle at 80% 20%, rgba(244, 114, 182, 0.08), transparent 24%),
-    linear-gradient(180deg, rgba(6, 11, 24, 0.96), rgba(3, 6, 14, 0.98));
+    radial-gradient(circle at top, rgba(96, 165, 250, 0.09), transparent 24%),
+    radial-gradient(circle at 80% 18%, rgba(244, 114, 182, 0.05), transparent 22%),
+    linear-gradient(180deg, rgba(6, 11, 24, 0.96), rgba(3, 6, 14, 0.985));
 }
 
 .safe-mode-main {
@@ -196,8 +208,9 @@ h1 {
 .top-control-bar {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
   align-items: center;
+  padding: 6px 4px 0;
 }
 
 .compact-project-switcher {
@@ -241,7 +254,7 @@ h1 {
   position: relative;
   min-height: 72vh;
   margin-top: 10px;
-  border-radius: 30px;
+  border-radius: 34px;
   overflow: hidden;
   width: 100%;
   max-width: 100%;
@@ -274,12 +287,12 @@ h1 {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 10% 14%, rgba(255,255,255,0.95) 0 1px, transparent 2px),
-    radial-gradient(circle at 82% 18%, rgba(255,255,255,0.75) 0 1px, transparent 2px),
-    radial-gradient(circle at 68% 76%, rgba(255,255,255,0.72) 0 1px, transparent 2px),
-    radial-gradient(circle at 30% 70%, rgba(255,255,255,0.68) 0 1px, transparent 2px),
-    radial-gradient(circle at 55% 28%, rgba(125,211,252,0.12) 0 120px, transparent 220px),
-    linear-gradient(180deg, rgba(5, 10, 22, 0.2), rgba(2, 4, 10, 0.7));
+    radial-gradient(circle at 10% 14%, rgba(255,255,255,0.78) 0 1px, transparent 2px),
+    radial-gradient(circle at 82% 18%, rgba(255,255,255,0.64) 0 1px, transparent 2px),
+    radial-gradient(circle at 68% 76%, rgba(255,255,255,0.58) 0 1px, transparent 2px),
+    radial-gradient(circle at 30% 70%, rgba(255,255,255,0.52) 0 1px, transparent 2px),
+    radial-gradient(circle at 55% 28%, rgba(125,211,252,0.09) 0 120px, transparent 220px),
+    linear-gradient(180deg, rgba(5, 10, 22, 0.14), rgba(2, 4, 10, 0.62));
 }
 
 .ship-stage-hull {
@@ -287,10 +300,10 @@ h1 {
   inset: 60px 80px 36px;
   border-radius: 120px;
   background:
-    linear-gradient(180deg, rgba(26, 38, 68, 0.95), rgba(8, 14, 28, 0.96)),
-    radial-gradient(circle at top center, rgba(125,211,252,0.12), transparent 38%);
-  border: 1px solid rgba(125, 211, 252, 0.16);
-  box-shadow: inset 0 0 40px rgba(125, 211, 252, 0.06), 0 30px 80px rgba(0, 0, 0, 0.34);
+    linear-gradient(180deg, rgba(23, 34, 63, 0.94), rgba(8, 14, 28, 0.97)),
+    radial-gradient(circle at top center, rgba(125,211,252,0.09), transparent 36%);
+  border: 1px solid rgba(125, 211, 252, 0.12);
+  box-shadow: inset 0 0 30px rgba(125, 211, 252, 0.04), 0 30px 80px rgba(0, 0, 0, 0.28);
 }
 
 .ship-stage-hull::before,
@@ -333,9 +346,9 @@ h1 {
   z-index: 1;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 34px 24px;
-  padding: 110px 120px 70px;
-  min-height: 640px;
+  gap: 36px 26px;
+  padding: 108px 118px 74px;
+  min-height: 660px;
   align-items: start;
 }
 
@@ -344,13 +357,13 @@ h1 {
 }
 
 .ship-chamber-card {
-  min-height: 180px;
-  border-radius: 28px;
-  border: 1px solid rgba(125, 211, 252, 0.16);
+  min-height: 186px;
+  border-radius: 30px;
+  border: 1px solid rgba(125, 211, 252, 0.14);
   background:
     linear-gradient(180deg, rgba(14, 22, 40, 0.96), rgba(9, 14, 26, 0.94)),
     radial-gradient(circle at top left, rgba(255,255,255,0.03), transparent 36%);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02), 0 12px 30px rgba(0, 0, 0, 0.24);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02), 0 16px 36px rgba(0, 0, 0, 0.26);
 }
 
 .ship-chamber-card::before {
@@ -418,11 +431,32 @@ h1 {
 .hero-status-pill {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding: 14px 16px;
   border-radius: 18px;
   background: rgba(125, 211, 252, 0.08);
   border: 1px solid rgba(125, 211, 252, 0.16);
+}
+
+.premium-status-pill {
+  min-width: 260px;
+  justify-content: flex-start;
+  backdrop-filter: blur(18px);
+  background: rgba(12, 20, 36, 0.72);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+}
+
+.premium-status-copy {
+  display: grid;
+  gap: 2px;
+}
+
+.premium-status-copy strong {
+  font-size: 0.98rem;
+}
+
+.premium-status-copy small {
+  color: var(--soft-text);
 }
 
 .status-dot {
@@ -525,7 +559,22 @@ h1 {
 .chamber-task-stack {
   display: grid;
   gap: 8px;
-  margin-top: 4px;
+  margin-top: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.premium-hero-stage {
+  position: relative;
+}
+
+.premium-hero-stage::before {
+  content: '';
+  position: absolute;
+  inset: -12px;
+  border-radius: 38px;
+  background: radial-gradient(circle at 50% 10%, rgba(125, 211, 252, 0.06), transparent 38%);
+  pointer-events: none;
 }
 
 .command-lower-grid {
@@ -541,10 +590,11 @@ h1 {
 }
 
 .friendly-metric-card {
-  border-radius: 20px;
-  padding: 18px;
-  border: 1px solid rgba(125, 211, 252, 0.12);
-  background: rgba(255, 255, 255, 0.03);
+  border-radius: 22px;
+  padding: 20px;
+  border: 1px solid rgba(125, 211, 252, 0.1);
+  background: linear-gradient(180deg, rgba(12, 19, 37, 0.88), rgba(8, 14, 28, 0.96));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
 }
 
 .friendly-metric-card span,
@@ -577,6 +627,9 @@ h1 {
 
 .activity-friendly-item {
   background: rgba(255, 255, 255, 0.03);
+  border-radius: 18px;
+  padding: 16px 18px;
+  border: 1px solid rgba(125, 211, 252, 0.08);
 }
 
 .activity-friendly-topline {
@@ -619,22 +672,53 @@ h1 {
 }
 
 .chamber-card {
+  position: relative;
   display: grid;
   align-content: start;
-  gap: 8px;
-  padding: 16px;
-  background: rgba(8, 14, 28, 0.82);
-  border: 1px solid rgba(125, 211, 252, 0.14);
+  gap: 10px;
+  padding: 18px;
+  background: linear-gradient(180deg, rgba(12, 20, 38, 0.9), rgba(8, 14, 28, 0.96));
+  border: 1px solid rgba(125, 211, 252, 0.12);
+  border-radius: 24px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+  overflow: hidden;
+}
+
+.chamber-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, color-mix(in srgb, var(--agent-primary) 18%, transparent), transparent 38%);
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.chamber-card::after {
+  content: '';
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 12px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+  pointer-events: none;
 }
 
 .mini-task-button {
   margin-top: 4px;
-  border: 1px solid rgba(125, 211, 252, 0.16);
-  background: rgba(125, 211, 252, 0.08);
+  border: 1px solid rgba(125, 211, 252, 0.12);
+  background: rgba(7, 12, 24, 0.72);
   color: #eaf4ff;
-  border-radius: 12px;
-  padding: 8px 10px;
+  border-radius: 14px;
+  padding: 9px 11px;
   text-align: left;
+  transition: border-color 160ms ease, transform 160ms ease, background 160ms ease;
+}
+
+.mini-task-button:hover {
+  border-color: rgba(125, 211, 252, 0.22);
+  background: rgba(10, 18, 34, 0.9);
+  transform: translateY(-1px);
 }
 
 .chamber-glyph {
@@ -648,6 +732,23 @@ h1 {
   color: white;
   font-weight: 800;
   font-size: 1.2rem;
+  box-shadow: 0 0 24px color-mix(in srgb, var(--agent-glow) 28%, transparent);
+}
+
+.chamber-card-copy {
+  display: grid;
+  gap: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.chamber-card-copy strong {
+  font-size: 1rem;
+}
+
+.chamber-card-copy span {
+  color: var(--soft-text);
+  line-height: 1.35;
 }
 
 .chamber-card span,
@@ -661,8 +762,8 @@ h1 {
 
 .review-safe-grid {
   display: grid;
-  grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
-  gap: 16px;
+  grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+  gap: 18px;
   margin-top: 14px;
 }
 
@@ -1306,19 +1407,27 @@ th {
 
 .artifact-list-item {
   display: grid;
-  gap: 6px;
+  gap: 8px;
   width: 100%;
   text-align: left;
-  padding: 14px;
-  border-radius: 18px;
-  border: 1px solid rgba(125, 211, 252, 0.12);
-  background: rgba(125, 211, 252, 0.06);
+  padding: 15px;
+  border-radius: 20px;
+  border: 1px solid rgba(125, 211, 252, 0.1);
+  background: linear-gradient(180deg, rgba(8, 14, 28, 0.88), rgba(7, 12, 24, 0.78));
   color: #eaf4ff;
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.artifact-list-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(125, 211, 252, 0.2);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
 }
 
 .artifact-list-item.active {
   border-color: rgba(125, 211, 252, 0.34);
-  box-shadow: 0 0 0 1px rgba(125, 211, 252, 0.18);
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.24);
+  background: linear-gradient(180deg, rgba(18, 34, 62, 0.92), rgba(10, 18, 34, 0.9));
 }
 
 .artifact-list-topline {
@@ -1345,15 +1454,46 @@ th {
 .approval-none { background: rgba(148, 163, 184, 0.14); color: #cbd5e1; }
 
 .artifact-preview-card {
-  border-radius: 22px;
-  border: 1px solid rgba(125, 211, 252, 0.12);
+  border-radius: 24px;
+  border: 1px solid rgba(125, 211, 252, 0.1);
   background: rgba(7, 12, 24, 0.72);
-  padding: 16px;
+  padding: 18px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+  min-height: 540px;
 }
 
 .artifact-preview-inner {
   display: grid;
-  gap: 14px;
+  gap: 16px;
+}
+
+.premium-artifact-preview-body {
+  border-radius: 20px;
+  background: rgba(4, 9, 18, 0.62);
+  border: 1px solid rgba(125, 211, 252, 0.08);
+  padding: 12px;
+}
+
+.premium-review-notes {
+  border-radius: 18px;
+  background: rgba(9, 15, 28, 0.62);
+  border: 1px solid rgba(125, 211, 252, 0.08);
+  padding: 14px;
+}
+
+.review-notes-header {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.review-notes-header span {
+  color: var(--soft-text);
+  font-size: 0.9rem;
+}
+
+.premium-artifact-actions {
+  gap: 12px;
 }
 
 .artifact-preview-topline {
@@ -1381,9 +1521,15 @@ th {
 
 .action-button {
   border-radius: 999px;
-  padding: 10px 14px;
+  padding: 11px 18px;
   border: 1px solid rgba(125, 211, 252, 0.16);
   color: #eaf4ff;
+  transition: transform 160ms ease, filter 160ms ease, background 160ms ease;
+}
+
+.action-button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
 }
 
 .action-button.primary { background: rgba(59, 130, 246, 0.22); }
@@ -1400,10 +1546,17 @@ th {
   width: 100%;
   border-radius: 12px;
   border: 1px solid rgba(125, 211, 252, 0.18);
-  background: rgba(5, 10, 24, 0.72);
+  background: rgba(5, 10, 24, 0.82);
   color: #e8f4ff;
   padding: 12px 14px;
   resize: vertical;
+  min-height: 110px;
+}
+
+.review-notes-input:focus {
+  outline: none;
+  border-color: rgba(125, 211, 252, 0.28);
+  box-shadow: 0 0 0 3px rgba(125, 211, 252, 0.08);
 }
 
 .artifact-image-preview,
@@ -1568,11 +1721,142 @@ th {
   width: min(720px, 100%);
   max-height: 88vh;
   overflow: auto;
-  border-radius: 28px;
+  border-radius: 32px;
   background: rgba(8, 14, 28, 0.96);
-  border: 1px solid rgba(125, 211, 252, 0.16);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
-  padding: 24px;
+  border: 1px solid rgba(125, 211, 252, 0.12);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
+  padding: 28px;
+}
+
+@media (max-width: 1080px) {
+  .top-control-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .premium-status-pill,
+  .compact-project-switcher {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .ship-stage-grid {
+    padding: 104px 70px 70px;
+    gap: 22px 18px;
+  }
+
+  .review-safe-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .artifact-preview-card {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 820px) {
+  .top-drawer {
+    width: min(100vw - 24px, 1100px);
+    padding: 18px;
+    border-radius: 24px;
+    flex-direction: column;
+  }
+
+  .side-drawer {
+    top: 110px;
+    bottom: 12px;
+    width: min(92vw, 360px);
+  }
+
+  .ship-stage-shell {
+    min-height: 64vh;
+  }
+
+  .ship-stage-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 96px 34px 58px;
+    min-height: 700px;
+  }
+}
+
+@media (max-width: 640px) {
+  .safe-mode-shell {
+    padding: 16px;
+  }
+
+  .top-control-bar {
+    gap: 10px;
+    padding-top: 0;
+  }
+
+  .ship-stage-shell {
+    min-height: 70vh;
+    border-radius: 26px;
+  }
+
+  .ship-stage-hull {
+    inset: 42px 24px 24px;
+    border-radius: 64px;
+  }
+
+  .ship-stage-grid {
+    grid-template-columns: 1fr;
+    padding: 88px 22px 44px;
+    min-height: 0;
+  }
+
+  .ship-chamber-card {
+    min-height: 168px;
+  }
+
+  .drawer-toggle.top {
+    top: 10px;
+  }
+
+  .drawer-toggle.left,
+  .drawer-toggle.right {
+    top: 58px;
+  }
+
+  .side-drawer {
+    top: 96px;
+    width: calc(100vw - 24px);
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+  }
+
+  .side-drawer.left,
+  .side-drawer.right {
+    transform: translateY(110%);
+  }
+
+  .side-drawer.open {
+    transform: translateY(0);
+  }
+
+  .top-drawer {
+    top: 12px;
+    width: calc(100vw - 24px);
+    padding: 16px;
+  }
+
+  .friendly-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .artifact-actions {
+    flex-direction: column;
+  }
+
+  .action-button {
+    width: 100%;
+  }
+
+  .agent-modal {
+    padding: 20px;
+    border-radius: 24px;
+  }
 }
 
 .theme-science-lab.agent-modal,
