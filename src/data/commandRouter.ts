@@ -9,6 +9,7 @@ export type CommandRouteResult = {
   intent: string
   summary: string
   nextAction: string
+  suggestedPanel?: 'overview' | 'agents' | 'review'
 }
 
 function includesAny(input: string, terms: string[]) {
@@ -24,6 +25,7 @@ export function routeCommand(raw: string, context: CommandContext): CommandRoute
       intent: 'review_action',
       summary: 'This command belongs in the Business Command review flow.',
       nextAction: 'Focus the review dock and map the request to an approval or denial action.',
+      suggestedPanel: 'review',
     }
   }
 
@@ -33,6 +35,7 @@ export function routeCommand(raw: string, context: CommandContext): CommandRoute
       intent: 'business_query',
       summary: 'This command should be handled against live business operational state.',
       nextAction: 'Use dashboard business data, then route to the assistant/runtime for deeper actions if needed.',
+      suggestedPanel: includesAny(input, ['agent', 'agents', 'team', 'worker', 'manager']) ? 'agents' : 'overview',
     }
   }
 
@@ -59,5 +62,6 @@ export function routeCommand(raw: string, context: CommandContext): CommandRoute
     intent: 'general_command',
     summary: `This command currently routes by active UI context (${context.appMode}).`,
     nextAction: 'Capture the command, show routing intent, and hand off to the assistant/runtime in the next backend step.',
+    suggestedPanel: context.appMode === 'business' ? context.businessPanel as 'overview' | 'agents' | 'review' : undefined,
   }
 }

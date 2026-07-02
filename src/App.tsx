@@ -369,6 +369,9 @@ function App() {
         personalSection,
         businessPanel,
       }, businessSummary)
+      if (appMode === 'business' && response.suggestedPanel) {
+        setBusinessPanel(response.suggestedPanel)
+      }
       setCommandResponse(`Route: ${response.route} · Intent: ${response.intent}. ${response.message} Next: ${response.nextAction}`)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Command routing failed.'
@@ -701,6 +704,7 @@ function App() {
                 <button className="command-trigger solid" onClick={() => void submitCommand()}>Send</button>
               </div>
               <div className="command-response-box">{commandResponse}</div>
+              {appMode === 'business' ? <div className="command-context">Business surface follows routed panel focus automatically.</div> : null}
               <div className="command-history">
                 <h3>Recent commands</h3>
                 {commandHistory.length === 0 ? <p>No commands yet.</p> : commandHistory.map((item) => <div key={item} className="history-chip">{item}</div>)}

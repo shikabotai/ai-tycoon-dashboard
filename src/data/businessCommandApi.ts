@@ -14,6 +14,7 @@ export type BusinessCommandResponse = {
   intent: string
   message: string
   nextAction: string
+  suggestedPanel?: 'overview' | 'agents' | 'review'
 }
 
 export async function sendBusinessCommand(raw: string, context: CommandContext, summary?: DashboardSummary): Promise<BusinessCommandResponse> {

@@ -76,6 +76,7 @@ export default defineConfig({
               intent: route.intent || 'general_command',
               message: `Routed to ${route.route || 'unknown'} with ${summary.approvalsPending ?? 0} pending approvals and ${summary.publishedToday ?? 0} publications today.`,
               nextAction: route.nextAction || 'Hand off to the assistant/runtime backend.',
+              suggestedPanel: route.suggestedPanel,
             }))
           })
         })
