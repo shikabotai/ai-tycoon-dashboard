@@ -27,6 +27,11 @@ type PersonalSectionData = {
   heroSummary: string
   summaryCards: PersonalCard[]
   highlights: string[]
+  freshness?: {
+    label: string
+    ageDays: number | null
+    stale: boolean
+  }
 }
 
 type AutopilotStatus = {
@@ -523,6 +528,11 @@ function App() {
               <article className="detail-panel">
                 <h2>Projection status</h2>
                 <p>This page is now using a real PunkRecords projection path. The next layer is richer source extraction and better freshness signals, not placeholder replacement.</p>
+                {currentPersonalData?.freshness ? (
+                  <div className={`history-chip${currentPersonalData.freshness.stale ? ' stale-chip' : ''}`}>
+                    {currentPersonalData.freshness.label} · {currentPersonalData.freshness.ageDays === null ? 'freshness unknown' : `${currentPersonalData.freshness.ageDays}d old`}
+                  </div>
+                ) : null}
               </article>
             </section>
           </main>

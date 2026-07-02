@@ -12,6 +12,11 @@ export type ProjectedSection = {
   heroSummary: string
   summaryCards: ProjectedCard[]
   highlights: string[]
+  freshness?: {
+    label: string
+    ageDays: number | null
+    stale: boolean
+  }
 }
 
 const PUNK_RECORDS_ROOT = '/Users/shika/.openclaw/workspace/PunkRecords'
@@ -46,6 +51,14 @@ function countMatches(input: string, needle: string) {
   return input.split(needle).length - 1
 }
 
+function summarizeFreshness(label: string, ageDays: number | null, staleAfterDays: number) {
+  return {
+    label,
+    ageDays,
+    stale: ageDays === null ? true : ageDays > staleAfterDays,
+  }
+}
+
 export function buildVesselData(): ProjectedSection {
   const fitness = readPunkFile('Vessel/Fitness/Fitness Overview.md')
   const nutrition = readPunkFile('Vessel/Nutrition/Nutrition Overview.md')
@@ -72,6 +85,7 @@ export function buildVesselData(): ProjectedSection {
       `Latest nutrition evidence: ${nutritionDate ?? 'missing'}`,
       activeDirection,
     ],
+    freshness: summarizeFreshness('Vessel evidence', Math.min(workoutAge ?? 999, nutritionAge ?? 999), 4),
   }
 }
 
@@ -100,6 +114,7 @@ export function buildIdentityData(): ProjectedSection {
       `Top mission: ${topGoal}`,
       'Ideal Self, Goals Overview, and Annual Goals are the main identity anchors.',
     ],
+    freshness: summarizeFreshness('Identity planning docs', 0, 30),
   }
 }
 
@@ -125,6 +140,7 @@ export function buildSystemsData(): ProjectedSection {
       'Ventures MOC helps expose cross-project surface area.',
       'This page should evolve into the daily operational command layer.',
     ],
+    freshness: summarizeFreshness('Operations board evidence', 0, 14),
   }
 }
 
@@ -149,6 +165,7 @@ export function buildVenturesData(): ProjectedSection {
       'Annual goals provide the immediate venture pressure.',
       'This page should stay distinct from Business Command live ops.',
     ],
+    freshness: summarizeFreshness('Ventures planning docs', 0, 21),
   }
 }
 
@@ -177,6 +194,7 @@ export function buildCareerData(): ProjectedSection {
       'Annual goals and 5-year goals are the main current sources.',
       'This page should later expose evidence, not just strategy text.',
     ],
+    freshness: summarizeFreshness('Career planning docs', 0, 30),
   }
 }
 
@@ -201,6 +219,7 @@ export function buildKnowledgeData(): ProjectedSection {
       'Current projections are still strategy-heavy and should deepen later.',
       'This section is ready for richer repo traversal when Phase 1 core is complete.',
     ],
+    freshness: summarizeFreshness('Knowledge strategy docs', 0, 30),
   }
 }
 
@@ -220,6 +239,7 @@ export function buildWealthData(): ProjectedSection {
       'Current projections are strategic, not account-level.',
       'This section needs deeper data sources in a later pass.',
     ],
+    freshness: summarizeFreshness('Wealth strategy docs', 0, 30),
   }
 }
 
@@ -242,6 +262,7 @@ export function buildEducationData(): ProjectedSection {
       'This section still needs live academic detail later.',
       'Current projection keeps the long-arc program in view.',
     ],
+    freshness: summarizeFreshness('Education planning docs', 0, 45),
   }
 }
 
@@ -265,5 +286,6 @@ export function buildRelationshipsData(): ProjectedSection {
       'Current notes emphasize timing and environment constraints.',
       'This page is still intentionally lighter than the execution-heavy sections.',
     ],
+    freshness: summarizeFreshness('Relationship planning docs', 0, 45),
   }
 }

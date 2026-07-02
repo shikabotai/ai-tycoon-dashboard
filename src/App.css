@@ -564,6 +564,12 @@ input {
   padding: 14px 16px;
 }
 
+.stale-chip {
+  background: rgba(255, 166, 77, 0.12);
+  border-color: rgba(255, 166, 77, 0.35);
+  color: #ffd7a0;
+}
+
 .command-history {
   display: flex;
   flex-direction: column;
