@@ -1,953 +1,641 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { Canvas } from '@react-three/fiber'
+import { Html, Float, Line, OrbitControls, Sphere, Stars, Text } from '@react-three/drei'
+import { AnimatePresence, motion } from 'motion/react'
 import './App.css'
-import { supabase } from './lib/supabase'
-import { agentIdentities } from './agentIdentities'
+import { useDashboardData } from './hooks/useDashboardData'
+import { sendBusinessCommand } from './data/businessCommandApi'
 
-type QueueHealth = {
-  observed_at: string | null
-  runnable_count: number
-  in_progress_count: number
-  flagged_count: number
+type AppMode = 'personal' | 'business'
+type PersonalSection =
+  | 'home'
+  | 'vessel'
+  | 'identity'
+  | 'career'
+  | 'wealth'
+  | 'ventures'
+  | 'systems'
+  | 'education'
+  | 'relationships'
+  | 'knowledge'
+
+type BusinessPanel = 'overview' | 'agents' | 'review'
+
+type PersonalCard = { label: string; value: string; note: string; stale?: boolean }
+
+type PersonalSectionData = {
+  heroSummary: string
+  summaryCards: PersonalCard[]
+  highlights: string[]
 }
 
-type Summary = {
-  revenueUsd: number
-  costUsd: number
-  marginUsd: number
-  publishedToday: number
+
+type NodeSpec = {
+  key: Exclude<PersonalSection, 'home'>
+  label: string
+  position: [number, number, number]
+  tier: 'core' | 'secondary'
 }
 
-type ProjectRow = {
-  id: string
-  title: string
+type LoginState = {
+  username: string
+  password: string
 }
 
-type TaskRow = {
-  id: string
-  title: string
-  project_id: string | null
-  assigned_agent_id?: string | null
-  status?: string
-  metadata?: Record<string, unknown> | null
-}
+const VALID_USERNAME = 'mthanath64'
+const VALID_PASSWORD = 'Mitch2002'
+const MAX_LOGIN_ATTEMPTS = 10
+const LOCKOUT_MS = 10 * 60 * 1000
+const SESSION_KEY = 'control-center-auth'
+const LOGIN_STATE_KEY = 'control-center-login-state'
 
-type EventRow = {
-  id: string
-  task_id: string
-  event_type: string
-  actor_agent_id: string | null
-  created_at: string
-  payload: Record<string, unknown> | null
-}
-
-type ArtifactRow = {
-  id: string
-  task_id: string
-  artifact_type: string
-  content: string | null
-  filename: string | null
-  storage_path: string | null
-  created_at: string
-}
-
-const PUBLIC_REVIEW_IMAGE_URLS: Record<string, string> = {
-  '783a3fbc-2cbb-4dc2-9e01-1e5541563a77': 'https://fedodlznieytjgmcamds.supabase.co/storage/v1/object/public/public-artifacts/reviews/a7eaaf02-a2e6-4286-94ea-78131a44e482/designer-output.png',
-}
-
-function isImageArtifact(artifact: { filename?: string | null; storage_path?: string | null }) {
-  const value = `${artifact.filename || ''} ${artifact.storage_path || ''}`.toLowerCase()
-  return ['.png', '.jpg', '.jpeg', '.webp', '.gif'].some((ext) => value.includes(ext))
-}
-
-async function storageObjectUrl(storagePath: string) {
-  const { data, error } = await supabase.storage.from('artifact-files').createSignedUrl(storagePath, 60 * 60)
-  if (error || !data?.signedUrl) throw error || new Error('Unable to create signed URL')
-  return data.signedUrl
-}
-
-type ApprovalRow = {
-  id: string
-  task_id: string
-  status: string
-  comment?: string | null
-  created_at: string
-}
-
-function approvalReviewUrl(comment?: string | null) {
-  if (!comment) return null
-  const match = comment.match(/review_url=(https?:\/\/\S+)/)
-  return match ? match[1] : null
-}
-
-type AgentRow = {
-  id: string
-  role: string
-  display_name: string
-  status: string
-}
-
-type TaskDetail = {
-  task: TaskRow
-  projectTitle?: string
-  approvals: ApprovalRow[]
-  artifacts: ArtifactRow[]
-  events: EventRow[]
-}
-
-type PanelKey = 'metrics' | 'activity' | 'review'
-
-const DECK_LAYOUT = [
-  ['gateway', 'manager', 'reviewer'],
-  ['researcher', 'content', 'designer'],
-  ['worker-1', 'worker-2', 'packager'],
+const PERSONAL_NODES: NodeSpec[] = [
+  { key: 'vessel', label: 'Vessel', position: [-3.6, 1.1, 0], tier: 'core' },
+  { key: 'identity', label: 'Identity', position: [0, 2.65, 0], tier: 'core' },
+  { key: 'career', label: 'Career', position: [3.4, 1.25, 0], tier: 'core' },
+  { key: 'wealth', label: 'Wealth', position: [3.9, -0.55, 0], tier: 'core' },
+  { key: 'ventures', label: 'Ventures', position: [2.25, -2.2, 0], tier: 'core' },
+  { key: 'systems', label: 'Systems', position: [-2.25, -2.2, 0], tier: 'core' },
+  { key: 'education', label: 'Education', position: [-4.2, -0.45, 0], tier: 'secondary' },
+  { key: 'relationships', label: 'Relationships', position: [-1.45, 3.65, 0], tier: 'secondary' },
+  { key: 'knowledge', label: 'Knowledge', position: [1.75, 3.6, 0], tier: 'secondary' },
 ]
 
-export default function App() {
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [projects, setProjects] = useState<ProjectRow[]>([])
-  const [tasks, setTasks] = useState<TaskRow[]>([])
-  const [agents, setAgents] = useState<AgentRow[]>([])
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null)
-  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null)
-  const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null)
-  const [selectedArtifactId, setSelectedArtifactId] = useState<string | null>(null)
-  const [approvalBusy, setApprovalBusy] = useState(false)
-  const [taskBusy, setTaskBusy] = useState(false)
-  const [openPanel, setOpenPanel] = useState<PanelKey | null>(null)
-  const [signedArtifactUrls, setSignedArtifactUrls] = useState<Record<string, string>>({})
-  const [reviewNotes, setReviewNotes] = useState('')
-  const [mapScale, setMapScale] = useState(0.56)
-  const [mapOffset, setMapOffset] = useState({ x: 0, y: -8 })
-  const dragState = useRef<{ x: number; y: number; originX: number; originY: number; pinchDistance?: number; pinchScale?: number } | null>(null)
+const PERSONAL_SECTION_CONTENT: Record<Exclude<PersonalSection, 'home'>, { eyebrow: string; title: string; summaryCards: string[]; highlights: string[] }> = {
+  vessel: {
+    eyebrow: 'Body and performance',
+    title: 'Vessel',
+    summaryCards: ['Weight / body metrics', 'Workout consistency', 'Nutrition consistency', 'Sleep / recovery', 'Mental state / discipline', 'Current physique goal'],
+    highlights: ['Recent workouts and body trends', 'Cut / recomp progress from PunkRecords', 'Stale-data warnings with best-effort status'],
+  },
+  identity: {
+    eyebrow: 'Internal command',
+    title: 'Identity',
+    summaryCards: ['Current identity statement', 'Ideal self alignment', 'Current mission / year theme', 'Top active goals', 'Current dilemmas / blockers', 'Recent lessons / growth'],
+    highlights: ['Ideal Self and Annual Goals as centerpieces', 'Decision Engine, philosophy, and blockers', 'Alignment-first view of momentum'],
+  },
+  career: {
+    eyebrow: 'Trajectory and leverage',
+    title: 'Career',
+    summaryCards: ['Current career trajectory', 'Resume / portfolio readiness', 'Job search status', 'Skill-building progress', 'Current leverage opportunities', 'Next career milestone'],
+    highlights: ['Career strategy overviews and SWOT', 'Portfolio / resume readiness', 'Opportunities tied to real repo data'],
+  },
+  wealth: {
+    eyebrow: 'Capital and strategy',
+    title: 'Wealth',
+    summaryCards: ['Net worth', 'Cash / liquidity', 'Income snapshot', 'Investment allocation', 'Current financial priorities', 'Wealth-building progress / phase'],
+    highlights: ['Budget, cashflow, investments, and tax strategy', 'Current financial priorities surfaced fast', 'Balanced between present state and future direction'],
+  },
+  ventures: {
+    eyebrow: 'Personal venture strategy',
+    title: 'Ventures',
+    summaryCards: ['Current priority venture', 'Venture portfolio snapshot', 'Biggest blocker', 'Available capital / deployment posture', 'Current opportunity score / ROI focus', 'Next key venture decision'],
+    highlights: ['Personal venture worldview from PunkRecords', 'Priority logic and blocker visibility', 'Clear distinction from live Business Command operations'],
+  },
+  systems: {
+    eyebrow: 'Life operations layer',
+    title: 'Systems',
+    summaryCards: ['Today’s top priorities', 'Operations task board status', 'Active automations', 'Open loops / stale items', 'Discipline / consistency snapshot', 'Recent captures / updates'],
+    highlights: ['Operations Task Board as a daily command center', 'Automations, capture systems, and stale-item visibility', 'Strong anchor for the global daily focus layer'],
+  },
+  education: {
+    eyebrow: 'Learning and school',
+    title: 'Education',
+    summaryCards: ['Current program / course load', 'Current courses', 'Upcoming deadlines', 'Progress / completion status', 'Current learning focus', 'Academic priority level'],
+    highlights: ['GT / UF / certification context', 'Current course and deadline clarity', 'Education visible without taking over the whole system'],
+  },
+  relationships: {
+    eyebrow: 'Family and connection',
+    title: 'Relationships',
+    summaryCards: ['Family / relationship priority snapshot', 'Current connection health', 'Important people / relationship focus', 'Upcoming relationship actions', 'Long-term relationship vision', 'Current blockers / gaps'],
+    highlights: ['Family, future partner, and relationship vision', 'Connection health without overexposing sensitive content', 'Actionable relationship focus rather than vague reflection'],
+  },
+  knowledge: {
+    eyebrow: 'Mental models and references',
+    title: 'Knowledge',
+    summaryCards: ['Current learning domains', 'Most valuable mental models', 'Recently added knowledge', 'High-value references', 'Current research / reading focus', 'Knowledge gaps to close'],
+    highlights: ['Business, finance, health, and psychology frameworks', 'Knowledge browser built from PunkRecords structure', 'Designed to support action, not just hoarding information'],
+  },
+}
 
-  const [metricsLoaded, setMetricsLoaded] = useState(false)
-  const [activityLoaded, setActivityLoaded] = useState(false)
-  const [reviewLoaded, setReviewLoaded] = useState(false)
+function formatRelativeTime(value?: string | null) {
+  if (!value) return 'No recent activity'
+  const diffMs = Date.now() - Date.parse(value)
+  if (Number.isNaN(diffMs)) return value
+  const diffMinutes = Math.floor(diffMs / 60000)
+  if (diffMinutes < 1) return 'just now'
+  if (diffMinutes < 60) return `${diffMinutes}m ago`
+  const diffHours = Math.floor(diffMinutes / 60)
+  if (diffHours < 24) return `${diffHours}h ago`
+  const diffDays = Math.floor(diffHours / 24)
+  return `${diffDays}d ago`
+}
 
-  const [queueHealth, setQueueHealth] = useState<QueueHealth | null>(null)
-  const [summary, setSummary] = useState<Summary>({ revenueUsd: 0, costUsd: 0, marginUsd: 0, publishedToday: 0 })
-  const [events, setEvents] = useState<EventRow[]>([])
-  const [artifacts, setArtifacts] = useState<ArtifactRow[]>([])
-  const [approvals, setApprovals] = useState<ApprovalRow[]>([])
+function formatUsd(value: number) {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  }).format(value)
+}
 
-  useEffect(() => {
-    let cancelled = false
-
-    async function loadBase() {
-      setLoading(true)
-      setError(null)
-
-      const [projectsRes, tasksRes, agentsRes] = await Promise.all([
-        supabase.from('projects').select('id,title').order('title'),
-        supabase.from('tasks').select('id,title,project_id,assigned_agent_id,status,metadata').order('updated_at', { ascending: false }).limit(120),
-        supabase.from('agents').select('id,role,display_name,status').order('id'),
-      ])
-
-      if (cancelled) return
-
-      const firstError = projectsRes.error || tasksRes.error || agentsRes.error
-      if (firstError) {
-        setError(firstError.message)
-        setLoading(false)
-        return
-      }
-
-      setProjects((projectsRes.data ?? []) as ProjectRow[])
-      setTasks((tasksRes.data ?? []) as TaskRow[])
-      setAgents((agentsRes.data ?? []) as AgentRow[])
-      setLoading(false)
-    }
-
-    void loadBase()
-    return () => {
-      cancelled = true
-    }
-  }, [selectedProjectId])
-
-  useEffect(() => {
-    if (openPanel !== 'metrics' || metricsLoaded) return
-    let cancelled = false
-
-    async function loadMetrics() {
-      const [queueRes, pnlRes, publicationsRes] = await Promise.all([
-        supabase.from('v_queue_health').select('observed_at,runnable_count,in_progress_count,flagged_count').limit(1).maybeSingle(),
-        supabase.from('v_project_pnl').select('project_id,revenue_usd,cost_usd,margin_usd').order('month', { ascending: false }).limit(50),
-        supabase.from('publications').select('project_id,published_at').order('published_at', { ascending: false }).limit(100),
-      ])
-
-      if (cancelled) return
-      const firstError = queueRes.error || pnlRes.error || publicationsRes.error
-      if (firstError) {
-        setError(firstError.message)
-        return
-      }
-
-      setQueueHealth((queueRes.data as QueueHealth | null) ?? null)
-
-      const pnlRows = (pnlRes.data ?? []) as Array<{ project_id: string; revenue_usd: number; cost_usd: number; margin_usd: number }>
-      const publicationRows = (publicationsRes.data ?? []) as Array<{ project_id: string | null; published_at: string }>
-      const latestPnlByProject = new Map<string, { revenue_usd: number; cost_usd: number; margin_usd: number }>()
-      for (const row of pnlRows) {
-        if (!latestPnlByProject.has(row.project_id)) latestPnlByProject.set(row.project_id, row)
-      }
-
-      let revenueUsd = 0
-      let costUsd = 0
-      let marginUsd = 0
-      for (const [projectId, row] of latestPnlByProject.entries()) {
-        if (!selectedProjectId || selectedProjectId === projectId) {
-          revenueUsd += Number(row.revenue_usd || 0)
-          costUsd += Number(row.cost_usd || 0)
-          marginUsd += Number(row.margin_usd || 0)
-        }
-      }
-
-      const today = new Date().toISOString().slice(0, 10)
-      const publishedToday = publicationRows.filter((row) => row.published_at?.slice(0, 10) === today && (!selectedProjectId || row.project_id === selectedProjectId)).length
-      setSummary({ revenueUsd, costUsd, marginUsd, publishedToday })
-      setMetricsLoaded(true)
-    }
-
-    void loadMetrics()
-    return () => {
-      cancelled = true
-    }
-  }, [metricsLoaded, openPanel, selectedProjectId])
-
-  useEffect(() => {
-    if (openPanel !== 'activity' || activityLoaded) return
-    let cancelled = false
-
-    async function loadActivity() {
-      const { data, error: activityError } = await supabase.from('task_events').select('id,task_id,event_type,actor_agent_id,created_at,payload').order('created_at', { ascending: false }).limit(40)
-      if (cancelled) return
-      if (activityError) {
-        setError(activityError.message)
-        return
-      }
-      setEvents((data ?? []) as EventRow[])
-      setActivityLoaded(true)
-    }
-
-    void loadActivity()
-    return () => {
-      cancelled = true
-    }
-  }, [activityLoaded, openPanel])
-
-  useEffect(() => {
-    if (openPanel !== 'review' || reviewLoaded) return
-    let cancelled = false
-
-    async function loadReview() {
-      const [artifactsRes, approvalsRes] = await Promise.all([
-        supabase.from('artifacts').select('id,task_id,artifact_type,content,filename,storage_path,created_at').in('artifact_type', ['draft', 'draft_file', 'delivery_note', 'package']).order('created_at', { ascending: false }).limit(80),
-        supabase.from('approvals').select('id,task_id,status,comment,created_at').order('created_at', { ascending: false }).limit(80),
-      ])
-
-      if (cancelled) return
-      const firstError = artifactsRes.error || approvalsRes.error
-      if (firstError) {
-        setError(firstError.message)
-        return
-      }
-
-      setArtifacts((artifactsRes.data ?? []) as ArtifactRow[])
-      setApprovals((approvalsRes.data ?? []) as ApprovalRow[])
-      setReviewLoaded(true)
-    }
-
-    void loadReview()
-    return () => {
-      cancelled = true
-    }
-  }, [openPanel, reviewLoaded])
-
-  const projectMap = useMemo(() => new Map(projects.map((project) => [project.id, project.title])), [projects])
-  const taskMap = useMemo(() => new Map(tasks.map((task) => [task.id, task])), [tasks])
-
-  const filteredActivity = useMemo(() => {
-    const items: Array<{ id: string; eventType: string; actor: string; taskTitle: string; projectTitle?: string; detail?: string }> = []
-
-    for (const event of events) {
-      const task = taskMap.get(event.task_id)
-      if (!task) continue
-      if (selectedProjectId && task.project_id !== selectedProjectId) continue
-
-      let detail: string | undefined
-      const payload = event.payload || {}
-      if (typeof payload.comment === 'string') detail = payload.comment
-      else if (typeof payload.reason === 'string') detail = payload.reason
-      else if (typeof payload.decision === 'string') detail = payload.decision
-
-      items.push({
-        id: event.id,
-        eventType: event.event_type,
-        actor: event.actor_agent_id || 'system',
-        taskTitle: task.title,
-        projectTitle: task.project_id ? projectMap.get(task.project_id) : undefined,
-        detail,
-      })
-    }
-
-    return items.slice(0, 12)
-  }, [events, projectMap, selectedProjectId, taskMap])
-
-  const reviewItems = useMemo(() => {
-    const latestApprovalByTask = new Map<string, ApprovalRow>()
-    const bestArtifactByTask = new Map<string, ArtifactRow>()
-
-    for (const approval of approvals) {
-      if (!latestApprovalByTask.has(approval.task_id)) latestApprovalByTask.set(approval.task_id, approval)
-    }
-
-    for (const artifact of artifacts) {
-      const task = taskMap.get(artifact.task_id)
-      if (!task) continue
-      if (selectedProjectId && task.project_id !== selectedProjectId) continue
-      const approval = latestApprovalByTask.get(artifact.task_id)
-      const approvalStatus = approval?.status ?? 'none'
-      if (approvalStatus !== 'pending' && approvalStatus !== 'none') continue
-
-      const current = bestArtifactByTask.get(artifact.task_id)
-      const artifactIsPreferred = artifact.artifact_type === 'draft_file' || isImageArtifact(artifact)
-      const currentIsPreferred = current ? (current.artifact_type === 'draft_file' || isImageArtifact(current)) : false
-      if (!current || (artifactIsPreferred && !currentIsPreferred)) {
-        bestArtifactByTask.set(artifact.task_id, artifact)
-      }
-    }
-
-    return Array.from(bestArtifactByTask.values()).map((artifact) => {
-      const task = taskMap.get(artifact.task_id)!
-      const approval = latestApprovalByTask.get(artifact.task_id)
-      return {
-        artifactId: artifact.id,
-        taskId: artifact.task_id,
-        taskTitle: task.title,
-        projectTitle: task.project_id ? projectMap.get(task.project_id) : undefined,
-        artifactType: artifact.artifact_type,
-        content: artifact.content,
-        filename: artifact.filename,
-        storagePath: approvalReviewUrl(approval?.comment) || artifact.storage_path,
-        approvalStatus: approval?.status ?? 'none',
-      }
-    }).slice(0, 12)
-  }, [approvals, artifacts, projectMap, selectedProjectId, taskMap])
-
-  const selectedReviewItem = selectedArtifactId ? reviewItems.find((item) => item.artifactId === selectedArtifactId) : reviewItems[0]
-
-  useEffect(() => {
-    let cancelled = false
-    async function loadSignedUrls() {
-      const imageItems = reviewItems.filter((item) => item.storagePath && isImageArtifact(item))
-      if (imageItems.length === 0) return
-      const next: Record<string, string> = {}
-      for (const item of imageItems) {
-        if (item.storagePath?.startsWith('http://') || item.storagePath?.startsWith('https://')) {
-          next[item.artifactId] = item.storagePath
-          continue
-        }
-        if (PUBLIC_REVIEW_IMAGE_URLS[item.artifactId]) {
-          next[item.artifactId] = PUBLIC_REVIEW_IMAGE_URLS[item.artifactId]
-          continue
-        }
-        if (!item.storagePath) continue
-        try {
-          next[item.artifactId] = await storageObjectUrl(item.storagePath)
-        } catch {
-          // ignore and leave missing
-        }
-      }
-      if (!cancelled) setSignedArtifactUrls(next)
-    }
-    void loadSignedUrls()
-    return () => {
-      cancelled = true
-    }
-  }, [reviewItems])
-
-  const chamberCards = useMemo(() => {
-    return agents
-      .filter((agent) => ['gateway', 'manager', 'reviewer', 'researcher', 'content', 'worker-1', 'worker-2'].includes(agent.id))
-      .map((agent) => {
-        const activeTasks = tasks.filter((task) => task.assigned_agent_id === agent.id && (!selectedProjectId || task.project_id === selectedProjectId) && task.status !== 'done' && task.status !== 'published' && task.status !== 'cancelled')
-        return {
-          ...agent,
-          activeTasks,
-        }
-      })
-  }, [agents, selectedProjectId, tasks])
-
-  const selectedTaskDetail = useMemo(() => {
-    if (!selectedTaskId) return undefined
-    const task = taskMap.get(selectedTaskId)
-    if (!task) return undefined
+function loadStoredLoginState() {
+  if (typeof window === 'undefined') return { attempts: 0, lockoutUntil: 0 }
+  try {
+    const raw = window.localStorage.getItem(LOGIN_STATE_KEY)
+    if (!raw) return { attempts: 0, lockoutUntil: 0 }
+    const parsed = JSON.parse(raw) as { attempts?: number; lockoutUntil?: number }
     return {
-      task,
-      projectTitle: task.project_id ? projectMap.get(task.project_id) : undefined,
-      approvals: approvals.filter((item) => item.task_id === selectedTaskId),
-      artifacts: artifacts.filter((item) => item.task_id === selectedTaskId),
-      events: events.filter((item) => item.task_id === selectedTaskId),
-    } satisfies TaskDetail
-  }, [approvals, artifacts, events, projectMap, selectedTaskId, taskMap])
-
-  const selectedAgentProfile = useMemo(() => {
-    if (!selectedAgentId) return undefined
-    const chamber = chamberCards.find((agent) => agent.id === selectedAgentId)
-    if (!chamber) return undefined
-    const identity = agentIdentities[chamber.id] ?? agentIdentities.gateway
-    return {
-      chamber,
-      identity,
+      attempts: typeof parsed.attempts === 'number' ? parsed.attempts : 0,
+      lockoutUntil: typeof parsed.lockoutUntil === 'number' ? parsed.lockoutUntil : 0,
     }
-  }, [chamberCards, selectedAgentId])
+  } catch {
+    return { attempts: 0, lockoutUntil: 0 }
+  }
+}
 
-  const focusProject = selectedProjectId ? projects.find((project) => project.id === selectedProjectId) : undefined
-  const activeChambers = chamberCards.filter((agent) => agent.activeTasks.length > 0).length
-  const headlineStatus = error ? 'Needs attention' : loading ? 'Refreshing' : 'Stable orbit'
+function storeLoginState(state: { attempts: number; lockoutUntil: number }) {
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(LOGIN_STATE_KEY, JSON.stringify(state))
+}
 
-  function togglePanel(panel: PanelKey) {
-    setOpenPanel((current) => (current === panel ? null : panel))
+function App() {
+  const [authed, setAuthed] = useState(false)
+  const [appMode, setAppMode] = useState<AppMode>('personal')
+  const [personalSection, setPersonalSection] = useState<PersonalSection>('home')
+  const [businessPanel, setBusinessPanel] = useState<BusinessPanel>('overview')
+  const [commandOpen, setCommandOpen] = useState(false)
+  const [commandValue, setCommandValue] = useState('')
+  const [login, setLogin] = useState<LoginState>({ username: '', password: '' })
+  const [loginError, setLoginError] = useState<string | null>(null)
+  const [attempts, setAttempts] = useState(0)
+  const [lockoutUntil, setLockoutUntil] = useState(0)
+  const [now, setNow] = useState(() => Date.now())
+  const [commandHistory, setCommandHistory] = useState<string[]>([])
+  const [commandResponse, setCommandResponse] = useState('Your spotlight command bar will route natural-language instructions to the assistant layer here in Phase 1.')
+  const [projectedSections, setProjectedSections] = useState<Record<string, PersonalSectionData>>({})
+  const [reviewNoteDrafts, setReviewNoteDrafts] = useState<Record<string, string>>({})
+  const [selectedReviewTaskId, setSelectedReviewTaskId] = useState<string | null>(null)
+
+  const dashboardData = useDashboardData()
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const session = window.localStorage.getItem(SESSION_KEY)
+    if (session === 'true') setAuthed(true)
+    const stored = loadStoredLoginState()
+    setAttempts(stored.attempts)
+    setLockoutUntil(stored.lockoutUntil)
+  }, [])
+
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 1000)
+    return () => window.clearInterval(id)
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function loadProjectedSections() {
+      const targets: Array<{ key: 'vessel' | 'identity' | 'systems' | 'ventures'; url: string }> = [
+        { key: 'vessel', url: '/api/personal/vessel' },
+        { key: 'identity', url: '/api/personal/identity' },
+        { key: 'systems', url: '/api/personal/systems' },
+        { key: 'ventures', url: '/api/personal/ventures' },
+      ]
+
+      const entries = await Promise.all(
+        targets.map(async ({ key, url }) => {
+          try {
+            const response = await fetch(url)
+            if (!response.ok) throw new Error(`Failed ${url}`)
+            const data = (await response.json()) as PersonalSectionData
+            return [key, data] as const
+          } catch {
+            return null
+          }
+        }),
+      )
+
+      if (cancelled) return
+      const next = Object.fromEntries(entries.filter(Boolean) as Array<readonly [string, PersonalSectionData]>)
+      setProjectedSections(next)
+    }
+
+    void loadProjectedSections()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const lockedOut = lockoutUntil > now
+  const lockoutSeconds = Math.max(0, Math.ceil((lockoutUntil - now) / 1000))
+
+  const currentPersonalContent = personalSection === 'home' ? null : PERSONAL_SECTION_CONTENT[personalSection]
+  const currentPersonalData = useMemo<PersonalSectionData | null>(() => {
+    if (personalSection === 'home') return null
+    if (projectedSections[personalSection]) return projectedSections[personalSection]
+    if (!currentPersonalContent) return null
+    return {
+      heroSummary: `${currentPersonalContent.title} is scaffolded from the approved design plan and will next be connected to structured repo projections.`,
+      summaryCards: currentPersonalContent.summaryCards.map((card) => ({
+        label: card,
+        value: 'Planned',
+        note: 'Phase 1 shell is live. Repo-backed projections come next.',
+      })),
+      highlights: currentPersonalContent.highlights,
+    }
+  }, [personalSection, currentPersonalContent, projectedSections])
+
+  const lifeMomentum = useMemo(() => ({ score: 78, trend: 'Rising', components: ['Vessel', 'Identity', 'Wealth', 'Ventures', 'Systems', 'Execution'] }), [])
+
+  const businessSummary = dashboardData.summary
+  const queueHealth = dashboardData.queueHealth
+  const topPendingReview = dashboardData.artifactReviewItems[0]
+  const selectedReviewTaskIdSafe = selectedReviewTaskId ?? topPendingReview?.taskId ?? null
+  const selectedReviewItem = dashboardData.artifactReviewItems.find((item) => item.taskId === selectedReviewTaskIdSafe) ?? topPendingReview
+  const selectedReviewDetail = selectedReviewItem ? dashboardData.getTaskDetail(selectedReviewItem.taskId) : undefined
+  const businessAgents = dashboardData.agentChambers.slice(0, 6)
+  const recentActivity = dashboardData.activityFeed.slice(0, 5)
+
+  const dailyFocus = {
+    personal: 'Keep Vessel momentum high and finish the next identity-aligned priority.',
+    business: topPendingReview ? `Clear review pressure on ${topPendingReview.taskTitle}.` : 'Push the highest-value business bottleneck instead of spreading attention.',
+    drift: queueHealth?.oldest_stale_task_title ? `Oldest stale task: ${queueHealth.oldest_stale_task_title}` : 'Logging and consistency slip fastest when priorities go vague.',
+    momentum: `${lifeMomentum.score}/100 · ${lifeMomentum.trend}`,
   }
 
-  function clampScale(next: number) {
-    return Math.max(0.55, Math.min(1.4, next))
-  }
-
-  function zoomMap(delta: number) {
-    setMapScale((current) => clampScale(Number((current + delta).toFixed(2))))
-  }
-
-  async function reloadLazyPanel(panel: PanelKey) {
-    if (panel === 'metrics') setMetricsLoaded(false)
-    if (panel === 'activity') setActivityLoaded(false)
-    if (panel === 'review') setReviewLoaded(false)
-    setOpenPanel(panel)
-  }
-
-  async function reloadTaskContext() {
-    const [tasksRes, eventsRes, artifactsRes, approvalsRes] = await Promise.all([
-      supabase.from('tasks').select('id,title,project_id,assigned_agent_id,status,metadata').order('updated_at', { ascending: false }).limit(80),
-      activityLoaded ? supabase.from('task_events').select('id,task_id,event_type,actor_agent_id,created_at,payload').order('created_at', { ascending: false }).limit(40) : Promise.resolve({ data: events, error: null }),
-      reviewLoaded ? supabase.from('artifacts').select('id,task_id,artifact_type,content,filename,storage_path,created_at').in('artifact_type', ['draft', 'draft_file', 'delivery_note', 'package']).order('created_at', { ascending: false }).limit(80) : Promise.resolve({ data: artifacts, error: null }),
-      reviewLoaded ? supabase.from('approvals').select('id,task_id,status,comment,created_at').order('created_at', { ascending: false }).limit(80) : Promise.resolve({ data: approvals, error: null }),
-    ])
-
-    if (tasksRes.error || eventsRes.error || artifactsRes.error || approvalsRes.error) {
-      setError(tasksRes.error?.message || eventsRes.error?.message || artifactsRes.error?.message || approvalsRes.error?.message || 'Reload failed')
+  function handleLoginSubmit(event: React.FormEvent) {
+    event.preventDefault()
+    if (lockedOut) {
+      setLoginError(`Too many attempts. Try again in ${lockoutSeconds}s.`)
       return
     }
 
-    setTasks((tasksRes.data ?? []) as TaskRow[])
-    if (activityLoaded) setEvents((eventsRes.data ?? []) as EventRow[])
-    if (reviewLoaded) {
-      setArtifacts((artifactsRes.data ?? []) as ArtifactRow[])
-      setApprovals((approvalsRes.data ?? []) as ApprovalRow[])
+    if (login.username === VALID_USERNAME && login.password === VALID_PASSWORD) {
+      setAuthed(true)
+      setLoginError(null)
+      setAttempts(0)
+      setLockoutUntil(0)
+      storeLoginState({ attempts: 0, lockoutUntil: 0 })
+      window.localStorage.setItem(SESSION_KEY, 'true')
+      return
     }
+
+    const nextAttempts = attempts + 1
+    const nextLockout = nextAttempts >= MAX_LOGIN_ATTEMPTS ? Date.now() + LOCKOUT_MS : 0
+    setAttempts(nextAttempts)
+    setLockoutUntil(nextLockout)
+    storeLoginState({ attempts: nextAttempts, lockoutUntil: nextLockout })
+    setLoginError(nextLockout ? 'Too many failed attempts. Temporary lockout enabled.' : `Incorrect login. ${Math.max(0, MAX_LOGIN_ATTEMPTS - nextAttempts)} tries left.`)
   }
 
-  async function decideItem(taskId: string, artifactId: string, status: 'approved' | 'rejected', comment?: string) {
-    const pending = approvals.find((item) => item.task_id === taskId && item.status === 'pending')
-    if (pending) {
-      const { error } = await supabase.from('approvals').update({ status, comment: comment || null, decided_by: 'dashboard', decided_at: new Date().toISOString() }).eq('id', pending.id)
-      if (error) throw error
-    } else {
-      const { error } = await supabase.from('approvals').insert({ task_id: taskId, artifact_id: artifactId, required_role: 'owner', status, comment: comment || null, decided_by: 'dashboard', decided_at: new Date().toISOString() })
-      if (error) throw error
-    }
+  function logout() {
+    setAuthed(false)
+    window.localStorage.removeItem(SESSION_KEY)
+  }
 
-    if (status === 'rejected') {
-      const task = tasks.find((item) => item.id === taskId)
-      const metadata = {
-        ...((task as unknown as { metadata?: Record<string, unknown> } | undefined)?.metadata || {}),
-        revision_notes: comment || 'Needs revision',
-        last_human_rejection_at: new Date().toISOString(),
+  async function decideReview(taskId: string, status: 'approved' | 'rejected') {
+    try {
+      if (status === 'rejected' && !(reviewNoteDrafts[taskId] || '').trim()) {
+        setCommandResponse('Deny requires notes so the next attempt has actionable feedback.')
+        return
       }
-      const { error } = await supabase
-        .from('tasks')
-        .update({
-          status: 'assigned',
-          current_step_index: 2,
-          rejection_reason: comment || 'Needs revision',
-          metadata,
-        })
-        .eq('id', taskId)
-      if (error) throw error
+      await dashboardData.decideTaskApproval(taskId, status, reviewNoteDrafts[taskId] || undefined)
+      setCommandResponse(status === 'approved' ? 'Review approved from Business Command.' : 'Review denied with notes from Business Command.')
+      setSelectedReviewTaskId(null)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Approval action failed.'
+      setCommandResponse(message)
     }
   }
 
-  async function patchTask(taskId: string, patch: Record<string, unknown>) {
-    const { error } = await supabase.from('tasks').update(patch).eq('id', taskId)
-    if (error) throw error
+  async function submitCommand() {
+    if (!commandValue.trim()) return
+    const trimmed = commandValue.trim()
+    setCommandHistory((prev) => [trimmed, ...prev].slice(0, 6))
+    try {
+      const response = await sendBusinessCommand(trimmed, {
+        appMode,
+        personalSection,
+        businessPanel,
+      }, businessSummary)
+      setCommandResponse(`Route: ${response.route} · Intent: ${response.intent}. ${response.message} Next: ${response.nextAction}`)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Command routing failed.'
+      setCommandResponse(message)
+    }
+    setCommandValue('')
+  }
+
+  if (!authed) {
+    return (
+      <div className="login-shell">
+        <div className="login-orb" />
+        <form className="login-card" onSubmit={handleLoginSubmit}>
+          <div className="login-eyebrow">Private Control Center</div>
+          <h1>Enter Command Access</h1>
+          <p className="login-copy">A private life-and-business operating system for Mitchell.</p>
+          <label>
+            <span>Username</span>
+            <input value={login.username} onChange={(e) => setLogin((prev) => ({ ...prev, username: e.target.value }))} autoComplete="username" />
+          </label>
+          <label>
+            <span>Password</span>
+            <input type="password" value={login.password} onChange={(e) => setLogin((prev) => ({ ...prev, password: e.target.value }))} autoComplete="current-password" />
+          </label>
+          <button type="submit" disabled={lockedOut}>{lockedOut ? `Locked · ${lockoutSeconds}s` : 'Enter'}</button>
+          <div className="login-meta">
+            <span>Attempts used: {attempts}/{MAX_LOGIN_ATTEMPTS}</span>
+            {loginError ? <span className="login-error">{loginError}</span> : <span>Simple Phase 1 access gate with temporary lockout.</span>}
+          </div>
+        </form>
+      </div>
+    )
   }
 
   return (
-    <div className="app-shell safe-mode-shell command-deck-shell">
-      <main className="safe-mode-main command-deck-main map-first-main">
-        <section className="top-control-bar">
-          <label className="project-switcher compact-project-switcher">
-            <span>Business focus</span>
-            <select value={selectedProjectId ?? ''} onChange={(event) => setSelectedProjectId(event.target.value || null)}>
-              <option value="">All businesses</option>
-              {projects.map((project) => (
-                <option key={project.id} value={project.id}>{project.title}</option>
-              ))}
-            </select>
-          </label>
+    <div className="control-shell">
+      <header className="top-shell-bar">
+        <div>
+          <div className="shell-mark">Private Control Center</div>
+          <div className="shell-submark">Dark-tech life OS · Personal first · Business command on standby</div>
+        </div>
+        <div className="shell-actions">
+          <button className={appMode === 'personal' ? 'shell-toggle active' : 'shell-toggle'} onClick={() => setAppMode('personal')}>Personal</button>
+          <button className={appMode === 'business' ? 'shell-toggle active' : 'shell-toggle'} onClick={() => setAppMode('business')}>Business</button>
+          <button className="command-trigger" onClick={() => setCommandOpen(true)}>Open Command</button>
+          <button className="logout-btn" onClick={logout}>Lock</button>
+        </div>
+      </header>
 
-          <div className="hero-status-pill compact-status-pill premium-status-pill">
-            <span className="status-dot" />
-            <div className="premium-status-copy">
-              <strong>{focusProject ? focusProject.title : 'Fleet overview'}</strong>
-              <small>{headlineStatus} • {activeChambers} active chambers</small>
-            </div>
-          </div>
-        </section>
+      <section className="daily-focus-strip">
+        <div><span>Personal</span><strong>{dailyFocus.personal}</strong></div>
+        <div><span>Business</span><strong>{dailyFocus.business}</strong></div>
+        <div><span>Drift</span><strong>{dailyFocus.drift}</strong></div>
+        <div><span>Momentum</span><strong>{dailyFocus.momentum}</strong></div>
+      </section>
 
-        <section className="safe-mode-card chamber-section-card chamber-command-card map-stage-card ship-stage-card minimal-map-card premium-hero-stage">
-          <div className={`ship-stage-shell ${dragState.current ? 'dragging-map' : ''}`} onWheel={(event) => {
-            event.preventDefault()
-            zoomMap(event.deltaY > 0 ? -0.08 : 0.08)
-          }} onPointerMove={(event) => {
-            if (!dragState.current || dragState.current.pinchDistance) return
-            const deltaX = event.clientX - dragState.current.x
-            const deltaY = event.clientY - dragState.current.y
-            setMapOffset({ x: dragState.current.originX + deltaX, y: dragState.current.originY + deltaY })
-          }} onPointerUp={() => {
-            dragState.current = null
-          }} onPointerLeave={() => {
-            dragState.current = null
-          }} onTouchStart={(event) => {
-            if (event.touches.length === 1) {
-              dragState.current = {
-                x: event.touches[0].clientX,
-                y: event.touches[0].clientY,
-                originX: mapOffset.x,
-                originY: mapOffset.y,
-              }
-              return
-            }
-            if (event.touches.length === 2) {
-              const dx = event.touches[0].clientX - event.touches[1].clientX
-              const dy = event.touches[0].clientY - event.touches[1].clientY
-              dragState.current = {
-                x: 0,
-                y: 0,
-                originX: mapOffset.x,
-                originY: mapOffset.y,
-                pinchDistance: Math.hypot(dx, dy),
-                pinchScale: mapScale,
-              }
-            }
-          }} onTouchMove={(event) => {
-            if (!dragState.current) return
-            if (event.touches.length === 1 && !dragState.current.pinchDistance) {
-              const deltaX = event.touches[0].clientX - dragState.current.x
-              const deltaY = event.touches[0].clientY - dragState.current.y
-              setMapOffset({ x: dragState.current.originX + deltaX, y: dragState.current.originY + deltaY })
-              return
-            }
-            if (event.touches.length === 2 && dragState.current.pinchDistance && dragState.current.pinchScale) {
-              const dx = event.touches[0].clientX - event.touches[1].clientX
-              const dy = event.touches[0].clientY - event.touches[1].clientY
-              const nextDistance = Math.hypot(dx, dy)
-              const ratio = nextDistance / dragState.current.pinchDistance
-              setMapScale(clampScale(dragState.current.pinchScale * ratio))
-            }
-          }} onTouchEnd={() => {
-            dragState.current = null
-          }}>
-            <div className="ship-stage-pan-zone" onPointerDown={(event) => {
-              dragState.current = {
-                x: event.clientX,
-                y: event.clientY,
-                originX: mapOffset.x,
-                originY: mapOffset.y,
-              }
-            }} onTouchStart={(event) => {
-              if (event.touches.length !== 1) return
-              dragState.current = {
-                x: event.touches[0].clientX,
-                y: event.touches[0].clientY,
-                originX: mapOffset.x,
-                originY: mapOffset.y,
-              }
-            }} />
-            <div className="ship-stage-stars" />
-            <div className="ship-stage-camera" style={{ transform: `translate(${mapOffset.x}px, ${mapOffset.y}px) scale(${mapScale})` }}>
-              <div className="ship-stage-hull" />
-              <div className="ship-stage-bridge" />
-
-              <div className="ship-stage-grid">
-              {DECK_LAYOUT.flat().map((id, index) => {
-                if (!id) return <div key={`empty-${index}`} className="ship-stage-empty" />
-                const chamber = chamberCards.find((agent) => agent.id === id)
-                if (!chamber) return <div key={id} className="chamber-card chamber-placeholder">Offline</div>
-                const identity = agentIdentities[chamber.id] ?? agentIdentities.gateway
-                return (
-                  <div key={chamber.id} className={`chamber-card command-chamber-card ship-chamber-card theme-${identity.roomTheme} ${chamber.activeTasks.length > 0 ? 'has-work' : ''} ${chamber.id === 'manager' ? 'manager-hub-card' : ''}`} style={{ ['--agent-primary' as string]: identity.palette.primary, ['--agent-secondary' as string]: identity.palette.secondary, ['--agent-glow' as string]: identity.palette.glow }} onClick={() => setSelectedAgentId(chamber.id)}>
-                    <div className="chamber-card-topline">
-                      <div className="chamber-glyph">{identity.name.slice(0, 1)}</div>
-                      <span className="chamber-task-count">{chamber.activeTasks.length} active</span>
-                    </div>
-                    <div className="chamber-card-copy">
-                      <strong>{identity.name}</strong>
-                      <span>{identity.subtitle}</span>
-                    </div>
-                    <div className="chamber-task-stack">
-                      {chamber.activeTasks.length === 0 ? (
-                        <p className="empty">Quiet chamber</p>
-                      ) : (
-                        chamber.activeTasks.slice(0, 2).map((task) => (
-                          <button key={task.id} className="mini-task-button" onClick={async (event) => {
-                            event.stopPropagation()
-                            setSelectedTaskId(task.id)
-                          }}>{task.title}</button>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                )
-              })}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="drawer-toggle-row premium-drawer-toggle-row">
-          <button className={`drawer-tab ${openPanel === 'metrics' ? 'active' : ''}`} onClick={() => togglePanel('metrics')}>Business pulse</button>
-          <button className={`drawer-tab ${openPanel === 'activity' ? 'active' : ''}`} onClick={() => togglePanel('activity')}>Live activity</button>
-          <button className={`drawer-tab ${openPanel === 'review' ? 'active' : ''}`} onClick={() => togglePanel('review')}>Review dock</button>
-        </section>
-
-        {openPanel === 'metrics' && (
-          <section className="safe-mode-card lazy-panel-card">
-            <div className="section-heading-row compact">
-              <div>
-                <p className="eyebrow">Business pulse</p>
-                <h2>At a glance</h2>
-              </div>
-              <button className="panel-refresh-button" onClick={() => void reloadLazyPanel('metrics')}>Refresh</button>
-            </div>
-            {!metricsLoaded ? (
-              <p className="empty">Loading metrics...</p>
-            ) : (
-              <div className="friendly-metrics-grid">
-                <div className="friendly-metric-card revenue">
-                  <span>Revenue</span>
-                  <strong>${summary.revenueUsd.toFixed(2)}</strong>
-                </div>
-                <div className="friendly-metric-card cost">
-                  <span>Cost</span>
-                  <strong>${summary.costUsd.toFixed(2)}</strong>
-                </div>
-                <div className="friendly-metric-card margin">
-                  <span>Margin</span>
-                  <strong>${summary.marginUsd.toFixed(2)}</strong>
-                </div>
-                <div className="friendly-metric-card queue">
-                  <span>Queue pressure</span>
-                  <strong>{queueHealth?.runnable_count ?? 0}/{queueHealth?.in_progress_count ?? 0}</strong>
-                  <small>runnable / active</small>
+      {appMode === 'personal' ? (
+        personalSection === 'home' ? (
+          <main className="personal-home">
+            <section className="avatar-scene-card">
+              <div className="scene-overlay center-info">
+                <div className="center-chip">Mitchell</div>
+                <div className="center-age">Age 23</div>
+                <div className="momentum-card">
+                  <span>Life Momentum</span>
+                  <strong>{lifeMomentum.score}/100</strong>
+                  <em>{lifeMomentum.trend}</em>
                 </div>
               </div>
-            )}
-          </section>
-        )}
-
-        {openPanel === 'activity' && (
-          <section className="safe-mode-card lazy-panel-card">
-            <div className="section-heading-row compact">
-              <div>
-                <p className="eyebrow">Recent motion</p>
-                <h2>Live activity</h2>
+              <div className="scene-overlay business-portal-wrap">
+                <button className="business-portal" onClick={() => setAppMode('business')}>
+                  <span>Gateway</span>
+                  <strong>Business Command</strong>
+                </button>
               </div>
-              <button className="panel-refresh-button" onClick={() => void reloadLazyPanel('activity')}>Refresh</button>
-            </div>
-            {!activityLoaded ? (
-              <p className="empty">Loading activity...</p>
-            ) : filteredActivity.length === 0 ? (
-              <p className="empty">No recent activity yet.</p>
-            ) : (
-              <div className="safe-list-blocks activity-feed-friendly">
-                {filteredActivity.map((item) => (
-                  <div key={item.id} className="safe-item activity-friendly-item">
-                    <div className="activity-friendly-topline">
-                      <strong>{item.eventType}</strong>
-                      <span>{item.actor}</span>
-                    </div>
-                    <span>{item.taskTitle}</span>
-                    <small>{item.projectTitle || 'Unknown project'}</small>
-                    {item.detail && <small>{item.detail}</small>}
-                  </div>
+              <Canvas camera={{ position: [0, 0, 8], fov: 42 }}>
+                <color attach="background" args={['#05070d']} />
+                <ambientLight intensity={1.8} />
+                <pointLight position={[8, 8, 8]} intensity={30} color="#6fb0ff" />
+                <pointLight position={[-6, -3, 4]} intensity={16} color="#d8e5ff" />
+                <Stars radius={32} depth={12} count={2500} factor={3} saturation={0} fade speed={0.35} />
+                <Float speed={1.4} rotationIntensity={0.18} floatIntensity={0.35}>
+                  <group>
+                    <Sphere args={[0.95, 64, 64]} position={[0, 1.55, 0]}>
+                      <meshStandardMaterial color="#a6c9ff" metalness={0.88} roughness={0.22} emissive="#14345f" emissiveIntensity={0.65} />
+                    </Sphere>
+                    <Sphere args={[1.15, 64, 64]} position={[0, -0.1, 0]} scale={[1.2, 1.6, 0.95]}>
+                      <meshStandardMaterial color="#98a7bb" metalness={0.84} roughness={0.28} emissive="#0d1525" emissiveIntensity={0.36} />
+                    </Sphere>
+                    <Sphere args={[0.35, 48, 48]} position={[-1.35, 0.25, 0]} scale={[1.25, 2.2, 1]}>
+                      <meshStandardMaterial color="#8ca0b8" metalness={0.84} roughness={0.28} />
+                    </Sphere>
+                    <Sphere args={[0.35, 48, 48]} position={[1.35, 0.25, 0]} scale={[1.25, 2.2, 1]}>
+                      <meshStandardMaterial color="#8ca0b8" metalness={0.84} roughness={0.28} />
+                    </Sphere>
+                    <Sphere args={[0.38, 48, 48]} position={[-0.52, -2.0, 0]} scale={[1, 2.4, 1]}>
+                      <meshStandardMaterial color="#7f90a5" metalness={0.8} roughness={0.34} />
+                    </Sphere>
+                    <Sphere args={[0.38, 48, 48]} position={[0.52, -2.0, 0]} scale={[1, 2.4, 1]}>
+                      <meshStandardMaterial color="#7f90a5" metalness={0.8} roughness={0.34} />
+                    </Sphere>
+                  </group>
+                </Float>
+
+                {PERSONAL_NODES.map((node) => (
+                  <group key={node.key} position={node.position}>
+                    <Line points={[[0, 0, 0], [node.position[0] * -0.32, node.position[1] * -0.32, 0]]} color={node.tier === 'core' ? '#5fa7ff' : '#7b89a6'} lineWidth={1.2} />
+                    <Html center transform distanceFactor={8}>
+                      <button className={`node-button ${node.tier}`} onClick={() => setPersonalSection(node.key)}>
+                        {node.label}
+                      </button>
+                    </Html>
+                  </group>
                 ))}
-              </div>
-            )}
-          </section>
-        )}
 
-        {openPanel === 'review' && (
-          <section className="safe-mode-card lazy-panel-card">
-            <div className="section-heading-row compact">
+                <Text position={[0, -3.38, 0]} fontSize={0.16} color="#9fb8dd" letterSpacing={0.04}>
+                  Private life operating system · PunkRecords grounded · Business one click away
+                </Text>
+                <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.42} maxPolarAngle={1.85} minPolarAngle={1.2} />
+              </Canvas>
+            </section>
+          </main>
+        ) : (
+          <main className="section-page personal-section-page">
+            <section className="section-hero">
+              <button className="back-button" onClick={() => setPersonalSection('home')}>← Personal Home</button>
               <div>
-                <p className="eyebrow">Human gate</p>
-                <h2>Review dock</h2>
+                <div className="section-eyebrow">{currentPersonalContent?.eyebrow}</div>
+                <h1>{currentPersonalContent?.title}</h1>
+                <p>{currentPersonalData?.heroSummary ?? `${currentPersonalContent?.title} is dashboard-first in Phase 1, with current state and goal progress balanced together.`}</p>
               </div>
-              <button className="panel-refresh-button" onClick={() => void reloadLazyPanel('review')}>Refresh</button>
+            </section>
+            <section className="summary-grid">
+              {currentPersonalData?.summaryCards.map((card) => (
+                <article key={card.label} className={`summary-card${card.stale ? ' stale' : ''}`}>
+                  <span>{card.label}</span>
+                  <strong>{card.value}</strong>
+                  <p>{card.note}</p>
+                </article>
+              ))}
+            </section>
+            <section className="detail-panels">
+              <article className="detail-panel">
+                <h2>Why this page matters</h2>
+                <ul>
+                  {currentPersonalData?.highlights.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </article>
+              <article className="detail-panel">
+                <h2>Phase 1 build note</h2>
+                <p>This page is intentionally scaffolded first as a premium dashboard shell. The next step will map real PunkRecords data projections into each card and deeper module.</p>
+              </article>
+            </section>
+          </main>
+        )
+      ) : (
+        <main className="business-command-page">
+          <section className="section-hero business-hero">
+            <div>
+              <div className="section-eyebrow">Business Command</div>
+              <h1>Hybrid Command Overview</h1>
+              <p>Top = ventures/goals, middle = agents/hierarchy, side = reviews/blockers. This is the new operating bridge between business repo strategy and live business state.</p>
             </div>
-            {!reviewLoaded ? (
-              <p className="empty">Loading review items...</p>
-            ) : reviewItems.length === 0 ? (
-              <p className="empty">No pending review items right now.</p>
-            ) : (
-              <div className="review-safe-grid">
-                <div className="safe-list-blocks">
-                  {reviewItems.map((item) => (
-                    <button key={item.artifactId} className={`artifact-list-item ${selectedReviewItem?.artifactId === item.artifactId ? 'active' : ''}`} onClick={() => setSelectedArtifactId(item.artifactId)}>
-                      <div className="artifact-list-topline">
-                        <span className="badge">{item.artifactType}</span>
-                        <span className={`approval-pill approval-${item.approvalStatus}`}>{item.approvalStatus}</span>
-                      </div>
-                      <strong>{item.taskTitle}</strong>
-                      <span>{item.projectTitle || 'Unknown project'}</span>
-                    </button>
+            <div className="business-panel-switches">
+              {(['overview', 'agents', 'review'] as BusinessPanel[]).map((panel) => (
+                <button key={panel} className={businessPanel === panel ? 'shell-toggle active' : 'shell-toggle'} onClick={() => setBusinessPanel(panel)}>{panel}</button>
+              ))}
+            </div>
+          </section>
+
+          <section className="business-top-strip">
+            <article className="summary-card business-strip-card">
+              <span>Live ventures</span>
+              <strong>{dashboardData.projects.length}</strong>
+              <p>Tracked business projects currently visible in Supabase.</p>
+            </article>
+            <article className="summary-card business-strip-card">
+              <span>Revenue / margin</span>
+              <strong>{formatUsd(businessSummary.revenueUsd)} / {formatUsd(businessSummary.marginUsd)}</strong>
+              <p>Latest project-level P&L snapshot, with cost at {formatUsd(businessSummary.costUsd)}.</p>
+            </article>
+            <article className="summary-card business-strip-card">
+              <span>Approval pressure</span>
+              <strong>{businessSummary.approvalsPending}</strong>
+              <p>Artifacts currently awaiting human decision in the review dock.</p>
+            </article>
+            <article className="summary-card business-strip-card">
+              <span>Queue health</span>
+              <strong>{queueHealth?.runnable_count ?? 0} runnable / {queueHealth?.in_progress_count ?? 0} active</strong>
+              <p>{queueHealth?.stale_active_count ?? 0} stale active, {queueHealth?.flagged_count ?? 0} flagged, {queueHealth?.review_loop_count ?? 0} review loops.</p>
+            </article>
+            <article className="summary-card business-strip-card">
+              <span>Recent output</span>
+              <strong>{businessSummary.publishedToday} published today</strong>
+              <p>{recentActivity[0] ? `${recentActivity[0].taskTitle} · ${recentActivity[0].eventType}` : 'No recent activity yet.'}</p>
+            </article>
+          </section>
+
+          <section className="business-main-grid">
+            <div className="business-center-column">
+              <article className="detail-panel hierarchy-panel">
+                <h2>Agent Hierarchy</h2>
+                <p>Live oversight view from Supabase tasks, agent runs, and recent activity.</p>
+                <div className="agent-card-grid">
+                  {businessAgents.map((agent) => (
+                    <div key={agent.id} className="agent-card-shell">
+                      <span>{agent.chamberLabel}</span>
+                      <strong>{agent.displayName}</strong>
+                      <p>{agent.role} · {agent.status} · {agent.taskCount} active tasks</p>
+                      <p>Recent run: {formatRelativeTime(agent.lastRunAt)} · Cost: {formatUsd(agent.totalCostUsd)}</p>
+                      <p>{agent.tasks[0] ? `Current: ${agent.tasks[0].title}` : 'No active assigned task right now.'}</p>
+                      <p>{agent.lastError ? `Blocked: ${agent.lastError}` : 'No current error signal.'}</p>
+                    </div>
                   ))}
                 </div>
+              </article>
 
-                <div className="artifact-preview-card">
-                  {selectedReviewItem ? (
-                    <div className="artifact-preview-inner">
-                      <div className="artifact-preview-topline">
-                        <div>
-                          <p className="eyebrow">{selectedReviewItem.projectTitle || 'Review item'}</p>
-                          <h3>{selectedReviewItem.taskTitle}</h3>
-                        </div>
-                        <span className={`approval-pill approval-${selectedReviewItem.approvalStatus}`}>{selectedReviewItem.approvalStatus}</span>
-                      </div>
+              <article className="detail-panel hierarchy-panel">
+                <h2>Recent activity</h2>
+                <ul>
+                  {recentActivity.map((item) => (
+                    <li key={item.id}>{item.taskTitle} · {item.eventType} · {formatRelativeTime(item.createdAt)}</li>
+                  ))}
+                </ul>
+              </article>
+            </div>
 
-                      <div className="artifact-review-notes premium-review-notes">
-                        <div className="review-notes-header">
-                          <label htmlFor="review-notes"><strong>Revision guidance</strong></label>
-                          <span>What should change in the next attempt?</span>
-                        </div>
-                        <textarea
-                          id="review-notes"
-                          className="review-notes-input"
-                          placeholder="Add specific guidance here so the next draft gets sharper..."
-                          value={reviewNotes}
-                          onChange={(event) => setReviewNotes(event.target.value)}
-                          rows={4}
-                        />
-                      </div>
-
-                      <div className="artifact-actions premium-artifact-actions">
-                        <button className="action-button primary" disabled={approvalBusy} onClick={async () => {
-                          try {
-                            setApprovalBusy(true)
-                            await decideItem(selectedReviewItem.taskId, selectedReviewItem.artifactId, 'approved', reviewNotes || undefined)
-                            setReviewNotes('')
-                            await reloadTaskContext()
-                          } finally {
-                            setApprovalBusy(false)
-                          }
-                        }}>{approvalBusy ? 'Saving...' : 'Approve to ship'}</button>
-                        <button className="action-button danger" disabled={approvalBusy || !reviewNotes.trim()} onClick={async () => {
-                          try {
-                            setApprovalBusy(true)
-                            await decideItem(selectedReviewItem.taskId, selectedReviewItem.artifactId, 'rejected', reviewNotes.trim())
-                            setReviewNotes('')
-                            await reloadTaskContext()
-                          } finally {
-                            setApprovalBusy(false)
-                          }
-                        }}>{approvalBusy ? 'Saving...' : 'Deny and request changes'}</button>
-                      </div>
-
-                      <div className="artifact-preview-body premium-artifact-preview-body">
-                        {selectedReviewItem.storagePath && isImageArtifact(selectedReviewItem) ? (
-                          <div className="artifact-image-preview">
-                            {signedArtifactUrls[selectedReviewItem.artifactId] ? (
-                              <img src={signedArtifactUrls[selectedReviewItem.artifactId]} alt={selectedReviewItem.taskTitle} />
-                            ) : (
-                              <p className="empty">Loading image preview...</p>
-                            )}
-                          </div>
-                        ) : (
-                          <pre>{selectedReviewItem.content || selectedReviewItem.storagePath || 'No inline artifact content stored yet.'}</pre>
-                        )}
-                      </div>
-                    </div>
-                  ) : (
-                    <p className="empty">Select an item to review.</p>
-                  )}
-                </div>
-              </div>
-            )}
-          </section>
-        )}
-
-        {selectedAgentProfile && (
-          <div className="agent-modal-backdrop" onClick={() => setSelectedAgentId(null)}>
-            <div className={`agent-modal theme-${selectedAgentProfile.identity.roomTheme}`} onClick={(event) => event.stopPropagation()}>
-              <button className="agent-modal-close" onClick={() => setSelectedAgentId(null)}>Close</button>
-              <div className="agent-modal-header">
-                <div>
-                  <p className="eyebrow">Agent profile</p>
-                  <h2>{selectedAgentProfile.identity.name}</h2>
-                  <p className="subcopy">{selectedAgentProfile.identity.subtitle}</p>
-                </div>
-                <div className="modal-avatar chamber-profile-avatar">
-                  <div className="chamber-glyph">{selectedAgentProfile.identity.name.slice(0, 1)}</div>
-                </div>
-              </div>
-
-              <div className="agent-modal-grid">
-                <div className="metric-card"><span>Agent id</span><strong>{selectedAgentProfile.chamber.id}</strong></div>
-                <div className="metric-card"><span>Status</span><strong>{selectedAgentProfile.chamber.status}</strong></div>
-                <div className="metric-card"><span>Active tasks</span><strong>{selectedAgentProfile.chamber.activeTasks.length}</strong></div>
-              </div>
-
-              <div className="agent-detail-strip">
-                <section className="summary-panel">
-                  <h3>Role</h3>
-                  <p className="empty">{selectedAgentProfile.chamber.role}</p>
-                </section>
-                <section className="summary-panel">
-                  <h3>Room theme</h3>
-                  <p className="empty">{selectedAgentProfile.identity.roomTheme}</p>
-                </section>
-              </div>
-
-              <div className="task-detail-sections">
-                <section className="summary-panel">
-                  <h3>Assigned work</h3>
-                  {selectedAgentProfile.chamber.activeTasks.length === 0 ? <p className="empty">No active tasks right now.</p> : (
-                    <div className="summary-list">
-                      {selectedAgentProfile.chamber.activeTasks.map((task) => (
-                        <button key={task.id} className="summary-item task-button" onClick={() => {
-                          setSelectedAgentId(null)
-                          setSelectedTaskId(task.id)
-                        }}>
-                          <strong>{task.title}</strong>
-                          <span>{task.status || 'unknown'} • {task.project_id ? projectMap.get(task.project_id) || 'Unknown project' : 'No project'}</span>
+            <aside className="business-side-column">
+              <article className="detail-panel review-panel">
+                <h2>Review Dock</h2>
+                {selectedReviewItem ? (
+                  <div className="review-dock-live">
+                    <div className="review-queue-list">
+                      {dashboardData.artifactReviewItems.slice(0, 4).map((item) => (
+                        <button
+                          key={`${item.taskId}-${item.artifactId}`}
+                          className={selectedReviewItem.taskId === item.taskId ? 'review-queue-item active' : 'review-queue-item'}
+                          onClick={() => setSelectedReviewTaskId(item.taskId)}
+                        >
+                          <strong>{item.taskTitle}</strong>
+                          <span>{item.projectTitle ?? 'No project'} · {item.artifactType}</span>
                         </button>
                       ))}
                     </div>
-                  )}
-                </section>
-
-                <section className="summary-panel">
-                  <h3>Chamber notes</h3>
-                  <div className="summary-list">
-                    <div className="summary-item">
-                      <strong>Primary color</strong>
-                      <span>{selectedAgentProfile.identity.palette.primary}</span>
-                    </div>
-                    <div className="summary-item">
-                      <strong>Accent color</strong>
-                      <span>{selectedAgentProfile.identity.palette.accent}</span>
+                    <p><strong>{selectedReviewItem.taskTitle}</strong></p>
+                    <p>{selectedReviewItem.projectTitle ?? 'No project title'} · {selectedReviewItem.artifactType} · {formatRelativeTime(selectedReviewItem.createdAt)}</p>
+                    <p>{selectedReviewItem.filename || selectedReviewItem.storagePath || 'No file path yet'}</p>
+                    {selectedReviewDetail ? (
+                      <div className="review-detail-grid">
+                        <div className="history-chip">Artifacts: {selectedReviewDetail.artifacts.length}</div>
+                        <div className="history-chip">Approvals: {selectedReviewDetail.approvals.length}</div>
+                        <div className="history-chip">Events: {selectedReviewDetail.events.length}</div>
+                        <div className="history-chip">Deliveries: {selectedReviewDetail.deliveries.length}</div>
+                        <div className="history-chip">Publications: {selectedReviewDetail.publications.length}</div>
+                      </div>
+                    ) : null}
+                    <textarea
+                      className="review-note-input"
+                      placeholder="Required deny notes / optional approval notes"
+                      value={reviewNoteDrafts[selectedReviewItem.taskId] || ''}
+                      onChange={(e) => setReviewNoteDrafts((prev) => ({ ...prev, [selectedReviewItem.taskId]: e.target.value }))}
+                    />
+                    <div className="review-actions">
+                      <button className="command-trigger solid" onClick={() => void decideReview(selectedReviewItem.taskId, 'approved')}>Approve</button>
+                      <button className="logout-btn" onClick={() => void decideReview(selectedReviewItem.taskId, 'rejected')}>Deny</button>
                     </div>
                   </div>
-                </section>
-              </div>
-            </div>
-          </div>
-        )}
+                ) : (
+                  <p>No pending approval item right now.</p>
+                )}
+                <ul>
+                  <li>{queueHealth?.oldest_stale_task_title ? `Oldest stale: ${queueHealth.oldest_stale_task_title}` : 'No stale task highlighted.'}</li>
+                  <li>{queueHealth?.hottest_review_loop_task_title ? `Review loop hotspot: ${queueHealth.hottest_review_loop_task_title}` : 'No review loop hotspot currently.'}</li>
+                  <li>{queueHealth?.hottest_retry_loop_task_title ? `Retry loop hotspot: ${queueHealth.hottest_retry_loop_task_title}` : 'No retry loop hotspot currently.'}</li>
+                </ul>
+              </article>
+            </aside>
+          </section>
+        </main>
+      )}
 
-        {selectedTaskDetail && (
-          <div className="agent-modal-backdrop" onClick={() => setSelectedTaskId(null)}>
-            <div className="agent-modal task-detail-modal" onClick={(event) => event.stopPropagation()}>
-              <button className="agent-modal-close" onClick={() => setSelectedTaskId(null)}>Close</button>
-              <div className="agent-modal-header">
+      <AnimatePresence>
+        {commandOpen ? (
+          <motion.div className="command-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.div className="command-modal" initial={{ y: 16, opacity: 0, scale: 0.98 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 12, opacity: 0, scale: 0.98 }}>
+              <div className="command-modal-top">
                 <div>
-                  <p className="eyebrow">Task drill-down</p>
-                  <h2>{selectedTaskDetail.task.title}</h2>
-                  <p className="subcopy">{selectedTaskDetail.projectTitle || 'Unknown project'} • {selectedTaskDetail.task.status || 'unknown'}</p>
+                  <div className="shell-mark">Spotlight Command</div>
+                  <div className="shell-submark">Natural-language control across personal and business contexts</div>
                 </div>
+                <button className="logout-btn" onClick={() => setCommandOpen(false)}>Close</button>
               </div>
-
-              <div className="agent-modal-grid">
-                <div className="metric-card"><span>Approvals</span><strong>{selectedTaskDetail.approvals.length}</strong></div>
-                <div className="metric-card"><span>Artifacts</span><strong>{selectedTaskDetail.artifacts.length}</strong></div>
-                <div className="metric-card"><span>Events</span><strong>{selectedTaskDetail.events.length}</strong></div>
+              <div className="command-context">Context: {appMode} · {appMode === 'personal' ? personalSection : businessPanel}</div>
+              <div className="command-input-wrap">
+                <input
+                  autoFocus
+                  placeholder="Type what you want in natural language..."
+                  value={commandValue}
+                  onChange={(e) => setCommandValue(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') void submitCommand()
+                  }}
+                />
+                <button className="command-trigger solid" onClick={() => void submitCommand()}>Send</button>
               </div>
-
-              <div className="artifact-actions task-detail-actions">
-                <button className="action-button secondary" disabled={taskBusy} onClick={async () => {
-                  try {
-                    setTaskBusy(true)
-                    await patchTask(selectedTaskDetail.task.id, { status: 'assigned' })
-                    await reloadTaskContext()
-                  } finally {
-                    setTaskBusy(false)
-                  }
-                }}>{taskBusy ? 'Saving...' : 'Reset to assigned'}</button>
-                <button className="action-button danger" disabled={taskBusy} onClick={async () => {
-                  const reason = window.prompt('Cancel this task? Add an optional reason.', 'cancelled from dashboard')
-                  if (reason === null) return
-                  try {
-                    setTaskBusy(true)
-                    await patchTask(selectedTaskDetail.task.id, { status: 'cancelled' })
-                    await reloadTaskContext()
-                  } finally {
-                    setTaskBusy(false)
-                  }
-                }}>{taskBusy ? 'Saving...' : 'Cancel task'}</button>
+              <div className="command-response-box">{commandResponse}</div>
+              <div className="command-history">
+                <h3>Recent commands</h3>
+                {commandHistory.length === 0 ? <p>No commands yet.</p> : commandHistory.map((item) => <div key={item} className="history-chip">{item}</div>)}
               </div>
-
-              <div className="task-detail-sections">
-                <section className="summary-panel">
-                  <h3>Artifacts</h3>
-                  {selectedTaskDetail.artifacts.length === 0 ? <p className="empty">No artifacts loaded yet.</p> : (
-                    <div className="summary-list">
-                      {selectedTaskDetail.artifacts.map((item) => (
-                        <div key={item.id} className="summary-item artifact-summary-item">
-                          <strong>{item.filename || item.artifact_type}</strong>
-                          <span>{item.created_at}</span>
-                          {item.storage_path && isImageArtifact(item) && signedArtifactUrls[item.id] && (
-                            <div className="artifact-inline-thumb">
-                              <img src={signedArtifactUrls[item.id]} alt={item.filename || item.artifact_type} />
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </section>
-
-                <section className="summary-panel">
-                  <h3>Approvals</h3>
-                  {selectedTaskDetail.approvals.length === 0 ? <p className="empty">No approvals loaded yet.</p> : (
-                    <div className="summary-list">
-                      {selectedTaskDetail.approvals.map((item) => (
-                        <div key={item.id} className="summary-item">
-                          <strong>{item.status}</strong>
-                          <span>{item.comment || item.created_at}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </section>
-
-                <section className="summary-panel">
-                  <h3>Event trail</h3>
-                  {selectedTaskDetail.events.length === 0 ? <p className="empty">No events loaded yet.</p> : (
-                    <div className="summary-list">
-                      {selectedTaskDetail.events.slice(0, 12).map((item) => (
-                        <div key={item.id} className="summary-item">
-                          <strong>{item.event_type}</strong>
-                          <span>{item.actor_agent_id || 'system'} • {item.created_at}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </section>
-              </div>
-            </div>
-          </div>
-        )}
-      </main>
+            </motion.div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   )
 }
+
+export default App
