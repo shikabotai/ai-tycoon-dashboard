@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { buildCareerData, buildEducationData, buildIdentityData, buildKnowledgeData, buildRelationshipsData, buildSystemsData, buildVesselData, buildVenturesData, buildWealthData } from './src/data/punkProjection'
+import { readAutopilotStatus } from './src/data/autopilotStatus'
 
 export default defineConfig({
   server: {
@@ -48,6 +49,10 @@ export default defineConfig({
         server.middlewares.use('/api/personal/relationships', (_req, res) => {
           res.setHeader('Content-Type', 'application/json')
           res.end(JSON.stringify(buildRelationshipsData()))
+        })
+        server.middlewares.use('/api/autopilot/status', (_req, res) => {
+          res.setHeader('Content-Type', 'application/json')
+          res.end(JSON.stringify(readAutopilotStatus()))
         })
         server.middlewares.use('/api/command/route', (req, res) => {
           if (req.method !== 'POST') {

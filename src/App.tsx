@@ -29,6 +29,23 @@ type PersonalSectionData = {
   highlights: string[]
 }
 
+type AutopilotStatus = {
+  activeTaskId: string
+  title: string
+  status: string
+  startedAt: string
+  lastHeartbeatAt: string
+  lastWorkActionAt: string
+  lastCommitAt: string | null
+  currentStep: string
+  lastCompletedStep: string
+  nextStep: string
+  percentEstimate: number
+  blocker: string | null
+  repo: string
+  notes: string[]
+}
+
 
 type NodeSpec = {
   key: Exclude<PersonalSection, 'home'>
@@ -176,6 +193,7 @@ function App() {
   const [projectedSections, setProjectedSections] = useState<Record<string, PersonalSectionData>>({})
   const [reviewNoteDrafts, setReviewNoteDrafts] = useState<Record<string, string>>({})
   const [selectedReviewTaskId, setSelectedReviewTaskId] = useState<string | null>(null)
+  const [autopilotStatus, setAutopilotStatus] = useState<AutopilotStatus | null>(null)
 
   const dashboardData = useDashboardData()
 
@@ -230,6 +248,32 @@ function App() {
     void loadProjectedSections()
     return () => {
       cancelled = true
+    }
+  }, [])
+
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function loadAutopilotStatus() {
+      try {
+        const response = await fetch('/api/autopilot/status')
+        if (!response.ok) throw new Error('autopilot status failed')
+        const data = (await response.json()) as AutopilotStatus | null
+        if (!cancelled) setAutopilotStatus(data)
+      } catch {
+        if (!cancelled) setAutopilotStatus(null)
+      }
+    }
+
+    void loadAutopilotStatus()
+    const id = window.setInterval(() => {
+      if (!cancelled) void loadAutopilotStatus()
+    }, 15000)
+
+    return () => {
+      cancelled = true
+      window.clearInterval(id)
     }
   }, [])
 
@@ -533,88 +577,100 @@ function App() {
                   <strong>{businessSummary.publishedToday} published today</strong>
                   <p>{recentActivity[0] ? `${recentActivity[0].taskTitle} · ${recentActivity[0].eventType}` : 'No recent activity yet.'}</p>
                 </article>
+
+                {autopilotStatus ? (
+                  <article className="summary-card business-strip-card">
+                    <span>Autopilot</span>
+                    <strong>{autopilotStatus.percentEstimate}% · {autopilotStatus.status}</strong>
+                    <p>Last work: {formatRelativeTime(autopilotStatus.lastWorkActionAt)} · Current step: {autopilotStatus.currentStep}</p>
+                  </article>
+                ) : null}
               </section>
 
-              <section className="business-main-grid">
-            <div className="business-center-column">
-              <article className="detail-panel hierarchy-panel">
-                <h2>Agent Hierarchy</h2>
-                <p>Live oversight view from Supabase tasks, agent runs, and recent activity.</p>
-                <div className="agent-card-grid">
-                  {businessAgents.map((agent) => (
-                    <div key={agent.id} className="agent-card-shell">
-                      <span>{agent.chamberLabel}</span>
-                      <strong>{agent.displayName}</strong>
-                      <p>{agent.role} · {agent.status} · {agent.taskCount} active tasks</p>
-                      <p>Recent run: {formatRelativeTime(agent.lastRunAt)} · Cost: {formatUsd(agent.totalCostUsd)}</p>
-                      <p>{agent.tasks[0] ? `Current: ${agent.tasks[0].title}` : 'No active assigned task right now.'}</p>
-                      <p>{agent.lastError ? `Blocked: ${agent.lastError}` : 'No current error signal.'}</p>
-                    </div>
-                  ))}
-                </div>
-              </article>
-
-              <article className="detail-panel hierarchy-panel">
-                <h2>Recent activity</h2>
-                <ul>
-                  {recentActivity.map((item) => (
-                    <li key={item.id}>{item.taskTitle} · {item.eventType} · {formatRelativeTime(item.createdAt)}</li>
-                  ))}
-                </ul>
-              </article>
-            </div>
-
-            <aside className="business-side-column">
-              <article className="detail-panel review-panel">
-                <h2>Review Dock</h2>
-                {selectedReviewItem ? (
-                  <div className="review-dock-live">
-                    <div className="review-queue-list">
-                      {dashboardData.artifactReviewItems.slice(0, 4).map((item) => (
-                        <button
-                          key={`${item.taskId}-${item.artifactId}`}
-                          className={selectedReviewItem.taskId === item.taskId ? 'review-queue-item active' : 'review-queue-item'}
-                          onClick={() => setSelectedReviewTaskId(item.taskId)}
-                        >
-                          <strong>{item.taskTitle}</strong>
-                          <span>{item.projectTitle ?? 'No project'} · {item.artifactType}</span>
-                        </button>
-                      ))}
-                    </div>
-                    <p><strong>{selectedReviewItem.taskTitle}</strong></p>
-                    <p>{selectedReviewItem.projectTitle ?? 'No project title'} · {selectedReviewItem.artifactType} · {formatRelativeTime(selectedReviewItem.createdAt)}</p>
-                    <p>{selectedReviewItem.filename || selectedReviewItem.storagePath || 'No file path yet'}</p>
-                    {selectedReviewDetail ? (
-                      <div className="review-detail-grid">
-                        <div className="history-chip">Artifacts: {selectedReviewDetail.artifacts.length}</div>
-                        <div className="history-chip">Approvals: {selectedReviewDetail.approvals.length}</div>
-                        <div className="history-chip">Events: {selectedReviewDetail.events.length}</div>
-                        <div className="history-chip">Deliveries: {selectedReviewDetail.deliveries.length}</div>
-                        <div className="history-chip">Publications: {selectedReviewDetail.publications.length}</div>
+              {businessPanel !== 'review' ? (
+                <section className="business-main-grid">
+                  <div className="business-center-column">
+                    <article className="detail-panel hierarchy-panel">
+                      <h2>Agent Hierarchy</h2>
+                      <p>Live oversight view from Supabase tasks, agent runs, and recent activity.</p>
+                      <div className="agent-card-grid">
+                        {businessAgents.map((agent) => (
+                          <div key={agent.id} className="agent-card-shell">
+                            <span>{agent.chamberLabel}</span>
+                            <strong>{agent.displayName}</strong>
+                            <p>{agent.role} · {agent.status} · {agent.taskCount} active tasks</p>
+                            <p>Recent run: {formatRelativeTime(agent.lastRunAt)} · Cost: {formatUsd(agent.totalCostUsd)}</p>
+                            <p>{agent.tasks[0] ? `Current: ${agent.tasks[0].title}` : 'No active assigned task right now.'}</p>
+                            <p>{agent.lastError ? `Blocked: ${agent.lastError}` : 'No current error signal.'}</p>
+                          </div>
+                        ))}
                       </div>
-                    ) : null}
-                    <textarea
-                      className="review-note-input"
-                      placeholder="Required deny notes / optional approval notes"
-                      value={reviewNoteDrafts[selectedReviewItem.taskId] || ''}
-                      onChange={(e) => setReviewNoteDrafts((prev) => ({ ...prev, [selectedReviewItem.taskId]: e.target.value }))}
-                    />
-                    <div className="review-actions">
-                      <button className="command-trigger solid" onClick={() => void decideReview(selectedReviewItem.taskId, 'approved')}>Approve</button>
-                      <button className="logout-btn" onClick={() => void decideReview(selectedReviewItem.taskId, 'rejected')}>Deny</button>
-                    </div>
+                    </article>
+
+                    <article className="detail-panel hierarchy-panel">
+                      <h2>Recent activity</h2>
+                      <ul>
+                        {recentActivity.map((item) => (
+                          <li key={item.id}>{item.taskTitle} · {item.eventType} · {formatRelativeTime(item.createdAt)}</li>
+                        ))}
+                      </ul>
+                    </article>
                   </div>
-                ) : (
-                  <p>No pending approval item right now.</p>
-                )}
-                <ul>
-                  <li>{queueHealth?.oldest_stale_task_title ? `Oldest stale: ${queueHealth.oldest_stale_task_title}` : 'No stale task highlighted.'}</li>
-                  <li>{queueHealth?.hottest_review_loop_task_title ? `Review loop hotspot: ${queueHealth.hottest_review_loop_task_title}` : 'No review loop hotspot currently.'}</li>
-                  <li>{queueHealth?.hottest_retry_loop_task_title ? `Retry loop hotspot: ${queueHealth.hottest_retry_loop_task_title}` : 'No retry loop hotspot currently.'}</li>
-                </ul>
-              </article>
-            </aside>
-              </section>
+                </section>
+              ) : null}
+
+              {businessPanel !== 'agents' ? (
+                <aside className="business-side-column">
+                  <article className="detail-panel review-panel">
+                    <h2>Review Dock</h2>
+                    {selectedReviewItem ? (
+                      <div className="review-dock-live">
+                        <div className="review-queue-list">
+                          {dashboardData.artifactReviewItems.slice(0, 4).map((item) => (
+                            <button
+                              key={`${item.taskId}-${item.artifactId}`}
+                              className={selectedReviewItem.taskId === item.taskId ? 'review-queue-item active' : 'review-queue-item'}
+                              onClick={() => setSelectedReviewTaskId(item.taskId)}
+                            >
+                              <strong>{item.taskTitle}</strong>
+                              <span>{item.projectTitle ?? 'No project'} · {item.artifactType}</span>
+                            </button>
+                          ))}
+                        </div>
+                        <p><strong>{selectedReviewItem.taskTitle}</strong></p>
+                        <p>{selectedReviewItem.projectTitle ?? 'No project title'} · {selectedReviewItem.artifactType} · {formatRelativeTime(selectedReviewItem.createdAt)}</p>
+                        <p>{selectedReviewItem.filename || selectedReviewItem.storagePath || 'No file path yet'}</p>
+                        {selectedReviewDetail ? (
+                          <div className="review-detail-grid">
+                            <div className="history-chip">Artifacts: {selectedReviewDetail.artifacts.length}</div>
+                            <div className="history-chip">Approvals: {selectedReviewDetail.approvals.length}</div>
+                            <div className="history-chip">Events: {selectedReviewDetail.events.length}</div>
+                            <div className="history-chip">Deliveries: {selectedReviewDetail.deliveries.length}</div>
+                            <div className="history-chip">Publications: {selectedReviewDetail.publications.length}</div>
+                          </div>
+                        ) : null}
+                        <textarea
+                          className="review-note-input"
+                          placeholder="Required deny notes / optional approval notes"
+                          value={reviewNoteDrafts[selectedReviewItem.taskId] || ''}
+                          onChange={(e) => setReviewNoteDrafts((prev) => ({ ...prev, [selectedReviewItem.taskId]: e.target.value }))}
+                        />
+                        <div className="review-actions">
+                          <button className="command-trigger solid" onClick={() => void decideReview(selectedReviewItem.taskId, 'approved')}>Approve</button>
+                          <button className="logout-btn" onClick={() => void decideReview(selectedReviewItem.taskId, 'rejected')}>Deny</button>
+                        </div>
+                      </div>
+                    ) : (
+                      <p>No pending approval item right now.</p>
+                    )}
+                    <ul>
+                      <li>{queueHealth?.oldest_stale_task_title ? `Oldest stale: ${queueHealth.oldest_stale_task_title}` : 'No stale task highlighted.'}</li>
+                      <li>{queueHealth?.hottest_review_loop_task_title ? `Review loop hotspot: ${queueHealth.hottest_review_loop_task_title}` : 'No review loop hotspot currently.'}</li>
+                      <li>{queueHealth?.hottest_retry_loop_task_title ? `Retry loop hotspot: ${queueHealth.hottest_retry_loop_task_title}` : 'No retry loop hotspot currently.'}</li>
+                    </ul>
+                  </article>
+                </aside>
+              ) : null}
             </>
           )}
         </main>
