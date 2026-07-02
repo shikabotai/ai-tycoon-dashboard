@@ -197,11 +197,16 @@ function App() {
     let cancelled = false
 
     async function loadProjectedSections() {
-      const targets: Array<{ key: 'vessel' | 'identity' | 'systems' | 'ventures'; url: string }> = [
+      const targets: Array<{ key: 'vessel' | 'identity' | 'systems' | 'ventures' | 'career' | 'knowledge' | 'wealth' | 'education' | 'relationships'; url: string }> = [
         { key: 'vessel', url: '/api/personal/vessel' },
         { key: 'identity', url: '/api/personal/identity' },
         { key: 'systems', url: '/api/personal/systems' },
         { key: 'ventures', url: '/api/personal/ventures' },
+        { key: 'career', url: '/api/personal/career' },
+        { key: 'knowledge', url: '/api/personal/knowledge' },
+        { key: 'wealth', url: '/api/personal/wealth' },
+        { key: 'education', url: '/api/personal/education' },
+        { key: 'relationships', url: '/api/personal/relationships' },
       ]
 
       const entries = await Promise.all(
@@ -469,8 +474,8 @@ function App() {
                 </ul>
               </article>
               <article className="detail-panel">
-                <h2>Phase 1 build note</h2>
-                <p>This page is intentionally scaffolded first as a premium dashboard shell. The next step will map real PunkRecords data projections into each card and deeper module.</p>
+                <h2>Projection status</h2>
+                <p>This page is now using a real PunkRecords projection path. The next layer is richer source extraction and better freshness signals, not placeholder replacement.</p>
               </article>
             </section>
           </main>
@@ -490,35 +495,47 @@ function App() {
             </div>
           </section>
 
-          <section className="business-top-strip">
-            <article className="summary-card business-strip-card">
-              <span>Live ventures</span>
-              <strong>{dashboardData.projects.length}</strong>
-              <p>Tracked business projects currently visible in Supabase.</p>
-            </article>
-            <article className="summary-card business-strip-card">
-              <span>Revenue / margin</span>
-              <strong>{formatUsd(businessSummary.revenueUsd)} / {formatUsd(businessSummary.marginUsd)}</strong>
-              <p>Latest project-level P&L snapshot, with cost at {formatUsd(businessSummary.costUsd)}.</p>
-            </article>
-            <article className="summary-card business-strip-card">
-              <span>Approval pressure</span>
-              <strong>{businessSummary.approvalsPending}</strong>
-              <p>Artifacts currently awaiting human decision in the review dock.</p>
-            </article>
-            <article className="summary-card business-strip-card">
-              <span>Queue health</span>
-              <strong>{queueHealth?.runnable_count ?? 0} runnable / {queueHealth?.in_progress_count ?? 0} active</strong>
-              <p>{queueHealth?.stale_active_count ?? 0} stale active, {queueHealth?.flagged_count ?? 0} flagged, {queueHealth?.review_loop_count ?? 0} review loops.</p>
-            </article>
-            <article className="summary-card business-strip-card">
-              <span>Recent output</span>
-              <strong>{businessSummary.publishedToday} published today</strong>
-              <p>{recentActivity[0] ? `${recentActivity[0].taskTitle} · ${recentActivity[0].eventType}` : 'No recent activity yet.'}</p>
-            </article>
-          </section>
+          {dashboardData.loading ? (
+            <section className="detail-panel business-status-panel">
+              <h2>Loading live business state</h2>
+              <p>Pulling projects, queue health, approvals, activity, and agent runs from Supabase.</p>
+            </section>
+          ) : dashboardData.error ? (
+            <section className="detail-panel business-status-panel error">
+              <h2>Business data issue</h2>
+              <p>{dashboardData.error}</p>
+            </section>
+          ) : (
+            <>
+              <section className="business-top-strip">
+                <article className="summary-card business-strip-card">
+                  <span>Live ventures</span>
+                  <strong>{dashboardData.projects.length}</strong>
+                  <p>Tracked business projects currently visible in Supabase.</p>
+                </article>
+                <article className="summary-card business-strip-card">
+                  <span>Revenue / margin</span>
+                  <strong>{formatUsd(businessSummary.revenueUsd)} / {formatUsd(businessSummary.marginUsd)}</strong>
+                  <p>Latest project-level P&L snapshot, with cost at {formatUsd(businessSummary.costUsd)}.</p>
+                </article>
+                <article className="summary-card business-strip-card">
+                  <span>Approval pressure</span>
+                  <strong>{businessSummary.approvalsPending}</strong>
+                  <p>Artifacts currently awaiting human decision in the review dock.</p>
+                </article>
+                <article className="summary-card business-strip-card">
+                  <span>Queue health</span>
+                  <strong>{queueHealth?.runnable_count ?? 0} runnable / {queueHealth?.in_progress_count ?? 0} active</strong>
+                  <p>{queueHealth?.stale_active_count ?? 0} stale active, {queueHealth?.flagged_count ?? 0} flagged, {queueHealth?.review_loop_count ?? 0} review loops.</p>
+                </article>
+                <article className="summary-card business-strip-card">
+                  <span>Recent output</span>
+                  <strong>{businessSummary.publishedToday} published today</strong>
+                  <p>{recentActivity[0] ? `${recentActivity[0].taskTitle} · ${recentActivity[0].eventType}` : 'No recent activity yet.'}</p>
+                </article>
+              </section>
 
-          <section className="business-main-grid">
+              <section className="business-main-grid">
             <div className="business-center-column">
               <article className="detail-panel hierarchy-panel">
                 <h2>Agent Hierarchy</h2>
@@ -597,7 +614,9 @@ function App() {
                 </ul>
               </article>
             </aside>
-          </section>
+              </section>
+            </>
+          )}
         </main>
       )}
 

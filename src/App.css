@@ -444,6 +444,45 @@ input {
   margin: 0;
 }
 
+
+.review-queue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.review-queue-item {
+  text-align: left;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(117, 145, 182, 0.2);
+  background: rgba(7, 11, 17, 0.7);
+  color: #dce8fb;
+  cursor: pointer;
+}
+
+.review-queue-item.active {
+  border-color: rgba(113, 173, 255, 0.62);
+  box-shadow: 0 0 0 1px rgba(91, 146, 232, 0.16);
+}
+
+.review-queue-item span {
+  display: block;
+  margin-top: 6px;
+  color: #9fb2cf;
+  font-size: 0.9rem;
+}
+
+.review-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.review-detail-grid .history-chip {
+  padding: 10px 12px;
+}
+
 .business-center-column {
   display: flex;
   flex-direction: column;
@@ -460,7 +499,8 @@ input {
 }
 
 .login-card input:focus,
-.command-input-wrap input:focus {
+.command-input-wrap input:focus,
+.review-note-input:focus {
   border-color: rgba(110, 173, 255, 0.68);
   box-shadow: 0 0 0 4px rgba(74, 115, 191, 0.18);
 }
@@ -540,7 +580,8 @@ input {
   .business-top-strip,
   .detail-panels,
   .business-main-grid,
-  .agent-card-grid {
+  .agent-card-grid,
+  .review-detail-grid {
     grid-template-columns: 1fr;
   }
 
@@ -559,4 +600,9 @@ input {
   .center-info {
     top: 18px;
   }
+}
+
+
+.business-status-panel.error {
+  border-color: rgba(255, 138, 138, 0.38);
 }

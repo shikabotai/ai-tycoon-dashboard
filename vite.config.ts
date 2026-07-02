@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { buildIdentityData, buildSystemsData, buildVesselData, buildVenturesData } from './src/data/punkProjection'
+import { buildCareerData, buildEducationData, buildIdentityData, buildKnowledgeData, buildRelationshipsData, buildSystemsData, buildVesselData, buildVenturesData, buildWealthData } from './src/data/punkProjection'
 
 export default defineConfig({
   server: {
@@ -28,6 +28,26 @@ export default defineConfig({
         server.middlewares.use('/api/personal/ventures', (_req, res) => {
           res.setHeader('Content-Type', 'application/json')
           res.end(JSON.stringify(buildVenturesData()))
+        })
+        server.middlewares.use('/api/personal/career', (_req, res) => {
+          res.setHeader('Content-Type', 'application/json')
+          res.end(JSON.stringify(buildCareerData()))
+        })
+        server.middlewares.use('/api/personal/knowledge', (_req, res) => {
+          res.setHeader('Content-Type', 'application/json')
+          res.end(JSON.stringify(buildKnowledgeData()))
+        })
+        server.middlewares.use('/api/personal/wealth', (_req, res) => {
+          res.setHeader('Content-Type', 'application/json')
+          res.end(JSON.stringify(buildWealthData()))
+        })
+        server.middlewares.use('/api/personal/education', (_req, res) => {
+          res.setHeader('Content-Type', 'application/json')
+          res.end(JSON.stringify(buildEducationData()))
+        })
+        server.middlewares.use('/api/personal/relationships', (_req, res) => {
+          res.setHeader('Content-Type', 'application/json')
+          res.end(JSON.stringify(buildRelationshipsData()))
         })
         server.middlewares.use('/api/command/route', (req, res) => {
           if (req.method !== 'POST') {

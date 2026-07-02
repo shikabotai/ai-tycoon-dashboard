@@ -151,3 +151,119 @@ export function buildVenturesData(): ProjectedSection {
     ],
   }
 }
+
+export function buildCareerData(): ProjectedSection {
+  const annualGoals = readPunkFile('Personal Decision Engine/Goals/Annual Goals.md')
+  const goalsOverview = readPunkFile('Personal Decision Engine/Goals/Goals Overview.md')
+  const careerGoal = 'Land higher-paying SWE role or negotiate raise'
+  const careerLine = annualGoals.split('\n').find((line) => line.includes(careerGoal)) ?? ''
+  const fiveYearCareer = 'Georgia Tech MSML completed'
+  const longArcLine = goalsOverview.split('\n').find((line) => line.includes(fiveYearCareer)) ?? ''
+  const careerParts = careerLine.split('|').map((part) => part.trim()).filter(Boolean)
+  const currentStatus = careerParts.length >= 4 ? careerParts[3] : 'In progress'
+
+  return {
+    heroSummary: 'Career is currently in a leverage-building phase, with job-search preparation and long-arc ML credentials both visible in the source planning system.',
+    summaryCards: [
+      { label: 'Current career trajectory', value: currentStatus || 'In progress', note: careerGoal },
+      { label: 'Resume / portfolio readiness', value: 'Prep phase', note: 'Annual goals explicitly call out resume, interview, and leverage work.' },
+      { label: 'Job search status', value: 'Not fully activated', note: 'The note set suggests preparation before a full push.' },
+      { label: 'Skill-building progress', value: 'MSML path active', note: longArcLine || 'Georgia Tech MSML remains a visible long-arc credential target.' },
+      { label: 'Current leverage opportunities', value: 'Comp increase focus', note: 'Target is a >$20k comp increase or stronger role leverage.' },
+      { label: 'Next career milestone', value: 'Interview-ready profile', note: 'This page should later gain direct portfolio/resume artifacts and cadence tracking.' },
+    ],
+    highlights: [
+      'Career blends income leverage with long-term ML positioning.',
+      'Annual goals and 5-year goals are the main current sources.',
+      'This page should later expose evidence, not just strategy text.',
+    ],
+  }
+}
+
+export function buildKnowledgeData(): ProjectedSection {
+  const ideal = readPunkFile('Personal Decision Engine/Ideal Self/Ideal Self.md')
+  const goals = readPunkFile('Personal Decision Engine/Goals/Goals Overview.md')
+  const bookGoalLine = goals.split('\n').find((line) => line.includes('Read 10 books')) ?? ''
+  const modelMentions = countMatches(ideal.toLowerCase(), 'framework') + countMatches(ideal.toLowerCase(), 'mental model')
+
+  return {
+    heroSummary: 'Knowledge is currently more execution-supportive than archival, with learning tied to decision quality, identity formation, and active goals instead of passive accumulation.',
+    summaryCards: [
+      { label: 'Current learning domains', value: 'Career, ventures, self-mastery', note: 'The current note set points toward practical domains rather than broad browsing.' },
+      { label: 'Most valuable mental models', value: `${modelMentions || 1} explicit mentions`, note: 'Current source notes imply frameworks matter, but this page still needs richer extraction.' },
+      { label: 'Recently added knowledge', value: 'Not yet projected', note: 'A future pass should surface recency from the knowledge-side repo structure.', stale: true },
+      { label: 'High-value references', value: 'Goals + Ideal Self', note: 'Right now the strongest references are strategic and identity-oriented notes.' },
+      { label: 'Current research / reading focus', value: 'Reading goal active', note: bookGoalLine || 'Annual goals include an explicit reading target.' },
+      { label: 'Knowledge gaps to close', value: 'Stronger live knowledge rollups', note: 'This page needs deeper source mapping to become truly strong.', stale: true },
+    ],
+    highlights: [
+      'Knowledge should help action, not become a hoarding layer.',
+      'Current projections are still strategy-heavy and should deepen later.',
+      'This section is ready for richer repo traversal when Phase 1 core is complete.',
+    ],
+  }
+}
+
+export function buildWealthData(): ProjectedSection {
+  return {
+    heroSummary: 'Wealth is currently framed more as trajectory and future leverage than as a live net-worth ledger, with financial freedom still acting as the central long-arc target.',
+    summaryCards: [
+      { label: 'Net worth trajectory', value: '$500k+ 5-year target', note: 'The five-year goals note explicitly anchors this wealth milestone.' },
+      { label: 'Cash / liquidity', value: 'Not yet projected', note: 'Phase 1 still needs a dedicated finance source layer for real balances.', stale: true },
+      { label: 'Income snapshot', value: 'W-2 + venture upside', note: 'Current notes frame the transition away from paycheck dependence as a major goal.' },
+      { label: 'Investment allocation', value: 'Not yet projected', note: 'A later pass should expose accounts, allocations, and trend signals.', stale: true },
+      { label: 'Current financial priorities', value: 'Increase leverage', note: 'Comp growth and venture traction both matter on the current path.' },
+      { label: 'Wealth-building phase', value: 'Foundation-building', note: 'Still in the phase of increasing earning power and owned upside.' },
+    ],
+    highlights: [
+      'Wealth should eventually become a real finance cockpit, not a vague aspiration page.',
+      'Current projections are strategic, not account-level.',
+      'This section needs deeper data sources in a later pass.',
+    ],
+  }
+}
+
+export function buildEducationData(): ProjectedSection {
+  const goals = readPunkFile('Personal Decision Engine/Goals/Goals Overview.md')
+  const degreeLine = goals.split('\n').find((line) => line.includes('Georgia Tech MSML completed')) ?? ''
+
+  return {
+    heroSummary: 'Education is currently a supporting but serious track, centered on completing the Georgia Tech MSML path while balancing career and execution priorities.',
+    summaryCards: [
+      { label: 'Current program / course load', value: 'Georgia Tech MSML', note: degreeLine || 'The 5-year goals note keeps this degree path visible.' },
+      { label: 'Current courses', value: 'Not yet projected', note: 'This page should later surface live course-level data and deadlines.', stale: true },
+      { label: 'Upcoming deadlines', value: 'Not yet projected', note: 'A deeper academic projection layer is still needed.', stale: true },
+      { label: 'Progress / completion status', value: 'In progress', note: 'The education track is active, not complete.' },
+      { label: 'Current learning focus', value: 'ML credibility + execution balance', note: 'Education supports long-term positioning, not just credential collection.' },
+      { label: 'Academic priority level', value: 'Important but not primary', note: 'Current active life priorities still lean heavily toward execution and leverage.' },
+    ],
+    highlights: [
+      'Education should stay visible without dominating the control center.',
+      'This section still needs live academic detail later.',
+      'Current projection keeps the long-arc program in view.',
+    ],
+  }
+}
+
+export function buildRelationshipsData(): ProjectedSection {
+  const goals = readPunkFile('Personal Decision Engine/Goals/Goals Overview.md')
+  const relationshipLine = goals.split('\n').find((line) => line.includes('Seriously dating with marriage in mind')) ?? ''
+  const annualLine = goals.split('\n').find((line) => line.includes('Start dating intentionally')) ?? ''
+
+  return {
+    heroSummary: 'Relationships are treated as a meaningful life pillar, but current notes show this area as intentionally secondary until environment, relocation, and broader life conditions improve.',
+    summaryCards: [
+      { label: 'Relationship priority snapshot', value: 'Strategic but delayed', note: annualLine || 'The annual goals note keeps this active but paused.' },
+      { label: 'Current connection health', value: 'Not fully projected', note: 'A richer people/relationship data layer does not exist yet.', stale: true },
+      { label: 'Important people / focus', value: 'Family + future partner path', note: relationshipLine || 'Long-term notes keep serious partnership visible.' },
+      { label: 'Upcoming relationship actions', value: 'Environment shift first', note: 'Current notes imply relocation and life context are upstream dependencies.' },
+      { label: 'Long-term relationship vision', value: 'Marriage-minded', note: 'The long arc is serious partnership, not casual drift.' },
+      { label: 'Current blockers / gaps', value: 'Environment + timing', note: 'The current system explicitly recognizes context as a blocker.' },
+    ],
+    highlights: [
+      'Relationships should remain human and respectful, not become a weird quantified dashboard.',
+      'Current notes emphasize timing and environment constraints.',
+      'This page is still intentionally lighter than the execution-heavy sections.',
+    ],
+  }
+}
