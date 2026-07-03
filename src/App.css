@@ -612,3 +612,13 @@ input {
 .business-status-panel.error {
   border-color: rgba(255, 138, 138, 0.38);
 }
+
+
+.visual-loading {
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a2b3cb;
+  font-size: 0.95rem;
+}

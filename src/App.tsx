@@ -1,10 +1,15 @@
-import { useEffect, useMemo, useState } from 'react'
+import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Html, Float, Line, OrbitControls, Sphere, Stars, Text } from '@react-three/drei'
 import { AnimatePresence, motion } from 'motion/react'
 import './App.css'
 import { useDashboardData } from './hooks/useDashboardData'
 import { sendBusinessCommand } from './data/businessCommandApi'
+
+const SpaceScene = lazy(async () => {
+  const mod = await import('./components/SpaceScene')
+  return { default: mod.SpaceScene }
+})
 
 type AppMode = 'personal' | 'business'
 type PersonalSection =
@@ -555,6 +560,11 @@ function App() {
               {(['overview', 'agents', 'review'] as BusinessPanel[]).map((panel) => (
                 <button key={panel} className={businessPanel === panel ? 'shell-toggle active' : 'shell-toggle'} onClick={() => setBusinessPanel(panel)}>{panel}</button>
               ))}
+            </div>
+            <div className="business-visual-card">
+              <Suspense fallback={<div className="visual-loading">Loading activity constellation...</div>}>
+                <SpaceScene activeAgents={businessAgents.length} flaggedCount={queueHealth?.flagged_count ?? 0} />
+              </Suspense>
             </div>
           </section>
 
