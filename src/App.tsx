@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
 import './App.css'
-import { useDashboardData } from './hooks/useDashboardData'
 import { sendBusinessCommand } from './data/businessCommandApi'
 
 type AppMode = 'personal' | 'business'
@@ -194,9 +193,20 @@ function App() {
   const [commandResponse, setCommandResponse] = useState('Your spotlight command bar now routes by context and can shift Business Command focus automatically.')
   const [reviewNoteDrafts, setReviewNoteDrafts] = useState<Record<string, string>>({})
   const [selectedReviewTaskId, setSelectedReviewTaskId] = useState<string | null>(null)
-  const [autopilotStatus, setAutopilotStatus] = useState<AutopilotStatus | null>(null)
+  const [autopilotStatus] = useState<AutopilotStatus | null>(null)
 
-  const dashboardData = useDashboardData()
+  const dashboardData: any = {
+    loading: false,
+    error: null,
+    projects: [],
+    agentChambers: [],
+    artifactReviewItems: [],
+    activityFeed: [],
+    queueHealth: null,
+    projectSummary: { revenueUsd: 0, marginUsd: 0, costUsd: 0, approvalsPending: 0, publishedToday: 0 },
+    getTaskDetail: () => null,
+    decideTaskApproval: async () => undefined,
+  }
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -213,30 +223,6 @@ function App() {
   }, [])
 
 
-  useEffect(() => {
-    let cancelled = false
-
-    async function loadAutopilotStatus() {
-      try {
-        const response = await fetch('/api/autopilot/status')
-        if (!response.ok) throw new Error('autopilot status failed')
-        const data = (await response.json()) as AutopilotStatus | null
-        if (!cancelled) setAutopilotStatus(data)
-      } catch {
-        if (!cancelled) setAutopilotStatus(null)
-      }
-    }
-
-    void loadAutopilotStatus()
-    const id = window.setInterval(() => {
-      if (!cancelled) void loadAutopilotStatus()
-    }, 15000)
-
-    return () => {
-      cancelled = true
-      window.clearInterval(id)
-    }
-  }, [])
 
   const lockedOut = lockoutUntil > now
   const lockoutSeconds = Math.max(0, Math.ceil((lockoutUntil - now) / 1000))
@@ -262,7 +248,7 @@ function App() {
   const queueHealth = dashboardData.queueHealth
   const topPendingReview = dashboardData.artifactReviewItems[0]
   const selectedReviewTaskIdSafe = selectedReviewTaskId ?? topPendingReview?.taskId ?? null
-  const selectedReviewItem = dashboardData.artifactReviewItems.find((item) => item.taskId === selectedReviewTaskIdSafe) ?? topPendingReview
+  const selectedReviewItem = dashboardData.artifactReviewItems.find((item: any) => item.taskId === selectedReviewTaskIdSafe) ?? topPendingReview
   const selectedReviewDetail = selectedReviewItem ? dashboardData.getTaskDetail(selectedReviewItem.taskId) : undefined
   const businessAgents = dashboardData.agentChambers.slice(0, 6)
   const recentActivity = dashboardData.activityFeed.slice(0, 5)
@@ -515,8 +501,8 @@ function App() {
                 {autopilotStatus ? (
                   <article className="summary-card business-strip-card">
                     <span>Autopilot</span>
-                    <strong>{autopilotStatus.percentEstimate}% · {autopilotStatus.status}</strong>
-                    <p>Last work: {formatRelativeTime(autopilotStatus.lastWorkActionAt)} · Current step: {autopilotStatus.currentStep}</p>
+                    <strong>Isolation mode</strong>
+                    <p>Autopilot polling disabled in this build.</p>
                   </article>
                 ) : null}
               </section>
@@ -528,7 +514,7 @@ function App() {
                       <h2>Agent Hierarchy</h2>
                       <p>Live oversight view from Supabase tasks, agent runs, and recent activity.</p>
                       <div className="agent-card-grid">
-                        {businessAgents.map((agent) => (
+                        {businessAgents.map((agent: any) => (
                           <div key={agent.id} className="agent-card-shell">
                             <span>{agent.chamberLabel}</span>
                             <strong>{agent.displayName}</strong>
@@ -544,7 +530,7 @@ function App() {
                     <article className="detail-panel hierarchy-panel">
                       <h2>Recent activity</h2>
                       <ul>
-                        {recentActivity.map((item) => (
+                        {recentActivity.map((item: any) => (
                           <li key={item.id}>{item.taskTitle} · {item.eventType} · {formatRelativeTime(item.createdAt)}</li>
                         ))}
                       </ul>
@@ -560,7 +546,7 @@ function App() {
                     {selectedReviewItem ? (
                       <div className="review-dock-live">
                         <div className="review-queue-list">
-                          {dashboardData.artifactReviewItems.slice(0, 4).map((item) => (
+                          {dashboardData.artifactReviewItems.slice(0, 4).map((item: any) => (
                             <button
                               key={`${item.taskId}-${item.artifactId}`}
                               className={selectedReviewItem.taskId === item.taskId ? 'review-queue-item active' : 'review-queue-item'}
@@ -602,12 +588,7 @@ function App() {
                       <li>{queueHealth?.hottest_review_loop_task_title ? `Review loop hotspot: ${queueHealth.hottest_review_loop_task_title}` : 'No review loop hotspot currently.'}</li>
                       <li>{queueHealth?.hottest_retry_loop_task_title ? `Retry loop hotspot: ${queueHealth.hottest_retry_loop_task_title}` : 'No retry loop hotspot currently.'}</li>
                     </ul>
-                    {autopilotStatus ? (
-                      <div className="review-detail-grid">
-                        <div className="history-chip">Current step: {autopilotStatus.currentStep}</div>
-                        <div className="history-chip">Next step: {autopilotStatus.nextStep}</div>
-                      </div>
-                    ) : null}
+
                   </article>
                 </aside>
               ) : null}
@@ -627,7 +608,7 @@ function App() {
                 <button className="logout-btn" onClick={() => setCommandOpen(false)}>Close</button>
               </div>
               <div className="command-context">Context: {appMode} · {appMode === 'personal' ? personalSection : businessPanel}</div>
-              {autopilotStatus ? <div className="command-context">Autopilot: {autopilotStatus.status} · {autopilotStatus.currentStep}</div> : null}
+
               <div className="command-input-wrap">
                 <input
                   autoFocus
