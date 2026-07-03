@@ -194,7 +194,7 @@ function App() {
   const [lockoutUntil, setLockoutUntil] = useState(0)
   const [now, setNow] = useState(() => Date.now())
   const [commandHistory, setCommandHistory] = useState<string[]>([])
-  const [commandResponse, setCommandResponse] = useState('Your spotlight command bar will route natural-language instructions to the assistant layer here in Phase 1.')
+  const [commandResponse, setCommandResponse] = useState('Your spotlight command bar now routes by context and can shift Business Command focus automatically.')
   const [projectedSections, setProjectedSections] = useState<Record<string, PersonalSectionData>>({})
   const [reviewNoteDrafts, setReviewNoteDrafts] = useState<Record<string, string>>({})
   const [selectedReviewTaskId, setSelectedReviewTaskId] = useState<string | null>(null)
@@ -681,6 +681,12 @@ function App() {
                       <li>{queueHealth?.hottest_review_loop_task_title ? `Review loop hotspot: ${queueHealth.hottest_review_loop_task_title}` : 'No review loop hotspot currently.'}</li>
                       <li>{queueHealth?.hottest_retry_loop_task_title ? `Retry loop hotspot: ${queueHealth.hottest_retry_loop_task_title}` : 'No retry loop hotspot currently.'}</li>
                     </ul>
+                    {autopilotStatus ? (
+                      <div className="review-detail-grid">
+                        <div className="history-chip">Current step: {autopilotStatus.currentStep}</div>
+                        <div className="history-chip">Next step: {autopilotStatus.nextStep}</div>
+                      </div>
+                    ) : null}
                   </article>
                 </aside>
               ) : null}
@@ -701,6 +707,7 @@ function App() {
                 <button className="logout-btn" onClick={() => setCommandOpen(false)}>Close</button>
               </div>
               <div className="command-context">Context: {appMode} · {appMode === 'personal' ? personalSection : businessPanel}</div>
+              {autopilotStatus ? <div className="command-context">Autopilot: {autopilotStatus.status} · {autopilotStatus.currentStep}</div> : null}
               <div className="command-input-wrap">
                 <input
                   autoFocus
