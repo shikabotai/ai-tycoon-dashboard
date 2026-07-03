@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import './App.css'
+import { useDashboardData } from './hooks/useDashboardData'
 import { sendBusinessCommand } from './data/businessCommandApi'
 
 type AppMode = 'personal' | 'business'
@@ -196,18 +197,7 @@ function App() {
   const [selectedReviewTaskId, setSelectedReviewTaskId] = useState<string | null>(null)
   const [autopilotStatus, setAutopilotStatus] = useState<AutopilotStatus | null>(null)
 
-  const dashboardData: any = {
-    loading: false,
-    error: null,
-    projects: [],
-    agentChambers: [],
-    artifactReviewItems: [],
-    activityFeed: [],
-    queueHealth: null,
-    projectSummary: { revenueUsd: 0, marginUsd: 0, costUsd: 0, approvalsPending: 0, publishedToday: 0 },
-    getTaskDetail: () => null,
-    decideTaskApproval: async () => undefined,
-  }
+  const dashboardData = useDashboardData()
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -314,7 +304,7 @@ function App() {
   const queueHealth = dashboardData.queueHealth
   const topPendingReview = dashboardData.artifactReviewItems[0]
   const selectedReviewTaskIdSafe = selectedReviewTaskId ?? topPendingReview?.taskId ?? null
-  const selectedReviewItem = dashboardData.artifactReviewItems.find((item: any) => item.taskId === selectedReviewTaskIdSafe) ?? topPendingReview
+  const selectedReviewItem = dashboardData.artifactReviewItems.find((item) => item.taskId === selectedReviewTaskIdSafe) ?? topPendingReview
   const selectedReviewDetail = selectedReviewItem ? dashboardData.getTaskDetail(selectedReviewItem.taskId) : undefined
   const businessAgents = dashboardData.agentChambers.slice(0, 6)
   const recentActivity = dashboardData.activityFeed.slice(0, 5)
@@ -580,7 +570,7 @@ function App() {
                       <h2>Agent Hierarchy</h2>
                       <p>Live oversight view from Supabase tasks, agent runs, and recent activity.</p>
                       <div className="agent-card-grid">
-                        {businessAgents.map((agent: any) => (
+                        {businessAgents.map((agent) => (
                           <div key={agent.id} className="agent-card-shell">
                             <span>{agent.chamberLabel}</span>
                             <strong>{agent.displayName}</strong>
@@ -596,7 +586,7 @@ function App() {
                     <article className="detail-panel hierarchy-panel">
                       <h2>Recent activity</h2>
                       <ul>
-                        {recentActivity.map((item: any) => (
+                        {recentActivity.map((item) => (
                           <li key={item.id}>{item.taskTitle} · {item.eventType} · {formatRelativeTime(item.createdAt)}</li>
                         ))}
                       </ul>
@@ -612,7 +602,7 @@ function App() {
                     {selectedReviewItem ? (
                       <div className="review-dock-live">
                         <div className="review-queue-list">
-                          {dashboardData.artifactReviewItems.slice(0, 4).map((item: any) => (
+                          {dashboardData.artifactReviewItems.slice(0, 4).map((item) => (
                             <button
                               key={`${item.taskId}-${item.artifactId}`}
                               className={selectedReviewItem.taskId === item.taskId ? 'review-queue-item active' : 'review-queue-item'}
