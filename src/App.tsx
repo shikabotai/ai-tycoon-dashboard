@@ -182,6 +182,7 @@ function storeLoginState(state: { attempts: number; lockoutUntil: number }) {
 }
 
 function App() {
+  const [authReady, setAuthReady] = useState(false)
   const [authed, setAuthed] = useState(false)
   const [appMode, setAppMode] = useState<AppMode>('personal')
   const [personalSection, setPersonalSection] = useState<PersonalSection>('home')
@@ -205,10 +206,11 @@ function App() {
   useEffect(() => {
     if (typeof window === 'undefined') return
     const session = window.localStorage.getItem(SESSION_KEY)
-    if (session === 'true') setAuthed(true)
+    setAuthed(session === 'true')
     const stored = loadStoredLoginState()
     setAttempts(stored.attempts)
     setLockoutUntil(stored.lockoutUntil)
+    setAuthReady(true)
   }, [])
 
   useEffect(() => {
@@ -383,6 +385,10 @@ function App() {
       setCommandResponse(message)
     }
     setCommandValue('')
+  }
+
+  if (!authReady) {
+    return <div className="login-shell"><div className="login-card"><div className="login-eyebrow">Private Control Center</div><h1>Loading Access Gate</h1><p className="login-copy">Checking local session state before rendering the control center.</p></div></div>
   }
 
   if (!authed) {
