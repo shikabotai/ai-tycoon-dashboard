@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import type { ActivityFeedItem, AgentChamber, AgentRow, AgentRunRow, ApprovalRow, ArtifactReviewItem, ArtifactRow, DashboardSummary, DeliveryRow, ProjectDestinationRow, ProjectPnlRow, ProjectRow, ProjectSummary, PublicationRow, QueueHealth, TaskDetail, TaskEventRow, TaskRow, WatchdogRow } from '../types'
+import type { ActivityFeedItem, AgentChamber, AgentRow, AgentRunRow, ApprovalRow, ArtifactReviewItem, ArtifactRow, DashboardSummary, DeliveryRow, PipelineRow, ProjectDestinationRow, ProjectPnlRow, ProjectRow, ProjectSummary, PublicationRow, QueueHealth, TaskDetail, TaskEventRow, TaskRow, WatchdogRow } from '../types'
 
 const CHAMBER_LABELS: Record<string, string> = {
   gateway: 'Dock A1',
@@ -14,6 +14,7 @@ const CHAMBER_LABELS: Record<string, string> = {
 
 export function useDashboardData(_selectedProjectId?: string | null) {
   const [queueHealth, setQueueHealth] = useState<QueueHealth | null>(null)
+  const [pipeline, setPipeline] = useState<PipelineRow[]>([])
   const [agents, setAgents] = useState<AgentRow[]>([])
   const [tasks, setTasks] = useState<TaskRow[]>([])
   const [projects, setProjects] = useState<ProjectRow[]>([])
@@ -33,8 +34,9 @@ export function useDashboardData(_selectedProjectId?: string | null) {
     setLoading(true)
     setError(null)
 
-    const [queueHealthRes, agentsRes, tasksRes, projectsRes, agentRunsRes, artifactsRes, approvalsRes, watchdogRes, pnlRes, publicationsRes, destinationsRes, deliveriesRes, eventsRes] = await Promise.all([
+    const [queueHealthRes, pipelineRes, agentsRes, tasksRes, projectsRes, agentRunsRes, artifactsRes, approvalsRes, watchdogRes, pnlRes, publicationsRes, destinationsRes, deliveriesRes, eventsRes] = await Promise.all([
       supabase.from('v_queue_health').select('*').limit(1).maybeSingle(),
+      supabase.from('v_pipeline_now').select('*').order('project').order('status'),
       supabase.from('agents').select('id,role,display_name,status,capabilities').order('id'),
       supabase.from('tasks').select('id,title,status,assigned_agent_id,current_step_index,project_id,updated_at,metadata').order('updated_at', { ascending: false }).limit(120),
       supabase.from('projects').select('id,title').order('title'),
@@ -49,12 +51,13 @@ export function useDashboardData(_selectedProjectId?: string | null) {
       supabase.from('task_events').select('id,task_id,event_type,actor_agent_id,payload,created_at').order('created_at', { ascending: false }).limit(80),
     ])
 
-    const firstError = queueHealthRes.error || agentsRes.error || tasksRes.error || projectsRes.error || agentRunsRes.error || artifactsRes.error || approvalsRes.error || watchdogRes.error || pnlRes.error || publicationsRes.error || destinationsRes.error || deliveriesRes.error || eventsRes.error
+    const firstError = queueHealthRes.error || pipelineRes.error || agentsRes.error || tasksRes.error || projectsRes.error || agentRunsRes.error || artifactsRes.error || approvalsRes.error || watchdogRes.error || pnlRes.error || publicationsRes.error || destinationsRes.error || deliveriesRes.error || eventsRes.error
 
     if (firstError) {
       setError(firstError.message)
     } else {
       setQueueHealth((queueHealthRes.data as QueueHealth | null) ?? null)
+      setPipeline((pipelineRes.data as PipelineRow[] | null) ?? [])
       setAgents((agentsRes.data as AgentRow[] | null) ?? [])
       setTasks((tasksRes.data as TaskRow[] | null) ?? [])
       setProjects((projectsRes.data as ProjectRow[] | null) ?? [])
@@ -252,7 +255,7 @@ export function useDashboardData(_selectedProjectId?: string | null) {
 
   return {
     queueHealth,
-    pipeline: [],
+    pipeline,
     watchdog,
     loading,
     error,
