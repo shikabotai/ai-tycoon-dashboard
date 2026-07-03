@@ -192,7 +192,6 @@ function App() {
   const [now, setNow] = useState(() => Date.now())
   const [commandHistory, setCommandHistory] = useState<string[]>([])
   const [commandResponse, setCommandResponse] = useState('Your spotlight command bar now routes by context and can shift Business Command focus automatically.')
-  const [projectedSections, setProjectedSections] = useState<Record<string, PersonalSectionData>>({})
   const [reviewNoteDrafts, setReviewNoteDrafts] = useState<Record<string, string>>({})
   const [selectedReviewTaskId, setSelectedReviewTaskId] = useState<string | null>(null)
   const [autopilotStatus, setAutopilotStatus] = useState<AutopilotStatus | null>(null)
@@ -211,46 +210,6 @@ function App() {
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000)
     return () => window.clearInterval(id)
-  }, [])
-
-  useEffect(() => {
-    let cancelled = false
-
-    async function loadProjectedSections() {
-      const targets: Array<{ key: 'vessel' | 'identity' | 'systems' | 'ventures' | 'career' | 'knowledge' | 'wealth' | 'education' | 'relationships'; url: string }> = [
-        { key: 'vessel', url: '/api/personal/vessel' },
-        { key: 'identity', url: '/api/personal/identity' },
-        { key: 'systems', url: '/api/personal/systems' },
-        { key: 'ventures', url: '/api/personal/ventures' },
-        { key: 'career', url: '/api/personal/career' },
-        { key: 'knowledge', url: '/api/personal/knowledge' },
-        { key: 'wealth', url: '/api/personal/wealth' },
-        { key: 'education', url: '/api/personal/education' },
-        { key: 'relationships', url: '/api/personal/relationships' },
-      ]
-
-      const entries = await Promise.all(
-        targets.map(async ({ key, url }) => {
-          try {
-            const response = await fetch(url)
-            if (!response.ok) throw new Error(`Failed ${url}`)
-            const data = (await response.json()) as PersonalSectionData
-            return [key, data] as const
-          } catch {
-            return null
-          }
-        }),
-      )
-
-      if (cancelled) return
-      const next = Object.fromEntries(entries.filter(Boolean) as Array<readonly [string, PersonalSectionData]>)
-      setProjectedSections(next)
-    }
-
-    void loadProjectedSections()
-    return () => {
-      cancelled = true
-    }
   }, [])
 
 
@@ -285,7 +244,6 @@ function App() {
   const currentPersonalContent = personalSection === 'home' ? null : PERSONAL_SECTION_CONTENT[personalSection]
   const currentPersonalData = useMemo<PersonalSectionData | null>(() => {
     if (personalSection === 'home') return null
-    if (projectedSections[personalSection]) return projectedSections[personalSection]
     if (!currentPersonalContent) return null
     return {
       heroSummary: `${currentPersonalContent.title} is scaffolded from the approved design plan and will next be connected to structured repo projections.`,
@@ -296,7 +254,7 @@ function App() {
       })),
       highlights: currentPersonalContent.highlights,
     }
-  }, [personalSection, currentPersonalContent, projectedSections])
+  }, [personalSection, currentPersonalContent])
 
   const lifeMomentum = useMemo(() => ({ score: 78, trend: 'Rising', components: ['Vessel', 'Identity', 'Wealth', 'Ventures', 'Systems', 'Execution'] }), [])
 
