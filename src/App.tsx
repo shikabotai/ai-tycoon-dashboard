@@ -7,6 +7,8 @@ type LoginState = {
 }
 
 type AppMode = 'personal' | 'business'
+type PersonalSection = 'home' | 'vessel' | 'identity'
+type BusinessPanel = 'overview' | 'agents' | 'review'
 
 const VALID_USERNAME = 'mthanath64'
 const VALID_PASSWORD = 'Mitch2002'
@@ -39,6 +41,10 @@ function App() {
   const [authReady, setAuthReady] = useState(false)
   const [authed, setAuthed] = useState(false)
   const [appMode, setAppMode] = useState<AppMode>('personal')
+  const [personalSection, setPersonalSection] = useState<PersonalSection>('home')
+  const [businessPanel, setBusinessPanel] = useState<BusinessPanel>('overview')
+  const [commandValue, setCommandValue] = useState('')
+  const [commandResponse, setCommandResponse] = useState('Minimal routed shell test. No live data or heavy visual systems yet.')
   const [login, setLogin] = useState<LoginState>({ username: '', password: '' })
   const [loginError, setLoginError] = useState<string | null>(null)
   const [attempts, setAttempts] = useState(0)
@@ -93,6 +99,32 @@ function App() {
     window.localStorage.removeItem(SESSION_KEY)
   }
 
+  function submitCommand(event: React.FormEvent) {
+    event.preventDefault()
+    const trimmed = commandValue.trim()
+    if (!trimmed) return
+    if (trimmed.toLowerCase().includes('review')) {
+      setAppMode('business')
+      setBusinessPanel('review')
+      setCommandResponse('Routed to Business Command review panel in minimal shell test.')
+    } else if (trimmed.toLowerCase().includes('agent')) {
+      setAppMode('business')
+      setBusinessPanel('agents')
+      setCommandResponse('Routed to Business Command agents panel in minimal shell test.')
+    } else if (trimmed.toLowerCase().includes('vessel')) {
+      setAppMode('personal')
+      setPersonalSection('vessel')
+      setCommandResponse('Routed to Vessel section in minimal shell test.')
+    } else if (trimmed.toLowerCase().includes('identity')) {
+      setAppMode('personal')
+      setPersonalSection('identity')
+      setCommandResponse('Routed to Identity section in minimal shell test.')
+    } else {
+      setCommandResponse(`Accepted command: ${trimmed}`)
+    }
+    setCommandValue('')
+  }
+
   if (!authReady) {
     return (
       <div className="login-shell minimal-shell">
@@ -112,7 +144,7 @@ function App() {
         <form className="login-card minimal-card" onSubmit={handleLoginSubmit}>
           <div className="login-eyebrow">Private Control Center</div>
           <h1>Enter Command Access</h1>
-          <p className="login-copy">Login plus minimal post-login shell test. No live data, no 3D, no motion, no feature loaders.</p>
+          <p className="login-copy">Login plus routed shell test. Still no live data, no 3D, no motion, and no feature loaders.</p>
           <label>
             <span>Username</span>
             <input value={login.username} onChange={(e) => setLogin((prev) => ({ ...prev, username: e.target.value }))} autoComplete="username" />
@@ -124,7 +156,7 @@ function App() {
           <button type="submit" disabled={lockedOut}>{lockedOut ? `Locked · ${lockoutSeconds}s` : 'Enter'}</button>
           <div className="login-meta">
             <span>Attempts used: {attempts}/{MAX_LOGIN_ATTEMPTS}</span>
-            {loginError ? <span className="login-error">{loginError}</span> : <span>Minimal authenticated shell test build.</span>}
+            {loginError ? <span className="login-error">{loginError}</span> : <span>Minimal routed shell test build.</span>}
           </div>
         </form>
       </div>
@@ -136,7 +168,7 @@ function App() {
       <header className="top-shell-bar">
         <div>
           <div className="shell-mark">Private Control Center</div>
-          <div className="shell-submark">Minimal post-login shell isolation build</div>
+          <div className="shell-submark">Routed shell isolation build, still without heavy feature layers</div>
         </div>
         <div className="shell-actions">
           <button className={appMode === 'personal' ? 'shell-toggle active' : 'shell-toggle'} onClick={() => setAppMode('personal')}>Personal</button>
@@ -147,35 +179,45 @@ function App() {
 
       <section className="daily-focus-strip">
         <div><span>Mode</span><strong>{appMode}</strong></div>
-        <div><span>Status</span><strong>Authenticated</strong></div>
-        <div><span>Runtime</span><strong>Minimal shell</strong></div>
-        <div><span>Goal</span><strong>Crash isolation</strong></div>
+        <div><span>Personal</span><strong>{personalSection}</strong></div>
+        <div><span>Business</span><strong>{businessPanel}</strong></div>
+        <div><span>Status</span><strong>Routed shell</strong></div>
       </section>
 
       <main className="section-page personal-section-page">
         <section className="section-hero">
           <div>
             <div className="section-eyebrow">Isolation Step</div>
-            <h1>Minimal Post-Login Shell</h1>
-            <p>This screen proves whether the crash begins immediately after authentication or only once richer control-center features are restored.</p>
+            <h1>Minimal Routed Post-Login Shell</h1>
+            <p>This adds basic mode switching and command routing, but still excludes live data, Canvas, Phaser, motion, and the richer app trees.</p>
           </div>
         </section>
+
+        <form className="detail-panel" onSubmit={submitCommand}>
+          <h2>Command Test</h2>
+          <p className="login-copy">Try commands like “review”, “agent”, “vessel”, or “identity”.</p>
+          <div className="command-input-wrap">
+            <input value={commandValue} onChange={(e) => setCommandValue(e.target.value)} placeholder="Type a simple routing command..." />
+            <button type="submit">Send</button>
+          </div>
+          <div className="command-response-box">{commandResponse}</div>
+        </form>
 
         <section className="summary-grid">
           <article className="summary-card">
             <span>Live data</span>
             <strong>Disabled</strong>
-            <p>Supabase and business loaders are intentionally bypassed.</p>
+            <p>No Supabase or business loaders are active yet.</p>
           </article>
           <article className="summary-card">
-            <span>3D / visuals</span>
+            <span>Visual systems</span>
             <strong>Disabled</strong>
-            <p>No Canvas, Phaser, or animated visual surfaces are mounted here.</p>
+            <p>No Canvas, Phaser, or animated visual surfaces are mounted.</p>
           </article>
           <article className="summary-card">
-            <span>Purpose</span>
-            <strong>Post-login isolation</strong>
-            <p>If this stays visible, the crash is in a richer feature layer, not auth or shell transition.</p>
+            <span>What this tests</span>
+            <strong>Post-login shell logic</strong>
+            <p>If this works, the crash is in richer feature layers, not the basic routed shell.</p>
           </article>
         </section>
       </main>
