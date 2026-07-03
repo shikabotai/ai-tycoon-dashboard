@@ -1,5 +1,4 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
 import './App.css'
 import { useDashboardData } from './hooks/useDashboardData'
 import { sendBusinessCommand } from './data/businessCommandApi'
@@ -598,40 +597,38 @@ function App() {
         </main>
       )}
 
-      <AnimatePresence>
-        {commandOpen ? (
-          <motion.div className="command-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <motion.div className="command-modal" initial={{ y: 16, opacity: 0, scale: 0.98 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 12, opacity: 0, scale: 0.98 }}>
-              <div className="command-modal-top">
-                <div>
-                  <div className="shell-mark">Spotlight Command</div>
-                  <div className="shell-submark">Natural-language control across personal and business contexts</div>
-                </div>
-                <button className="logout-btn" onClick={() => setCommandOpen(false)}>Close</button>
+      {commandOpen ? (
+        <div className="command-overlay">
+          <div className="command-modal">
+            <div className="command-modal-top">
+              <div>
+                <div className="shell-mark">Spotlight Command</div>
+                <div className="shell-submark">Natural-language control across personal and business contexts</div>
               </div>
-              <div className="command-context">Context: {appMode} · {appMode === 'personal' ? personalSection : businessPanel}</div>
-              <div className="command-input-wrap">
-                <input
-                  autoFocus
-                  placeholder="Type what you want in natural language..."
-                  value={commandValue}
-                  onChange={(e) => setCommandValue(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') void submitCommand()
-                  }}
-                />
-                <button className="command-trigger solid" onClick={() => void submitCommand()}>Send</button>
-              </div>
-              <div className="command-response-box">{commandResponse}</div>
-              {appMode === 'business' ? <div className="command-context">Business surface follows routed panel focus automatically.</div> : null}
-              <div className="command-history">
-                <h3>Recent commands</h3>
-                {commandHistory.length === 0 ? <p>No commands yet.</p> : commandHistory.map((item) => <div key={item} className="history-chip">{item}</div>)}
-              </div>
-            </motion.div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+              <button className="logout-btn" onClick={() => setCommandOpen(false)}>Close</button>
+            </div>
+            <div className="command-context">Context: {appMode} · {appMode === 'personal' ? personalSection : businessPanel}</div>
+            <div className="command-input-wrap">
+              <input
+                autoFocus
+                placeholder="Type what you want in natural language..."
+                value={commandValue}
+                onChange={(e) => setCommandValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') void submitCommand()
+                }}
+              />
+              <button className="command-trigger solid" onClick={() => void submitCommand()}>Send</button>
+            </div>
+            <div className="command-response-box">{commandResponse}</div>
+            {appMode === 'business' ? <div className="command-context">Business surface follows routed panel focus automatically.</div> : null}
+            <div className="command-history">
+              <h3>Recent commands</h3>
+              {commandHistory.length === 0 ? <p>No commands yet.</p> : commandHistory.map((item) => <div key={item} className="history-chip">{item}</div>)}
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }
