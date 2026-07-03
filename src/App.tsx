@@ -6,6 +6,8 @@ type LoginState = {
   password: string
 }
 
+type AppMode = 'personal' | 'business'
+
 const VALID_USERNAME = 'mthanath64'
 const VALID_PASSWORD = 'Mitch2002'
 const MAX_LOGIN_ATTEMPTS = 10
@@ -36,6 +38,7 @@ function storeLoginState(state: { attempts: number; lockoutUntil: number }) {
 function App() {
   const [authReady, setAuthReady] = useState(false)
   const [authed, setAuthed] = useState(false)
+  const [appMode, setAppMode] = useState<AppMode>('personal')
   const [login, setLogin] = useState<LoginState>({ username: '', password: '' })
   const [loginError, setLoginError] = useState<string | null>(null)
   const [attempts, setAttempts] = useState(0)
@@ -109,7 +112,7 @@ function App() {
         <form className="login-card minimal-card" onSubmit={handleLoginSubmit}>
           <div className="login-eyebrow">Private Control Center</div>
           <h1>Enter Command Access</h1>
-          <p className="login-copy">Isolated login-only test. No business data, no 3D, no motion, no extra runtime layers.</p>
+          <p className="login-copy">Login plus minimal post-login shell test. No live data, no 3D, no motion, no feature loaders.</p>
           <label>
             <span>Username</span>
             <input value={login.username} onChange={(e) => setLogin((prev) => ({ ...prev, username: e.target.value }))} autoComplete="username" />
@@ -121,7 +124,7 @@ function App() {
           <button type="submit" disabled={lockedOut}>{lockedOut ? `Locked · ${lockoutSeconds}s` : 'Enter'}</button>
           <div className="login-meta">
             <span>Attempts used: {attempts}/{MAX_LOGIN_ATTEMPTS}</span>
-            {loginError ? <span className="login-error">{loginError}</span> : <span>Plain login-gate isolation build.</span>}
+            {loginError ? <span className="login-error">{loginError}</span> : <span>Minimal authenticated shell test build.</span>}
           </div>
         </form>
       </div>
@@ -129,13 +132,53 @@ function App() {
   }
 
   return (
-    <div className="login-shell minimal-shell">
-      <div className="login-card minimal-card">
-        <div className="login-eyebrow">Private Control Center</div>
-        <h1>Login Worked</h1>
-        <p className="login-copy">The isolated auth gate succeeded. That means the crash is in the layers that come after login, not the login page itself.</p>
-        <button onClick={logout}>Lock</button>
-      </div>
+    <div className="control-shell">
+      <header className="top-shell-bar">
+        <div>
+          <div className="shell-mark">Private Control Center</div>
+          <div className="shell-submark">Minimal post-login shell isolation build</div>
+        </div>
+        <div className="shell-actions">
+          <button className={appMode === 'personal' ? 'shell-toggle active' : 'shell-toggle'} onClick={() => setAppMode('personal')}>Personal</button>
+          <button className={appMode === 'business' ? 'shell-toggle active' : 'shell-toggle'} onClick={() => setAppMode('business')}>Business</button>
+          <button className="logout-btn" onClick={logout}>Lock</button>
+        </div>
+      </header>
+
+      <section className="daily-focus-strip">
+        <div><span>Mode</span><strong>{appMode}</strong></div>
+        <div><span>Status</span><strong>Authenticated</strong></div>
+        <div><span>Runtime</span><strong>Minimal shell</strong></div>
+        <div><span>Goal</span><strong>Crash isolation</strong></div>
+      </section>
+
+      <main className="section-page personal-section-page">
+        <section className="section-hero">
+          <div>
+            <div className="section-eyebrow">Isolation Step</div>
+            <h1>Minimal Post-Login Shell</h1>
+            <p>This screen proves whether the crash begins immediately after authentication or only once richer control-center features are restored.</p>
+          </div>
+        </section>
+
+        <section className="summary-grid">
+          <article className="summary-card">
+            <span>Live data</span>
+            <strong>Disabled</strong>
+            <p>Supabase and business loaders are intentionally bypassed.</p>
+          </article>
+          <article className="summary-card">
+            <span>3D / visuals</span>
+            <strong>Disabled</strong>
+            <p>No Canvas, Phaser, or animated visual surfaces are mounted here.</p>
+          </article>
+          <article className="summary-card">
+            <span>Purpose</span>
+            <strong>Post-login isolation</strong>
+            <p>If this stays visible, the crash is in a richer feature layer, not auth or shell transition.</p>
+          </article>
+        </section>
+      </main>
     </div>
   )
 }
