@@ -193,7 +193,7 @@ function App() {
   const [commandResponse, setCommandResponse] = useState('Your spotlight command bar now routes by context and can shift Business Command focus automatically.')
   const [reviewNoteDrafts, setReviewNoteDrafts] = useState<Record<string, string>>({})
   const [selectedReviewTaskId, setSelectedReviewTaskId] = useState<string | null>(null)
-  const [autopilotStatus] = useState<AutopilotStatus | null>(null)
+  const [autopilotStatus, setAutopilotStatus] = useState<AutopilotStatus | null>(null)
 
   const dashboardData: any = {
     loading: false,
@@ -220,6 +220,31 @@ function App() {
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000)
     return () => window.clearInterval(id)
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function loadAutopilotStatus() {
+      try {
+        const response = await fetch('/api/autopilot/status')
+        if (!response.ok) throw new Error('autopilot status failed')
+        const data = (await response.json()) as AutopilotStatus | null
+        if (!cancelled) setAutopilotStatus(data)
+      } catch {
+        if (!cancelled) setAutopilotStatus(null)
+      }
+    }
+
+    void loadAutopilotStatus()
+    const id = window.setInterval(() => {
+      if (!cancelled) void loadAutopilotStatus()
+    }, 15000)
+
+    return () => {
+      cancelled = true
+      window.clearInterval(id)
+    }
   }, [])
 
 
@@ -501,8 +526,8 @@ function App() {
                 {autopilotStatus ? (
                   <article className="summary-card business-strip-card">
                     <span>Autopilot</span>
-                    <strong>Isolation mode</strong>
-                    <p>Autopilot polling disabled in this build.</p>
+                    <strong>{autopilotStatus ? `${autopilotStatus.percentEstimate}% · ${autopilotStatus.status}` : 'Autopilot unavailable'}</strong>
+                    <p>{autopilotStatus ? `Last work: ${formatRelativeTime(autopilotStatus.lastWorkActionAt)} · Current step: ${autopilotStatus.currentStep}` : 'Autopilot polling restored for isolation test.'}</p>
                   </article>
                 ) : null}
               </section>
@@ -608,6 +633,7 @@ function App() {
                 <button className="logout-btn" onClick={() => setCommandOpen(false)}>Close</button>
               </div>
               <div className="command-context">Context: {appMode} · {appMode === 'personal' ? personalSection : businessPanel}</div>
+              {autopilotStatus ? <div className="command-context">Autopilot: {autopilotStatus.status} · {autopilotStatus.currentStep}</div> : null}
 
               <div className="command-input-wrap">
                 <input
