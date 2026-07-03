@@ -632,3 +632,35 @@ input {
   color: #dce9ff;
   font-size: 0.92rem;
 }
+
+
+.static-scene-shell {
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 32px;
+}
+
+.static-avatar-core {
+  width: 120px;
+  height: 120px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: #9fd0ff;
+  background: radial-gradient(circle, rgba(95,165,255,0.3), rgba(8,11,18,0.2));
+  border: 1px solid rgba(110,149,255,0.35);
+}
+
+.static-node-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  max-width: 720px;
+}
