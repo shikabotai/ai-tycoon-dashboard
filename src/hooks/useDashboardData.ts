@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import type { AgentChamber, AgentRow, AgentRunRow, ArtifactReviewItem, DashboardSummary, ProjectRow, ProjectSummary, QueueHealth, TaskDetail, TaskRow } from '../types'
+import type { AgentChamber, AgentRow, AgentRunRow, ApprovalRow, ArtifactReviewItem, ArtifactRow, DashboardSummary, ProjectRow, ProjectSummary, QueueHealth, TaskDetail, TaskRow } from '../types'
 
 const CHAMBER_LABELS: Record<string, string> = {
   gateway: 'Dock A1',
@@ -17,6 +17,8 @@ export function useDashboardData(_selectedProjectId?: string | null) {
   const [agents, setAgents] = useState<AgentRow[]>([])
   const [tasks, setTasks] = useState<TaskRow[]>([])
   const [projects, setProjects] = useState<ProjectRow[]>([])
+  const [artifacts, setArtifacts] = useState<ArtifactRow[]>([])
+  const [approvals, setApprovals] = useState<ApprovalRow[]>([])
   const [agentRuns, setAgentRuns] = useState<AgentRunRow[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -25,15 +27,17 @@ export function useDashboardData(_selectedProjectId?: string | null) {
     setLoading(true)
     setError(null)
 
-    const [queueHealthRes, agentsRes, tasksRes, projectsRes, agentRunsRes] = await Promise.all([
+    const [queueHealthRes, agentsRes, tasksRes, projectsRes, agentRunsRes, artifactsRes, approvalsRes] = await Promise.all([
       supabase.from('v_queue_health').select('*').limit(1).maybeSingle(),
       supabase.from('agents').select('id,role,display_name,status,capabilities').order('id'),
       supabase.from('tasks').select('id,title,status,assigned_agent_id,current_step_index,project_id,updated_at,metadata').order('updated_at', { ascending: false }).limit(120),
       supabase.from('projects').select('id,title').order('title'),
       supabase.from('agent_runs').select('id,task_id,agent_id,agent_role,status,cost_usd,error_message,started_at,completed_at').order('started_at', { ascending: false }).limit(120),
+      supabase.from('artifacts').select('id,task_id,artifact_type,content,mime_type,filename,storage_path,created_at').in('artifact_type', ['draft', 'draft_file', 'delivery_note', 'package']).order('created_at', { ascending: false }).limit(120),
+      supabase.from('approvals').select('id,task_id,status,decided_at,created_at,comment').order('created_at', { ascending: false }).limit(120),
     ])
 
-    const firstError = queueHealthRes.error || agentsRes.error || tasksRes.error || projectsRes.error || agentRunsRes.error
+    const firstError = queueHealthRes.error || agentsRes.error || tasksRes.error || projectsRes.error || agentRunsRes.error || artifactsRes.error || approvalsRes.error
 
     if (firstError) {
       setError(firstError.message)
@@ -43,6 +47,8 @@ export function useDashboardData(_selectedProjectId?: string | null) {
       setTasks((tasksRes.data as TaskRow[] | null) ?? [])
       setProjects((projectsRes.data as ProjectRow[] | null) ?? [])
       setAgentRuns((agentRunsRes.data as AgentRunRow[] | null) ?? [])
+      setArtifacts((artifactsRes.data as ArtifactRow[] | null) ?? [])
+      setApprovals((approvalsRes.data as ApprovalRow[] | null) ?? [])
     }
 
     setLoading(false)
@@ -102,7 +108,39 @@ export function useDashboardData(_selectedProjectId?: string | null) {
       })
   }, [agents, filteredAgentRuns, projects, tasks])
 
-  const artifactReviewItems = useMemo(() => [] as ArtifactReviewItem[], [])
+  const artifactReviewItems = useMemo(() => {
+    const projectMap = new Map(projects.map((project) => [project.id, project.title]))
+    const taskMap = new Map(tasks.map((task) => [task.id, task]))
+    const latestApprovalByTask = new Map<string, ApprovalRow>()
+
+    for (const approval of approvals) {
+      if (!latestApprovalByTask.has(approval.task_id)) {
+        latestApprovalByTask.set(approval.task_id, approval)
+      }
+    }
+
+    return artifacts
+      .filter((artifact) => filteredTaskIds.has(artifact.task_id))
+      .map((artifact) => {
+        const task = taskMap.get(artifact.task_id)
+        const approval = latestApprovalByTask.get(artifact.task_id)
+        return {
+          artifactId: artifact.id,
+          taskId: artifact.task_id,
+          taskTitle: task?.title ?? 'Unknown task',
+          projectTitle: task?.project_id ? projectMap.get(task.project_id) : undefined,
+          assignedAgentId: task?.assigned_agent_id,
+          artifactType: artifact.artifact_type,
+          filename: artifact.filename,
+          mimeType: artifact.mime_type,
+          content: artifact.content,
+          storagePath: artifact.storage_path,
+          createdAt: artifact.created_at,
+          approvalStatus: ((approval?.status as 'pending' | 'approved' | 'rejected' | undefined) ?? 'none'),
+        } satisfies ArtifactReviewItem
+      })
+      .filter((item) => item.taskTitle !== 'Unknown task')
+  }, [approvals, artifacts, filteredTaskIds, projects, tasks])
   const activityFeed = useMemo(() => [] as { id: string; taskId: string; taskTitle: string; projectTitle?: string; eventType: string; actorAgentId?: string | null; createdAt: string; detail?: string }[], [])
 
   const projectSummary = useMemo(() => {
