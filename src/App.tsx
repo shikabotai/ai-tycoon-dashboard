@@ -206,7 +206,8 @@ function App() {
   const [selectedReviewTaskId, setSelectedReviewTaskId] = useState<string | null>(null)
   const [autopilotStatus, setAutopilotStatus] = useState<AutopilotStatus | null>(null)
 
-  const dashboardData = useDashboardData()
+  const authDebugMode = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('auth_debug') === '1'
+  const dashboardData = useDashboardData(authDebugMode ? null : undefined)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -224,6 +225,7 @@ function App() {
   }, [])
 
   useEffect(() => {
+    if (authDebugMode) return
     let cancelled = false
 
     async function loadProjectedSections() {
@@ -265,6 +267,7 @@ function App() {
 
 
   useEffect(() => {
+    if (authDebugMode) return
     let cancelled = false
 
     async function loadAutopilotStatus() {
@@ -401,6 +404,7 @@ function App() {
       <div className="login-shell">
         <div className="login-orb" />
         <form className="login-card" onSubmit={handleLoginSubmit}>
+          {authDebugMode ? <div className="debug-banner">Auth debug mode is on. Non-auth data loaders are bypassed.</div> : null}
           <div className="login-eyebrow">Private Control Center</div>
           <h1>Enter Command Access</h1>
           <p className="login-copy">A private life-and-business operating system for Mitchell.</p>

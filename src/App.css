@@ -622,3 +622,13 @@ input {
   color: #a2b3cb;
   font-size: 0.95rem;
 }
+
+
+.debug-banner {
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(95, 165, 255, 0.12);
+  border: 1px solid rgba(95, 165, 255, 0.28);
+  color: #dce9ff;
+  font-size: 0.92rem;
+}
