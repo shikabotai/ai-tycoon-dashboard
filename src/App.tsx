@@ -1,7 +1,13 @@
-import { useEffect, useMemo, useState } from 'react'
+import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
 import './App.css'
 import { useDashboardData } from './hooks/useDashboardData'
 import { sendBusinessCommand } from './data/businessCommandApi'
+
+const SpaceScene = lazy(async () => {
+  const mod = await import('./components/SpaceScene')
+  return { default: mod.SpaceScene }
+})
 
 type AppMode = 'personal' | 'business'
 type PersonalSection =
@@ -383,6 +389,11 @@ function App() {
                   <strong>Business Command</strong>
                 </button>
               </div>
+              <div className="business-visual-card">
+                <Suspense fallback={<div className="visual-loading">Loading activity constellation...</div>}>
+                  <SpaceScene activeAgents={businessAgents.length} flaggedCount={queueHealth?.flagged_count ?? 0} />
+                </Suspense>
+              </div>
               <div className="static-scene-shell">
                 <div className="static-avatar-core">●</div>
                 <div className="static-node-grid">
@@ -392,7 +403,7 @@ function App() {
                     </button>
                   ))}
                 </div>
-                <p className="login-copy">Static personal-home shell, with 3D stack removed for isolation.</p>
+                <p className="login-copy">Visual runtime re-enabled for isolation. If this crashes, SpaceScene/lazy visual stack is the trigger.</p>
               </div>
             </section>
           </main>
@@ -587,9 +598,10 @@ function App() {
         </main>
       )}
 
-      {commandOpen ? (
-        <div className="command-overlay">
-          <div className="command-modal">
+      <AnimatePresence>
+        {commandOpen ? (
+          <motion.div className="command-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.div className="command-modal" initial={{ y: 16, opacity: 0, scale: 0.98 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 12, opacity: 0, scale: 0.98 }}>
               <div className="command-modal-top">
                 <div>
                   <div className="shell-mark">Spotlight Command</div>
@@ -598,7 +610,6 @@ function App() {
                 <button className="logout-btn" onClick={() => setCommandOpen(false)}>Close</button>
               </div>
               <div className="command-context">Context: {appMode} · {appMode === 'personal' ? personalSection : businessPanel}</div>
-
               <div className="command-input-wrap">
                 <input
                   autoFocus
@@ -617,9 +628,10 @@ function App() {
                 <h3>Recent commands</h3>
                 {commandHistory.length === 0 ? <p>No commands yet.</p> : commandHistory.map((item) => <div key={item} className="history-chip">{item}</div>)}
               </div>
-          </div>
-        </div>
-      ) : null}
+            </motion.div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   )
 }
