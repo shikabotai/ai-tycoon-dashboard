@@ -1,6 +1,7 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
 import './App.css'
 import { useDashboardData } from './hooks/useDashboardData'
+import { loadProjectedSection, type PersonalProjectionKey, type ProjectedSection as LiveProjectedSection } from './data/personalProjectionClient'
 import { sendBusinessCommand } from './data/businessCommandApi'
 
 const SpaceScene = lazy(async () => {
@@ -88,6 +89,7 @@ function App() {
   const [commandResponse, setCommandResponse] = useState('Private control center is stable. Next step is replacing the old visual language with the new dark-tech shell.')
   const [reviewNoteDrafts, setReviewNoteDrafts] = useState<Record<string, string>>({})
   const [selectedReviewTaskId, setSelectedReviewTaskId] = useState<string | null>(null)
+  const [projectedSections, setProjectedSections] = useState<Partial<Record<PersonalProjectionKey, LiveProjectedSection>>>({})
 
   const dashboardData = useDashboardData()
 
@@ -105,6 +107,30 @@ function App() {
     return () => window.clearInterval(id)
   }, [])
 
+  useEffect(() => {
+    let cancelled = false
+
+    async function primeProjections() {
+      const keys: PersonalProjectionKey[] = ['vessel', 'identity', 'systems', 'ventures', 'career', 'knowledge', 'wealth', 'education', 'relationships']
+      const entries = await Promise.all(keys.map(async (key) => {
+        try {
+          const section = await loadProjectedSection(key)
+          return section ? ([key, section] as const) : null
+        } catch {
+          return null
+        }
+      }))
+
+      if (cancelled) return
+      setProjectedSections(Object.fromEntries(entries.filter(Boolean) as Array<readonly [PersonalProjectionKey, LiveProjectedSection]>))
+    }
+
+    void primeProjections()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   const lockedOut = lockoutUntil > now
   const lockoutSeconds = Math.max(0, Math.ceil((lockoutUntil - now) / 1000))
   const businessSummary = dashboardData.summary
@@ -119,12 +145,14 @@ function App() {
   const currentPersonalContent = personalSection === 'home' ? null : PERSONAL_SECTION_CONTENT[personalSection]
   const currentPersonalData = useMemo<PersonalSectionData | null>(() => {
     if (personalSection === 'home' || !currentPersonalContent) return null
+    const projected = projectedSections[personalSection as PersonalProjectionKey]
+    if (projected) return projected
     return {
-      heroSummary: `${currentPersonalContent.title} is ready for the next dark-tech page treatment and deeper repo-backed projection pass.`,
-      summaryCards: currentPersonalContent.summaryCards.map((card) => ({ label: card, value: 'Live shell', note: 'Stable baseline now, richer projection styling comes next.' })),
+      heroSummary: `${currentPersonalContent.title} is loading from PunkRecords projection sources.`,
+      summaryCards: currentPersonalContent.summaryCards.map((card) => ({ label: card, value: 'Loading', note: 'Waiting for live PunkRecords projection data.' })),
       highlights: currentPersonalContent.highlights,
     }
-  }, [currentPersonalContent, personalSection])
+  }, [currentPersonalContent, personalSection, projectedSections])
 
   async function handleLoginSubmit(event: React.FormEvent) {
     event.preventDefault()
