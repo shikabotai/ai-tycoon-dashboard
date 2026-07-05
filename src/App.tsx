@@ -400,13 +400,30 @@ function App() {
                   <button key={panel} className={businessPanel === panel ? 'revamp-toggle active' : 'revamp-toggle'} onClick={() => setBusinessPanel(panel)}>{panel}</button>
                 ))}
               </div>
+              <div className="business-hero-strip">
+                <article className="business-signal-card">
+                  <span>Approval pressure</span>
+                  <strong>{businessSummary.approvalsPending}</strong>
+                  <p>{topPendingReview ? `Top queue item: ${topPendingReview.taskTitle}` : 'No review spike right now.'}</p>
+                </article>
+                <article className="business-signal-card">
+                  <span>Runtime load</span>
+                  <strong>{queueHealth?.runnable_count ?? 0} runnable</strong>
+                  <p>{queueHealth?.flagged_count ?? 0} flagged tasks currently need attention.</p>
+                </article>
+                <article className="business-signal-card">
+                  <span>Output today</span>
+                  <strong>{businessSummary.publishedToday}</strong>
+                  <p>{recentActivity[0] ? `${recentActivity[0].taskTitle} · ${recentActivity[0].eventType}` : 'No recent output events yet.'}</p>
+                </article>
+              </div>
             </article>
 
-            <section className="revamp-card-grid">
-              <article className="glass-panel"><span>Ventures</span><strong>{dashboardData.projects.length}</strong><p>Tracked projects visible in Supabase.</p></article>
-              <article className="glass-panel"><span>Revenue / Margin</span><strong>{formatUsd(businessSummary.revenueUsd)} / {formatUsd(businessSummary.marginUsd)}</strong><p>Latest live business snapshot.</p></article>
-              <article className="glass-panel"><span>Approval Pressure</span><strong>{businessSummary.approvalsPending}</strong><p>Items waiting in review.</p></article>
-              <article className="glass-panel"><span>Recent Output</span><strong>{businessSummary.publishedToday} today</strong><p>{recentActivity[0] ? `${recentActivity[0].taskTitle} · ${recentActivity[0].eventType}` : 'No recent activity yet.'}</p></article>
+            <section className="revamp-card-grid business-metric-grid">
+              <article className="glass-panel business-metric-card"><span>Ventures</span><strong>{dashboardData.projects.length}</strong><p>Tracked projects visible in Supabase.</p></article>
+              <article className="glass-panel business-metric-card"><span>Revenue / Margin</span><strong>{formatUsd(businessSummary.revenueUsd)} / {formatUsd(businessSummary.marginUsd)}</strong><p>Latest live business snapshot.</p></article>
+              <article className="glass-panel business-metric-card"><span>Approval Pressure</span><strong>{businessSummary.approvalsPending}</strong><p>Items waiting in review.</p></article>
+              <article className="glass-panel business-metric-card"><span>Recent Output</span><strong>{businessSummary.publishedToday} today</strong><p>{recentActivity[0] ? `${recentActivity[0].taskTitle} · ${recentActivity[0].eventType}` : 'No recent activity yet.'}</p></article>
             </section>
 
             {businessPanel !== 'review' ? (
@@ -427,13 +444,26 @@ function App() {
           </section>
 
           <aside className="revamp-business-side">
-            <article className="glass-panel">
+            <article className="glass-panel review-dock-panel">
               <div className="revamp-kicker">Review Dock</div>
               {selectedReviewItem ? (
                 <>
                   <h3>{selectedReviewItem.taskTitle}</h3>
                   <p>{selectedReviewItem.projectTitle ?? 'No project'} · {selectedReviewItem.artifactType}</p>
-                  {selectedReviewDetail ? <p>{selectedReviewDetail.artifacts.length} artifacts · {selectedReviewDetail.approvals.length} approvals</p> : null}
+                  <div className="review-dock-meta">
+                    <div>
+                      <span>Status</span>
+                      <strong>{selectedReviewItem.approvalStatus}</strong>
+                    </div>
+                    <div>
+                      <span>Artifacts</span>
+                      <strong>{selectedReviewDetail ? selectedReviewDetail.artifacts.length : 0}</strong>
+                    </div>
+                    <div>
+                      <span>Approvals</span>
+                      <strong>{selectedReviewDetail ? selectedReviewDetail.approvals.length : 0}</strong>
+                    </div>
+                  </div>
                   <textarea className="review-note-input" placeholder="Required deny notes / optional approval notes" value={reviewNoteDrafts[selectedReviewItem.taskId] || ''} onChange={(e) => setReviewNoteDrafts((prev) => ({ ...prev, [selectedReviewItem.taskId]: e.target.value }))} />
                   <div className="review-actions">
                     <button className="revamp-command-btn solid" onClick={() => void decideReview(selectedReviewItem.taskId, 'approved')}>Approve</button>

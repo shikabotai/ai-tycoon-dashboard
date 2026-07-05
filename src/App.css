@@ -399,6 +399,45 @@ button {
   gap: 14px;
 }
 
+.business-hero-strip,
+.review-dock-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.business-signal-card,
+.review-dock-meta > div,
+.business-metric-card {
+  border-radius: 20px;
+  border: 1px solid rgba(99, 157, 248, 0.18);
+  background: linear-gradient(180deg, rgba(11, 17, 27, 0.84), rgba(7, 11, 18, 0.92));
+  padding: 16px 18px;
+}
+
+.business-signal-card span,
+.review-dock-meta span {
+  color: #86a9df;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.business-signal-card strong,
+.review-dock-meta strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 1.12rem;
+}
+
+.business-metric-grid {
+  margin-top: 14px;
+}
+
+.review-dock-panel {
+  background: linear-gradient(180deg, rgba(13, 19, 31, 0.94), rgba(7, 10, 18, 0.96));
+}
+
 .glass-panel,
 .agent-card-shell,
 .command-modal {
@@ -584,7 +623,9 @@ button {
     grid-template-columns: 1fr;
   }
 
-  .avatar-stage-hud {
+  .avatar-stage-hud,
+  .business-hero-strip,
+  .review-dock-meta {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -615,7 +656,9 @@ button {
   }
 
   .revamp-status-ribbon,
-  .avatar-stage-hud {
+  .avatar-stage-hud,
+  .business-hero-strip,
+  .review-dock-meta {
     grid-template-columns: 1fr;
   }
 
