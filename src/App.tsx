@@ -88,7 +88,7 @@ function App() {
   const [lockoutUntil, setLockoutUntil] = useState(0)
   const [now, setNow] = useState(() => Date.now())
   const [commandHistory, setCommandHistory] = useState<string[]>([])
-  const [commandResponse, setCommandResponse] = useState('Private control center is stable. Next step is replacing the old visual language with the new dark-tech shell.')
+  const [commandResponse, setCommandResponse] = useState('Control center is live. Current effort is deepening the dark-tech shell, sharpening personal projections, and tightening Business Command review flow.')
   const [reviewNoteDrafts, setReviewNoteDrafts] = useState<Record<string, string>>({})
   const [selectedReviewTaskId, setSelectedReviewTaskId] = useState<string | null>(null)
   const [projectedSections, setProjectedSections] = useState<Partial<Record<PersonalProjectionKey, LiveProjectedSection>>>({})
@@ -150,8 +150,8 @@ function App() {
     const projected = projectedSections[personalSection as PersonalProjectionKey]
     if (projected) return projected
     return {
-      heroSummary: `${currentPersonalContent.title} is loading from PunkRecords projection sources.`,
-      summaryCards: currentPersonalContent.summaryCards.map((card) => ({ label: card, value: 'Loading', note: 'Waiting for live PunkRecords projection data.' })),
+      heroSummary: `${currentPersonalContent.title} is syncing with PunkRecords so this page can surface real projections instead of generic filler.`,
+      summaryCards: currentPersonalContent.summaryCards.map((card) => ({ label: card, value: 'Syncing', note: 'Waiting for live PunkRecords projection data to resolve this signal.' })),
       highlights: currentPersonalContent.highlights,
     }
   }, [currentPersonalContent, personalSection, projectedSections])
@@ -253,7 +253,7 @@ function App() {
         <form className="revamp-login-card" onSubmit={handleLoginSubmit}>
           <div className="revamp-kicker">Private Control Center</div>
           <h1>Dark Tech Access</h1>
-          <p>Stable baseline first, then the full avatar-centered revamp.</p>
+          <p>Private access into the live dark-tech control center.</p>
           <label><span>Username</span><input value={login.username} onChange={(e) => setLogin((prev) => ({ ...prev, username: e.target.value }))} autoComplete="username" /></label>
           <label><span>Password</span><input type="password" value={login.password} onChange={(e) => setLogin((prev) => ({ ...prev, password: e.target.value }))} autoComplete="current-password" /></label>
           <button type="submit" disabled={lockedOut}>{lockedOut ? `Locked · ${lockoutSeconds}s` : 'Enter Control Center'}</button>
@@ -312,7 +312,7 @@ function App() {
                   </div>
                 </div>
                 <div className="avatar-stage-visual premium-stage-frame">
-                  <Suspense fallback={<div className="visual-loading">Loading avatar stage…</div>}>
+                  <Suspense fallback={<div className="visual-loading">Rendering command presence…</div>}>
                     <SpaceScene activeAgents={businessAgents.length} flaggedCount={queueHealth?.flagged_count ?? 0} />
                   </Suspense>
                 </div>
@@ -423,7 +423,7 @@ function App() {
               <article className="glass-panel business-metric-card"><span>Ventures</span><strong>{dashboardData.projects.length}</strong><p>Tracked projects visible in Supabase.</p></article>
               <article className="glass-panel business-metric-card"><span>Revenue / Margin</span><strong>{formatUsd(businessSummary.revenueUsd)} / {formatUsd(businessSummary.marginUsd)}</strong><p>Latest live business snapshot.</p></article>
               <article className="glass-panel business-metric-card"><span>Approval Pressure</span><strong>{businessSummary.approvalsPending}</strong><p>Items waiting in review.</p></article>
-              <article className="glass-panel business-metric-card"><span>Recent Output</span><strong>{businessSummary.publishedToday} today</strong><p>{recentActivity[0] ? `${recentActivity[0].taskTitle} · ${recentActivity[0].eventType}` : 'No recent activity yet.'}</p></article>
+              <article className="glass-panel business-metric-card"><span>Recent Output</span><strong>{businessSummary.publishedToday} today</strong><p>{recentActivity[0] ? `${recentActivity[0].taskTitle} · ${recentActivity[0].eventType}` : 'Output feed is quiet right now, but the command deck remains live.'}</p></article>
             </section>
 
             {businessPanel !== 'review' ? (
@@ -470,7 +470,7 @@ function App() {
                     <button className="revamp-lock-btn" onClick={() => void decideReview(selectedReviewItem.taskId, 'rejected')}>Deny</button>
                   </div>
                 </>
-              ) : <p>No pending approval item right now.</p>}
+              ) : <p>Review pressure is clear for now. The dock is standing by for the next approval event.</p>}
             </article>
           </aside>
         </main>
@@ -494,7 +494,7 @@ function App() {
             <div className="command-response-box">{commandResponse}</div>
             <div className="command-history">
               <h3>Recent commands</h3>
-              {commandHistory.length === 0 ? <p>No commands yet.</p> : commandHistory.map((item) => <div key={item} className="history-chip">{item}</div>)}
+              {commandHistory.length === 0 ? <p>No routed commands yet in this session.</p> : commandHistory.map((item) => <div key={item} className="history-chip">{item}</div>)}
             </div>
           </div>
         </div>
