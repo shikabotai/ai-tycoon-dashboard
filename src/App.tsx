@@ -15,6 +15,7 @@ type BusinessPanel = 'overview' | 'agents' | 'review'
 type LoginState = { username: string; password: string }
 type PersonalCard = { label: string; value: string; note: string; stale?: boolean }
 type PersonalSectionData = { heroSummary: string; summaryCards: PersonalCard[]; highlights: string[]; freshness?: { label: string; ageDays: number | null; stale: boolean } }
+type HomeSignalCard = { kicker: string; title: string; body: string }
 
 type NodeSpec = { key: Exclude<PersonalSection, 'home'>; label: string; tier: 'core' | 'secondary' }
 
@@ -154,6 +155,30 @@ function App() {
     }
   }, [currentPersonalContent, personalSection, projectedSections])
 
+  const homeSignalCards = useMemo<HomeSignalCard[]>(() => {
+    const identity = projectedSections.identity
+    const ventures = projectedSections.ventures
+    const systems = projectedSections.systems
+
+    return [
+      {
+        kicker: 'Identity Signal',
+        title: identity?.summaryCards[0]?.value ?? 'Mission still loading',
+        body: identity?.heroSummary ?? 'Pulling the current identity projection from PunkRecords.',
+      },
+      {
+        kicker: 'Venture Pressure',
+        title: ventures?.summaryCards[0]?.value ?? 'Priority venture loading',
+        body: ventures?.heroSummary ?? 'Surfacing venture pressure and next decision from real records.',
+      },
+      {
+        kicker: 'System Readiness',
+        title: systems?.summaryCards[0]?.value ?? 'Operations signal loading',
+        body: systems?.heroSummary ?? 'Reading the current systems layer before presenting the command deck.',
+      },
+    ]
+  }, [projectedSections])
+
   async function handleLoginSubmit(event: React.FormEvent) {
     event.preventDefault()
     if (lockedOut) {
@@ -259,13 +284,38 @@ function App() {
             <section className="avatar-stage-card">
               <div className="avatar-stage-copy">
                 <div className="revamp-kicker">Avatar Stage</div>
-                <h2>3D avatar becomes the center of the experience</h2>
-                <p>This stage is now framed for the real avatar-centered revamp, without wasting effort on the old constellation design.</p>
+                <h2>Mitchell’s command presence, not just a dashboard shell</h2>
+                <p>The home screen now centers the avatar stage as a live identity surface, with personal signal cards and business pressure orbiting around it instead of competing with it.</p>
               </div>
-              <div className="avatar-stage-visual">
-                <Suspense fallback={<div className="visual-loading">Loading avatar stage…</div>}>
-                  <SpaceScene activeAgents={businessAgents.length} flaggedCount={queueHealth?.flagged_count ?? 0} />
-                </Suspense>
+              <div className="avatar-stage-shell">
+                <div className="avatar-stage-hud">
+                  <div>
+                    <span className="hud-label">Identity</span>
+                    <strong>{projectedSections.identity?.summaryCards[0]?.value ?? 'Projection syncing'}</strong>
+                  </div>
+                  <div>
+                    <span className="hud-label">Business load</span>
+                    <strong>{queueHealth?.runnable_count ?? 0} runnable</strong>
+                  </div>
+                  <div>
+                    <span className="hud-label">Review pressure</span>
+                    <strong>{businessSummary.approvalsPending} pending</strong>
+                  </div>
+                </div>
+                <div className="avatar-stage-visual premium-stage-frame">
+                  <Suspense fallback={<div className="visual-loading">Loading avatar stage…</div>}>
+                    <SpaceScene activeAgents={businessAgents.length} flaggedCount={queueHealth?.flagged_count ?? 0} />
+                  </Suspense>
+                </div>
+                <div className="avatar-stage-signals">
+                  {homeSignalCards.map((card) => (
+                    <article key={card.kicker} className="home-signal-card">
+                      <span>{card.kicker}</span>
+                      <strong>{card.title}</strong>
+                      <p>{card.body}</p>
+                    </article>
+                  ))}
+                </div>
               </div>
               <div className="avatar-node-rack">
                 {PERSONAL_NODES.map((node) => (
@@ -275,20 +325,20 @@ function App() {
             </section>
 
             <section className="revamp-side-stack">
-              <article className="glass-panel">
+              <article className="glass-panel focus-panel">
                 <div className="revamp-kicker">Personal Focus</div>
-                <h3>Next redesign target</h3>
-                <p>Replace the old personal home composition with a cleaner dark-tech orbit around the avatar.</p>
+                <h3>{projectedSections.identity?.summaryCards[1]?.value ?? 'Ideal self sync in progress'}</h3>
+                <p>{projectedSections.identity?.summaryCards[1]?.note ?? 'Using real identity projection data to shape the home presentation instead of generic motivational copy.'}</p>
               </article>
-              <article className="glass-panel">
+              <article className="glass-panel pulse-panel">
                 <div className="revamp-kicker">Business Pulse</div>
                 <h3>{queueHealth?.runnable_count ?? 0} runnable, {queueHealth?.flagged_count ?? 0} flagged</h3>
                 <p>{topPendingReview ? `Top review pressure: ${topPendingReview.taskTitle}` : 'No pending review spike right now.'}</p>
               </article>
-              <article className="glass-panel">
-                <div className="revamp-kicker">Design Principle</div>
-                <h3>Scrap the old layout</h3>
-                <p>Use this stable shell as a springboard, not as something to decorate further.</p>
+              <article className="glass-panel principle-panel">
+                <div className="revamp-kicker">Command Principle</div>
+                <h3>Personal presence first</h3>
+                <p>Business Command stays live, but the home frame should feel like Mitchell’s private cockpit before it feels like an ops dashboard.</p>
               </article>
             </section>
           </main>
