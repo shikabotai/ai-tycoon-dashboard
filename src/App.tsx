@@ -16,6 +16,7 @@ type LoginState = { username: string; password: string }
 type PersonalCard = { label: string; value: string; note: string; stale?: boolean }
 type PersonalSectionData = { heroSummary: string; summaryCards: PersonalCard[]; highlights: string[]; freshness?: { label: string; ageDays: number | null; stale: boolean } }
 type HomeSignalCard = { kicker: string; title: string; body: string }
+type ProjectionHighlightCard = { title: string; text: string }
 
 type NodeSpec = { key: Exclude<PersonalSection, 'home'>; label: string; tier: 'core' | 'secondary' }
 
@@ -154,6 +155,14 @@ function App() {
       highlights: currentPersonalContent.highlights,
     }
   }, [currentPersonalContent, personalSection, projectedSections])
+
+  const highlightCards = useMemo<ProjectionHighlightCard[]>(() => {
+    if (!currentPersonalData) return []
+    return currentPersonalData.highlights.slice(0, 3).map((item, index) => ({
+      title: currentPersonalData.summaryCards[index]?.label ?? `Highlight ${index + 1}`,
+      text: item,
+    }))
+  }, [currentPersonalData])
 
   const homeSignalCards = useMemo<HomeSignalCard[]>(() => {
     const identity = projectedSections.identity
@@ -354,12 +363,28 @@ function App() {
             </section>
             <section className="revamp-card-grid">
               {currentPersonalData?.summaryCards.map((card) => (
-                <article key={card.label} className="glass-panel">
+                <article key={card.label} className={`glass-panel detail-signal-card${card.stale ? ' stale' : ''}`}>
                   <span>{card.label}</span>
                   <strong>{card.value}</strong>
                   <p>{card.note}</p>
                 </article>
               ))}
+            </section>
+            <section className="detail-highlight-grid">
+              {highlightCards.map((item) => (
+                <article key={item.title} className="glass-panel detail-highlight-card">
+                  <div className="revamp-kicker">Projection signal</div>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </article>
+              ))}
+              {currentPersonalData?.freshness ? (
+                <article className={`glass-panel detail-highlight-card freshness-card${currentPersonalData.freshness.stale ? ' stale' : ''}`}>
+                  <div className="revamp-kicker">Freshness</div>
+                  <h3>{currentPersonalData.freshness.label}</h3>
+                  <p>{currentPersonalData.freshness.ageDays == null ? 'Source recency unavailable.' : `${currentPersonalData.freshness.ageDays} day${currentPersonalData.freshness.ageDays === 1 ? '' : 's'} since latest source update.`}</p>
+                </article>
+              ) : null}
             </section>
           </main>
         )
