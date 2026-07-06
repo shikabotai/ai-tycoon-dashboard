@@ -82,6 +82,8 @@ The dashboard currently supports three client-side API base envs:
 
 If these are unset, the UI falls back to same-origin `/api/*` paths, which currently map to local Vite middleware during development. For production hardening, the intended next step is to point these envs at real backend routes instead of relying on Vite-only transport.
 
+A dedicated backend landing zone now exists at `functions/README.md` for the future Cloudflare Pages Functions replacement path.
+
 ## Important security note
 
 Do not use `SUPABASE_SERVICE_ROLE_KEY` in the frontend.
