@@ -281,10 +281,10 @@ function App() {
       </header>
 
       <section className="revamp-status-ribbon">
-        <div><span>Runtime</span><strong>Stable baseline</strong></div>
-        <div><span>Visual stack</span><strong>No Phaser, no motion</strong></div>
-        <div><span>Theme direction</span><strong>Dark tech revamp</strong></div>
-        <div><span>Focus</span><strong>Avatar-first redesign</strong></div>
+        <div><span>Runtime</span><strong>Live private cockpit</strong></div>
+        <div><span>Visual stack</span><strong>Lightweight dark-tech scene</strong></div>
+        <div><span>Theme direction</span><strong>Black, silver, electric blue</strong></div>
+        <div><span>Focus</span><strong>Avatar-centered command core</strong></div>
       </section>
 
       {appMode === 'personal' ? (
@@ -300,7 +300,7 @@ function App() {
                 <div className="avatar-stage-hud">
                   <div>
                     <span className="hud-label">Identity</span>
-                    <strong>{projectedSections.identity?.summaryCards[0]?.value ?? 'Projection syncing'}</strong>
+                    <strong>{projectedSections.identity?.summaryCards[0]?.value ?? 'Identity projection syncing'}</strong>
                   </div>
                   <div>
                     <span className="hud-label">Business load</span>
@@ -336,7 +336,7 @@ function App() {
             <section className="revamp-side-stack">
               <article className="glass-panel focus-panel">
                 <div className="revamp-kicker">Personal Focus</div>
-                <h3>{projectedSections.identity?.summaryCards[1]?.value ?? 'Ideal self sync in progress'}</h3>
+                <h3>{projectedSections.identity?.summaryCards[1]?.value ?? 'Ideal self projection aligning'}</h3>
                 <p>{projectedSections.identity?.summaryCards[1]?.note ?? 'Using real identity projection data to shape the home presentation instead of generic motivational copy.'}</p>
               </article>
               <article className="glass-panel pulse-panel">
