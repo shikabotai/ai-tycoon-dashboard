@@ -16,18 +16,18 @@ export type ProjectedSection = {
   }
 }
 
-import { apiPath } from '../lib/apiBase'
+import { personalApiPath } from '../lib/apiBase'
 
 const PERSONAL_ENDPOINTS = {
-  vessel: apiPath('/api/personal/vessel'),
-  identity: apiPath('/api/personal/identity'),
-  systems: apiPath('/api/personal/systems'),
-  ventures: apiPath('/api/personal/ventures'),
-  career: apiPath('/api/personal/career'),
-  knowledge: apiPath('/api/personal/knowledge'),
-  wealth: apiPath('/api/personal/wealth'),
-  education: apiPath('/api/personal/education'),
-  relationships: apiPath('/api/personal/relationships'),
+  vessel: personalApiPath('/api/personal/vessel'),
+  identity: personalApiPath('/api/personal/identity'),
+  systems: personalApiPath('/api/personal/systems'),
+  ventures: personalApiPath('/api/personal/ventures'),
+  career: personalApiPath('/api/personal/career'),
+  knowledge: personalApiPath('/api/personal/knowledge'),
+  wealth: personalApiPath('/api/personal/wealth'),
+  education: personalApiPath('/api/personal/education'),
+  relationships: personalApiPath('/api/personal/relationships'),
 } as const
 
 export type PersonalProjectionKey = keyof typeof PERSONAL_ENDPOINTS
