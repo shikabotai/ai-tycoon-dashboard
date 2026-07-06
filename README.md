@@ -8,6 +8,10 @@ React + Phaser dashboard for visualizing agent activity, queue health, pipeline 
 2. Set:
    - `VITE_SUPABASE_URL`
    - `VITE_SUPABASE_ANON_KEY`
+   - optional API routing envs if you want the dashboard to hit non-default backend paths:
+     - `VITE_APP_API_BASE`
+     - `VITE_PERSONAL_API_BASE`
+     - `VITE_COMMAND_API_BASE`
 3. Install deps:
    - `npm install`
 4. Run locally:
@@ -61,9 +65,22 @@ Optional CLI path once `vercel` is installed and logged in:
 - Environment variables:
   - `VITE_SUPABASE_URL`
   - `VITE_SUPABASE_ANON_KEY`
+  - optional backend path envs for production hardening:
+    - `VITE_APP_API_BASE`
+    - `VITE_PERSONAL_API_BASE`
+    - `VITE_COMMAND_API_BASE`
 - Node.js version: `20`
 
 Connect the GitHub repo `shikabotai/ai-tycoon-dashboard` and deploy the `main` branch.
+
+### Production API routing notes
+
+The dashboard currently supports three client-side API base envs:
+- `VITE_APP_API_BASE` for a shared default backend base
+- `VITE_PERSONAL_API_BASE` for personal projection endpoints
+- `VITE_COMMAND_API_BASE` for Business Command routing endpoints
+
+If these are unset, the UI falls back to same-origin `/api/*` paths, which currently map to local Vite middleware during development. For production hardening, the intended next step is to point these envs at real backend routes instead of relying on Vite-only transport.
 
 ## Important security note
 
