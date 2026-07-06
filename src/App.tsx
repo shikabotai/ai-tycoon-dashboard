@@ -494,7 +494,7 @@ function App() {
             <div className="command-response-box">{commandResponse}</div>
             <div className="command-history">
               <h3>Recent commands</h3>
-              {commandHistory.length === 0 ? <p>This session has not routed a command yet.</p> : commandHistory.map((item) => <div key={item} className="history-chip">{item}</div>)}
+              {commandHistory.length === 0 ? <p>The command lane is clear and ready for the first routed instruction of this session.</p> : commandHistory.map((item) => <div key={item} className="history-chip">{item}</div>)}
             </div>
           </div>
         </div>
