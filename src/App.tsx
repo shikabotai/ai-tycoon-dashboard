@@ -1,7 +1,8 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
 import './App.css'
 import { useDashboardData } from './hooks/useDashboardData'
-import { loadProjectedSection, type PersonalProjectionKey, type ProjectedSection as LiveProjectedSection } from './data/personalProjectionClient'
+import { loadProjectedSection, type PersonalProjectionKey } from './data/personalProjectionClient'
+import type { ProjectedSection as LiveProjectedSection } from './data/projectedTypes'
 import { sendBusinessCommand } from './data/businessCommandApi'
 
 const SpaceScene = lazy(async () => {

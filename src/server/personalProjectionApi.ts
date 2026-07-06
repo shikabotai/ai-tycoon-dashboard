@@ -1,5 +1,6 @@
 import { buildCareerData, buildEducationData, buildIdentityData, buildKnowledgeData, buildRelationshipsData, buildSystemsData, buildVesselData, buildVenturesData, buildWealthData } from '../data/punkProjection'
-import type { PersonalProjectionKey, ProjectedSection } from '../data/personalProjectionClient'
+import type { ProjectedSection } from '../data/projectedTypes'
+import type { PersonalProjectionKey } from '../data/personalProjectionClient'
 
 const PERSONAL_BUILDERS: Record<PersonalProjectionKey, () => ProjectedSection> = {
   vessel: buildVesselData,

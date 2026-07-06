@@ -1,23 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-
-export type ProjectedCard = {
-  label: string
-  value: string
-  note: string
-  stale?: boolean
-}
-
-export type ProjectedSection = {
-  heroSummary: string
-  summaryCards: ProjectedCard[]
-  highlights: string[]
-  freshness?: {
-    label: string
-    ageDays: number | null
-    stale: boolean
-  }
-}
+import type { ProjectedSection } from './projectedTypes'
 
 const PUNK_RECORDS_ROOT = '/Users/shika/.openclaw/workspace/PunkRecords'
 
