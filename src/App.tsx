@@ -342,7 +342,7 @@ function App() {
               <article className="glass-panel pulse-panel">
                 <div className="revamp-kicker">Business Pulse</div>
                 <h3>{queueHealth?.runnable_count ?? 0} runnable, {queueHealth?.flagged_count ?? 0} flagged</h3>
-                <p>{topPendingReview ? `Top review pressure: ${topPendingReview.taskTitle}` : 'The live business grid is calm for the moment, but ready for the next workflow spike.'}</p>
+                <p>{topPendingReview ? `Top review pressure: ${topPendingReview.taskTitle}` : 'The business grid is standing ready, with execution capacity available for the next workflow wave.'}</p>
               </article>
               <article className="glass-panel principle-panel">
                 <div className="revamp-kicker">Command Principle</div>
@@ -423,7 +423,7 @@ function App() {
               <article className="glass-panel business-metric-card"><span>Ventures</span><strong>{dashboardData.projects.length}</strong><p>Tracked projects visible in Supabase.</p></article>
               <article className="glass-panel business-metric-card"><span>Revenue / Margin</span><strong>{formatUsd(businessSummary.revenueUsd)} / {formatUsd(businessSummary.marginUsd)}</strong><p>Latest live business snapshot.</p></article>
               <article className="glass-panel business-metric-card"><span>Approval Pressure</span><strong>{businessSummary.approvalsPending}</strong><p>Items waiting in review.</p></article>
-              <article className="glass-panel business-metric-card"><span>Recent Output</span><strong>{businessSummary.publishedToday} today</strong><p>{recentActivity[0] ? `${recentActivity[0].taskTitle} · ${recentActivity[0].eventType}` : 'Output feed is quiet right now, but the command deck remains live.'}</p></article>
+              <article className="glass-panel business-metric-card"><span>Recent Output</span><strong>{businessSummary.publishedToday} today</strong><p>{recentActivity[0] ? `${recentActivity[0].taskTitle} · ${recentActivity[0].eventType}` : 'The output channel is clear right now, with the command deck still fully live and ready.'}</p></article>
             </section>
 
             {businessPanel !== 'review' ? (
@@ -470,7 +470,7 @@ function App() {
                     <button className="revamp-lock-btn" onClick={() => void decideReview(selectedReviewItem.taskId, 'rejected')}>Deny</button>
                   </div>
                 </>
-              ) : <p>Review pressure is clear for now. The dock is standing by for the next approval event.</p>}
+              ) : <p>The review dock is clear for now and ready to surface the next approval decision the moment it arrives.</p>}
             </article>
           </aside>
         </main>
@@ -494,7 +494,7 @@ function App() {
             <div className="command-response-box">{commandResponse}</div>
             <div className="command-history">
               <h3>Recent commands</h3>
-              {commandHistory.length === 0 ? <p>No routed commands yet in this session.</p> : commandHistory.map((item) => <div key={item} className="history-chip">{item}</div>)}
+              {commandHistory.length === 0 ? <p>This session has not routed a command yet.</p> : commandHistory.map((item) => <div key={item} className="history-chip">{item}</div>)}
             </div>
           </div>
         </div>
