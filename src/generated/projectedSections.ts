@@ -138,6 +138,98 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       "ageDays": 0,
       "stale": false
     }
+  },
+  "ventures": {
+    "heroSummary": "Ventures is currently a portfolio view with 13 venture bullets visible in the Ventures MOC and 4 explicit in-progress markers across annual goals.",
+    "summaryCards": [
+      {
+        "label": "Portfolio inventory",
+        "value": "13 listed bullets",
+        "note": "Fast proxy for how much venture surface area exists in the current note set."
+      },
+      {
+        "label": "Current priority posture",
+        "value": "Execution over ideation",
+        "note": "Annual goals emphasize shipping and traction, not endless exploration."
+      },
+      {
+        "label": "In-progress venture goals",
+        "value": "4 in progress",
+        "note": "Pulled from the annual goals source note."
+      },
+      {
+        "label": "Capital deployment stance",
+        "value": "Selective",
+        "note": "This control center should eventually expose ROI-ranked moves, not just inventories."
+      },
+      {
+        "label": "Biggest operating need",
+        "value": "Priority compression",
+        "note": "Reduce surface area and make the next best move obvious."
+      },
+      {
+        "label": "Current blocker visibility",
+        "value": "Improving",
+        "note": "Business Command will complement this page with live operational blockers."
+      }
+    ],
+    "highlights": [
+      "Ventures MOC remains the personal strategy-side anchor.",
+      "Annual goals provide the immediate venture pressure.",
+      "This page should stay distinct from Business Command live ops."
+    ],
+    "freshness": {
+      "label": "Ventures planning docs",
+      "ageDays": 0,
+      "stale": false
+    }
+  },
+  "knowledge": {
+    "heroSummary": "Knowledge is currently more execution-supportive than archival, with learning tied to decision quality, identity formation, and active goals instead of passive accumulation.",
+    "summaryCards": [
+      {
+        "label": "Current learning domains",
+        "value": "Career, ventures, self-mastery",
+        "note": "The current note set points toward practical domains rather than broad browsing."
+      },
+      {
+        "label": "Most valuable mental models",
+        "value": "1 explicit mentions",
+        "note": "Current source notes imply frameworks matter, but this page still needs richer extraction."
+      },
+      {
+        "label": "Recently added knowledge",
+        "value": "Not yet projected",
+        "note": "A future pass should surface recency from the knowledge-side repo structure.",
+        "stale": true
+      },
+      {
+        "label": "High-value references",
+        "value": "Goals + Ideal Self",
+        "note": "Right now the strongest references are strategic and identity-oriented notes."
+      },
+      {
+        "label": "Current research / reading focus",
+        "value": "Reading goal active",
+        "note": "| Read 10 books | Learning | 10 by 12/31 | 1/10 completed |"
+      },
+      {
+        "label": "Knowledge gaps to close",
+        "value": "Stronger live knowledge rollups",
+        "note": "This page needs deeper source mapping to become truly strong.",
+        "stale": true
+      }
+    ],
+    "highlights": [
+      "Knowledge should help action, not become a hoarding layer.",
+      "Current projections are still strategy-heavy and should deepen later.",
+      "This section is ready for richer repo traversal when Phase 1 core is complete."
+    ],
+    "freshness": {
+      "label": "Knowledge planning docs",
+      "ageDays": 0,
+      "stale": false
+    }
   }
 } as Partial<Record<PersonalProjectionKey, ProjectedSection>>
 
