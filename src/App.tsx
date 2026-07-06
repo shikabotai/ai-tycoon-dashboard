@@ -150,7 +150,7 @@ function App() {
     const projected = projectedSections[personalSection as PersonalProjectionKey]
     if (projected) return projected
     return {
-      heroSummary: `${currentPersonalContent.title} is drawing in live PunkRecords projections so this chamber can resolve into a true operating view instead of a placeholder shell.`,
+      heroSummary: `${currentPersonalContent.title} is drawing in live PunkRecords projections so this chamber can resolve into a true operating view for Mitchell’s private control center.`,
       summaryCards: currentPersonalContent.summaryCards.map((card) => ({ label: card, value: 'Resolving', note: 'Live PunkRecords projection data is still assembling this signal.' })),
       highlights: currentPersonalContent.highlights,
     }
