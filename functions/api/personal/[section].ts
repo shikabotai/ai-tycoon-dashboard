@@ -1,4 +1,4 @@
-import { getProjectedSection } from '../../../src/server/personalProjectionApi'
+import { getGeneratedProjectedSection } from '../../../src/generated/projectedSections'
 
 export const onRequestGet: PagesFunction = async ({ params }) => {
   const sectionParam = params.section
@@ -8,7 +8,7 @@ export const onRequestGet: PagesFunction = async ({ params }) => {
     return new Response('Missing section', { status: 400 })
   }
 
-  const data = getProjectedSection(section as Parameters<typeof getProjectedSection>[0])
+  const data = getGeneratedProjectedSection(section as Parameters<typeof getGeneratedProjectedSection>[0])
   if (!data) {
     return new Response('Not found', { status: 404 })
   }
