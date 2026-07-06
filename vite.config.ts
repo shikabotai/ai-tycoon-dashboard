@@ -1,7 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { buildCareerData, buildEducationData, buildIdentityData, buildKnowledgeData, buildRelationshipsData, buildSystemsData, buildVesselData, buildVenturesData, buildWealthData } from './src/data/punkProjection'
 import { readAutopilotStatus } from './src/data/autopilotStatus'
+import { buildBusinessCommandResponse } from './src/server/commandRouteApi'
+import { getProjectedSection } from './src/server/personalProjectionApi'
 
 export default defineConfig({
   server: {
@@ -14,42 +15,19 @@ export default defineConfig({
     {
       name: 'punkrecords-projection-api',
       configureServer(server) {
-        server.middlewares.use('/api/personal/vessel', (_req, res) => {
-          res.setHeader('Content-Type', 'application/json')
-          res.end(JSON.stringify(buildVesselData()))
-        })
-        server.middlewares.use('/api/personal/identity', (_req, res) => {
-          res.setHeader('Content-Type', 'application/json')
-          res.end(JSON.stringify(buildIdentityData()))
-        })
-        server.middlewares.use('/api/personal/systems', (_req, res) => {
-          res.setHeader('Content-Type', 'application/json')
-          res.end(JSON.stringify(buildSystemsData()))
-        })
-        server.middlewares.use('/api/personal/ventures', (_req, res) => {
-          res.setHeader('Content-Type', 'application/json')
-          res.end(JSON.stringify(buildVenturesData()))
-        })
-        server.middlewares.use('/api/personal/career', (_req, res) => {
-          res.setHeader('Content-Type', 'application/json')
-          res.end(JSON.stringify(buildCareerData()))
-        })
-        server.middlewares.use('/api/personal/knowledge', (_req, res) => {
-          res.setHeader('Content-Type', 'application/json')
-          res.end(JSON.stringify(buildKnowledgeData()))
-        })
-        server.middlewares.use('/api/personal/wealth', (_req, res) => {
-          res.setHeader('Content-Type', 'application/json')
-          res.end(JSON.stringify(buildWealthData()))
-        })
-        server.middlewares.use('/api/personal/education', (_req, res) => {
-          res.setHeader('Content-Type', 'application/json')
-          res.end(JSON.stringify(buildEducationData()))
-        })
-        server.middlewares.use('/api/personal/relationships', (_req, res) => {
-          res.setHeader('Content-Type', 'application/json')
-          res.end(JSON.stringify(buildRelationshipsData()))
-        })
+        const personalRoutes = ['vessel', 'identity', 'systems', 'ventures', 'career', 'knowledge', 'wealth', 'education', 'relationships'] as const
+        for (const key of personalRoutes) {
+          server.middlewares.use(`/api/personal/${key}`, (_req, res) => {
+            const section = getProjectedSection(key)
+            if (!section) {
+              res.statusCode = 404
+              res.end('Not found')
+              return
+            }
+            res.setHeader('Content-Type', 'application/json')
+            res.end(JSON.stringify(section))
+          })
+        }
         server.middlewares.use('/api/autopilot/status', (_req, res) => {
           res.setHeader('Content-Type', 'application/json')
           res.end(JSON.stringify(readAutopilotStatus()))
@@ -67,17 +45,8 @@ export default defineConfig({
           })
           req.on('end', () => {
             const payload = JSON.parse(body || '{}')
-            const route = payload.route || {}
-            const summary = payload.summary || {}
             res.setHeader('Content-Type', 'application/json')
-            res.end(JSON.stringify({
-              ok: true,
-              route: route.route || 'unknown',
-              intent: route.intent || 'general_command',
-              message: `Routed to ${route.route || 'unknown'} with ${summary.approvalsPending ?? 0} pending approvals and ${summary.publishedToday ?? 0} publications today.`,
-              nextAction: route.nextAction || 'Hand off to the assistant/runtime backend.',
-              suggestedPanel: route.suggestedPanel,
-            }))
+            res.end(JSON.stringify(buildBusinessCommandResponse(payload)))
           })
         })
       },

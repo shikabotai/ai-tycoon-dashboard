@@ -1,21 +1,7 @@
 import type { DashboardSummary } from '../types'
-import type { CommandContext, CommandRouteResult } from './commandRouter'
+import type { CommandContext } from './commandRouter'
 import { routeCommand } from './commandRouter'
-
-type BusinessCommandPayload = {
-  route: CommandRouteResult
-  context: CommandContext
-  summary?: DashboardSummary
-}
-
-export type BusinessCommandResponse = {
-  ok: true
-  route: string
-  intent: string
-  message: string
-  nextAction: string
-  suggestedPanel?: 'overview' | 'agents' | 'review'
-}
+import type { BusinessCommandPayload, BusinessCommandResponse } from '../server/commandRouteApi'
 
 export async function sendBusinessCommand(raw: string, context: CommandContext, summary?: DashboardSummary): Promise<BusinessCommandResponse> {
   const route = routeCommand(raw, context)
