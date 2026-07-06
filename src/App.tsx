@@ -342,12 +342,12 @@ function App() {
               <article className="glass-panel pulse-panel">
                 <div className="revamp-kicker">Business Pulse</div>
                 <h3>{queueHealth?.runnable_count ?? 0} runnable, {queueHealth?.flagged_count ?? 0} flagged</h3>
-                <p>{topPendingReview ? `Top review pressure: ${topPendingReview.taskTitle}` : 'No pending review spike right now.'}</p>
+                <p>{topPendingReview ? `Top review pressure: ${topPendingReview.taskTitle}` : 'The live business grid is calm for the moment, but ready for the next workflow spike.'}</p>
               </article>
               <article className="glass-panel principle-panel">
                 <div className="revamp-kicker">Command Principle</div>
-                <h3>Personal presence first</h3>
-                <p>Business Command stays live, but the home frame should feel like Mitchell’s private cockpit before it feels like an ops dashboard.</p>
+                <h3>Private cockpit first</h3>
+                <p>The control center should read like Mitchell’s private operating deck, with business systems orbiting a strong personal core instead of flattening the experience into a generic ops dashboard.</p>
               </article>
             </section>
           </main>
