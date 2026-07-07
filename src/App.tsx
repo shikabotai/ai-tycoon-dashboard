@@ -389,6 +389,38 @@ function App() {
             </section>
           </main>
         )
+      ) : dashboardData.loading ? (
+        <main className="revamp-business-grid">
+          <section className="revamp-business-main">
+            <article className="glass-panel hero-business-panel state-panel">
+              <div className="revamp-kicker">Business Command</div>
+              <h2>Syncing live operations</h2>
+              <p>The control center is pulling the latest queue, review, and publishing signals from the runtime.</p>
+            </article>
+          </section>
+          <aside className="revamp-business-side">
+            <article className="glass-panel review-dock-panel state-panel">
+              <div className="revamp-kicker">Review Dock</div>
+              <p>Preparing the next approval lane.</p>
+            </article>
+          </aside>
+        </main>
+      ) : dashboardData.error ? (
+        <main className="revamp-business-grid">
+          <section className="revamp-business-main">
+            <article className="glass-panel hero-business-panel state-panel error">
+              <div className="revamp-kicker">Business Command</div>
+              <h2>Runtime signal interrupted</h2>
+              <p>{dashboardData.error}</p>
+            </article>
+          </section>
+          <aside className="revamp-business-side">
+            <article className="glass-panel review-dock-panel state-panel error">
+              <div className="revamp-kicker">Review Dock</div>
+              <p>Live review data will return here once the runtime connection stabilizes.</p>
+            </article>
+          </aside>
+        </main>
       ) : (
         <main className="revamp-business-grid">
           <section className="revamp-business-main">

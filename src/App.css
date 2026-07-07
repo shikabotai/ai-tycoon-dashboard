@@ -560,6 +560,18 @@ button {
   margin-top: 14px;
 }
 
+.state-panel {
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.state-panel.error {
+  border-color: rgba(255, 124, 124, 0.3);
+  background: linear-gradient(180deg, rgba(39, 14, 20, 0.92), rgba(15, 7, 11, 0.96));
+}
+
 .visual-loading {
   min-height: 360px;
   display: grid;
