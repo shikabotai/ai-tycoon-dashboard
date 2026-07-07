@@ -539,6 +539,25 @@ button {
   padding: 14px 16px;
 }
 
+.command-response-box span,
+.command-history-card span {
+  color: #86a9df;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.command-response-box strong,
+.command-history-card strong {
+  display: block;
+  margin-top: 8px;
+}
+
+.command-response-box p,
+.command-history-card p {
+  margin: 10px 0 0;
+}
+
 .command-history {
   margin-top: 18px;
 }
@@ -552,6 +571,18 @@ button {
   padding: 8px 12px;
   color: #d7e5ff;
   background: rgba(5, 10, 18, 0.72);
+}
+
+.command-history-list {
+  display: grid;
+  gap: 10px;
+}
+
+.command-history-card {
+  display: block;
+  margin: 0;
+  border-radius: 18px;
+  padding: 14px 16px;
 }
 
 .review-detail-stack {

@@ -18,6 +18,7 @@ type PersonalCard = { label: string; value: string; note: string; stale?: boolea
 type PersonalSectionData = { heroSummary: string; summaryCards: PersonalCard[]; highlights: string[]; freshness?: { label: string; ageDays: number | null; stale: boolean } }
 type HomeSignalCard = { kicker: string; title: string; body: string }
 type ProjectionHighlightCard = { title: string; text: string }
+type CommandHistoryEntry = { id: string; text: string; context: string }
 
 type NodeSpec = { key: Exclude<PersonalSection, 'home'>; label: string; tier: 'core' | 'secondary' }
 
@@ -88,7 +89,7 @@ function App() {
   const [attempts, setAttempts] = useState(0)
   const [lockoutUntil, setLockoutUntil] = useState(0)
   const [now, setNow] = useState(() => Date.now())
-  const [commandHistory, setCommandHistory] = useState<string[]>([])
+  const [commandHistory, setCommandHistory] = useState<CommandHistoryEntry[]>([])
   const [commandResponse, setCommandResponse] = useState('Control center live. Dark-tech shell stable, projection layers active, and Business Command ready for the next move.')
   const [reviewNoteDrafts, setReviewNoteDrafts] = useState<Record<string, string>>({})
   const [selectedReviewTaskId, setSelectedReviewTaskId] = useState<string | null>(null)
@@ -235,7 +236,8 @@ function App() {
   async function submitCommand() {
     if (!commandValue.trim()) return
     const trimmed = commandValue.trim()
-    setCommandHistory((prev) => [trimmed, ...prev].slice(0, 6))
+    const commandContextLabel = `${appMode} · ${appMode === 'personal' ? personalSection : businessPanel}`
+    setCommandHistory((prev) => [{ id: `${Date.now()}`, text: trimmed, context: commandContextLabel }, ...prev].slice(0, 6))
     try {
       const response = await sendBusinessCommand(trimmed, { appMode, personalSection, businessPanel }, businessSummary)
       if (appMode === 'business' && response.suggestedPanel) setBusinessPanel(response.suggestedPanel)
@@ -549,10 +551,23 @@ function App() {
               <input autoFocus placeholder="Tell the control center what you want to do..." value={commandValue} onChange={(e) => setCommandValue(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') void submitCommand() }} />
               <button className="revamp-command-btn solid" onClick={() => void submitCommand()}>Send</button>
             </div>
-            <div className="command-response-box">{commandResponse}</div>
+            <div className="command-response-box">
+              <span>Latest response</span>
+              <strong>Command status</strong>
+              <p>{commandResponse}</p>
+            </div>
             <div className="command-history">
               <h3>Recent commands</h3>
-              {commandHistory.length === 0 ? <p>The command lane is open and ready for the first move in this session.</p> : commandHistory.map((item) => <div key={item} className="history-chip">{item}</div>)}
+              {commandHistory.length === 0 ? <p>The command lane is open and ready for the first move in this session.</p> : (
+                <div className="command-history-list">
+                  {commandHistory.map((item) => (
+                    <div key={item.id} className="history-chip command-history-card">
+                      <span>{item.context}</span>
+                      <strong>{item.text}</strong>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
