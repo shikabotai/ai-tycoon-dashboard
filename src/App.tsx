@@ -89,7 +89,7 @@ function App() {
   const [lockoutUntil, setLockoutUntil] = useState(0)
   const [now, setNow] = useState(() => Date.now())
   const [commandHistory, setCommandHistory] = useState<string[]>([])
-  const [commandResponse, setCommandResponse] = useState('Control center is live. Current effort is deepening the dark-tech shell, sharpening personal projections, and tightening Business Command review flow.')
+  const [commandResponse, setCommandResponse] = useState('Control center live. Dark-tech shell stable, projection layers active, and Business Command ready for the next move.')
   const [reviewNoteDrafts, setReviewNoteDrafts] = useState<Record<string, string>>({})
   const [selectedReviewTaskId, setSelectedReviewTaskId] = useState<string | null>(null)
   const [projectedSections, setProjectedSections] = useState<Partial<Record<PersonalProjectionKey, LiveProjectedSection>>>({})
@@ -220,11 +220,11 @@ function App() {
   async function decideReview(taskId: string, status: 'approved' | 'rejected') {
     try {
       if (status === 'rejected' && !(reviewNoteDrafts[taskId] || '').trim()) {
-        setCommandResponse('Deny requires notes so the next attempt has actionable feedback.')
+        setCommandResponse('Review hold: a denial needs notes so the next pass has clear direction.')
         return
       }
       await dashboardData.decideTaskApproval(taskId, status, reviewNoteDrafts[taskId] || undefined)
-      setCommandResponse(status === 'approved' ? 'Review approved from Business Command.' : 'Review denied with notes from Business Command.')
+      setCommandResponse(status === 'approved' ? 'Approval sent. Business Command cleared this item and moved the review lane forward.' : 'Denial sent with notes. The review lane now has actionable feedback for the next revision.')
       setSelectedReviewTaskId(null)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Approval action failed.'
@@ -239,7 +239,7 @@ function App() {
     try {
       const response = await sendBusinessCommand(trimmed, { appMode, personalSection, businessPanel }, businessSummary)
       if (appMode === 'business' && response.suggestedPanel) setBusinessPanel(response.suggestedPanel)
-      setCommandResponse(`Route: ${response.route} · Intent: ${response.intent}. ${response.message} Next: ${response.nextAction}`)
+      setCommandResponse(`Command routed to ${response.route}. ${response.message} Next move: ${response.nextAction}`)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Command routing failed.'
       setCommandResponse(message)
