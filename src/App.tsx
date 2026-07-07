@@ -173,17 +173,17 @@ function App() {
     return [
       {
         kicker: 'Identity Signal',
-        title: identity?.summaryCards[0]?.value ?? 'Mission still loading',
+        title: identity?.summaryCards[0]?.value ?? 'Mission profile coming into focus',
         body: identity?.heroSummary ?? 'Pulling the current identity projection from PunkRecords.',
       },
       {
         kicker: 'Venture Pressure',
-        title: ventures?.summaryCards[0]?.value ?? 'Priority venture loading',
+        title: ventures?.summaryCards[0]?.value ?? 'Priority venture coming into focus',
         body: ventures?.heroSummary ?? 'Surfacing venture pressure and next decision from real records.',
       },
       {
         kicker: 'System Readiness',
-        title: systems?.summaryCards[0]?.value ?? 'Operations signal loading',
+        title: systems?.summaryCards[0]?.value ?? 'Operations signal coming into focus',
         body: systems?.heroSummary ?? 'Reading the current systems layer before presenting the command deck.',
       },
     ]
@@ -313,7 +313,7 @@ function App() {
                   </div>
                 </div>
                 <div className="avatar-stage-visual premium-stage-frame">
-                  <Suspense fallback={<div className="visual-loading">Rendering command presence…</div>}>
+                  <Suspense fallback={<div className="visual-loading">Preparing the avatar stage…</div>}>
                     <SpaceScene activeAgents={businessAgents.length} flaggedCount={queueHealth?.flagged_count ?? 0} />
                   </Suspense>
                 </div>
@@ -343,7 +343,7 @@ function App() {
               <article className="glass-panel pulse-panel">
                 <div className="revamp-kicker">Business Pulse</div>
                 <h3>{queueHealth?.runnable_count ?? 0} runnable, {queueHealth?.flagged_count ?? 0} flagged</h3>
-                <p>{topPendingReview ? `Top review pressure: ${topPendingReview.taskTitle}` : 'The business grid is standing ready, with execution capacity available for the next workflow wave.'}</p>
+                <p>{topPendingReview ? `Top review pressure: ${topPendingReview.taskTitle}` : 'The business grid is ready for the next workflow wave, with room to move the highest-leverage task forward.'}</p>
               </article>
               <article className="glass-panel principle-panel">
                 <div className="revamp-kicker">Command Principle</div>
@@ -424,7 +424,7 @@ function App() {
               <article className="glass-panel business-metric-card"><span>Ventures</span><strong>{dashboardData.projects.length}</strong><p>Tracked projects visible in Supabase.</p></article>
               <article className="glass-panel business-metric-card"><span>Revenue / Margin</span><strong>{formatUsd(businessSummary.revenueUsd)} / {formatUsd(businessSummary.marginUsd)}</strong><p>Latest live business snapshot.</p></article>
               <article className="glass-panel business-metric-card"><span>Approval Pressure</span><strong>{businessSummary.approvalsPending}</strong><p>Items waiting in review.</p></article>
-              <article className="glass-panel business-metric-card"><span>Recent Output</span><strong>{businessSummary.publishedToday} today</strong><p>{recentActivity[0] ? `${recentActivity[0].taskTitle} · ${recentActivity[0].eventType}` : 'The output channel is clear right now, with the command deck still fully live and ready.'}</p></article>
+              <article className="glass-panel business-metric-card"><span>Recent Output</span><strong>{businessSummary.publishedToday} today</strong><p>{recentActivity[0] ? `${recentActivity[0].taskTitle} · ${recentActivity[0].eventType}` : 'No fresh output has landed yet, but the command deck is ready for the next release cycle.'}</p></article>
             </section>
 
             {businessPanel !== 'review' ? (
@@ -436,7 +436,7 @@ function App() {
                       <span>{agent.chamberLabel}</span>
                       <strong>{agent.displayName}</strong>
                       <p>{agent.role} · {agent.status}</p>
-                      <p>{agent.tasks[0] ? `Current: ${agent.tasks[0].title}` : 'No active task right now.'}</p>
+                      <p>{agent.tasks[0] ? `Current: ${agent.tasks[0].title}` : 'Standing by for the next assigned task.'}</p>
                     </div>
                   ))}
                 </div>
@@ -450,7 +450,7 @@ function App() {
               {selectedReviewItem ? (
                 <>
                   <h3>{selectedReviewItem.taskTitle}</h3>
-                  <p>{selectedReviewItem.projectTitle ?? 'No project'} · {selectedReviewItem.artifactType}</p>
+                  <p>{selectedReviewItem.projectTitle ?? 'Unassigned project'} · {selectedReviewItem.artifactType}</p>
                   <div className="review-dock-meta">
                     <div>
                       <span>Status</span>
