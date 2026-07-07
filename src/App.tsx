@@ -19,6 +19,7 @@ type PersonalSectionData = { heroSummary: string; summaryCards: PersonalCard[]; 
 type HomeSignalCard = { kicker: string; title: string; body: string }
 type ProjectionHighlightCard = { title: string; text: string }
 type CommandHistoryEntry = { id: string; text: string; context: string }
+type CommandSuggestion = { label: string; prompt: string }
 
 type NodeSpec = { key: Exclude<PersonalSection, 'home'>; label: string; tier: 'core' | 'secondary' }
 
@@ -40,6 +41,19 @@ const PERSONAL_NODES: NodeSpec[] = [
   { key: 'relationships', label: 'Relationships', tier: 'secondary' },
   { key: 'knowledge', label: 'Knowledge', tier: 'secondary' },
 ]
+
+const COMMAND_SUGGESTIONS: Record<AppMode, CommandSuggestion[]> = {
+  personal: [
+    { label: 'Focus reset', prompt: 'Summarize my highest-priority personal focus right now.' },
+    { label: 'Identity check', prompt: 'Show the strongest identity signal on this screen.' },
+    { label: 'Systems pulse', prompt: 'What system needs attention first?' },
+  ],
+  business: [
+    { label: 'Review pressure', prompt: 'Show the most urgent review item and why it matters.' },
+    { label: 'Agent load', prompt: 'Which agent has the highest current workload?' },
+    { label: 'Publishing pulse', prompt: 'Summarize recent output and what should ship next.' },
+  ],
+}
 
 const PERSONAL_SECTION_CONTENT: Record<Exclude<PersonalSection, 'home'>, { eyebrow: string; title: string; summaryCards: string[]; highlights: string[] }> = {
   vessel: { eyebrow: 'Body and performance', title: 'Vessel', summaryCards: ['Weight / body metrics', 'Workout consistency', 'Nutrition consistency', 'Sleep / recovery'], highlights: ['Recent workouts and body trends', 'Cut / recomp progress', 'Stale-data warnings with best-effort status'] },
@@ -136,6 +150,7 @@ function App() {
   }, [])
 
   const lockedOut = lockoutUntil > now
+  const commandSuggestions = COMMAND_SUGGESTIONS[appMode]
   const lockoutSeconds = Math.max(0, Math.ceil((lockoutUntil - now) / 1000))
   const businessSummary = dashboardData.summary
   const queueHealth = dashboardData.queueHealth
@@ -547,6 +562,11 @@ function App() {
               <button className="revamp-lock-btn" onClick={() => setCommandOpen(false)}>Close</button>
             </div>
             <div className="command-context">Context: {appMode} · {appMode === 'personal' ? personalSection : businessPanel}</div>
+            <div className="command-suggestion-row">
+              {commandSuggestions.map((item) => (
+                <button key={item.label} className="command-suggestion-chip" onClick={() => setCommandValue(item.prompt)}>{item.label}</button>
+              ))}
+            </div>
             <div className="command-input-wrap">
               <input autoFocus placeholder="Tell the control center what you want to do..." value={commandValue} onChange={(e) => setCommandValue(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') void submitCommand() }} />
               <button className="revamp-command-btn solid" onClick={() => void submitCommand()}>Send</button>
