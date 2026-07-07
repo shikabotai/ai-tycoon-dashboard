@@ -301,7 +301,7 @@ function App() {
                 <div className="avatar-stage-hud">
                   <div>
                     <span className="hud-label">Identity</span>
-                    <strong>{projectedSections.identity?.summaryCards[0]?.value ?? 'Identity projection syncing'}</strong>
+                    <strong>{projectedSections.identity?.summaryCards[0]?.value ?? 'Identity profile loading'}</strong>
                   </div>
                   <div>
                     <span className="hud-label">Business load</span>
@@ -337,7 +337,7 @@ function App() {
             <section className="revamp-side-stack">
               <article className="glass-panel focus-panel">
                 <div className="revamp-kicker">Personal Focus</div>
-                <h3>{projectedSections.identity?.summaryCards[1]?.value ?? 'Ideal self projection aligning'}</h3>
+                <h3>{projectedSections.identity?.summaryCards[1]?.value ?? 'Ideal self profile loading'}</h3>
                 <p>{projectedSections.identity?.summaryCards[1]?.note ?? 'Using real identity projection data to shape the home presentation instead of generic motivational copy.'}</p>
               </article>
               <article className="glass-panel pulse-panel">
@@ -495,7 +495,7 @@ function App() {
             <div className="command-response-box">{commandResponse}</div>
             <div className="command-history">
               <h3>Recent commands</h3>
-              {commandHistory.length === 0 ? <p>The command lane is clear and ready for the first routed instruction of this session.</p> : commandHistory.map((item) => <div key={item} className="history-chip">{item}</div>)}
+              {commandHistory.length === 0 ? <p>The command lane is open and ready for the first move in this session.</p> : commandHistory.map((item) => <div key={item} className="history-chip">{item}</div>)}
             </div>
           </div>
         </div>
