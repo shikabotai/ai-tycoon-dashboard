@@ -230,6 +230,96 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       "ageDays": 0,
       "stale": false
     }
+  },
+  "career": {
+    "heroSummary": "Career is currently in a leverage-building phase, with job-search preparation and long-arc ML credentials both visible in the source planning system.",
+    "summaryCards": [
+      {
+        "label": "Current career trajectory",
+        "value": "In progress",
+        "note": "Land higher-paying SWE role or negotiate raise"
+      },
+      {
+        "label": "Primary career goal",
+        "value": "Higher-paying SWE role",
+        "note": "Target is stronger leverage through a raise or better offer."
+      },
+      {
+        "label": "Long-arc credential",
+        "value": "Georgia Tech MSML",
+        "note": "| Georgia Tech MSML completed | Career | 2027 | In progress |"
+      },
+      {
+        "label": "Skill-building progress",
+        "value": "MSML path active",
+        "note": "| Georgia Tech MSML completed | Career | 2027 | In progress |"
+      },
+      {
+        "label": "Current leverage opportunities",
+        "value": "Comp increase focus",
+        "note": "Target is a >$20k comp increase or stronger role leverage."
+      },
+      {
+        "label": "Next career milestone",
+        "value": "Interview-ready profile",
+        "note": "This page should later gain direct portfolio/resume artifacts and cadence tracking."
+      }
+    ],
+    "highlights": [
+      "Career blends income leverage with long-term ML positioning.",
+      "Annual goals and 5-year goals are the main current sources.",
+      "This page should later expose evidence, not just strategy text."
+    ],
+    "freshness": {
+      "label": "Career planning docs",
+      "ageDays": 0,
+      "stale": false
+    }
+  },
+  "education": {
+    "heroSummary": "Education is currently a supporting but serious track, centered on completing the Georgia Tech MSML path while balancing career and execution priorities.",
+    "summaryCards": [
+      {
+        "label": "Current program / course load",
+        "value": "Georgia Tech MSML",
+        "note": "| Georgia Tech MSML completed | Career | 2027 | In progress |"
+      },
+      {
+        "label": "Why it matters",
+        "value": "Long-term ML leverage",
+        "note": "Education is tied to future career leverage, not abstract credential collection."
+      },
+      {
+        "label": "Current tradeoff",
+        "value": "Execution vs depth",
+        "note": "The challenge is balancing shipping pressure with sustained study."
+      },
+      {
+        "label": "Support system",
+        "value": "Self-directed",
+        "note": "This page should later surface concrete timelines, deliverables, and pacing."
+      },
+      {
+        "label": "Biggest risk",
+        "value": "Overload / dilution",
+        "note": "Education can slip if too many business and career fronts are active at once."
+      },
+      {
+        "label": "Next education milestone",
+        "value": "Sustained completion path",
+        "note": "Future versions should show direct program checkpoints."
+      }
+    ],
+    "highlights": [
+      "Education is strategic, not ornamental.",
+      "MSML is the clearest current anchor.",
+      "This section still needs deeper milestone extraction later."
+    ],
+    "freshness": {
+      "label": "Education planning docs",
+      "ageDays": 0,
+      "stale": false
+    }
   }
 } as Partial<Record<PersonalProjectionKey, ProjectedSection>>
 
