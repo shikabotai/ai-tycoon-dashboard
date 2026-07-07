@@ -241,13 +241,13 @@ export function useDashboardData(_selectedProjectId?: string | null) {
     return {
       task,
       projectTitle,
-      approvals: [],
-      artifacts: [],
-      events: [],
-      deliveries: [],
-      publications: [],
+      approvals: approvals.filter((item) => item.task_id === taskId),
+      artifacts: artifacts.filter((item) => item.task_id === taskId),
+      events: events.filter((item) => item.task_id === taskId),
+      deliveries: deliveries.filter((item) => item.task_id === taskId),
+      publications: publications.filter((item) => item.task_id === taskId),
     }
-  }, [projects, tasks])
+  }, [approvals, artifacts, deliveries, events, projects, publications, tasks])
 
   const patchTask = useCallback(async (_taskId?: string, _patch?: Record<string, unknown>) => undefined, [])
   const decideApproval = useCallback(async (_item?: unknown, _status?: 'approved' | 'rejected', _comment?: string) => undefined, [])

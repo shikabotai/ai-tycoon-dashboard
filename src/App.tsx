@@ -497,6 +497,31 @@ function App() {
                       <strong>{selectedReviewDetail ? selectedReviewDetail.approvals.length : 0}</strong>
                     </div>
                   </div>
+                  {selectedReviewDetail ? (
+                    <div className="review-detail-stack">
+                      <div className="review-detail-card">
+                        <span>Latest event</span>
+                        <strong>{selectedReviewDetail.events[0]?.event_type ?? 'No event yet'}</strong>
+                        <p>{(() => {
+                          const payload = selectedReviewDetail.events[0]?.payload
+                          if (payload && typeof payload === 'object') {
+                            const reason = payload.reason
+                            const comment = payload.comment
+                            const decision = payload.decision
+                            if (typeof reason === 'string' && reason.trim()) return reason
+                            if (typeof comment === 'string' && comment.trim()) return comment
+                            if (typeof decision === 'string' && decision.trim()) return decision
+                          }
+                          return 'This review item has not emitted a detailed event note yet.'
+                        })()}</p>
+                      </div>
+                      <div className="review-detail-card">
+                        <span>Latest artifact</span>
+                        <strong>{selectedReviewDetail.artifacts[0]?.filename ?? selectedReviewDetail.artifacts[0]?.artifact_type ?? 'No artifact yet'}</strong>
+                        <p>{selectedReviewDetail.artifacts[0]?.mime_type ?? 'Artifact metadata will appear here when available.'}</p>
+                      </div>
+                    </div>
+                  ) : null}
                   <textarea className="review-note-input" placeholder="Add approval notes, or enter the required reason for a denial" value={reviewNoteDrafts[selectedReviewItem.taskId] || ''} onChange={(e) => setReviewNoteDrafts((prev) => ({ ...prev, [selectedReviewItem.taskId]: e.target.value }))} />
                   <div className="review-actions">
                     <button className="revamp-command-btn solid" onClick={() => void decideReview(selectedReviewItem.taskId, 'approved')}>Approve</button>

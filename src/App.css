@@ -554,6 +554,36 @@ button {
   background: rgba(5, 10, 18, 0.72);
 }
 
+.review-detail-stack {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.review-detail-card {
+  border-radius: 18px;
+  border: 1px solid rgba(99, 157, 248, 0.16);
+  background: rgba(6, 10, 18, 0.72);
+  padding: 14px 16px;
+}
+
+.review-detail-card span {
+  color: #86a9df;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.review-detail-card strong {
+  display: block;
+  margin-top: 8px;
+}
+
+.review-detail-card p {
+  margin: 10px 0 0;
+}
+
 .review-note-input {
   min-height: 120px;
   resize: vertical;
@@ -739,7 +769,8 @@ button {
   .revamp-status-ribbon,
   .avatar-stage-hud,
   .business-hero-strip,
-  .review-dock-meta {
+  .review-dock-meta,
+  .review-detail-stack {
     grid-template-columns: 1fr;
   }
 
