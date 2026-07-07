@@ -465,13 +465,13 @@ function App() {
                       <strong>{selectedReviewDetail ? selectedReviewDetail.approvals.length : 0}</strong>
                     </div>
                   </div>
-                  <textarea className="review-note-input" placeholder="Required deny notes / optional approval notes" value={reviewNoteDrafts[selectedReviewItem.taskId] || ''} onChange={(e) => setReviewNoteDrafts((prev) => ({ ...prev, [selectedReviewItem.taskId]: e.target.value }))} />
+                  <textarea className="review-note-input" placeholder="Add approval notes, or enter the required reason for a denial" value={reviewNoteDrafts[selectedReviewItem.taskId] || ''} onChange={(e) => setReviewNoteDrafts((prev) => ({ ...prev, [selectedReviewItem.taskId]: e.target.value }))} />
                   <div className="review-actions">
                     <button className="revamp-command-btn solid" onClick={() => void decideReview(selectedReviewItem.taskId, 'approved')}>Approve</button>
                     <button className="revamp-lock-btn" onClick={() => void decideReview(selectedReviewItem.taskId, 'rejected')}>Deny</button>
                   </div>
                 </>
-              ) : <p>The review dock is clear for now and ready to surface the next approval decision the moment it arrives.</p>}
+              ) : <p>The review dock is quiet right now. The next approval decision will appear here as soon as something needs your call.</p>}
             </article>
           </aside>
         </main>
@@ -483,13 +483,13 @@ function App() {
             <div className="command-modal-top">
               <div>
                 <div className="revamp-kicker">Spotlight Command</div>
-                <div className="shell-submark">Natural-language control across personal and business contexts</div>
+                <div className="shell-submark">Natural-language control across personal and business operations</div>
               </div>
               <button className="revamp-lock-btn" onClick={() => setCommandOpen(false)}>Close</button>
             </div>
             <div className="command-context">Context: {appMode} · {appMode === 'personal' ? personalSection : businessPanel}</div>
             <div className="command-input-wrap">
-              <input autoFocus placeholder="Type what you want in natural language..." value={commandValue} onChange={(e) => setCommandValue(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') void submitCommand() }} />
+              <input autoFocus placeholder="Tell the control center what you want to do..." value={commandValue} onChange={(e) => setCommandValue(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') void submitCommand() }} />
               <button className="revamp-command-btn solid" onClick={() => void submitCommand()}>Send</button>
             </div>
             <div className="command-response-box">{commandResponse}</div>
