@@ -320,6 +320,97 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       "ageDays": 0,
       "stale": false
     }
+  },
+  "wealth": {
+    "heroSummary": "Wealth is currently framed as leverage-building rather than passive tracking, with compensation growth and venture upside both acting as the main financial drivers.",
+    "summaryCards": [
+      {
+        "label": "Current financial priorities",
+        "value": "Increase leverage",
+        "note": "Comp growth and venture traction both matter on the current path."
+      },
+      {
+        "label": "Cashflow strategy",
+        "value": "Earn more first",
+        "note": "The current system emphasizes higher income and upside before elaborate optimization."
+      },
+      {
+        "label": "Wealth operating stance",
+        "value": "Selective accumulation",
+        "note": "Avoid distraction and focus on the highest-leverage growth paths."
+      },
+      {
+        "label": "Main wealth engines",
+        "value": "Career + ventures",
+        "note": "Those are still the clearest financial multipliers in the current plan."
+      },
+      {
+        "label": "Current blind spot",
+        "value": "Live net-worth visibility",
+        "note": "This section still needs stronger direct financial source integration.",
+        "stale": true
+      },
+      {
+        "label": "Next wealth milestone",
+        "value": "Stronger recurring surplus",
+        "note": "Future versions should surface explicit financial scoreboard data."
+      }
+    ],
+    "highlights": [
+      "Wealth is being treated as leverage, not vanity tracking.",
+      "Current plan is still income- and venture-centric.",
+      "This section will benefit from deeper structured source integration later."
+    ],
+    "freshness": {
+      "label": "Wealth planning docs",
+      "ageDays": 0,
+      "stale": false
+    }
+  },
+  "relationships": {
+    "heroSummary": "Relationships is currently more directional than fully instrumented, with family grounding and serious long-term partnership still visible in the planning layer.",
+    "summaryCards": [
+      {
+        "label": "Current relationship posture",
+        "value": "Long-term oriented",
+        "note": "- **Relationship:** Wife or fianc\u00e9e. The relationship is solid, loving, and both people are proud of each other. Not stressful, not uncertain."
+      },
+      {
+        "label": "Important people / focus",
+        "value": "Family + future partner path",
+        "note": "Family grounding and future partnership both remain active themes."
+      },
+      {
+        "label": "Social growth edge",
+        "value": "Confidence + environment",
+        "note": "Identity notes imply social confidence and environment are still part of the work."
+      },
+      {
+        "label": "Main blocker",
+        "value": "Context mismatch",
+        "note": "The right environment and consistent exposure still matter more than abstract intention."
+      },
+      {
+        "label": "Desired outcome",
+        "value": "Serious aligned relationship",
+        "note": "This is treated as a real life-direction goal, not a vague someday wish."
+      },
+      {
+        "label": "Next relationship milestone",
+        "value": "Better social positioning",
+        "note": "Future versions should expose more direct relationship evidence and momentum."
+      }
+    ],
+    "highlights": [
+      "Relationships is still a strategy-heavy section today.",
+      "Family and future partnership are both visible anchors.",
+      "This page should gain stronger direct evidence over time."
+    ],
+    "freshness": {
+      "label": "Relationship planning docs",
+      "ageDays": 0,
+      "stale": false
+    }
   }
 } as Partial<Record<PersonalProjectionKey, ProjectedSection>>
 
