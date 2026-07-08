@@ -474,6 +474,12 @@ button {
   margin-bottom: 18px;
 }
 
+.revamp-detail-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
 .detail-highlight-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -821,8 +827,20 @@ button {
   .avatar-stage-hud,
   .business-hero-strip,
   .review-dock-meta,
-  .review-detail-stack {
+  .review-detail-stack,
+  .revamp-card-grid,
+  .detail-highlight-grid {
     grid-template-columns: 1fr;
+  }
+
+  .revamp-detail-page {
+    gap: 14px;
+  }
+
+  .detail-signal-card,
+  .detail-highlight-card,
+  .freshness-card {
+    padding: 16px 18px;
   }
 
   .avatar-stage-card {
