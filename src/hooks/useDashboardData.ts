@@ -249,9 +249,68 @@ export function useDashboardData(_selectedProjectId?: string | null) {
     }
   }, [approvals, artifacts, deliveries, events, projects, publications, tasks])
 
-  const patchTask = useCallback(async (_taskId?: string, _patch?: Record<string, unknown>) => undefined, [])
-  const decideApproval = useCallback(async (_item?: unknown, _status?: 'approved' | 'rejected', _comment?: string) => undefined, [])
-  const decideTaskApproval = useCallback(async (_taskId?: string, _status?: 'approved' | 'rejected', _comment?: string) => undefined, [])
+  const patchTask = useCallback(async (taskId?: string, patch?: Record<string, unknown>) => {
+    if (!taskId || !patch) return undefined
+
+    const { error: patchError } = await supabase
+      .from('tasks')
+      .update(patch)
+      .eq('id', taskId)
+
+    if (patchError) throw patchError
+    await load()
+    return undefined
+  }, [load])
+
+  const decideTaskApproval = useCallback(async (taskId?: string, status?: 'approved' | 'rejected', comment?: string) => {
+    if (!taskId || !status) return undefined
+
+    const approval = approvals.find((item) => item.task_id === taskId && item.status === 'pending')
+    if (!approval) {
+      throw new Error('No pending approval is available for this task.')
+    }
+
+    const { error: approvalError } = await supabase
+      .from('approvals')
+      .update({
+        status,
+        decided_by: 'dashboard',
+        decided_at: new Date().toISOString(),
+        comment: comment ?? null,
+      })
+      .eq('id', approval.id)
+
+    if (approvalError) throw approvalError
+
+    if (status === 'rejected') {
+      const task = tasks.find((item) => item.id === taskId)
+      const metadata = { ...(task?.metadata ?? {}) }
+      metadata.revision_notes = comment || 'Rejected from Business Command.'
+      metadata.last_human_rejection_at = new Date().toISOString()
+      metadata.revision_retry_count = Number(metadata.revision_retry_count ?? 0)
+
+      const { error: taskError } = await supabase
+        .from('tasks')
+        .update({
+          status: 'assigned',
+          current_step_index: Math.max(Number(task?.current_step_index ?? 1) - 1, 0),
+          rejection_reason: comment || 'Rejected from Business Command.',
+          metadata,
+          last_error: null,
+        })
+        .eq('id', taskId)
+
+      if (taskError) throw taskError
+    }
+
+    await load()
+    return undefined
+  }, [approvals, load, tasks])
+
+  const decideApproval = useCallback(async (item?: unknown, status?: 'approved' | 'rejected', comment?: string) => {
+    const taskId = typeof item === 'object' && item && 'taskId' in item ? String((item as { taskId?: unknown }).taskId) : undefined
+    return decideTaskApproval(taskId, status, comment)
+  }, [decideTaskApproval])
 
   return {
     queueHealth,

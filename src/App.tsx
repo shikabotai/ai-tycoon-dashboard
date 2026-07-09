@@ -288,7 +288,7 @@ function App() {
         <div>
           <div className="revamp-kicker">Mitchell Control Center</div>
           <h1>Dark Tech Command Deck</h1>
-          <p>Black, silver, electric blue, stable baseline. Avatar-first revamp shell begins here.</p>
+          <p>Private personal and business operations in one avatar-centered command deck.</p>
         </div>
         <div className="revamp-top-actions">
           <button className={appMode === 'personal' ? 'revamp-toggle active' : 'revamp-toggle'} onClick={() => setAppMode('personal')}>Personal</button>
@@ -443,8 +443,8 @@ function App() {
           <section className="revamp-business-main">
             <article className="glass-panel hero-business-panel">
               <div className="revamp-kicker">Business Command</div>
-              <h2>Live operations, new shell</h2>
-              <p>Business data is still live, but the old visual language is being phased out in favor of the new black-silver-blue command deck.</p>
+              <h2>Live operations command</h2>
+              <p>Queue pressure, approvals, agent load, and publishing signals stay close enough for a fast decision.</p>
               <div className="business-panel-switches">
                 {(['overview', 'agents', 'review'] as BusinessPanel[]).map((panel) => (
                   <button key={panel} className={businessPanel === panel ? 'revamp-toggle active' : 'revamp-toggle'} onClick={() => setBusinessPanel(panel)}>{panel}</button>
