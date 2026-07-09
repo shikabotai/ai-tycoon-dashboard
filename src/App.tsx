@@ -16,6 +16,8 @@ const SpaceScene = lazy(async () => {
 type AppMode = 'personal' | 'business'
 type PersonalSection = 'home' | 'vessel' | 'identity' | 'career' | 'wealth' | 'ventures' | 'systems' | 'education' | 'relationships' | 'knowledge'
 type BusinessPanel = 'overview' | 'agents' | 'review'
+type BusinessPage = 'business-command' | 'agents' | 'review-dock' | 'runtime-trail'
+type AppPage = PersonalSection | BusinessPage
 type LoginState = { username: string; password: string }
 type PersonalCard = { label: string; value: string; note: string; stale?: boolean }
 type PersonalSectionData = { heroSummary: string; summaryCards: PersonalCard[]; highlights: string[]; freshness?: { label: string; ageDays: number | null; stale: boolean } }
@@ -27,6 +29,7 @@ type EmptyStateProps = { label: string; title: string; body: string }
 type AvatarAssetStatus = 'loading' | 'ready' | 'missing'
 
 type NodeSpec = { key: Exclude<PersonalSection, 'home'>; label: string; tier: 'core' | 'secondary' }
+type NavItem = { page: AppPage; label: string; description: string }
 
 const VALID_USERNAME = 'mthanath64'
 const VALID_PASSWORD = 'Mitch2002'
@@ -36,6 +39,48 @@ const SESSION_KEY = 'control-center-auth'
 const LOGIN_STATE_KEY = 'control-center-login-state'
 const COMMAND_HISTORY_KEY = 'control-center-command-history'
 const AVATAR_ASSET_PATH = '/avatar/control-center-avatar.png'
+
+const PERSONAL_ROUTES: Record<PersonalSection, string> = {
+  home: '/',
+  vessel: '/vessel',
+  identity: '/identity',
+  career: '/career',
+  wealth: '/wealth',
+  ventures: '/ventures',
+  systems: '/systems',
+  education: '/education',
+  relationships: '/relationships',
+  knowledge: '/knowledge',
+}
+
+const BUSINESS_ROUTES: Record<BusinessPage, string> = {
+  'business-command': '/business-command',
+  agents: '/agents',
+  'review-dock': '/review-dock',
+  'runtime-trail': '/runtime-trail',
+}
+
+const PAGE_ROUTES: Record<AppPage, string> = { ...PERSONAL_ROUTES, ...BUSINESS_ROUTES }
+
+const PERSONAL_NAV_ITEMS: NavItem[] = [
+  { page: 'home', label: 'Home', description: 'Operating overview' },
+  { page: 'vessel', label: 'Vessel', description: 'Body and performance' },
+  { page: 'identity', label: 'Identity', description: 'Mission and self alignment' },
+  { page: 'systems', label: 'Systems', description: 'Tasks, automations, open loops' },
+  { page: 'ventures', label: 'Ventures', description: 'Personal venture strategy' },
+  { page: 'career', label: 'Career', description: 'Trajectory and portfolio' },
+  { page: 'wealth', label: 'Wealth', description: 'Capital and priorities' },
+  { page: 'education', label: 'Education', description: 'Courses and deadlines' },
+  { page: 'knowledge', label: 'Knowledge', description: 'Models and references' },
+  { page: 'relationships', label: 'Relationships', description: 'Connection and care' },
+]
+
+const BUSINESS_NAV_ITEMS: NavItem[] = [
+  { page: 'business-command', label: 'Business Command', description: 'Operations overview' },
+  { page: 'agents', label: 'Agents', description: 'Workload and chambers' },
+  { page: 'review-dock', label: 'Review Dock', description: 'Approval decisions' },
+  { page: 'runtime-trail', label: 'Runtime Trail', description: 'Command provenance' },
+]
 
 const PERSONAL_NODES: NodeSpec[] = [
   { key: 'vessel', label: 'Vessel', tier: 'core' },
@@ -48,6 +93,26 @@ const PERSONAL_NODES: NodeSpec[] = [
   { key: 'relationships', label: 'Relationships', tier: 'secondary' },
   { key: 'knowledge', label: 'Knowledge', tier: 'secondary' },
 ]
+
+function pageFromPath(pathname: string): AppPage {
+  const normalized = pathname.replace(/\/+$/, '') || '/'
+  const match = (Object.entries(PAGE_ROUTES) as Array<[AppPage, string]>).find(([, path]) => path === normalized)
+  return match?.[0] ?? 'home'
+}
+
+function isBusinessPage(page: AppPage): page is BusinessPage {
+  return page === 'business-command' || page === 'agents' || page === 'review-dock' || page === 'runtime-trail'
+}
+
+function businessPanelFromPage(page: BusinessPage): BusinessPanel {
+  if (page === 'agents') return 'agents'
+  if (page === 'review-dock') return 'review'
+  return 'overview'
+}
+
+function pageLabel(page: AppPage) {
+  return [...PERSONAL_NAV_ITEMS, ...BUSINESS_NAV_ITEMS].find((item) => item.page === page)?.label ?? 'Home'
+}
 
 const COMMAND_SUGGESTIONS: Record<AppMode, CommandSuggestion[]> = {
   personal: [
@@ -187,9 +252,7 @@ function storeCommandHistory(history: CommandHistoryEntry[]) {
 
 function App() {
   const [authed, setAuthed] = useState(false)
-  const [appMode, setAppMode] = useState<AppMode>('personal')
-  const [personalSection, setPersonalSection] = useState<PersonalSection>('home')
-  const [businessPanel, setBusinessPanel] = useState<BusinessPanel>('overview')
+  const [currentPage, setCurrentPage] = useState<AppPage>(() => typeof window === 'undefined' ? 'home' : pageFromPath(window.location.pathname))
   const [commandOpen, setCommandOpen] = useState(false)
   const [commandValue, setCommandValue] = useState('')
   const [login, setLogin] = useState<LoginState>({ username: '', password: '' })
@@ -205,6 +268,10 @@ function App() {
   const [avatarAssetStatus, setAvatarAssetStatus] = useState<AvatarAssetStatus>('loading')
 
   const dashboardData = useDashboardData()
+  const appMode: AppMode = isBusinessPage(currentPage) ? 'business' : 'personal'
+  const personalSection: PersonalSection = isBusinessPage(currentPage) ? 'home' : currentPage
+  const businessPanel: BusinessPanel = isBusinessPage(currentPage) ? businessPanelFromPage(currentPage) : 'overview'
+  const currentPath = PAGE_ROUTES[currentPage]
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -213,6 +280,13 @@ function App() {
     const stored = loadStoredLoginState()
     setAttempts(stored.attempts)
     setLockoutUntil(stored.lockoutUntil)
+  }, [])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const handlePopstate = () => setCurrentPage(pageFromPath(window.location.pathname))
+    window.addEventListener('popstate', handlePopstate)
+    return () => window.removeEventListener('popstate', handlePopstate)
   }, [])
 
   useEffect(() => {
@@ -310,6 +384,15 @@ function App() {
     ]
   }, [projectedSections])
 
+  function navigateToPage(page: AppPage) {
+    setCurrentPage(page)
+    if (typeof window === 'undefined') return
+    const nextPath = PAGE_ROUTES[page]
+    if (window.location.pathname !== nextPath) {
+      window.history.pushState({}, '', nextPath)
+    }
+  }
+
   async function handleLoginSubmit(event: React.FormEvent) {
     event.preventDefault()
     if (lockedOut) {
@@ -385,7 +468,9 @@ function App() {
       const handoff = response.runtimeAction.target === 'assistant-runtime'
         ? await sendCommandHandoff(trimmed, commandContextLabel, response.runtimeAction)
         : undefined
-      if (appMode === 'business' && response.suggestedPanel) setBusinessPanel(response.suggestedPanel)
+      if (appMode === 'business' && response.suggestedPanel) {
+        navigateToPage(response.suggestedPanel === 'agents' ? 'agents' : response.suggestedPanel === 'review' ? 'review-dock' : 'business-command')
+      }
       setCommandHistory((prev) => [{ id: `${Date.now()}`, text: trimmed, context: commandContextLabel, action: response.runtimeAction, handoff }, ...prev].slice(0, 6))
       setCommandResponse(`Command routed to ${response.route}. ${response.message} Runtime action: ${response.runtimeAction.effect}${handoff ? ` Handoff: ${handoff.message}` : ''} Next move: ${response.nextAction}`)
     } catch (error) {
@@ -419,22 +504,47 @@ function App() {
       <header className="revamp-topbar">
         <div>
           <div className="revamp-kicker">Mitchell Control Center</div>
-          <h1>Dark Tech Command Deck</h1>
-          <p>Private personal and business operations in one avatar-centered command deck.</p>
+          <h1>{pageLabel(currentPage)}</h1>
+          <p>Private personal and business operating system with direct routes for every major dashboard.</p>
         </div>
         <div className="revamp-top-actions">
-          <button className={appMode === 'personal' ? 'revamp-toggle active' : 'revamp-toggle'} onClick={() => setAppMode('personal')}>Personal</button>
-          <button className={appMode === 'business' ? 'revamp-toggle active' : 'revamp-toggle'} onClick={() => setAppMode('business')}>Business</button>
+          <button className={appMode === 'personal' ? 'revamp-toggle active' : 'revamp-toggle'} onClick={() => navigateToPage('home')}>Personal</button>
+          <button className={appMode === 'business' ? 'revamp-toggle active' : 'revamp-toggle'} onClick={() => navigateToPage('business-command')}>Business</button>
           <button className="revamp-command-btn" onClick={() => setCommandOpen(true)}>Command</button>
           <button className="revamp-lock-btn" onClick={logout}>Lock</button>
         </div>
       </header>
 
+      <nav className="app-nav-shell" aria-label="Control center sections">
+        <section>
+          <div className="app-nav-heading">Personal Dashboards</div>
+          <div className="app-nav-grid">
+            {PERSONAL_NAV_ITEMS.map((item) => (
+              <button key={item.page} className={currentPage === item.page ? 'app-nav-item active' : 'app-nav-item'} onClick={() => navigateToPage(item.page)}>
+                <span>{item.label}</span>
+                <small>{item.description}</small>
+              </button>
+            ))}
+          </div>
+        </section>
+        <section>
+          <div className="app-nav-heading">Business Operations</div>
+          <div className="app-nav-grid business">
+            {BUSINESS_NAV_ITEMS.map((item) => (
+              <button key={item.page} className={currentPage === item.page ? 'app-nav-item active' : 'app-nav-item'} onClick={() => navigateToPage(item.page)}>
+                <span>{item.label}</span>
+                <small>{item.description}</small>
+              </button>
+            ))}
+          </div>
+        </section>
+      </nav>
+
       <section className="revamp-status-ribbon">
-        <div><span>Runtime</span><strong>Live private cockpit</strong></div>
-        <div><span>Visual stack</span><strong>Lightweight dark-tech scene</strong></div>
-        <div><span>Theme direction</span><strong>Black, silver, electric blue</strong></div>
-        <div><span>Focus</span><strong>Avatar-centered command core</strong></div>
+        <div><span>Current route</span><strong>{currentPath}</strong></div>
+        <div><span>Section</span><strong>{pageLabel(currentPage)}</strong></div>
+        <div><span>Mode</span><strong>{appMode === 'personal' ? 'Personal OS' : 'Business operations'}</strong></div>
+        <div><span>Navigation</span><strong>Direct pages active</strong></div>
       </section>
 
       {appMode === 'personal' ? (
@@ -488,7 +598,7 @@ function App() {
               </div>
               <div className="avatar-node-rack">
                 {PERSONAL_NODES.map((node) => (
-                  <button key={node.key} className={`avatar-node-pill ${node.tier}`} onClick={() => setPersonalSection(node.key)}>{node.label}</button>
+                  <button key={node.key} className={`avatar-node-pill ${node.tier}`} onClick={() => navigateToPage(node.key)}>{node.label}</button>
                 ))}
               </div>
             </section>
@@ -515,7 +625,7 @@ function App() {
         ) : (
           <main className="revamp-detail-page">
             <section className="revamp-detail-hero">
-              <button className="back-button" onClick={() => setPersonalSection('home')}>← Avatar Home</button>
+              <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
               <div>
                 <div className="revamp-kicker">{currentPersonalContent?.eyebrow}</div>
                 <h2>{currentPersonalContent?.title}</h2>
@@ -590,7 +700,13 @@ function App() {
               <p>Queue pressure, approvals, agent load, and publishing signals stay close enough for a fast decision.</p>
               <div className="business-panel-switches">
                 {(['overview', 'agents', 'review'] as BusinessPanel[]).map((panel) => (
-                  <button key={panel} className={businessPanel === panel ? 'revamp-toggle active' : 'revamp-toggle'} onClick={() => setBusinessPanel(panel)}>{panel}</button>
+                  <button
+                    key={panel}
+                    className={businessPanel === panel ? 'revamp-toggle active' : 'revamp-toggle'}
+                    onClick={() => navigateToPage(panel === 'agents' ? 'agents' : panel === 'review' ? 'review-dock' : 'business-command')}
+                  >
+                    {panel}
+                  </button>
                 ))}
               </div>
               <div className="business-hero-strip">
