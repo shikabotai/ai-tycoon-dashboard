@@ -706,6 +706,12 @@ button {
   padding: 5px 8px;
 }
 
+.command-handoff-trace {
+  margin-top: 12px;
+  border-top: 1px solid rgba(118, 158, 218, 0.14);
+  padding-top: 12px;
+}
+
 .review-detail-stack {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

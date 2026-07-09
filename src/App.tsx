@@ -3,8 +3,9 @@ import './App.css'
 import { useDashboardData } from './hooks/useDashboardData'
 import { loadProjectedSection, type PersonalProjectionKey } from './data/personalProjectionClient'
 import type { ProjectedSection as LiveProjectedSection } from './data/projectedTypes'
-import { sendBusinessCommand } from './data/businessCommandApi'
+import { sendBusinessCommand, sendCommandHandoff } from './data/businessCommandApi'
 import { routeCommand } from './data/commandRouter'
+import type { CommandHandoffResponse } from './server/commandHandoffApi'
 import type { BusinessCommandResponse } from './server/commandRouteApi'
 
 const SpaceScene = lazy(async () => {
@@ -20,7 +21,7 @@ type PersonalCard = { label: string; value: string; note: string; stale?: boolea
 type PersonalSectionData = { heroSummary: string; summaryCards: PersonalCard[]; highlights: string[]; freshness?: { label: string; ageDays: number | null; stale: boolean } }
 type HomeSignalCard = { kicker: string; title: string; body: string }
 type ProjectionHighlightCard = { title: string; text: string }
-type CommandHistoryEntry = { id: string; text: string; context: string; action?: BusinessCommandResponse['runtimeAction'] }
+type CommandHistoryEntry = { id: string; text: string; context: string; action?: BusinessCommandResponse['runtimeAction']; handoff?: CommandHandoffResponse }
 type CommandSuggestion = { label: string; prompt: string }
 type EmptyStateProps = { label: string; title: string; body: string }
 
@@ -120,6 +121,15 @@ function isRuntimeAction(value: unknown): value is BusinessCommandResponse['runt
     typeof action.effect === 'string'
 }
 
+function isCommandHandoff(value: unknown): value is CommandHandoffResponse {
+  if (!value || typeof value !== 'object') return false
+  const handoff = value as Partial<CommandHandoffResponse>
+  return typeof handoff.auditId === 'string' &&
+    typeof handoff.status === 'string' &&
+    typeof handoff.message === 'string' &&
+    typeof handoff.recordedAt === 'string'
+}
+
 function loadStoredCommandHistory(): CommandHistoryEntry[] {
   if (typeof window === 'undefined') return []
   try {
@@ -135,6 +145,7 @@ function loadStoredCommandHistory(): CommandHistoryEntry[] {
         text: item.text as string,
         context: item.context as string,
         action: isRuntimeAction(item.action) ? item.action : undefined,
+        handoff: isCommandHandoff(item.handoff) ? item.handoff : undefined,
       }))
       .slice(0, 6)
   } catch {
@@ -319,9 +330,12 @@ function App() {
     const commandContextLabel = `${appMode} · ${appMode === 'personal' ? personalSection : businessPanel}`
     try {
       const response = await sendBusinessCommand(trimmed, { appMode, personalSection, businessPanel }, businessSummary)
+      const handoff = response.runtimeAction.target === 'assistant-runtime'
+        ? await sendCommandHandoff(trimmed, commandContextLabel, response.runtimeAction)
+        : undefined
       if (appMode === 'business' && response.suggestedPanel) setBusinessPanel(response.suggestedPanel)
-      setCommandHistory((prev) => [{ id: `${Date.now()}`, text: trimmed, context: commandContextLabel, action: response.runtimeAction }, ...prev].slice(0, 6))
-      setCommandResponse(`Command routed to ${response.route}. ${response.message} Runtime action: ${response.runtimeAction.effect} Next move: ${response.nextAction}`)
+      setCommandHistory((prev) => [{ id: `${Date.now()}`, text: trimmed, context: commandContextLabel, action: response.runtimeAction, handoff }, ...prev].slice(0, 6))
+      setCommandResponse(`Command routed to ${response.route}. ${response.message} Runtime action: ${response.runtimeAction.effect}${handoff ? ` Handoff: ${handoff.message}` : ''} Next move: ${response.nextAction}`)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Command routing failed.'
       setCommandHistory((prev) => [{ id: `${Date.now()}`, text: trimmed, context: commandContextLabel }, ...prev].slice(0, 6))
@@ -688,6 +702,16 @@ function App() {
                             <span>{formatActionTime(item.action.executedAt)}</span>
                             {item.action.provenance.map((entry) => <code key={entry}>{entry}</code>)}
                           </div>
+                          {item.handoff ? (
+                            <div className="command-handoff-trace">
+                              <p><b>{item.handoff.status.replace(/_/g, ' ')}</b> · {item.handoff.message}</p>
+                              <p>{item.handoff.safety}</p>
+                              <div className="command-action-meta">
+                                <span>{item.handoff.auditId}</span>
+                                <span>{formatActionTime(item.handoff.recordedAt)}</span>
+                              </div>
+                            </div>
+                          ) : null}
                         </div>
                       ) : null}
                     </div>

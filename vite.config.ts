@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
 import { readAutopilotStatus } from './src/data/autopilotStatus'
+import { buildCommandHandoffResponse } from './src/server/commandHandoffApi'
 import { buildBusinessCommandResponse } from './src/server/commandRouteApi'
 import { getProjectedSection } from './src/server/personalProjectionApi'
 
@@ -50,6 +51,23 @@ export default defineConfig({
             const payload = JSON.parse(body || '{}')
             res.setHeader('Content-Type', 'application/json')
             res.end(JSON.stringify(buildBusinessCommandResponse(payload)))
+          })
+        })
+        server.middlewares.use('/api/command/handoff', (req, res) => {
+          if (req.method !== 'POST') {
+            res.statusCode = 405
+            res.end('Method not allowed')
+            return
+          }
+
+          let body = ''
+          req.on('data', (chunk) => {
+            body += chunk
+          })
+          req.on('end', () => {
+            const payload = JSON.parse(body || '{}')
+            res.setHeader('Content-Type', 'application/json')
+            res.end(JSON.stringify(buildCommandHandoffResponse(payload)))
           })
         })
       },
