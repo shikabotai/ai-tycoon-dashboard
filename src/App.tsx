@@ -5,6 +5,7 @@ import { loadProjectedSection, type PersonalProjectionKey } from './data/persona
 import type { ProjectedSection as LiveProjectedSection } from './data/projectedTypes'
 import { sendBusinessCommand } from './data/businessCommandApi'
 import { routeCommand } from './data/commandRouter'
+import type { BusinessCommandResponse } from './server/commandRouteApi'
 
 const SpaceScene = lazy(async () => {
   const mod = await import('./components/SpaceScene')
@@ -19,7 +20,7 @@ type PersonalCard = { label: string; value: string; note: string; stale?: boolea
 type PersonalSectionData = { heroSummary: string; summaryCards: PersonalCard[]; highlights: string[]; freshness?: { label: string; ageDays: number | null; stale: boolean } }
 type HomeSignalCard = { kicker: string; title: string; body: string }
 type ProjectionHighlightCard = { title: string; text: string }
-type CommandHistoryEntry = { id: string; text: string; context: string }
+type CommandHistoryEntry = { id: string; text: string; context: string; action?: BusinessCommandResponse['runtimeAction'] }
 type CommandSuggestion = { label: string; prompt: string }
 type EmptyStateProps = { label: string; title: string; body: string }
 
@@ -269,13 +270,14 @@ function App() {
     if (!commandValue.trim()) return
     const trimmed = commandValue.trim()
     const commandContextLabel = `${appMode} · ${appMode === 'personal' ? personalSection : businessPanel}`
-    setCommandHistory((prev) => [{ id: `${Date.now()}`, text: trimmed, context: commandContextLabel }, ...prev].slice(0, 6))
     try {
       const response = await sendBusinessCommand(trimmed, { appMode, personalSection, businessPanel }, businessSummary)
       if (appMode === 'business' && response.suggestedPanel) setBusinessPanel(response.suggestedPanel)
-      setCommandResponse(`Command routed to ${response.route}. ${response.message} Next move: ${response.nextAction}`)
+      setCommandHistory((prev) => [{ id: `${Date.now()}`, text: trimmed, context: commandContextLabel, action: response.runtimeAction }, ...prev].slice(0, 6))
+      setCommandResponse(`Command routed to ${response.route}. ${response.message} Runtime action: ${response.runtimeAction.effect} Next move: ${response.nextAction}`)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Command routing failed.'
+      setCommandHistory((prev) => [{ id: `${Date.now()}`, text: trimmed, context: commandContextLabel }, ...prev].slice(0, 6))
       setCommandResponse(message)
     }
     setCommandValue('')
@@ -630,6 +632,7 @@ function App() {
                     <div key={item.id} className="history-chip command-history-card">
                       <span>{item.context}</span>
                       <strong>{item.text}</strong>
+                      {item.action ? <p>{item.action.label} · {item.action.status.replace(/_/g, ' ')}</p> : null}
                     </div>
                   ))}
                 </div>
