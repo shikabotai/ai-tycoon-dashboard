@@ -75,6 +75,12 @@ function formatUsd(value: number) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value)
 }
 
+function formatActionTime(value: string) {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return 'timestamp unavailable'
+  return date.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+}
+
 function BusinessEmptyState({ label, title, body }: EmptyStateProps) {
   return (
     <div className="business-empty-state">
@@ -673,7 +679,17 @@ function App() {
                     <div key={item.id} className="history-chip command-history-card">
                       <span>{item.context}</span>
                       <strong>{item.text}</strong>
-                      {item.action ? <p>{item.action.label} · {item.action.status.replace(/_/g, ' ')}</p> : null}
+                      {item.action ? (
+                        <div className="command-action-trace">
+                          <p><b>{item.action.label}</b> · {item.action.status.replace(/_/g, ' ')}</p>
+                          <p>{item.action.effect}</p>
+                          <p className="command-action-safety">{item.action.safety}</p>
+                          <div className="command-action-meta">
+                            <span>{formatActionTime(item.action.executedAt)}</span>
+                            {item.action.provenance.map((entry) => <code key={entry}>{entry}</code>)}
+                          </div>
+                        </div>
+                      ) : null}
                     </div>
                   ))}
                 </div>
