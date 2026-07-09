@@ -1,4 +1,5 @@
 import type { PersonalProjectionKey } from '../data/personalProjectionClient'
+import { attachProjectedDashboard } from '../data/projectedDashboardModel'
 import type { ProjectedSection } from '../data/projectedTypes'
 
 export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, ProjectedSection>> = {
@@ -373,7 +374,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Current relationship posture",
         "value": "Long-term oriented",
-        "note": "- **Relationship:** Wife or fianc\u00e9e. The relationship is solid, loving, and both people are proud of each other. Not stressful, not uncertain."
+        "note": "Long-term partnership direction is kept as a private operating signal without exposing intimate planning detail."
       },
       {
         "label": "Important people / focus",
@@ -415,5 +416,6 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
 } as Partial<Record<PersonalProjectionKey, ProjectedSection>>
 
 export function getGeneratedProjectedSection(key: PersonalProjectionKey): ProjectedSection | null {
-  return generatedProjectedSections[key] ?? null
+  const section = generatedProjectedSections[key]
+  return section ? attachProjectedDashboard(key, section) : null
 }

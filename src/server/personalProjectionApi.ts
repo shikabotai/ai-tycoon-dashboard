@@ -1,4 +1,5 @@
 import { buildCareerData, buildEducationData, buildIdentityData, buildKnowledgeData, buildRelationshipsData, buildSystemsData, buildVesselData, buildVenturesData, buildWealthData } from '../data/punkProjection'
+import { attachProjectedDashboard } from '../data/projectedDashboardModel'
 import type { ProjectedSection } from '../data/projectedTypes'
 import type { PersonalProjectionKey } from '../data/personalProjectionClient'
 
@@ -16,5 +17,5 @@ const PERSONAL_BUILDERS: Record<PersonalProjectionKey, () => ProjectedSection> =
 
 export function getProjectedSection(key: PersonalProjectionKey): ProjectedSection | null {
   const builder = PERSONAL_BUILDERS[key]
-  return builder ? builder() : null
+  return builder ? attachProjectedDashboard(key, builder()) : null
 }
