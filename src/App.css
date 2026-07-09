@@ -544,6 +544,15 @@ button {
 
 .command-modal {
   width: min(100%, 760px);
+  max-height: calc(100svh - 40px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.command-modal p,
+.command-modal strong,
+.command-modal input {
+  overflow-wrap: anywhere;
 }
 
 .command-modal-top,
@@ -865,6 +874,7 @@ button {
   .command-modal {
     width: 100%;
     padding: 18px;
+    max-height: calc(100svh - 24px);
   }
 
   .revamp-status-ribbon,
