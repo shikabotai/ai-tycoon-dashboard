@@ -315,8 +315,31 @@ function App() {
         setCommandResponse('Review hold: a denial needs notes so the next pass has clear direction.')
         return
       }
-      await dashboardData.decideTaskApproval(taskId, status, reviewNoteDrafts[taskId] || undefined)
-      setCommandResponse(status === 'approved' ? 'Approval sent. Business Command cleared this item and moved the review lane forward.' : 'Denial sent with notes. The review lane now has actionable feedback for the next revision.')
+      const reviewTitle = selectedReviewItem?.taskTitle ?? taskId
+      const reviewProject = selectedReviewItem?.projectTitle
+      const notes = reviewNoteDrafts[taskId] || undefined
+      await dashboardData.decideTaskApproval(taskId, status, notes)
+      const action: BusinessCommandResponse['runtimeAction'] = {
+        id: `review-${status}-${taskId}`,
+        label: status === 'approved' ? 'Approve review item' : 'Reject review item',
+        target: 'dashboard-runtime',
+        status: 'executed',
+        effect: status === 'approved'
+          ? `Approval sent for ${reviewTitle}; the review lane can advance from this decision.`
+          : `Denial sent for ${reviewTitle}; the next pass now has explicit review feedback.`,
+        safety: status === 'approved'
+          ? 'Approval used the explicit review button; no assistant or external message was dispatched by the command trail.'
+          : 'Denial used the explicit review button and required notes before the live review update was sent.',
+        provenance: [
+          `task:${taskId}`,
+          `decision:${status}`,
+          reviewProject ? `project:${reviewProject}` : 'project:unknown',
+          notes ? 'notes:present' : 'notes:none',
+        ],
+        executedAt: new Date().toISOString(),
+      }
+      setCommandHistory((prev) => [{ id: `${Date.now()}`, text: `${status === 'approved' ? 'Approved' : 'Rejected'} review: ${reviewTitle}`, context: 'business · review', action }, ...prev].slice(0, 6))
+      setCommandResponse(status === 'approved' ? 'Approval sent. Business Command cleared this item and saved the review action trace.' : 'Denial sent with notes. The review lane now has feedback and a saved action trace.')
       setSelectedReviewTaskId(null)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Approval action failed.'
