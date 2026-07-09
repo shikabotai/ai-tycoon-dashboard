@@ -170,13 +170,13 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Current blocker visibility",
         "value": "Improving",
-        "note": "Business Command will complement this page with live operational blockers."
+        "note": "Business Command keeps live operational blockers separate from the personal strategy layer."
       }
     ],
     "highlights": [
       "Ventures MOC remains the personal strategy-side anchor.",
       "Annual goals provide the immediate venture pressure.",
-      "This page should stay distinct from Business Command live ops."
+      "Personal strategy stays distinct from Business Command live operations."
     ],
     "freshness": {
       "label": "Ventures planning docs",

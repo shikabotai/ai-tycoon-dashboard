@@ -116,7 +116,7 @@ function App() {
   const [lockoutUntil, setLockoutUntil] = useState(0)
   const [now, setNow] = useState(() => Date.now())
   const [commandHistory, setCommandHistory] = useState<CommandHistoryEntry[]>([])
-  const [commandResponse, setCommandResponse] = useState('Control center live. Dark-tech shell stable, projection layers active, and Business Command ready for the next move.')
+  const [commandResponse, setCommandResponse] = useState('Control center live. Projection layers active, Business Command ready, and the next move can route from here.')
   const [reviewNoteDrafts, setReviewNoteDrafts] = useState<Record<string, string>>({})
   const [selectedReviewTaskId, setSelectedReviewTaskId] = useState<string | null>(null)
   const [projectedSections, setProjectedSections] = useState<Partial<Record<PersonalProjectionKey, LiveProjectedSection>>>({})

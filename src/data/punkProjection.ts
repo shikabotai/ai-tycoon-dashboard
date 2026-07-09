@@ -141,12 +141,12 @@ export function buildVenturesData(): ProjectedSection {
       { label: 'In-progress venture goals', value: `${inProgressCount} in progress`, note: 'Pulled from the annual goals source note.' },
       { label: 'Capital deployment stance', value: 'Selective', note: 'The control center is moving toward ROI-ranked moves rather than simple inventory.' },
       { label: 'Biggest operating need', value: 'Priority compression', note: 'Reduce surface area and make the next best move obvious.' },
-      { label: 'Current blocker visibility', value: 'Improving', note: 'Business Command will complement this page with live operational blockers.' },
+      { label: 'Current blocker visibility', value: 'Improving', note: 'Business Command keeps live operational blockers separate from the personal strategy layer.' },
     ],
     highlights: [
       'Ventures MOC remains the personal strategy-side anchor.',
       'Annual goals provide the immediate venture pressure.',
-      'This page should stay distinct from Business Command live ops.',
+      'Personal strategy stays distinct from Business Command live operations.',
     ],
     freshness: summarizeFreshness('Ventures planning docs', 0, 21),
   }
@@ -241,7 +241,7 @@ export function buildEducationData(): ProjectedSection {
       { label: 'Academic priority level', value: 'Important but not primary', note: 'Current active life priorities still lean heavily toward execution and leverage.' },
     ],
     highlights: [
-      'Education should stay visible without dominating the control center.',
+      'Education stays visible without dominating the control center.',
       'The next layer is live academic detail and concrete milestones.',
       'Current projection keeps the long-arc program in view.',
     ],
