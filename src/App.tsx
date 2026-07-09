@@ -24,6 +24,7 @@ type ProjectionHighlightCard = { title: string; text: string }
 type CommandHistoryEntry = { id: string; text: string; context: string; action?: BusinessCommandResponse['runtimeAction']; handoff?: CommandHandoffResponse }
 type CommandSuggestion = { label: string; prompt: string }
 type EmptyStateProps = { label: string; title: string; body: string }
+type AvatarAssetStatus = 'loading' | 'ready' | 'missing'
 
 type NodeSpec = { key: Exclude<PersonalSection, 'home'>; label: string; tier: 'core' | 'secondary' }
 
@@ -201,7 +202,7 @@ function App() {
   const [reviewNoteDrafts, setReviewNoteDrafts] = useState<Record<string, string>>({})
   const [selectedReviewTaskId, setSelectedReviewTaskId] = useState<string | null>(null)
   const [projectedSections, setProjectedSections] = useState<Partial<Record<PersonalProjectionKey, LiveProjectedSection>>>({})
-  const [avatarAssetAvailable, setAvatarAssetAvailable] = useState(true)
+  const [avatarAssetStatus, setAvatarAssetStatus] = useState<AvatarAssetStatus>('loading')
 
   const dashboardData = useDashboardData()
 
@@ -464,13 +465,14 @@ function App() {
                   <Suspense fallback={<div className="visual-loading">Preparing the avatar stage…</div>}>
                     <SpaceScene activeAgents={businessAgents.length} flaggedCount={queueHealth?.flagged_count ?? 0} />
                   </Suspense>
-                  {avatarAssetAvailable ? (
+                  {avatarAssetStatus !== 'missing' ? (
                     <img
-                      className="avatar-stage-asset"
+                      className={`avatar-stage-asset ${avatarAssetStatus}`}
                       src={AVATAR_ASSET_PATH}
                       alt="Mitchell control center avatar"
                       decoding="async"
-                      onError={() => setAvatarAssetAvailable(false)}
+                      onLoad={() => setAvatarAssetStatus('ready')}
+                      onError={() => setAvatarAssetStatus('missing')}
                     />
                   ) : null}
                 </div>
