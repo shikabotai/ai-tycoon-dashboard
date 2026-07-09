@@ -92,6 +92,31 @@ function BusinessEmptyState({ label, title, body }: EmptyStateProps) {
   )
 }
 
+function RuntimeTrailPanel({ items }: { items: CommandHistoryEntry[] }) {
+  return (
+    <article className="glass-panel runtime-trail-panel">
+      <div className="revamp-kicker">Runtime Trail</div>
+      {items.length > 0 ? (
+        <div className="runtime-trail-list">
+          {items.map((item) => (
+            <div key={item.id} className="runtime-trail-item">
+              <span>{item.action?.status.replace(/_/g, ' ') ?? 'recorded'} · {item.action ? formatActionTime(item.action.executedAt) : 'timestamp unavailable'}</span>
+              <strong>{item.action?.label ?? item.text}</strong>
+              <p>{item.handoff ? `${item.handoff.status.replace(/_/g, ' ')} · ${item.handoff.auditId}` : item.action?.effect}</p>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <BusinessEmptyState
+          label="Runtime trail"
+          title="No actions recorded yet"
+          body="Commands, assistant handoffs, and review decisions will collect here as the cockpit moves work."
+        />
+      )}
+    </article>
+  )
+}
+
 function loadStoredLoginState() {
   if (typeof window === 'undefined') return { attempts: 0, lockoutUntil: 0 }
   try {
@@ -466,6 +491,7 @@ function App() {
                 <h3>{queueHealth?.runnable_count ?? 0} runnable, {queueHealth?.flagged_count ?? 0} flagged</h3>
                 <p>{topPendingReview ? `Top review pressure: ${topPendingReview.taskTitle}` : 'The business grid is ready for the next workflow wave, with room to move the highest-leverage task forward.'}</p>
               </article>
+              <RuntimeTrailPanel items={actionTrail} />
               <article className="glass-panel principle-panel">
                 <div className="revamp-kicker">Command Principle</div>
                 <h3>Private cockpit first</h3>
@@ -665,26 +691,7 @@ function App() {
                 />
               )}
             </article>
-            <article className="glass-panel runtime-trail-panel">
-              <div className="revamp-kicker">Runtime Trail</div>
-              {actionTrail.length > 0 ? (
-                <div className="runtime-trail-list">
-                  {actionTrail.map((item) => (
-                    <div key={item.id} className="runtime-trail-item">
-                      <span>{item.action?.status.replace(/_/g, ' ') ?? 'recorded'} · {item.action ? formatActionTime(item.action.executedAt) : 'timestamp unavailable'}</span>
-                      <strong>{item.action?.label ?? item.text}</strong>
-                      <p>{item.handoff ? `${item.handoff.status.replace(/_/g, ' ')} · ${item.handoff.auditId}` : item.action?.effect}</p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <BusinessEmptyState
-                  label="Runtime trail"
-                  title="No actions recorded yet"
-                  body="Commands, assistant handoffs, and review decisions will collect here as the cockpit moves work."
-                />
-              )}
-            </article>
+            <RuntimeTrailPanel items={actionTrail} />
           </aside>
         </main>
       )}
