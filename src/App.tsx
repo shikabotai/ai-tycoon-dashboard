@@ -236,6 +236,7 @@ function App() {
     if (!draft) return null
     return routeCommand(draft, { appMode, personalSection, businessPanel })
   }, [appMode, businessPanel, commandValue, personalSection])
+  const actionTrail = useMemo(() => commandHistory.filter((item) => item.action).slice(0, 3), [commandHistory])
 
   const currentPersonalContent = personalSection === 'home' ? null : PERSONAL_SECTION_CONTENT[personalSection]
   const currentPersonalData = useMemo<PersonalSectionData | null>(() => {
@@ -661,6 +662,26 @@ function App() {
                   label="Review dock"
                   title="Approval lane clear"
                   body="The next artifact requiring a decision will pin here with status, provenance, and action controls."
+                />
+              )}
+            </article>
+            <article className="glass-panel runtime-trail-panel">
+              <div className="revamp-kicker">Runtime Trail</div>
+              {actionTrail.length > 0 ? (
+                <div className="runtime-trail-list">
+                  {actionTrail.map((item) => (
+                    <div key={item.id} className="runtime-trail-item">
+                      <span>{item.action?.status.replace(/_/g, ' ') ?? 'recorded'} · {item.action ? formatActionTime(item.action.executedAt) : 'timestamp unavailable'}</span>
+                      <strong>{item.action?.label ?? item.text}</strong>
+                      <p>{item.handoff ? `${item.handoff.status.replace(/_/g, ' ')} · ${item.handoff.auditId}` : item.action?.effect}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <BusinessEmptyState
+                  label="Runtime trail"
+                  title="No actions recorded yet"
+                  body="Commands, assistant handoffs, and review decisions will collect here as the cockpit moves work."
                 />
               )}
             </article>
