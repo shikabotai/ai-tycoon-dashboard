@@ -32,6 +32,7 @@ const MAX_LOGIN_ATTEMPTS = 10
 const LOCKOUT_MS = 10 * 60 * 1000
 const SESSION_KEY = 'control-center-auth'
 const LOGIN_STATE_KEY = 'control-center-login-state'
+const COMMAND_HISTORY_KEY = 'control-center-command-history'
 
 const PERSONAL_NODES: NodeSpec[] = [
   { key: 'vessel', label: 'Vessel', tier: 'core' },
@@ -104,6 +105,42 @@ function storeLoginState(state: { attempts: number; lockoutUntil: number }) {
   window.localStorage.setItem(LOGIN_STATE_KEY, JSON.stringify(state))
 }
 
+function isRuntimeAction(value: unknown): value is BusinessCommandResponse['runtimeAction'] {
+  if (!value || typeof value !== 'object') return false
+  const action = value as Partial<BusinessCommandResponse['runtimeAction']>
+  return typeof action.id === 'string' &&
+    typeof action.label === 'string' &&
+    typeof action.status === 'string' &&
+    typeof action.effect === 'string'
+}
+
+function loadStoredCommandHistory(): CommandHistoryEntry[] {
+  if (typeof window === 'undefined') return []
+  try {
+    const raw = window.localStorage.getItem(COMMAND_HISTORY_KEY)
+    if (!raw) return []
+    const parsed = JSON.parse(raw) as Partial<CommandHistoryEntry>[]
+    if (!Array.isArray(parsed)) return []
+
+    return parsed
+      .filter((item) => typeof item.id === 'string' && typeof item.text === 'string' && typeof item.context === 'string')
+      .map((item) => ({
+        id: item.id as string,
+        text: item.text as string,
+        context: item.context as string,
+        action: isRuntimeAction(item.action) ? item.action : undefined,
+      }))
+      .slice(0, 6)
+  } catch {
+    return []
+  }
+}
+
+function storeCommandHistory(history: CommandHistoryEntry[]) {
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(COMMAND_HISTORY_KEY, JSON.stringify(history.slice(0, 6)))
+}
+
 function App() {
   const [authed, setAuthed] = useState(false)
   const [appMode, setAppMode] = useState<AppMode>('personal')
@@ -116,7 +153,7 @@ function App() {
   const [attempts, setAttempts] = useState(0)
   const [lockoutUntil, setLockoutUntil] = useState(0)
   const [now, setNow] = useState(() => Date.now())
-  const [commandHistory, setCommandHistory] = useState<CommandHistoryEntry[]>([])
+  const [commandHistory, setCommandHistory] = useState<CommandHistoryEntry[]>(() => loadStoredCommandHistory())
   const [commandResponse, setCommandResponse] = useState('Control center live. Projection layers active, Business Command ready, and the next move can route from here.')
   const [reviewNoteDrafts, setReviewNoteDrafts] = useState<Record<string, string>>({})
   const [selectedReviewTaskId, setSelectedReviewTaskId] = useState<string | null>(null)
@@ -137,6 +174,10 @@ function App() {
     const id = window.setInterval(() => setNow(Date.now()), 1000)
     return () => window.clearInterval(id)
   }, [])
+
+  useEffect(() => {
+    storeCommandHistory(commandHistory)
+  }, [commandHistory])
 
   useEffect(() => {
     let cancelled = false
