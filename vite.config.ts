@@ -1,13 +1,16 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { fileURLToPath, URL } from 'node:url'
 import { readAutopilotStatus } from './src/data/autopilotStatus'
 import { buildBusinessCommandResponse } from './src/server/commandRouteApi'
 import { getProjectedSection } from './src/server/personalProjectionApi'
 
+const dashboardRoot = fileURLToPath(new URL('.', import.meta.url))
+
 export default defineConfig({
   server: {
     fs: {
-      allow: ['/Users/shika/.openclaw/workspace/PunkRecords'],
+      allow: [dashboardRoot, '/Users/shika/.openclaw/workspace/PunkRecords'],
     },
   },
   plugins: [

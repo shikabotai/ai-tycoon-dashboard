@@ -105,6 +105,16 @@ button {
   gap: 14px;
 }
 
+.revamp-login-card h1 {
+  font-size: clamp(2rem, 9vw, 3.35rem);
+  line-height: 1.02;
+}
+
+.revamp-topbar h1 {
+  font-size: clamp(2.35rem, 7vw, 3.35rem);
+  line-height: 1.02;
+}
+
 .revamp-login-card h1,
 .revamp-topbar h1,
 .avatar-stage-copy h2,
@@ -112,6 +122,7 @@ button {
 .revamp-detail-hero h2 {
   margin: 0;
   letter-spacing: -0.03em;
+  color: var(--text);
 }
 
 .revamp-kicker {
