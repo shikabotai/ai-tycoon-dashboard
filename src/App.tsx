@@ -32,6 +32,8 @@ type CoreDashboardDefinition = ProjectedDashboard
 
 type NodeSpec = { key: Exclude<PersonalSection, 'home'>; label: string; tier: 'core' | 'secondary' }
 type NavItem = { page: AppPage; label: string; description: string }
+type PageDirective = { outcome: string; system: string; usefulFor: string; cadence: string }
+type GrowthLoopCard = { page: Exclude<PersonalSection, 'home'>; label: string; command: string; result: string }
 
 const VALID_USERNAME = 'mthanath64'
 const VALID_PASSWORD = 'Mitch2002'
@@ -82,6 +84,100 @@ const BUSINESS_NAV_ITEMS: NavItem[] = [
   { page: 'agents', label: 'Agents', description: 'Workload and chambers' },
   { page: 'review-dock', label: 'Review Dock', description: 'Approval decisions' },
   { page: 'runtime-trail', label: 'Runtime Trail', description: 'Command provenance' },
+]
+
+const PAGE_DIRECTIVES: Record<AppPage, PageDirective> = {
+  home: {
+    outcome: 'Know the day in under a minute',
+    system: 'Identity, body, work, money, learning, and relationships compressed into one operating view.',
+    usefulFor: 'Choosing what deserves attention before the day gets noisy.',
+    cadence: 'Daily scan',
+  },
+  vessel: {
+    outcome: 'Protect energy and physique momentum',
+    system: 'Training, nutrition, recovery, and discipline signals translated into next actions.',
+    usefulFor: 'Keeping the body system aligned with confidence, health, and consistency.',
+    cadence: 'Daily check',
+  },
+  identity: {
+    outcome: 'Act like the person you are building',
+    system: 'Mission, ideal-self gap, year theme, and blockers kept in one decision frame.',
+    usefulFor: 'Making choices from identity instead of mood or pressure.',
+    cadence: 'Morning and reset moments',
+  },
+  systems: {
+    outcome: 'Reduce open loops',
+    system: 'Tasks, automations, blockers, and operations pressure surfaced as a control layer.',
+    usefulFor: 'Turning scattered obligations into a small number of executable moves.',
+    cadence: 'Daily command',
+  },
+  ventures: {
+    outcome: 'Aim effort at the highest-upside line',
+    system: 'Portfolio pressure, venture priority, blockers, and ROI logic kept separate from live ops.',
+    usefulFor: 'Preventing idea sprawl and choosing the best next bet.',
+    cadence: 'Weekly strategy',
+  },
+  career: {
+    outcome: 'Convert work into leverage',
+    system: 'Role trajectory, compensation moves, portfolio proof, and skill compounding in one board.',
+    usefulFor: 'Making shipped work count toward opportunity, income, and reputation.',
+    cadence: 'Weekly review',
+  },
+  wealth: {
+    outcome: 'Build capital around leverage',
+    system: 'Income engines, cashflow stance, priority gaps, and finance visibility separated cleanly.',
+    usefulFor: 'Focusing money decisions on career, venture, and life ROI.',
+    cadence: 'Weekly money review',
+  },
+  education: {
+    outcome: 'Learn what compounds',
+    system: 'Program, deadlines, tradeoffs, and career value tied into one execution lane.',
+    usefulFor: 'Keeping school useful without letting it swallow the rest of the system.',
+    cadence: 'Study planning',
+  },
+  knowledge: {
+    outcome: 'Turn information into better decisions',
+    system: 'Mental models, references, learning domains, and knowledge gaps converted into tools.',
+    usefulFor: 'Using what you learn to improve choices, not just collect notes.',
+    cadence: 'Weekly extraction',
+  },
+  relationships: {
+    outcome: 'Maintain real connection with respect',
+    system: 'Care actions, environment fit, social confidence, and privacy boundaries summarized safely.',
+    usefulFor: 'Making relationships actionable without exposing private detail.',
+    cadence: 'Weekly touchpoint',
+  },
+  'business-command': {
+    outcome: 'Move the business with fewer clicks',
+    system: 'Queue pressure, revenue signals, reviews, and runtime actions in one command surface.',
+    usefulFor: 'Knowing what business work should move, approve, or escalate first.',
+    cadence: 'Live ops',
+  },
+  agents: {
+    outcome: 'See who is carrying what',
+    system: 'Agent chambers, assignments, costs, active tasks, and alert pressure grouped together.',
+    usefulFor: 'Balancing automated work without losing sight of ownership.',
+    cadence: 'Live ops',
+  },
+  'review-dock': {
+    outcome: 'Approve only with context',
+    system: 'Artifacts, decision notes, event evidence, and explicit approve or deny controls.',
+    usefulFor: 'Keeping quality high while work continues moving.',
+    cadence: 'As needed',
+  },
+  'runtime-trail': {
+    outcome: 'Trust the system because it leaves evidence',
+    system: 'Commands, handoffs, safety notes, audit ids, and provenance stored as a ledger.',
+    usefulFor: 'Understanding what happened and why before delegating more.',
+    cadence: 'Audit review',
+  },
+}
+
+const GROWTH_LOOP_CARDS: GrowthLoopCard[] = [
+  { page: 'identity', label: 'Decide', command: 'Start from mission and current self gap.', result: 'Cleaner choices' },
+  { page: 'systems', label: 'Execute', command: 'Collapse open loops into one next move.', result: 'Less drag' },
+  { page: 'vessel', label: 'Energize', command: 'Protect training, food, and recovery rhythm.', result: 'More capacity' },
+  { page: 'wealth', label: 'Compound', command: 'Aim money and effort at leverage engines.', result: 'More options' },
 ]
 
 const PERSONAL_NODES: NodeSpec[] = [
@@ -628,6 +724,14 @@ function App() {
     ? GROWTH_DASHBOARD_DEFINITIONS[personalSection]
     : null
   const currentSectionDashboard = currentPersonalData?.dashboard ?? currentCoreDashboard ?? currentGrowthDashboard
+  const currentDirective = PAGE_DIRECTIVES[currentPage]
+  const primaryNextMove = currentSectionDashboard?.actionRows[0]?.title ??
+    (isBusinessPage(currentPage)
+      ? (topPendingReview ? `Review ${topPendingReview.taskTitle}` : 'Keep the operations lane clear')
+      : 'Start with the strongest signal')
+  const currentEvidenceLabel = currentPersonalData?.freshness?.label ??
+    (isBusinessPage(currentPage) ? 'Live business runtime' : 'Projected personal records')
+  const currentSignalQuality = currentPersonalData?.freshness?.stale ? 'Needs refresh' : appMode === 'business' ? 'Live feed' : 'Usable signal'
 
   const highlightCards = useMemo<ProjectionHighlightCard[]>(() => {
     if (!currentPersonalData) return []
@@ -1093,7 +1197,7 @@ function App() {
         <div>
           <div className="revamp-kicker">Mitchell Control Center</div>
           <h1>{pageLabel(currentPage)}</h1>
-          <p>Private personal and business operating system with direct routes for every major dashboard.</p>
+          <p>{currentDirective.outcome}. {currentDirective.system}</p>
         </div>
         <div className="revamp-top-actions">
           <button className={appMode === 'personal' ? 'revamp-toggle active' : 'revamp-toggle'} onClick={() => navigateToPage('home')}>Personal</button>
@@ -1127,6 +1231,29 @@ function App() {
           </div>
         </section>
       </nav>
+
+      <section className="daily-command-strip" aria-label="Current command summary">
+        <article className="daily-command-primary">
+          <span>Best next move</span>
+          <strong>{primaryNextMove}</strong>
+          <p>{currentDirective.usefulFor}</p>
+        </article>
+        <article>
+          <span>Signal quality</span>
+          <strong>{currentSignalQuality}</strong>
+          <p>{currentEvidenceLabel}</p>
+        </article>
+        <article>
+          <span>Cadence</span>
+          <strong>{currentDirective.cadence}</strong>
+          <p>Designed for fast scanning, then deeper action only when needed.</p>
+        </article>
+        <article className="daily-command-action">
+          <span>Command lane</span>
+          <strong>Ask, route, decide</strong>
+          <button className="revamp-command-btn solid" onClick={() => setCommandOpen(true)}>Open command</button>
+        </article>
+      </section>
 
       <section className="revamp-status-ribbon">
         <div><span>Current route</span><strong>{currentPath}</strong></div>
@@ -1189,6 +1316,15 @@ function App() {
                   <button key={node.key} className={`avatar-node-pill ${node.tier}`} onClick={() => navigateToPage(node.key)}>{node.label}</button>
                 ))}
               </div>
+              <div className="growth-loop-board">
+                {GROWTH_LOOP_CARDS.map((item, index) => (
+                  <button key={item.page} className="growth-loop-card" onClick={() => navigateToPage(item.page)}>
+                    <span>0{index + 1} · {item.label}</span>
+                    <strong>{item.command}</strong>
+                    <small>{item.result}</small>
+                  </button>
+                ))}
+              </div>
             </section>
 
             <section className="revamp-side-stack">
@@ -1204,9 +1340,9 @@ function App() {
               </article>
               <RuntimeTrailPanel items={actionTrail} />
               <article className="glass-panel principle-panel">
-                <div className="revamp-kicker">Command Principle</div>
-                <h3>Route to the right surface</h3>
-                <p>Each major area has its own dashboard, source context, and action lane so the home screen stays useful without becoming the whole product.</p>
+                <div className="revamp-kicker">Simple Growth Logic</div>
+                <h3>Decide, execute, energize, compound</h3>
+                <p>The home page now acts like an operating map: it shows the most useful loop first, then lets each dedicated dashboard carry its own deeper work.</p>
               </article>
             </section>
           </main>
@@ -1219,6 +1355,11 @@ function App() {
                 <h2>{currentPersonalContent?.title}</h2>
                 <p>{currentPersonalData?.heroSummary}</p>
               </div>
+              <aside className="section-utility-card">
+                <span>{currentDirective.cadence}</span>
+                <strong>{currentDirective.outcome}</strong>
+                <p>{currentDirective.usefulFor}</p>
+              </aside>
             </section>
             <section className="revamp-card-grid">
               {currentPersonalData?.summaryCards.map((card) => (
