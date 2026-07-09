@@ -34,6 +34,7 @@ const LOCKOUT_MS = 10 * 60 * 1000
 const SESSION_KEY = 'control-center-auth'
 const LOGIN_STATE_KEY = 'control-center-login-state'
 const COMMAND_HISTORY_KEY = 'control-center-command-history'
+const AVATAR_ASSET_PATH = '/avatar/control-center-avatar.png'
 
 const PERSONAL_NODES: NodeSpec[] = [
   { key: 'vessel', label: 'Vessel', tier: 'core' },
@@ -200,6 +201,7 @@ function App() {
   const [reviewNoteDrafts, setReviewNoteDrafts] = useState<Record<string, string>>({})
   const [selectedReviewTaskId, setSelectedReviewTaskId] = useState<string | null>(null)
   const [projectedSections, setProjectedSections] = useState<Partial<Record<PersonalProjectionKey, LiveProjectedSection>>>({})
+  const [avatarAssetAvailable, setAvatarAssetAvailable] = useState(true)
 
   const dashboardData = useDashboardData()
 
@@ -462,6 +464,15 @@ function App() {
                   <Suspense fallback={<div className="visual-loading">Preparing the avatar stage…</div>}>
                     <SpaceScene activeAgents={businessAgents.length} flaggedCount={queueHealth?.flagged_count ?? 0} />
                   </Suspense>
+                  {avatarAssetAvailable ? (
+                    <img
+                      className="avatar-stage-asset"
+                      src={AVATAR_ASSET_PATH}
+                      alt="Mitchell control center avatar"
+                      decoding="async"
+                      onError={() => setAvatarAssetAvailable(false)}
+                    />
+                  ) : null}
                 </div>
                 <div className="avatar-stage-signals">
                   {homeSignalCards.map((card) => (
