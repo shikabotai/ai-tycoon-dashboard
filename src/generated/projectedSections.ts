@@ -3,7 +3,7 @@ import type { ProjectedSection } from '../data/projectedTypes'
 
 export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, ProjectedSection>> = {
   "identity": {
-    "heroSummary": "Identity is currently grounded in the Execution (ship + prep) year theme, with ship the software as the immediate mission and the ideal self acting as the compass.",
+    "heroSummary": "Identity is grounded in the Execution (ship + prep) year theme, with ship the software as the immediate mission and the ideal self acting as the compass.",
     "summaryCards": [
       {
         "label": "Current identity statement",
@@ -28,12 +28,12 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Current dilemmas / blockers",
         "value": "Environment + consistency",
-        "note": "Current sources still need richer blocker extraction."
+        "note": "Source records are ready for deeper blocker extraction."
       },
       {
         "label": "Recent lessons / growth",
         "value": "Bridge current self to ideal self",
-        "note": "Identity plan is still serving as the main growth lens."
+        "note": "The identity plan remains the main growth lens."
       }
     ],
     "highlights": [
@@ -68,7 +68,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Sleep / recovery",
         "value": "Best-effort projection",
-        "note": "Direct sleep/recovery parsers are still pending.",
+        "note": "Sleep and recovery are estimated until direct recovery evidence is available.",
         "stale": true
       },
       {
@@ -94,7 +94,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     }
   },
   "systems": {
-    "heroSummary": "Systems is grounded in the Operations Task Board with 0 open checklist items currently visible and 0 completed ones captured in the source note.",
+    "heroSummary": "Systems is grounded in the Operations Task Board with 0 open checklist items visible and 0 completed ones captured in the source note.",
     "summaryCards": [
       {
         "label": "Operations board",
@@ -114,7 +114,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Automation posture",
         "value": "Manual + AI-assisted",
-        "note": "Current systems layer is still hybrid, not fully automated yet."
+        "note": "The systems layer blends human judgment with AI support."
       },
       {
         "label": "Operating principle",
@@ -140,7 +140,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     }
   },
   "ventures": {
-    "heroSummary": "Ventures is currently a portfolio view with 13 venture bullets visible in the Ventures MOC and 4 explicit in-progress markers across annual goals.",
+    "heroSummary": "Ventures presents a portfolio view with 13 venture bullets visible in the Ventures MOC and 4 explicit in-progress markers across annual goals.",
     "summaryCards": [
       {
         "label": "Portfolio inventory",
@@ -160,7 +160,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Capital deployment stance",
         "value": "Selective",
-        "note": "This control center should eventually expose ROI-ranked moves, not just inventories."
+        "note": "The control center is moving toward ROI-ranked moves rather than simple inventory."
       },
       {
         "label": "Biggest operating need",
@@ -185,7 +185,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     }
   },
   "knowledge": {
-    "heroSummary": "Knowledge is currently more execution-supportive than archival, with learning tied to decision quality, identity formation, and active goals instead of passive accumulation.",
+    "heroSummary": "Knowledge is execution-supportive rather than archival, with learning tied to decision quality, identity formation, and active goals.",
     "summaryCards": [
       {
         "label": "Current learning domains",
@@ -195,7 +195,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Most valuable mental models",
         "value": "1 explicit mentions",
-        "note": "Current source notes imply frameworks matter, but this page still needs richer extraction."
+        "note": "Source notes show frameworks as part of the decision system."
       },
       {
         "label": "Recently added knowledge",
@@ -222,8 +222,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "highlights": [
       "Knowledge should help action, not become a hoarding layer.",
-      "Current projections are still strategy-heavy and should deepen later.",
-      "This section is ready for richer repo traversal when Phase 1 core is complete."
+      "The strategy layer is established and ready for deeper source traversal.",
+      "This section is ready for richer source traversal as the control center deepens."
     ],
     "freshness": {
       "label": "Knowledge planning docs",
@@ -232,7 +232,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     }
   },
   "career": {
-    "heroSummary": "Career is currently in a leverage-building phase, with job-search preparation and long-arc ML credentials both visible in the source planning system.",
+    "heroSummary": "Career is in a leverage-building phase, with job-search preparation and long-arc ML credentials both visible in the source planning system.",
     "summaryCards": [
       {
         "label": "Current career trajectory",
@@ -262,13 +262,13 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Next career milestone",
         "value": "Interview-ready profile",
-        "note": "This page should later gain direct portfolio/resume artifacts and cadence tracking."
+        "note": "The next layer is direct portfolio, resume, and cadence evidence."
       }
     ],
     "highlights": [
       "Career blends income leverage with long-term ML positioning.",
       "Annual goals and 5-year goals are the main current sources.",
-      "This page should later expose evidence, not just strategy text."
+      "The next layer is direct evidence from portfolio, resume, and interview cadence."
     ],
     "freshness": {
       "label": "Career planning docs",
@@ -277,7 +277,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     }
   },
   "education": {
-    "heroSummary": "Education is currently a supporting but serious track, centered on completing the Georgia Tech MSML path while balancing career and execution priorities.",
+    "heroSummary": "Education is a supporting but serious track, centered on completing the Georgia Tech MSML path while balancing career and execution priorities.",
     "summaryCards": [
       {
         "label": "Current program / course load",
@@ -297,7 +297,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Support system",
         "value": "Self-directed",
-        "note": "This page should later surface concrete timelines, deliverables, and pacing."
+        "note": "The next layer is concrete timelines, deliverables, and pacing."
       },
       {
         "label": "Biggest risk",
@@ -313,7 +313,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     "highlights": [
       "Education is strategic, not ornamental.",
       "MSML is the clearest current anchor.",
-      "This section still needs deeper milestone extraction later."
+      "The next layer is deeper milestone extraction."
     ],
     "freshness": {
       "label": "Education planning docs",
@@ -322,7 +322,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     }
   },
   "wealth": {
-    "heroSummary": "Wealth is currently framed as leverage-building rather than passive tracking, with compensation growth and venture upside both acting as the main financial drivers.",
+    "heroSummary": "Wealth is framed as leverage-building rather than passive tracking, with compensation growth and venture upside both acting as the main financial drivers.",
     "summaryCards": [
       {
         "label": "Current financial priorities",
@@ -342,12 +342,12 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Main wealth engines",
         "value": "Career + ventures",
-        "note": "Those are still the clearest financial multipliers in the current plan."
+        "note": "These are the clearest financial multipliers in the current plan."
       },
       {
         "label": "Current blind spot",
         "value": "Live net-worth visibility",
-        "note": "This section still needs stronger direct financial source integration.",
+        "note": "This section is waiting on stronger direct financial source integration.",
         "stale": true
       },
       {
@@ -358,7 +358,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "highlights": [
       "Wealth is being treated as leverage, not vanity tracking.",
-      "Current plan is still income- and venture-centric.",
+      "The current plan is income- and venture-centric.",
       "This section will benefit from deeper structured source integration later."
     ],
     "freshness": {
@@ -368,7 +368,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     }
   },
   "relationships": {
-    "heroSummary": "Relationships is currently more directional than fully instrumented, with family grounding and serious long-term partnership still visible in the planning layer.",
+    "heroSummary": "Relationships are more directional than fully instrumented, with family grounding and serious long-term partnership visible in the planning layer.",
     "summaryCards": [
       {
         "label": "Current relationship posture",
@@ -383,12 +383,12 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Social growth edge",
         "value": "Confidence + environment",
-        "note": "Identity notes imply social confidence and environment are still part of the work."
+        "note": "Identity notes keep social confidence and environment in focus."
       },
       {
         "label": "Main blocker",
         "value": "Context mismatch",
-        "note": "The right environment and consistent exposure still matter more than abstract intention."
+        "note": "The right environment and consistent exposure matter more than abstract intention."
       },
       {
         "label": "Desired outcome",
@@ -402,7 +402,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       }
     ],
     "highlights": [
-      "Relationships is still a strategy-heavy section today.",
+      "Relationships is a strategy-heavy section today.",
       "Family and future partnership are both visible anchors.",
       "This page should gain stronger direct evidence over time."
     ],

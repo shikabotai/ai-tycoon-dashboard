@@ -184,8 +184,8 @@ function App() {
     const projected = projectedSections[personalSection as PersonalProjectionKey]
     if (projected) return projected
     return {
-      heroSummary: `${currentPersonalContent.title} is drawing in live PunkRecords projections so this chamber can resolve into a true operating view for Mitchell’s private control center.`,
-      summaryCards: currentPersonalContent.summaryCards.map((card) => ({ label: card, value: 'Resolving', note: 'Live PunkRecords projection data is still assembling this signal.' })),
+      heroSummary: `${currentPersonalContent.title} is drawing from PunkRecords so this chamber can present a focused operating view for Mitchell’s private control center.`,
+      summaryCards: currentPersonalContent.summaryCards.map((card) => ({ label: card, value: 'Resolving', note: 'Source records are being organized into a usable operating signal.' })),
       highlights: currentPersonalContent.highlights,
     }
   }, [currentPersonalContent, personalSection, projectedSections])
@@ -328,8 +328,8 @@ function App() {
             <section className="avatar-stage-card">
               <div className="avatar-stage-copy">
                 <div className="revamp-kicker">Avatar Stage</div>
-                <h2>Mitchell’s command presence, not just a dashboard shell</h2>
-                <p>The home screen now centers the avatar stage as a live identity surface, with personal signal cards and business pressure orbiting around it instead of competing with it.</p>
+                <h2>Mitchell’s command presence at the center</h2>
+                <p>The home screen centers the avatar stage as a live identity surface, with personal signal cards and business pressure orbiting around it.</p>
               </div>
               <div className="avatar-stage-shell">
                 <div className="avatar-stage-hud">
@@ -372,7 +372,7 @@ function App() {
               <article className="glass-panel focus-panel">
                 <div className="revamp-kicker">Personal Focus</div>
                 <h3>{projectedSections.identity?.summaryCards[1]?.value ?? 'Ideal self profile loading'}</h3>
-                <p>{projectedSections.identity?.summaryCards[1]?.note ?? 'Using real identity projection data to shape the home presentation instead of generic motivational copy.'}</p>
+                <p>{projectedSections.identity?.summaryCards[1]?.note ?? 'Identity projections shape the home presentation around grounded personal context.'}</p>
               </article>
               <article className="glass-panel pulse-panel">
                 <div className="revamp-kicker">Business Pulse</div>
@@ -382,7 +382,7 @@ function App() {
               <article className="glass-panel principle-panel">
                 <div className="revamp-kicker">Command Principle</div>
                 <h3>Private cockpit first</h3>
-                <p>The control center should read like Mitchell’s private operating deck, with business systems orbiting a strong personal core instead of flattening the experience into a generic ops dashboard.</p>
+                <p>The control center reads as Mitchell’s private operating deck, with business systems orbiting a strong personal core.</p>
               </article>
             </section>
           </main>
@@ -417,7 +417,7 @@ function App() {
                 <article className={`glass-panel detail-highlight-card freshness-card${currentPersonalData.freshness.stale ? ' stale' : ''}`}>
                   <div className="revamp-kicker">Freshness</div>
                   <h3>{currentPersonalData.freshness.label}</h3>
-                  <p>{currentPersonalData.freshness.ageDays == null ? 'Source recency unavailable.' : `${currentPersonalData.freshness.ageDays} day${currentPersonalData.freshness.ageDays === 1 ? '' : 's'} since latest source update.`}</p>
+                  <p>{currentPersonalData.freshness.ageDays == null ? 'Source recency has not been established yet.' : `${currentPersonalData.freshness.ageDays} day${currentPersonalData.freshness.ageDays === 1 ? '' : 's'} since latest source update.`}</p>
                 </article>
               ) : null}
             </section>
@@ -476,7 +476,7 @@ function App() {
                 <article className="business-signal-card">
                   <span>Runtime load</span>
                   <strong>{queueHealth?.runnable_count ?? 0} runnable</strong>
-                  <p>{queueHealth?.flagged_count ?? 0} flagged tasks currently need attention.</p>
+                  <p>{queueHealth?.flagged_count ?? 0} flagged tasks need attention.</p>
                 </article>
                 <article className="business-signal-card">
                   <span>Output today</span>
@@ -490,7 +490,7 @@ function App() {
               <article className="glass-panel business-metric-card"><span>Ventures</span><strong>{dashboardData.projects.length}</strong><p>Tracked projects visible in Supabase.</p></article>
               <article className="glass-panel business-metric-card"><span>Revenue / Margin</span><strong>{formatUsd(businessSummary.revenueUsd)} / {formatUsd(businessSummary.marginUsd)}</strong><p>Latest live business snapshot.</p></article>
               <article className="glass-panel business-metric-card"><span>Approval Pressure</span><strong>{businessSummary.approvalsPending}</strong><p>Items waiting in review.</p></article>
-              <article className="glass-panel business-metric-card"><span>Recent Output</span><strong>{businessSummary.publishedToday} today</strong><p>{recentActivity[0] ? `${recentActivity[0].taskTitle} · ${recentActivity[0].eventType}` : 'No fresh output has landed yet, but the command deck is ready for the next release cycle.'}</p></article>
+              <article className="glass-panel business-metric-card"><span>Recent Output</span><strong>{businessSummary.publishedToday} today</strong><p>{recentActivity[0] ? `${recentActivity[0].taskTitle} · ${recentActivity[0].eventType}` : 'Output lane quiet. The command deck is ready for the next release cycle.'}</p></article>
             </section>
 
             {businessPanel !== 'review' ? (
@@ -510,7 +510,7 @@ function App() {
                     <BusinessEmptyState
                       label="Agent hierarchy"
                       title="No active chambers reporting"
-                      body="The hierarchy stays ready for the next runtime sync instead of showing a broken grid."
+                      body="The hierarchy stays ready for the next runtime sync with a clear, intentional quiet state."
                     />
                   )}
                 </div>

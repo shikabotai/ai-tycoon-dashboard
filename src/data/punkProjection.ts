@@ -57,9 +57,9 @@ export function buildVesselData(): ProjectedSection {
     heroSummary: `Current body system is in a ${activeDirection.toLowerCase()} phase with ${currentWeight} lb as the latest working reference and a target range of ${targetWeight} lb by September.`,
     summaryCards: [
       { label: 'Weight / body metrics', value: `${currentWeight} lb`, note: `Target ${targetWeight} lb by September from Fitness Overview.` },
-      { label: 'Workout consistency', value: workoutDate ? `Last logged ${workoutDate}` : 'No recent log', note: workoutDate ? `${workoutAge} days since latest workout evidence.` : 'Workout log needs evidence.', stale: (workoutAge ?? 999) > 4 },
-      { label: 'Nutrition consistency', value: nutritionDate ? `Last logged ${nutritionDate}` : 'No recent log', note: nutritionDate ? `${nutritionAge} days since latest nutrition evidence.` : 'Nutrition log needs evidence.', stale: (nutritionAge ?? 999) > 3 },
-      { label: 'Sleep / recovery', value: 'Best-effort projection', note: 'Sleep and recovery will infer status until direct sleep/recovery parsers are added.', stale: true },
+      { label: 'Workout consistency', value: workoutDate ? `Last logged ${workoutDate}` : 'Awaiting workout log', note: workoutDate ? `${workoutAge} days since latest workout evidence.` : 'Workout evidence has not reached the control center yet.', stale: (workoutAge ?? 999) > 4 },
+      { label: 'Nutrition consistency', value: nutritionDate ? `Last logged ${nutritionDate}` : 'Awaiting nutrition log', note: nutritionDate ? `${nutritionAge} days since latest nutrition evidence.` : 'Nutrition evidence has not reached the control center yet.', stale: (nutritionAge ?? 999) > 3 },
+      { label: 'Sleep / recovery', value: 'Best-effort projection', note: 'Sleep and recovery are estimated until direct recovery evidence is available.', stale: true },
       { label: 'Mental state / discipline', value: 'Consistency > intensity', note: 'Current philosophy emphasizes making 3 sessions/week automatic first.' },
       { label: 'Current physique goal', value: `${targetWeight} lb`, note: 'Lean, defined, and preserving muscle rather than swingy crash dieting.' },
     ],
@@ -83,7 +83,7 @@ export function buildIdentityData(): ProjectedSection {
   const socialGap = ideal.match(/\| Social confidence \|[^\n]+\|[^\n]+\|([^|]+)\|/)?.[1]?.trim() ?? 'Rebuild social confidence in the right environment.'
 
   return {
-    heroSummary: `Identity is currently grounded in the ${mission} year theme, with ${topGoal.toLowerCase()} as the immediate mission and the ideal self acting as the compass.`,
+    heroSummary: `Identity is grounded in the ${mission} year theme, with ${topGoal.toLowerCase()} as the immediate mission and the ideal self acting as the compass.`,
     summaryCards: [
       { label: 'Current identity statement', value: 'Execution-era self', note: identityStatement },
       { label: 'Ideal self alignment', value: 'Gap-aware', note: 'The ideal self is treated as a grounded compass, not fantasy.' },
@@ -109,12 +109,12 @@ export function buildSystemsData(): ProjectedSection {
   const ventureMentions = countMatches(ventures, '\n- ')
 
   return {
-    heroSummary: `Systems is grounded in the Operations Task Board with ${openItems} open checklist items currently visible and ${completedItems} completed ones captured in the source note.`,
+    heroSummary: `Systems is grounded in the Operations Task Board with ${openItems} open checklist items visible and ${completedItems} completed ones captured in the source note.`,
     summaryCards: [
       { label: 'Operations board', value: `${openItems} open`, note: 'Derived from checklist items in Operations Task Board.' },
       { label: 'Closed loops', value: `${completedItems} completed`, note: 'Completed checklist count from the same operating board.' },
       { label: 'Venture surface area', value: `${ventureMentions} listed lines`, note: 'Quick proxy for active venture inventory in Ventures MOC.' },
-      { label: 'Automation posture', value: 'Manual + AI-assisted', note: 'Current systems layer is still hybrid, not fully automated yet.' },
+      { label: 'Automation posture', value: 'Manual + AI-assisted', note: 'The systems layer blends human judgment with AI support.' },
       { label: 'Operating principle', value: 'Capture > clarify > execute', note: 'The goal is a practical operations layer, not a decorative dashboard.' },
       { label: 'Current systems need', value: 'Better live rollups', note: 'This page is now ready for richer projection modules beyond simple counts.', stale: true },
     ],
@@ -134,12 +134,12 @@ export function buildVenturesData(): ProjectedSection {
   const inProgressCount = countMatches(annualGoals.toLowerCase(), 'in progress')
 
   return {
-    heroSummary: `Ventures is currently a portfolio view with ${bulletCount} venture bullets visible in the Ventures MOC and ${inProgressCount} explicit in-progress markers across annual goals.`,
+    heroSummary: `Ventures presents a portfolio view with ${bulletCount} venture bullets visible in the Ventures MOC and ${inProgressCount} explicit in-progress markers across annual goals.`,
     summaryCards: [
       { label: 'Portfolio inventory', value: `${bulletCount} listed bullets`, note: 'Fast proxy for how much venture surface area exists in the current note set.' },
       { label: 'Current priority posture', value: 'Execution over ideation', note: 'Annual goals emphasize shipping and traction, not endless exploration.' },
       { label: 'In-progress venture goals', value: `${inProgressCount} in progress`, note: 'Pulled from the annual goals source note.' },
-      { label: 'Capital deployment stance', value: 'Selective', note: 'This control center should eventually expose ROI-ranked moves, not just inventories.' },
+      { label: 'Capital deployment stance', value: 'Selective', note: 'The control center is moving toward ROI-ranked moves rather than simple inventory.' },
       { label: 'Biggest operating need', value: 'Priority compression', note: 'Reduce surface area and make the next best move obvious.' },
       { label: 'Current blocker visibility', value: 'Improving', note: 'Business Command will complement this page with live operational blockers.' },
     ],
@@ -163,19 +163,19 @@ export function buildCareerData(): ProjectedSection {
   const currentStatus = careerParts.length >= 4 ? careerParts[3] : 'In progress'
 
   return {
-    heroSummary: 'Career is currently in a leverage-building phase, with job-search preparation and long-arc ML credentials both visible in the source planning system.',
+    heroSummary: 'Career is in a leverage-building phase, with job-search preparation and long-arc ML credentials both visible in the source planning system.',
     summaryCards: [
       { label: 'Current career trajectory', value: currentStatus || 'In progress', note: careerGoal },
       { label: 'Resume / portfolio readiness', value: 'Prep phase', note: 'Annual goals explicitly call out resume, interview, and leverage work.' },
       { label: 'Job search status', value: 'Not fully activated', note: 'The note set suggests preparation before a full push.' },
       { label: 'Skill-building progress', value: 'MSML path active', note: longArcLine || 'Georgia Tech MSML remains a visible long-arc credential target.' },
       { label: 'Current leverage opportunities', value: 'Comp increase focus', note: 'Target is a >$20k comp increase or stronger role leverage.' },
-      { label: 'Next career milestone', value: 'Interview-ready profile', note: 'This page should later gain direct portfolio/resume artifacts and cadence tracking.' },
+      { label: 'Next career milestone', value: 'Interview-ready profile', note: 'The next layer is direct portfolio, resume, and cadence evidence.' },
     ],
     highlights: [
       'Career blends income leverage with long-term ML positioning.',
       'Annual goals and 5-year goals are the main current sources.',
-      'This page should later expose evidence, not just strategy text.',
+      'The next layer is direct evidence from portfolio, resume, and interview cadence.',
     ],
     freshness: summarizeFreshness('Career planning docs', 0, 30),
   }
@@ -188,10 +188,10 @@ export function buildKnowledgeData(): ProjectedSection {
   const modelMentions = countMatches(ideal.toLowerCase(), 'framework') + countMatches(ideal.toLowerCase(), 'mental model')
 
   return {
-    heroSummary: 'Knowledge is currently more execution-supportive than archival, with learning tied to decision quality, identity formation, and active goals instead of passive accumulation.',
+    heroSummary: 'Knowledge is execution-supportive rather than archival, with learning tied to decision quality, identity formation, and active goals.',
     summaryCards: [
       { label: 'Current learning domains', value: 'Career, ventures, self-mastery', note: 'The current note set points toward practical domains rather than broad browsing.' },
-      { label: 'Most valuable mental models', value: `${modelMentions || 1} explicit mentions`, note: 'Current source notes imply frameworks matter, but this page still needs richer extraction.' },
+      { label: 'Most valuable mental models', value: `${modelMentions || 1} explicit mentions`, note: 'Source notes show frameworks as part of the decision system.' },
       { label: 'Recently added knowledge', value: 'Not yet projected', note: 'A future pass should surface recency from the knowledge-side repo structure.', stale: true },
       { label: 'High-value references', value: 'Goals + Ideal Self', note: 'Right now the strongest references are strategic and identity-oriented notes.' },
       { label: 'Current research / reading focus', value: 'Reading goal active', note: bookGoalLine || 'Annual goals include an explicit reading target.' },
@@ -199,8 +199,8 @@ export function buildKnowledgeData(): ProjectedSection {
     ],
     highlights: [
       'Knowledge should help action, not become a hoarding layer.',
-      'Current projections are still strategy-heavy and should deepen later.',
-      'This section is ready for richer repo traversal when Phase 1 core is complete.',
+      'The strategy layer is established and ready for deeper source traversal.',
+      'This section is ready for richer source traversal as the control center deepens.',
     ],
     freshness: summarizeFreshness('Knowledge strategy docs', 0, 30),
   }
@@ -208,17 +208,17 @@ export function buildKnowledgeData(): ProjectedSection {
 
 export function buildWealthData(): ProjectedSection {
   return {
-    heroSummary: 'Wealth is currently framed more as trajectory and future leverage than as a live net-worth ledger, with financial freedom still acting as the central long-arc target.',
+    heroSummary: 'Wealth is framed more as trajectory and future leverage than as a live net-worth ledger, with financial freedom acting as the central long-arc target.',
     summaryCards: [
       { label: 'Net worth trajectory', value: '$500k+ 5-year target', note: 'The five-year goals note explicitly anchors this wealth milestone.' },
-      { label: 'Cash / liquidity', value: 'Not yet projected', note: 'Phase 1 still needs a dedicated finance source layer for real balances.', stale: true },
+      { label: 'Cash / liquidity', value: 'Pending source layer', note: 'Real balances need a dedicated finance source before they appear here.', stale: true },
       { label: 'Income snapshot', value: 'W-2 + venture upside', note: 'Current notes frame the transition away from paycheck dependence as a major goal.' },
       { label: 'Investment allocation', value: 'Not yet projected', note: 'A later pass should expose accounts, allocations, and trend signals.', stale: true },
       { label: 'Current financial priorities', value: 'Increase leverage', note: 'Comp growth and venture traction both matter on the current path.' },
       { label: 'Wealth-building phase', value: 'Foundation-building', note: 'Still in the phase of increasing earning power and owned upside.' },
     ],
     highlights: [
-      'Wealth should eventually become a real finance cockpit, not a vague aspiration page.',
+      'Wealth is moving toward a real finance cockpit, not a vague aspiration page.',
       'Current projections are strategic, not account-level.',
       'This section needs deeper data sources in a later pass.',
     ],
@@ -231,18 +231,18 @@ export function buildEducationData(): ProjectedSection {
   const degreeLine = goals.split('\n').find((line) => line.includes('Georgia Tech MSML completed')) ?? ''
 
   return {
-    heroSummary: 'Education is currently a supporting but serious track, centered on completing the Georgia Tech MSML path while balancing career and execution priorities.',
+    heroSummary: 'Education is a supporting but serious track, centered on completing the Georgia Tech MSML path while balancing career and execution priorities.',
     summaryCards: [
       { label: 'Current program / course load', value: 'Georgia Tech MSML', note: degreeLine || 'The 5-year goals note keeps this degree path visible.' },
-      { label: 'Current courses', value: 'Not yet projected', note: 'This page should later surface live course-level data and deadlines.', stale: true },
-      { label: 'Upcoming deadlines', value: 'Not yet projected', note: 'A deeper academic projection layer is still needed.', stale: true },
+      { label: 'Current courses', value: 'Pending academic source', note: 'Course-level data and deadlines need a dedicated academic source before they appear here.', stale: true },
+      { label: 'Upcoming deadlines', value: 'Pending academic source', note: 'Course-level timing needs a dedicated academic source before it appears here.', stale: true },
       { label: 'Progress / completion status', value: 'In progress', note: 'The education track is active, not complete.' },
-      { label: 'Current learning focus', value: 'ML credibility + execution balance', note: 'Education supports long-term positioning, not just credential collection.' },
+      { label: 'Current learning focus', value: 'ML credibility + execution balance', note: 'Education supports long-term positioning and practical leverage.' },
       { label: 'Academic priority level', value: 'Important but not primary', note: 'Current active life priorities still lean heavily toward execution and leverage.' },
     ],
     highlights: [
       'Education should stay visible without dominating the control center.',
-      'This section still needs live academic detail later.',
+      'The next layer is live academic detail and concrete milestones.',
       'Current projection keeps the long-arc program in view.',
     ],
     freshness: summarizeFreshness('Education planning docs', 0, 45),
@@ -267,7 +267,7 @@ export function buildRelationshipsData(): ProjectedSection {
     highlights: [
       'Relationships should remain human and respectful, not become a weird quantified dashboard.',
       'Current notes emphasize timing and environment constraints.',
-      'This page is still intentionally lighter than the execution-heavy sections.',
+      'This page stays intentionally lighter than the execution-heavy sections.',
     ],
     freshness: summarizeFreshness('Relationship planning docs', 0, 45),
   }

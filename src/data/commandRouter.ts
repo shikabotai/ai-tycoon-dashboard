@@ -60,8 +60,8 @@ export function routeCommand(raw: string, context: CommandContext): CommandRoute
   return {
     route: context.appMode === 'business' ? 'business-command' : `personal-${context.personalSection}`,
     intent: 'general_command',
-    summary: `This command currently routes by active UI context (${context.appMode}).`,
-    nextAction: 'Capture the command, show routing intent, and hand off to the assistant/runtime in the next backend step.',
+    summary: `This command will use the active ${context.appMode} command context.`,
+    nextAction: 'Keep the request in the current operating lane and prepare the next action from the live context.',
     suggestedPanel: context.appMode === 'business' ? context.businessPanel as 'overview' | 'agents' | 'review' : undefined,
   }
 }
