@@ -21,6 +21,7 @@ type HomeSignalCard = { kicker: string; title: string; body: string }
 type ProjectionHighlightCard = { title: string; text: string }
 type CommandHistoryEntry = { id: string; text: string; context: string }
 type CommandSuggestion = { label: string; prompt: string }
+type EmptyStateProps = { label: string; title: string; body: string }
 
 type NodeSpec = { key: Exclude<PersonalSection, 'home'>; label: string; tier: 'core' | 'secondary' }
 
@@ -70,6 +71,16 @@ const PERSONAL_SECTION_CONTENT: Record<Exclude<PersonalSection, 'home'>, { eyebr
 
 function formatUsd(value: number) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value)
+}
+
+function BusinessEmptyState({ label, title, body }: EmptyStateProps) {
+  return (
+    <div className="business-empty-state">
+      <span>{label}</span>
+      <strong>{title}</strong>
+      <p>{body}</p>
+    </div>
+  )
 }
 
 function loadStoredLoginState() {
@@ -460,7 +471,7 @@ function App() {
                 <article className="business-signal-card">
                   <span>Approval pressure</span>
                   <strong>{businessSummary.approvalsPending}</strong>
-                  <p>{topPendingReview ? `Top queue item: ${topPendingReview.taskTitle}` : 'No review spike right now.'}</p>
+                  <p>{topPendingReview ? `Top queue item: ${topPendingReview.taskTitle}` : 'Review lane clear. New approval pressure will surface here with the next artifact.'}</p>
                 </article>
                 <article className="business-signal-card">
                   <span>Runtime load</span>
@@ -470,7 +481,7 @@ function App() {
                 <article className="business-signal-card">
                   <span>Output today</span>
                   <strong>{businessSummary.publishedToday}</strong>
-                  <p>{recentActivity[0] ? `${recentActivity[0].taskTitle} · ${recentActivity[0].eventType}` : 'No recent output events yet.'}</p>
+                  <p>{recentActivity[0] ? `${recentActivity[0].taskTitle} · ${recentActivity[0].eventType}` : 'Output lane quiet. The next publication event will become the lead signal.'}</p>
                 </article>
               </div>
             </article>
@@ -486,14 +497,22 @@ function App() {
               <article className="glass-panel">
                 <div className="revamp-kicker">Agent Hierarchy</div>
                 <div className="agent-card-grid">
-                  {businessAgents.map((agent) => (
-                    <div key={agent.id} className="agent-card-shell neon-agent-card">
-                      <span>{agent.chamberLabel}</span>
-                      <strong>{agent.displayName}</strong>
-                      <p>{agent.role} · {agent.status}</p>
-                      <p>{agent.tasks[0] ? `Current: ${agent.tasks[0].title}` : 'Standing by for the next assigned task.'}</p>
-                    </div>
-                  ))}
+                  {businessAgents.length > 0 ? (
+                    businessAgents.map((agent) => (
+                      <div key={agent.id} className="agent-card-shell neon-agent-card">
+                        <span>{agent.chamberLabel}</span>
+                        <strong>{agent.displayName}</strong>
+                        <p>{agent.role} · {agent.status}</p>
+                        <p>{agent.tasks[0] ? `Current: ${agent.tasks[0].title}` : 'Standing by for the next assigned task.'}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <BusinessEmptyState
+                      label="Agent hierarchy"
+                      title="No active chambers reporting"
+                      body="The hierarchy stays ready for the next runtime sync instead of showing a broken grid."
+                    />
+                  )}
                 </div>
               </article>
             ) : null}
@@ -551,7 +570,13 @@ function App() {
                     <button className="revamp-lock-btn" onClick={() => void decideReview(selectedReviewItem.taskId, 'rejected')}>Deny</button>
                   </div>
                 </>
-              ) : <p>The review dock is quiet right now. The next approval decision will appear here as soon as something needs your call.</p>}
+              ) : (
+                <BusinessEmptyState
+                  label="Review dock"
+                  title="Approval lane clear"
+                  body="The next artifact requiring a decision will pin here with status, provenance, and action controls."
+                />
+              )}
             </article>
           </aside>
         </main>

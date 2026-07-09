@@ -462,6 +462,34 @@ button {
   gap: 12px;
 }
 
+.business-empty-state {
+  grid-column: 1 / -1;
+  border-radius: 20px;
+  border: 1px solid rgba(111, 165, 255, 0.2);
+  background:
+    linear-gradient(180deg, rgba(13, 22, 35, 0.82), rgba(5, 9, 16, 0.88));
+  padding: 18px;
+}
+
+.business-empty-state span {
+  color: #86a9df;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.business-empty-state strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--text);
+  font-size: 1.04rem;
+}
+
+.business-empty-state p {
+  margin: 10px 0 0;
+  color: var(--muted);
+}
+
 .neon-agent-card {
   border-color: rgba(105, 165, 255, 0.22);
   background: linear-gradient(180deg, rgba(11, 16, 25, 0.92), rgba(7, 11, 18, 0.95));
