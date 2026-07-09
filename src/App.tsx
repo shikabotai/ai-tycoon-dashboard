@@ -21,9 +21,11 @@ type AppPage = PersonalSection | BusinessPage
 type LoginState = { username: string; password: string }
 type PersonalSectionData = LiveProjectedSection
 type HomeSignalCard = { kicker: string; title: string; body: string }
+type TodayCommandItem = { label: string; title: string; body: string; page?: AppPage; tone?: 'calm' | 'opportunity' | 'risk' | 'action' }
 type ProjectionHighlightCard = { title: string; text: string }
 type CommandHistoryEntry = { id: string; text: string; context: string; action?: BusinessCommandResponse['runtimeAction']; handoff?: CommandHandoffResponse }
 type CommandSuggestion = { label: string; prompt: string }
+type QuickAction = { label: string; detail: string; prompt?: string; page?: AppPage }
 type EmptyStateProps = { label: string; title: string; body: string }
 type AvatarAssetStatus = 'loading' | 'ready' | 'missing'
 type CoreDashboardSection = Extract<PersonalSection, 'vessel' | 'identity' | 'systems'>
@@ -34,6 +36,22 @@ type NodeSpec = { key: Exclude<PersonalSection, 'home'>; label: string; tier: 'c
 type NavItem = { page: AppPage; label: string; description: string }
 type PageDirective = { outcome: string; system: string; usefulFor: string; cadence: string }
 type GrowthLoopCard = { page: Exclude<PersonalSection, 'home'>; label: string; command: string; result: string }
+type GrowthLoopDefinition = {
+  target: string
+  ritual: string
+  blocker: string
+  compound: string
+  cadence: string
+}
+type CrossDomainInsight = {
+  label: string
+  title: string
+  body: string
+  recommendation: string
+  evidence: string
+  pages: Exclude<PersonalSection, 'home'>[]
+  tone: 'leverage' | 'tradeoff' | 'evidence'
+}
 
 const VALID_USERNAME = 'mthanath64'
 const VALID_PASSWORD = 'Mitch2002'
@@ -212,6 +230,13 @@ function pageLabel(page: AppPage) {
   return [...PERSONAL_NAV_ITEMS, ...BUSINESS_NAV_ITEMS].find((item) => item.page === page)?.label ?? 'Home'
 }
 
+function sourceConfidence(section?: LiveProjectedSection) {
+  if (!section) return 'Assembling'
+  if (section.freshness?.stale) return 'Needs refresh'
+  if ((section.missingData?.length ?? 0) > 0) return 'Partial'
+  return 'Grounded'
+}
+
 const COMMAND_SUGGESTIONS: Record<AppMode, CommandSuggestion[]> = {
   personal: [
     { label: 'Focus reset', prompt: 'Summarize my highest-priority personal focus right now.' },
@@ -236,6 +261,129 @@ const PERSONAL_SECTION_CONTENT: Record<Exclude<PersonalSection, 'home'>, { eyebr
   relationships: { eyebrow: 'Family and connection', title: 'Relationships', summaryCards: ['Priority snapshot', 'Connection health', 'Important people', 'Upcoming actions'], highlights: ['Family and partner vision', 'Actionable relationship focus', 'Sensitive content kept minimal'] },
   knowledge: { eyebrow: 'Mental models and references', title: 'Knowledge', summaryCards: ['Learning domains', 'Mental models', 'Recent knowledge', 'Knowledge gaps'], highlights: ['Business, finance, health, psychology', 'Knowledge browser from PunkRecords', 'Built for action'] },
 }
+
+const GROWTH_LOOP_DEFINITIONS: Record<Exclude<PersonalSection, 'home'>, GrowthLoopDefinition> = {
+  vessel: {
+    target: 'Body system that raises confidence, energy, and visible discipline.',
+    ritual: 'Check training, food, and recovery before choosing the day’s hardest work.',
+    blocker: 'Stale body inputs can hide whether effort is actually compounding.',
+    compound: 'Better readiness makes business output, learning depth, and social confidence easier.',
+    cadence: 'Daily body check',
+  },
+  identity: {
+    target: 'Choices that match the person Mitchell is deliberately becoming.',
+    ritual: 'Name the identity-aligned move before reacting to pressure or mood.',
+    blocker: 'Too many pulls can make the top mission feel optional.',
+    compound: 'Identity clarity turns goals into defaults instead of repeated negotiations.',
+    cadence: 'Morning and reset',
+  },
+  systems: {
+    target: 'Fewer open loops and cleaner execution across life and work.',
+    ritual: 'Clarify, delegate, delete, or execute one ambiguous obligation.',
+    blocker: 'Untriaged surface area makes the day feel productive without real closure.',
+    compound: 'Cleaner systems free attention for health, business, learning, and relationships.',
+    cadence: 'Daily command pass',
+  },
+  ventures: {
+    target: 'A venture portfolio that concentrates effort on the highest-upside line.',
+    ritual: 'Pick the one venture decision that creates the most leverage this week.',
+    blocker: 'Idea sprawl can disguise itself as ambition.',
+    compound: 'Focused venture work creates proof, income options, and career leverage.',
+    cadence: 'Weekly strategy',
+  },
+  career: {
+    target: 'Shipped work converted into compensation, reputation, and role leverage.',
+    ritual: 'Turn one concrete artifact into portfolio, resume, or negotiation proof.',
+    blocker: 'Good work loses value when it stays private or unframed.',
+    compound: 'Career leverage funds freedom, wealth, education, and bigger business bets.',
+    cadence: 'Twice-weekly proof pass',
+  },
+  wealth: {
+    target: 'Capital decisions that support freedom and bigger upside.',
+    ritual: 'Check whether the next spend or work block improves earning power or resilience.',
+    blocker: 'Without live money signals, small optimizations can crowd out larger leverage.',
+    compound: 'Better capital posture gives every other life domain more room to breathe.',
+    cadence: 'Weekly money review',
+  },
+  education: {
+    target: 'Learning that compounds career leverage instead of becoming background pressure.',
+    ritual: 'Identify the next course checkpoint and connect it to a practical skill.',
+    blocker: 'School can become a vague stressor when deadlines are not visible.',
+    compound: 'Structured learning strengthens technical judgment and long-term opportunity.',
+    cadence: 'Course checkpoint review',
+  },
+  knowledge: {
+    target: 'Knowledge converted into decisions, models, and repeatable operating rules.',
+    ritual: 'Extract one usable model from the highest-value note or reference.',
+    blocker: 'A large archive can feel smart while staying inert.',
+    compound: 'Decision-ready knowledge improves business, health, money, and relationships.',
+    cadence: 'Weekly model extraction',
+  },
+  relationships: {
+    target: 'Connection handled with care, privacy, and concrete follow-through.',
+    ritual: 'Choose one respectful action that improves connection without overexposing context.',
+    blocker: 'Good intentions decay when they never become a timed action.',
+    compound: 'Stronger relationships make ambition feel supported instead of isolated.',
+    cadence: 'Weekly connection check',
+  },
+}
+
+const CROSS_DOMAIN_INSIGHTS: CrossDomainInsight[] = [
+  {
+    label: 'Leverage chain',
+    title: 'Body readiness multiplies execution',
+    body: 'Training, food, and recovery are not separate from work. They decide how much focus is available for career proof, business output, and social confidence.',
+    recommendation: 'Protect the body check before choosing the hardest work block.',
+    evidence: 'Vessel readiness changes Career, Ventures, and Relationships capacity.',
+    pages: ['vessel', 'career', 'ventures', 'relationships'],
+    tone: 'leverage',
+  },
+  {
+    label: 'Tradeoff watch',
+    title: 'Open loops tax every growth lane',
+    body: 'If Systems is noisy, education, wealth, relationships, and venture decisions all become harder to execute cleanly.',
+    recommendation: 'Clear one ambiguous obligation before adding more ambition.',
+    evidence: 'Systems pressure touches Education, Wealth, and Venture execution.',
+    pages: ['systems', 'education', 'wealth', 'ventures'],
+    tone: 'tradeoff',
+  },
+  {
+    label: 'Compounding move',
+    title: 'Shipped proof should serve multiple goals',
+    body: 'The best work should count at least twice: useful business output now, career proof later, and wealth leverage over time.',
+    recommendation: 'Package the next shipped artifact so it can become proof.',
+    evidence: 'Career, Ventures, Wealth, and Knowledge all improve from reusable output.',
+    pages: ['career', 'ventures', 'wealth', 'knowledge'],
+    tone: 'leverage',
+  },
+  {
+    label: 'Decision support',
+    title: 'Knowledge only matters when it changes a choice',
+    body: 'Learning should feed concrete decisions in career, ventures, health, and money instead of becoming a passive archive.',
+    recommendation: 'Extract one model and attach it to a real decision.',
+    evidence: 'Knowledge is strongest when it changes Career, Venture, or Wealth behavior.',
+    pages: ['knowledge', 'career', 'ventures', 'wealth'],
+    tone: 'evidence',
+  },
+  {
+    label: 'Human layer',
+    title: 'Ambition needs protected connection',
+    body: 'Relationships and identity keep the operating system human: useful progress should create more steadiness, not just more output.',
+    recommendation: 'Choose one relationship action that supports the mission without overexposure.',
+    evidence: 'Relationships and Identity stabilize the pressure created by Systems and Vessel work.',
+    pages: ['relationships', 'identity', 'vessel', 'systems'],
+    tone: 'tradeoff',
+  },
+  {
+    label: 'Long arc',
+    title: 'Education compounds when attached to real artifacts',
+    body: 'School is most useful when each checkpoint strengthens career leverage, technical judgment, and the quality of shipped work.',
+    recommendation: 'Connect the next course checkpoint to a portfolio-quality artifact.',
+    evidence: 'Education compounds through Career, Knowledge, and Venture proof.',
+    pages: ['education', 'career', 'knowledge', 'ventures'],
+    tone: 'evidence',
+  },
+]
 
 const CORE_DASHBOARD_DEFINITIONS: Record<CoreDashboardSection, CoreDashboardDefinition> = {
   vessel: {
@@ -724,6 +872,24 @@ function App() {
     ? GROWTH_DASHBOARD_DEFINITIONS[personalSection]
     : null
   const currentSectionDashboard = currentPersonalData?.dashboard ?? currentCoreDashboard ?? currentGrowthDashboard
+  const currentGrowthLoop = useMemo(() => {
+    if (personalSection === 'home' || !currentPersonalData || !currentSectionDashboard) return null
+    const definition = GROWTH_LOOP_DEFINITIONS[personalSection]
+    const primaryMetric = currentSectionDashboard.metrics[0]
+    const primaryCard = primaryMetric ? currentPersonalData.summaryCards[primaryMetric.sourceCardIndex] : undefined
+    const action = currentSectionDashboard.actionRows[0]
+    const blocker = currentPersonalData.blockers?.[0] ?? currentPersonalData.missingData?.[0]
+    return {
+      definition,
+      progressLabel: primaryCard?.label ?? primaryMetric?.label ?? 'Current signal',
+      progressValue: primaryCard?.value ?? 'No signal yet',
+      progressNote: primaryCard?.note ?? 'This loop is waiting for stronger source coverage.',
+      nextAction: action?.title ?? 'Choose the next clean move',
+      nextActionBody: action?.body ?? 'Pick the smallest action that makes the loop easier to repeat tomorrow.',
+      blockerLabel: blocker ? `${blocker.label}: ${blocker.value}` : 'No critical blocker surfaced',
+      blockerBody: blocker?.detail ?? definition.blocker,
+    }
+  }, [currentPersonalData, currentSectionDashboard, personalSection])
   const currentDirective = PAGE_DIRECTIVES[currentPage]
   const primaryNextMove = currentSectionDashboard?.actionRows[0]?.title ??
     (isBusinessPage(currentPage)
@@ -732,6 +898,76 @@ function App() {
   const currentEvidenceLabel = currentPersonalData?.freshness?.label ??
     (isBusinessPage(currentPage) ? 'Live business runtime' : 'Projected personal records')
   const currentSignalQuality = currentPersonalData?.freshness?.stale ? 'Needs refresh' : appMode === 'business' ? 'Live feed' : 'Usable signal'
+  const currentCrossDomainInsights = useMemo(() => {
+    if (personalSection === 'home') return CROSS_DOMAIN_INSIGHTS.slice(0, 4)
+    return CROSS_DOMAIN_INSIGHTS.filter((item) => item.pages.includes(personalSection)).slice(0, 3)
+  }, [personalSection])
+  const quickNavItems = useMemo(() => {
+    const query = commandValue.trim().toLowerCase()
+    const items = [...PERSONAL_NAV_ITEMS, ...BUSINESS_NAV_ITEMS]
+    if (!query) return items
+    return items.filter((item) => `${item.label} ${item.description} ${PAGE_ROUTES[item.page]}`.toLowerCase().includes(query)).slice(0, 6)
+  }, [commandValue])
+  const quickActions = useMemo<QuickAction[]>(() => {
+    const actions: QuickAction[] = [
+      {
+        label: 'Open best next move',
+        detail: primaryNextMove,
+        prompt: `Turn this next move into a clear plan: ${primaryNextMove}`,
+      },
+      {
+        label: 'Explain why this matters',
+        detail: currentDirective.outcome,
+        prompt: `Explain why ${pageLabel(currentPage)} matters for my growth today.`,
+      },
+    ]
+
+    if (appMode === 'personal') {
+      actions.push({
+        label: 'Show linked leverage',
+        detail: currentCrossDomainInsights[0]?.title ?? 'Cross-domain intelligence',
+        page: currentCrossDomainInsights[0]?.pages[0] ?? 'systems',
+      })
+    } else {
+      actions.push({
+        label: 'Jump to review pressure',
+        detail: topPendingReview ? topPendingReview.taskTitle : 'Review dock is clear',
+        page: topPendingReview ? 'review-dock' : 'runtime-trail',
+      })
+    }
+
+    return actions
+  }, [appMode, currentCrossDomainInsights, currentDirective.outcome, currentPage, primaryNextMove, topPendingReview])
+  const crossDomainSummary = useMemo(() => {
+    const personalPages: Exclude<PersonalSection, 'home'>[] = ['vessel', 'identity', 'systems', 'ventures', 'career', 'wealth', 'education', 'knowledge', 'relationships']
+    const staleCount = personalPages.filter((page) => projectedSections[page]?.freshness?.stale).length
+    const missingCount = personalPages.reduce((total, page) => total + (projectedSections[page]?.missingData?.length ?? 0), 0)
+    const groundedCount = personalPages.filter((page) => sourceConfidence(projectedSections[page]) === 'Grounded').length
+    return { staleCount, missingCount, groundedCount }
+  }, [projectedSections])
+  const commandHorizonStats = useMemo(() => {
+    const reviewPressure = businessSummary.approvalsPending + (queueHealth?.flagged_count ?? 0)
+    const runtimeLoad = (queueHealth?.runnable_count ?? 0) + actionTrail.length
+    const sourceScore = Math.max(0, crossDomainSummary.groundedCount - crossDomainSummary.staleCount)
+    const horizonHealth = sourceScore >= 6 && reviewPressure === 0 ? 'Clear' : reviewPressure > 0 ? 'Pressure' : 'Building'
+    return [
+      {
+        label: 'Growth signal',
+        value: appMode === 'personal' ? `${crossDomainSummary.groundedCount}/9 grounded` : `${businessSummary.publishedToday} shipped`,
+        detail: appMode === 'personal' ? `${crossDomainSummary.missingCount} data gaps tracked` : `${runtimeLoad} runtime traces loaded`,
+      },
+      {
+        label: 'Pressure',
+        value: reviewPressure > 0 ? `${reviewPressure} to resolve` : 'Clear lane',
+        detail: reviewPressure > 0 ? 'Review and flagged work need attention' : 'No flagged review pressure surfaced',
+      },
+      {
+        label: 'Operating mode',
+        value: horizonHealth,
+        detail: `${currentDirective.cadence} cadence`,
+      },
+    ]
+  }, [actionTrail.length, appMode, businessSummary.approvalsPending, businessSummary.publishedToday, crossDomainSummary.groundedCount, crossDomainSummary.missingCount, crossDomainSummary.staleCount, currentDirective.cadence, queueHealth?.flagged_count, queueHealth?.runnable_count])
 
   const highlightCards = useMemo<ProjectionHighlightCard[]>(() => {
     if (!currentPersonalData) return []
@@ -765,14 +1001,139 @@ function App() {
     ]
   }, [projectedSections])
 
+  const todayFocusStack = useMemo<TodayCommandItem[]>(() => {
+    const identity = projectedSections.identity
+    const vessel = projectedSections.vessel
+    const systems = projectedSections.systems
+    const career = projectedSections.career
+
+    return [
+      {
+        label: 'Lead with',
+        title: identity?.summaryCards[1]?.value ?? identity?.summaryCards[0]?.value ?? 'Identity alignment',
+        body: identity?.dashboard?.actionRows[0]?.body ?? identity?.summaryCards[1]?.note ?? 'Choose from the person you are building before the day becomes reactive.',
+        page: 'identity',
+        tone: 'action',
+      },
+      {
+        label: 'Protect',
+        title: vessel?.summaryCards[1]?.value ?? vessel?.summaryCards[0]?.value ?? 'Body system',
+        body: vessel?.dashboard?.actionRows[0]?.body ?? vessel?.summaryCards[1]?.note ?? 'Keep energy, training, food, and recovery from becoming the hidden constraint.',
+        page: 'vessel',
+        tone: 'calm',
+      },
+      {
+        label: 'Clear',
+        title: systems?.summaryCards[0]?.value ?? 'Open loop pressure',
+        body: systems?.dashboard?.actionRows[0]?.body ?? systems?.summaryCards[0]?.note ?? 'Turn the most ambiguous obligation into one clean next action.',
+        page: 'systems',
+        tone: 'risk',
+      },
+      {
+        label: 'Convert',
+        title: career?.summaryCards[1]?.value ?? career?.summaryCards[0]?.value ?? 'Leverage work',
+        body: career?.dashboard?.actionRows[0]?.body ?? 'Convert shipped work into proof for income, role leverage, and reputation.',
+        page: 'career',
+        tone: 'opportunity',
+      },
+    ]
+  }, [projectedSections])
+
+  const todayOpportunity = useMemo<TodayCommandItem>(() => {
+    const ventures = projectedSections.ventures
+    const wealth = projectedSections.wealth
+    if (businessSummary.publishedToday > 0) {
+      return {
+        label: 'Opportunity',
+        title: `${businessSummary.publishedToday} shipped today`,
+        body: 'Turn recent output into distribution, proof, or a tighter next business move while momentum is fresh.',
+        page: 'business-command',
+        tone: 'opportunity',
+      }
+    }
+    return {
+      label: 'Opportunity',
+      title: ventures?.summaryCards[0]?.value ?? wealth?.summaryCards[3]?.value ?? 'Compound the highest-upside lane',
+      body: ventures?.dashboard?.actionRows[0]?.body ?? wealth?.dashboard?.actionRows[0]?.body ?? 'Aim effort at the move most likely to improve income, options, and long-term leverage.',
+      page: ventures ? 'ventures' : 'wealth',
+      tone: 'opportunity',
+    }
+  }, [businessSummary.publishedToday, projectedSections])
+
+  const todayRisk = useMemo<TodayCommandItem>(() => {
+    const systems = projectedSections.systems
+    const education = projectedSections.education
+    if ((queueHealth?.flagged_count ?? 0) > 0) {
+      return {
+        label: 'Risk',
+        title: `${queueHealth?.flagged_count ?? 0} flagged business item${queueHealth?.flagged_count === 1 ? '' : 's'}`,
+        body: topPendingReview ? `Resolve review pressure around ${topPendingReview.taskTitle} before the queue drifts.` : 'Business execution has flagged pressure that should be inspected before adding more work.',
+        page: topPendingReview ? 'review-dock' : 'business-command',
+        tone: 'risk',
+      }
+    }
+    return {
+      label: 'Risk',
+      title: systems?.summaryCards[0]?.value ?? education?.summaryCards[2]?.value ?? 'Attention spread',
+      body: systems?.dashboard?.operatingRows[2]?.body ?? education?.dashboard?.operatingRows[2]?.body ?? 'Too many active fronts can make the day feel busy without compounding.',
+      page: systems ? 'systems' : 'education',
+      tone: 'risk',
+    }
+  }, [projectedSections, queueHealth?.flagged_count, topPendingReview])
+
+  const todayNextMoves = useMemo<TodayCommandItem[]>(() => {
+    const systems = projectedSections.systems
+    const identity = projectedSections.identity
+    const wealth = projectedSections.wealth
+    const moves: TodayCommandItem[] = [
+      {
+        label: 'Next move',
+        title: systems?.dashboard?.actionRows[0]?.title ?? 'Clarify one open loop',
+        body: systems?.dashboard?.actionRows[0]?.body ?? 'Pick the one item that reduces the most drag and make it executable.',
+        page: 'systems',
+        tone: 'action',
+      },
+      {
+        label: 'Decision',
+        title: topPendingReview ? `Review ${topPendingReview.taskTitle}` : identity?.dashboard?.actionRows[0]?.title ?? 'Choose from alignment',
+        body: topPendingReview ? `Approve, deny, or annotate the top review item so automated work can keep moving with context.` : identity?.dashboard?.actionRows[0]?.body ?? 'Use the identity page to choose the action that reduces the current self gap.',
+        page: topPendingReview ? 'review-dock' : 'identity',
+        tone: topPendingReview ? 'risk' : 'action',
+      },
+      {
+        label: 'Leverage',
+        title: wealth?.dashboard?.actionRows[0]?.title ?? 'Prioritize leverage',
+        body: wealth?.dashboard?.actionRows[0]?.body ?? 'Favor the action that increases earning power, durable upside, or personal capacity.',
+        page: 'wealth',
+        tone: 'opportunity',
+      },
+    ]
+    return moves
+  }, [projectedSections, topPendingReview])
+
   function navigateToPage(page: AppPage) {
     setCurrentPage(page)
+    setCommandOpen(false)
     if (typeof window === 'undefined') return
     const nextPath = PAGE_ROUTES[page]
     if (window.location.pathname !== nextPath) {
       window.history.pushState({}, '', nextPath)
     }
   }
+
+  useEffect(() => {
+    if (!authed || typeof window === 'undefined') return
+    const handleKeydown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault()
+        setCommandOpen(true)
+        return
+      }
+      if (event.key === 'Escape') setCommandOpen(false)
+    }
+    window.addEventListener('keydown', handleKeydown)
+    return () => window.removeEventListener('keydown', handleKeydown)
+  }, [authed])
 
   async function handleLoginSubmit(event: React.FormEvent) {
     event.preventDefault()
@@ -1207,6 +1568,27 @@ function App() {
         </div>
       </header>
 
+      <section className="command-horizon" aria-label="Growth OS command horizon">
+        <div className="command-horizon-lead">
+          <span className="revamp-kicker">Growth OS Horizon</span>
+          <strong>{primaryNextMove}</strong>
+          <p>{currentDirective.usefulFor}</p>
+        </div>
+        <div className="command-horizon-cells">
+          {commandHorizonStats.map((item) => (
+            <article key={item.label} className="command-horizon-cell">
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <p>{item.detail}</p>
+            </article>
+          ))}
+        </div>
+        <button className="command-horizon-action" onClick={() => setCommandOpen(true)}>
+          <span>Command</span>
+          <strong>Ctrl K</strong>
+        </button>
+      </section>
+
       <nav className="app-nav-shell" aria-label="Control center sections">
         <section>
           <div className="app-nav-heading">Personal Dashboards</div>
@@ -1267,10 +1649,93 @@ function App() {
           <main className="revamp-home-grid">
             <section className="avatar-stage-card">
               <div className="avatar-stage-copy">
-                <div className="revamp-kicker">Home Overview</div>
-                <h2>Operating map for the day</h2>
-                <p>Home summarizes the strongest personal and business signals, then routes into the dedicated dashboards that carry the actual work.</p>
+                <div className="revamp-kicker">Today Command Center</div>
+                <h2>Know what matters, why it matters, and where to move.</h2>
+                <p>The first screen compresses personal growth, business pressure, and runtime evidence into one daily operating decision.</p>
               </div>
+              <section className="today-command-center" aria-label="Today command center">
+                <div className="today-command-primary">
+                  <div className="today-command-header">
+                    <div>
+                      <span className="hud-label">Today focus stack</span>
+                      <strong>{todayFocusStack[0]?.title}</strong>
+                    </div>
+                    <button className="revamp-command-btn solid" onClick={() => setCommandOpen(true)}>Ask for next move</button>
+                  </div>
+                  <div className="today-focus-list">
+                    {todayFocusStack.map((item) => (
+                      <button key={`${item.label}-${item.title}`} className={`today-focus-item ${item.tone ?? 'calm'}`} onClick={() => item.page ? navigateToPage(item.page) : undefined}>
+                        <span>{item.label}</span>
+                        <strong>{item.title}</strong>
+                        <p>{item.body}</p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <aside className="today-command-side">
+                  {[todayOpportunity, todayRisk].map((item) => (
+                    <button key={item.label} className={`today-insight-card ${item.tone ?? 'calm'}`} onClick={() => item.page ? navigateToPage(item.page) : undefined}>
+                      <span>{item.label}</span>
+                      <strong>{item.title}</strong>
+                      <p>{item.body}</p>
+                    </button>
+                  ))}
+                  <div className="today-pressure-grid">
+                    <article>
+                      <span>Runtime</span>
+                      <strong>{actionTrail.length}</strong>
+                      <p>Recent traced actions</p>
+                    </article>
+                    <article>
+                      <span>Review</span>
+                      <strong>{businessSummary.approvalsPending}</strong>
+                      <p>Pending decisions</p>
+                    </article>
+                    <article>
+                      <span>Queue</span>
+                      <strong>{queueHealth?.runnable_count ?? 0}</strong>
+                      <p>Runnable items</p>
+                    </article>
+                  </div>
+                </aside>
+              </section>
+              <section className="today-next-moves" aria-label="Next moves">
+                {todayNextMoves.map((item, index) => (
+                  <button key={`${item.label}-${item.title}`} className={`today-next-move ${item.tone ?? 'action'}`} onClick={() => item.page ? navigateToPage(item.page) : undefined}>
+                    <span>0{index + 1} · {item.label}</span>
+                    <strong>{item.title}</strong>
+                    <p>{item.body}</p>
+                  </button>
+                ))}
+              </section>
+              <section className="cross-domain-board home-cross-domain" aria-label="Cross-domain intelligence">
+                <article className="glass-panel cross-domain-prime">
+                  <div className="revamp-kicker">Cross-Domain Intelligence</div>
+                  <h3>See the leverage, not just the category.</h3>
+                  <p>These links show how one move can improve body, career, wealth, learning, relationships, systems, and business output at the same time.</p>
+                  <div className="confidence-row">
+                    <span>{crossDomainSummary.groundedCount} grounded</span>
+                    <span>{crossDomainSummary.missingCount} data gaps</span>
+                    <span>{crossDomainSummary.staleCount} stale</span>
+                  </div>
+                </article>
+                {currentCrossDomainInsights.map((item) => (
+                  <button key={item.title} className={`cross-domain-card ${item.tone}`} onClick={() => navigateToPage(item.pages[0])}>
+                    <span>{item.label}</span>
+                    <strong>{item.title}</strong>
+                    <p>{item.body}</p>
+                    <div className="cross-domain-card-proof">
+                      <small>Next: {item.recommendation}</small>
+                      <small>Evidence: {item.evidence}</small>
+                    </div>
+                    <div className="cross-domain-route-row">
+                      {item.pages.map((page) => (
+                        <em key={page}>{pageLabel(page)}</em>
+                      ))}
+                    </div>
+                  </button>
+                ))}
+              </section>
               <div className="avatar-stage-shell">
                 <div className="avatar-stage-hud">
                   <div>
@@ -1368,6 +1833,69 @@ function App() {
                   <strong>{card.value}</strong>
                   <p>{card.note}</p>
                 </article>
+              ))}
+            </section>
+            {currentGrowthLoop ? (
+              <section className="personal-growth-loop" aria-label={`${currentPersonalContent?.title} growth loop`}>
+                <article className="glass-panel growth-loop-prime">
+                  <div className="revamp-kicker">{currentGrowthLoop.definition.cadence}</div>
+                  <h3>{currentGrowthLoop.definition.target}</h3>
+                  <p>{currentGrowthLoop.definition.compound}</p>
+                </article>
+                <article className="growth-loop-step">
+                  <span>Current signal</span>
+                  <strong>{currentGrowthLoop.progressValue}</strong>
+                  <p>{currentGrowthLoop.progressLabel}: {currentGrowthLoop.progressNote}</p>
+                </article>
+                <article className="growth-loop-step">
+                  <span>Ritual</span>
+                  <strong>{currentGrowthLoop.definition.ritual}</strong>
+                  <p>Repeatable, small, and designed to keep this domain moving without making the app feel heavy.</p>
+                </article>
+                <article className="growth-loop-step warning">
+                  <span>Blocker</span>
+                  <strong>{currentGrowthLoop.blockerLabel}</strong>
+                  <p>{currentGrowthLoop.blockerBody}</p>
+                </article>
+                <article className="growth-loop-step action">
+                  <span>Next logical move</span>
+                  <strong>{currentGrowthLoop.nextAction}</strong>
+                  <p>{currentGrowthLoop.nextActionBody}</p>
+                </article>
+              </section>
+            ) : null}
+            <section className="cross-domain-board detail-cross-domain" aria-label={`${currentPersonalContent?.title} cross-domain intelligence`}>
+              <article className="glass-panel cross-domain-prime">
+                <div className="revamp-kicker">Why This Matters</div>
+                <h3>{currentCrossDomainInsights[0]?.title ?? 'This domain affects the rest of the system.'}</h3>
+                <p>{currentCrossDomainInsights[0]?.body ?? 'The page stays useful by showing what this signal changes across the wider Growth OS.'}</p>
+                {currentCrossDomainInsights[0] ? (
+                  <div className="cross-domain-prime-proof">
+                    <strong>{currentCrossDomainInsights[0].recommendation}</strong>
+                    <small>{currentCrossDomainInsights[0].evidence}</small>
+                  </div>
+                ) : null}
+                <div className="confidence-row">
+                  <span>{sourceConfidence(currentPersonalData ?? undefined)}</span>
+                  <span>{currentPersonalData?.freshness?.label ?? 'Projected records'}</span>
+                  <span>{currentPersonalData?.missingData?.length ?? 0} gaps</span>
+                </div>
+              </article>
+              {currentCrossDomainInsights.slice(1).map((item) => (
+                <button key={item.title} className={`cross-domain-card ${item.tone}`} onClick={() => navigateToPage(item.pages.find((page) => page !== personalSection) ?? item.pages[0])}>
+                  <span>{item.label}</span>
+                  <strong>{item.title}</strong>
+                  <p>{item.body}</p>
+                  <div className="cross-domain-card-proof">
+                    <small>Next: {item.recommendation}</small>
+                    <small>Evidence: {item.evidence}</small>
+                  </div>
+                  <div className="cross-domain-route-row">
+                    {item.pages.map((page) => (
+                      <em key={page}>{pageLabel(page)}</em>
+                    ))}
+                  </div>
+                </button>
               ))}
             </section>
             <section className="section-dashboard-grid">
@@ -1557,34 +2085,65 @@ function App() {
               <button className="revamp-lock-btn" onClick={() => setCommandOpen(false)}>Close</button>
             </div>
             <div className="command-context">Context: {appMode} · {appMode === 'personal' ? personalSection : businessPanel}</div>
-            <div className="command-suggestion-row">
-              {commandSuggestions.map((item) => (
-                <button key={item.label} className="command-suggestion-chip" onClick={() => setCommandValue(item.prompt)}>{item.label}</button>
-              ))}
-            </div>
             <div className="command-input-wrap">
               <input autoFocus placeholder="Tell the control center what you want to do..." value={commandValue} onChange={(e) => setCommandValue(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') void submitCommand() }} />
               <button className="revamp-command-btn solid" onClick={() => void submitCommand()}>Send</button>
             </div>
-            <div className="command-preview-panel">
-              <span>Routing preview</span>
-              {commandPreview ? (
-                <>
-                  <strong>{commandPreview.route} · {commandPreview.intent.replace(/_/g, ' ')}</strong>
-                  <p>{commandPreview.summary}</p>
-                  <p className="command-preview-next">Next: {commandPreview.nextAction}</p>
-                </>
-              ) : (
-                <>
-                  <strong>Awaiting command</strong>
-                  <p>Type a request to see the route, intent, and next action before it moves through the command lane.</p>
-                </>
-              )}
+            <div className="command-launcher-grid">
+              <section className="command-route-panel" aria-label="Fast navigation">
+                <span>Fast navigation</span>
+                <div className="command-route-list">
+                  {quickNavItems.map((item) => (
+                    <button key={item.page} className={item.page === currentPage ? 'command-route-item active' : 'command-route-item'} onClick={() => navigateToPage(item.page)}>
+                      <strong>{item.label}</strong>
+                      <p>{item.description}</p>
+                      <small>{PAGE_ROUTES[item.page]}</small>
+                    </button>
+                  ))}
+                </div>
+              </section>
+              <section className="command-route-panel" aria-label="Context actions">
+                <span>Context actions</span>
+                <div className="command-action-grid">
+                  {quickActions.map((item) => (
+                    <button
+                      key={item.label}
+                      className="command-action-button"
+                      onClick={() => item.page ? navigateToPage(item.page) : item.prompt ? setCommandValue(item.prompt) : undefined}
+                    >
+                      <strong>{item.label}</strong>
+                      <p>{item.detail}</p>
+                    </button>
+                  ))}
+                </div>
+                <div className="command-suggestion-row compact">
+                  {commandSuggestions.map((item) => (
+                    <button key={item.label} className="command-suggestion-chip" onClick={() => setCommandValue(item.prompt)}>{item.label}</button>
+                  ))}
+                </div>
+              </section>
             </div>
-            <div className="command-response-box">
-              <span>Latest response</span>
-              <strong>Command status</strong>
-              <p>{commandResponse}</p>
+            <div className="command-intelligence-grid">
+              <div className="command-preview-panel">
+                <span>Routing preview</span>
+                {commandPreview ? (
+                  <>
+                    <strong>{commandPreview.route} · {commandPreview.intent.replace(/_/g, ' ')}</strong>
+                    <p>{commandPreview.summary}</p>
+                    <p className="command-preview-next">Next: {commandPreview.nextAction}</p>
+                  </>
+                ) : (
+                  <>
+                    <strong>Awaiting command</strong>
+                    <p>Search a page, pick an action, or type a request to see the route before it moves through the command lane.</p>
+                  </>
+                )}
+              </div>
+              <div className="command-response-box">
+                <span>Latest response</span>
+                <strong>Command status</strong>
+                <p>{commandResponse}</p>
+              </div>
             </div>
             <div className="command-history">
               <h3>Recent commands</h3>
