@@ -561,8 +561,18 @@ button {
   padding: 14px 16px;
 }
 
+.command-preview-panel {
+  margin-top: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(91, 168, 255, 0.24);
+  background:
+    linear-gradient(180deg, rgba(19, 35, 58, 0.72), rgba(7, 12, 20, 0.82));
+  padding: 14px 16px;
+}
+
 .command-response-box span,
-.command-history-card span {
+.command-history-card span,
+.command-preview-panel span {
   color: #86a9df;
   font-size: 0.72rem;
   text-transform: uppercase;
@@ -570,14 +580,20 @@ button {
 }
 
 .command-response-box strong,
-.command-history-card strong {
+.command-history-card strong,
+.command-preview-panel strong {
   display: block;
   margin-top: 8px;
 }
 
 .command-response-box p,
-.command-history-card p {
+.command-history-card p,
+.command-preview-panel p {
   margin: 10px 0 0;
+}
+
+.command-preview-next {
+  color: #bfd6ff;
 }
 
 .command-history {

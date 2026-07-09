@@ -4,6 +4,7 @@ import { useDashboardData } from './hooks/useDashboardData'
 import { loadProjectedSection, type PersonalProjectionKey } from './data/personalProjectionClient'
 import type { ProjectedSection as LiveProjectedSection } from './data/projectedTypes'
 import { sendBusinessCommand } from './data/businessCommandApi'
+import { routeCommand } from './data/commandRouter'
 
 const SpaceScene = lazy(async () => {
   const mod = await import('./components/SpaceScene')
@@ -160,6 +161,11 @@ function App() {
   const selectedReviewDetail = selectedReviewItem ? dashboardData.getTaskDetail(selectedReviewItem.taskId) : undefined
   const businessAgents = dashboardData.agentChambers.slice(0, 6)
   const recentActivity = dashboardData.activityFeed.slice(0, 5)
+  const commandPreview = useMemo(() => {
+    const draft = commandValue.trim()
+    if (!draft) return null
+    return routeCommand(draft, { appMode, personalSection, businessPanel })
+  }, [appMode, businessPanel, commandValue, personalSection])
 
   const currentPersonalContent = personalSection === 'home' ? null : PERSONAL_SECTION_CONTENT[personalSection]
   const currentPersonalData = useMemo<PersonalSectionData | null>(() => {
@@ -570,6 +576,21 @@ function App() {
             <div className="command-input-wrap">
               <input autoFocus placeholder="Tell the control center what you want to do..." value={commandValue} onChange={(e) => setCommandValue(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') void submitCommand() }} />
               <button className="revamp-command-btn solid" onClick={() => void submitCommand()}>Send</button>
+            </div>
+            <div className="command-preview-panel">
+              <span>Routing preview</span>
+              {commandPreview ? (
+                <>
+                  <strong>{commandPreview.route} · {commandPreview.intent.replace(/_/g, ' ')}</strong>
+                  <p>{commandPreview.summary}</p>
+                  <p className="command-preview-next">Next: {commandPreview.nextAction}</p>
+                </>
+              ) : (
+                <>
+                  <strong>Awaiting command</strong>
+                  <p>Type a request to see the route, intent, and next action before it moves through the command lane.</p>
+                </>
+              )}
             </div>
             <div className="command-response-box">
               <span>Latest response</span>
