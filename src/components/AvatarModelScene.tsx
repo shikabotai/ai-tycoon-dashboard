@@ -1,15 +1,25 @@
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
-import { useEffect, useMemo, useRef } from 'react'
+import { type MutableRefObject, type PointerEvent, useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 
 type AvatarModelSceneProps = {
   modelPath: string
 }
 
-const PLATFORM_BASE_Y = -0.05
+type AvatarRotationControl = {
+  dragging: MutableRefObject<boolean>
+  targetY: MutableRefObject<number>
+  velocityY: MutableRefObject<number>
+}
 
-function RotatingAvatar({ modelPath }: AvatarModelSceneProps) {
+const PLATFORM_BASE_Y = -0.05
+const INITIAL_AVATAR_ROTATION = -0.22
+const DRAG_ROTATION_SPEED = 0.012
+const AUTO_ROTATION_SPEED = 0.16
+const INERTIA_DECAY = 0.9
+
+function RotatingAvatar({ modelPath, rotationControl }: AvatarModelSceneProps & { rotationControl: AvatarRotationControl }) {
   const groupRef = useRef<THREE.Group>(null)
   const gltf = useGLTF(modelPath)
 
@@ -28,12 +38,26 @@ function RotatingAvatar({ modelPath }: AvatarModelSceneProps) {
 
   useEffect(() => {
     if (!groupRef.current) return
-    groupRef.current.rotation.set(0, -0.22, 0)
-  }, [])
+    groupRef.current.rotation.set(0, INITIAL_AVATAR_ROTATION, 0)
+    rotationControl.targetY.current = INITIAL_AVATAR_ROTATION
+  }, [rotationControl.targetY])
 
   useFrame((_, delta) => {
     if (!groupRef.current) return
-    groupRef.current.rotation.y += delta * 0.16
+    if (rotationControl.dragging.current) {
+      groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, rotationControl.targetY.current, 0.42)
+      return
+    }
+
+    if (Math.abs(rotationControl.velocityY.current) > 0.004) {
+      rotationControl.targetY.current += rotationControl.velocityY.current * delta
+      rotationControl.velocityY.current *= INERTIA_DECAY
+    } else {
+      rotationControl.velocityY.current = 0
+      rotationControl.targetY.current += delta * AUTO_ROTATION_SPEED
+    }
+
+    groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, rotationControl.targetY.current, 0.18)
   })
 
   return (
@@ -95,8 +119,46 @@ function ExperimentPlatform() {
 }
 
 export function AvatarModelScene({ modelPath }: AvatarModelSceneProps) {
+  const rotationControl = {
+    dragging: useRef(false),
+    targetY: useRef(INITIAL_AVATAR_ROTATION),
+    velocityY: useRef(0),
+  }
+  const dragState = useRef({ x: 0, time: 0 })
+
+  function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
+    rotationControl.dragging.current = true
+    rotationControl.velocityY.current = 0
+    dragState.current = { x: event.clientX, time: performance.now() }
+    event.currentTarget.setPointerCapture(event.pointerId)
+  }
+
+  function handlePointerMove(event: PointerEvent<HTMLDivElement>) {
+    if (!rotationControl.dragging.current) return
+    const now = performance.now()
+    const dx = event.clientX - dragState.current.x
+    const dt = Math.max((now - dragState.current.time) / 1000, 0.016)
+    rotationControl.targetY.current += dx * DRAG_ROTATION_SPEED
+    rotationControl.velocityY.current = (dx * DRAG_ROTATION_SPEED) / dt
+    dragState.current = { x: event.clientX, time: now }
+  }
+
+  function handlePointerUp(event: PointerEvent<HTMLDivElement>) {
+    rotationControl.dragging.current = false
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+  }
+
   return (
-    <div className="avatar-model-scene" aria-hidden="true">
+    <div
+      className="avatar-model-scene"
+      aria-hidden="true"
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
+    >
       <Canvas
         camera={{ position: [0, 0.2, 6.4], fov: 32, near: 0.1, far: 100 }}
         dpr={[1, 1.6]}
@@ -109,7 +171,7 @@ export function AvatarModelScene({ modelPath }: AvatarModelSceneProps) {
         <directionalLight position={[-4, 2, 3]} intensity={1.8} color="#8bd8ff" />
         <directionalLight position={[0, 3, -5]} intensity={2.2} color="#5ce4ff" />
         <ExperimentPlatform />
-        <RotatingAvatar modelPath={modelPath} />
+        <RotatingAvatar modelPath={modelPath} rotationControl={rotationControl} />
       </Canvas>
     </div>
   )

@@ -798,8 +798,14 @@ button {
   position: absolute;
   inset: 0;
   z-index: 2;
-  pointer-events: none;
+  cursor: grab;
+  pointer-events: auto;
+  touch-action: none;
   transform: translateZ(0);
+}
+
+.avatar-model-scene:active {
+  cursor: grabbing;
 }
 
 .avatar-model-scene canvas {
