@@ -711,7 +711,7 @@ button {
 
 .avatar-stage-shell {
   display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(280px, 1.05fr);
+  grid-template-columns: 1fr;
   gap: 14px;
   align-items: stretch;
 }
@@ -749,7 +749,7 @@ button {
 
 .avatar-stage-visual {
   flex: 1;
-  min-height: 310px;
+  min-height: 440px;
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid rgba(112, 151, 214, 0.16);
@@ -790,9 +790,22 @@ button {
   opacity: 1;
 }
 
+.avatar-model-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.avatar-model-scene canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
 .avatar-stage-signals {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
 
@@ -2125,6 +2138,10 @@ button {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .avatar-stage-signals {
+    grid-template-columns: 1fr;
+  }
+
   .revamp-status-ribbon {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2290,7 +2307,7 @@ button {
   }
 
   .avatar-stage-visual {
-    min-height: 320px;
+    min-height: 360px;
   }
 
   .avatar-stage-asset {

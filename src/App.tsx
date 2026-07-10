@@ -13,6 +13,11 @@ const SpaceScene = lazy(async () => {
   return { default: mod.SpaceScene }
 })
 
+const AvatarModelScene = lazy(async () => {
+  const mod = await import('./components/AvatarModelScene')
+  return { default: mod.AvatarModelScene }
+})
+
 type AppMode = 'personal' | 'business'
 type PersonalSection = 'home' | 'vessel' | 'identity' | 'career' | 'wealth' | 'ventures' | 'systems' | 'education' | 'relationships' | 'knowledge'
 type BusinessPanel = 'overview' | 'agents' | 'review'
@@ -61,6 +66,7 @@ const SESSION_KEY = 'control-center-auth'
 const LOGIN_STATE_KEY = 'control-center-login-state'
 const COMMAND_HISTORY_KEY = 'control-center-command-history'
 const AVATAR_ASSET_PATH = '/avatar/control-center-avatar.png'
+const AVATAR_MODEL_PATH = '/avatar/control-center-avatar.glb'
 
 const PERSONAL_ROUTES: Record<PersonalSection, string> = {
   home: '/',
@@ -1653,6 +1659,52 @@ function App() {
                 <h2>Know what matters, why it matters, and where to move.</h2>
                 <p>The first screen compresses personal growth, business pressure, and runtime evidence into one daily operating decision.</p>
               </div>
+              <div className="avatar-stage-shell">
+                <div className="avatar-stage-hud">
+                  <div>
+                    <span className="hud-label">Identity</span>
+                    <strong>{projectedSections.identity?.summaryCards[0]?.value ?? 'Identity profile loading'}</strong>
+                  </div>
+                  <div>
+                    <span className="hud-label">Business load</span>
+                    <strong>{queueHealth?.runnable_count ?? 0} runnable</strong>
+                  </div>
+                  <div>
+                    <span className="hud-label">Review pressure</span>
+                    <strong>{businessSummary.approvalsPending} pending</strong>
+                  </div>
+                </div>
+                <div className="avatar-stage-visual premium-stage-frame">
+                  <Suspense fallback={<div className="visual-loading">Preparing the avatar stage…</div>}>
+                    <SpaceScene activeAgents={businessAgents.length} flaggedCount={queueHealth?.flagged_count ?? 0} />
+                  </Suspense>
+                  <Suspense
+                    fallback={
+                      avatarAssetStatus !== 'missing' ? (
+                        <img
+                          className={`avatar-stage-asset ${avatarAssetStatus}`}
+                          src={AVATAR_ASSET_PATH}
+                          alt="Mitchell control center avatar"
+                          decoding="async"
+                          onLoad={() => setAvatarAssetStatus('ready')}
+                          onError={() => setAvatarAssetStatus('missing')}
+                        />
+                      ) : null
+                    }
+                  >
+                    <AvatarModelScene modelPath={AVATAR_MODEL_PATH} />
+                  </Suspense>
+                </div>
+                <div className="avatar-stage-signals">
+                  {homeSignalCards.map((card) => (
+                    <article key={card.kicker} className="home-signal-card">
+                      <span>{card.kicker}</span>
+                      <strong>{card.title}</strong>
+                      <p>{card.body}</p>
+                    </article>
+                  ))}
+                </div>
+              </div>
               <section className="today-command-center" aria-label="Today command center">
                 <div className="today-command-primary">
                   <div className="today-command-header">
@@ -1736,46 +1788,6 @@ function App() {
                   </button>
                 ))}
               </section>
-              <div className="avatar-stage-shell">
-                <div className="avatar-stage-hud">
-                  <div>
-                    <span className="hud-label">Identity</span>
-                    <strong>{projectedSections.identity?.summaryCards[0]?.value ?? 'Identity profile loading'}</strong>
-                  </div>
-                  <div>
-                    <span className="hud-label">Business load</span>
-                    <strong>{queueHealth?.runnable_count ?? 0} runnable</strong>
-                  </div>
-                  <div>
-                    <span className="hud-label">Review pressure</span>
-                    <strong>{businessSummary.approvalsPending} pending</strong>
-                  </div>
-                </div>
-                <div className="avatar-stage-visual premium-stage-frame">
-                  <Suspense fallback={<div className="visual-loading">Preparing the avatar stage…</div>}>
-                    <SpaceScene activeAgents={businessAgents.length} flaggedCount={queueHealth?.flagged_count ?? 0} />
-                  </Suspense>
-                  {avatarAssetStatus !== 'missing' ? (
-                    <img
-                      className={`avatar-stage-asset ${avatarAssetStatus}`}
-                      src={AVATAR_ASSET_PATH}
-                      alt="Mitchell control center avatar"
-                      decoding="async"
-                      onLoad={() => setAvatarAssetStatus('ready')}
-                      onError={() => setAvatarAssetStatus('missing')}
-                    />
-                  ) : null}
-                </div>
-                <div className="avatar-stage-signals">
-                  {homeSignalCards.map((card) => (
-                    <article key={card.kicker} className="home-signal-card">
-                      <span>{card.kicker}</span>
-                      <strong>{card.title}</strong>
-                      <p>{card.body}</p>
-                    </article>
-                  ))}
-                </div>
-              </div>
               <div className="avatar-node-rack">
                 {PERSONAL_NODES.map((node) => (
                   <button key={node.key} className={`avatar-node-pill ${node.tier}`} onClick={() => navigateToPage(node.key)}>{node.label}</button>
