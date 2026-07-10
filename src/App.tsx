@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
+import { Suspense, lazy, useEffect, useMemo, useState, type CSSProperties } from 'react'
 import './App.css'
 import { useDashboardData } from './hooks/useDashboardData'
 import { loadProjectedSection, type PersonalProjectionKey } from './data/personalProjectionClient'
@@ -25,7 +25,6 @@ type BusinessPage = 'business-command' | 'agents' | 'review-dock' | 'runtime-tra
 type AppPage = PersonalSection | BusinessPage
 type LoginState = { username: string; password: string }
 type PersonalSectionData = LiveProjectedSection
-type HomeSignalCard = { kicker: string; title: string; body: string }
 type TodayCommandItem = { label: string; title: string; body: string; page?: AppPage; tone?: 'calm' | 'opportunity' | 'risk' | 'action' }
 type ProjectionHighlightCard = { title: string; text: string }
 type CommandHistoryEntry = { id: string; text: string; context: string; action?: BusinessCommandResponse['runtimeAction']; handoff?: CommandHandoffResponse }
@@ -37,10 +36,19 @@ type CoreDashboardSection = Extract<PersonalSection, 'vessel' | 'identity' | 'sy
 type GrowthDashboardSection = Extract<PersonalSection, 'ventures' | 'career' | 'wealth' | 'education' | 'knowledge' | 'relationships'>
 type CoreDashboardDefinition = ProjectedDashboard
 
-type NodeSpec = { key: Exclude<PersonalSection, 'home'>; label: string; tier: 'core' | 'secondary' }
+type HomeConstellationNode = {
+  key: Exclude<PersonalSection, 'home'>
+  label: string
+  tier: 'core' | 'secondary'
+  x: number
+  y: number
+  anchorX: number
+  anchorY: number
+  signal: string
+  tone: 'body' | 'mind' | 'ops' | 'growth' | 'capital' | 'connection'
+}
 type NavItem = { page: AppPage; label: string; description: string }
 type PageDirective = { outcome: string; system: string; usefulFor: string; cadence: string }
-type GrowthLoopCard = { page: Exclude<PersonalSection, 'home'>; label: string; command: string; result: string }
 type GrowthLoopDefinition = {
   target: string
   ritual: string
@@ -197,23 +205,16 @@ const PAGE_DIRECTIVES: Record<AppPage, PageDirective> = {
   },
 }
 
-const GROWTH_LOOP_CARDS: GrowthLoopCard[] = [
-  { page: 'identity', label: 'Decide', command: 'Start from mission and current self gap.', result: 'Cleaner choices' },
-  { page: 'systems', label: 'Execute', command: 'Collapse open loops into one next move.', result: 'Less drag' },
-  { page: 'vessel', label: 'Energize', command: 'Protect training, food, and recovery rhythm.', result: 'More capacity' },
-  { page: 'wealth', label: 'Compound', command: 'Aim money and effort at leverage engines.', result: 'More options' },
-]
-
-const PERSONAL_NODES: NodeSpec[] = [
-  { key: 'vessel', label: 'Vessel', tier: 'core' },
-  { key: 'identity', label: 'Identity', tier: 'core' },
-  { key: 'career', label: 'Career', tier: 'core' },
-  { key: 'wealth', label: 'Wealth', tier: 'core' },
-  { key: 'ventures', label: 'Ventures', tier: 'core' },
-  { key: 'systems', label: 'Systems', tier: 'core' },
-  { key: 'education', label: 'Education', tier: 'secondary' },
-  { key: 'relationships', label: 'Relationships', tier: 'secondary' },
-  { key: 'knowledge', label: 'Knowledge', tier: 'secondary' },
+const HOME_CONSTELLATION_NODES: HomeConstellationNode[] = [
+  { key: 'identity', label: 'Identity', tier: 'core', x: 50, y: 5, anchorX: 50, anchorY: 30, signal: 'Mission', tone: 'mind' },
+  { key: 'vessel', label: 'Vessel', tier: 'core', x: 82, y: 28, anchorX: 57, anchorY: 43, signal: 'Body', tone: 'body' },
+  { key: 'systems', label: 'Systems', tier: 'core', x: 84, y: 56, anchorX: 61, anchorY: 54, signal: 'Loops', tone: 'ops' },
+  { key: 'ventures', label: 'Ventures', tier: 'core', x: 69, y: 82, anchorX: 55, anchorY: 67, signal: 'Upside', tone: 'growth' },
+  { key: 'career', label: 'Career', tier: 'core', x: 31, y: 82, anchorX: 45, anchorY: 67, signal: 'Leverage', tone: 'growth' },
+  { key: 'wealth', label: 'Wealth', tier: 'core', x: 16, y: 56, anchorX: 39, anchorY: 57, signal: 'Capital', tone: 'capital' },
+  { key: 'relationships', label: 'Relationships', tier: 'secondary', x: 18, y: 31, anchorX: 40, anchorY: 34, signal: 'Care', tone: 'connection' },
+  { key: 'education', label: 'Education', tier: 'secondary', x: 34, y: 18, anchorX: 45, anchorY: 34, signal: 'Study', tone: 'mind' },
+  { key: 'knowledge', label: 'Knowledge', tier: 'secondary', x: 66, y: 18, anchorX: 55, anchorY: 34, signal: 'Models', tone: 'mind' },
 ]
 
 function pageFromPath(pathname: string): AppPage {
@@ -983,30 +984,6 @@ function App() {
     }))
   }, [currentPersonalData])
 
-  const homeSignalCards = useMemo<HomeSignalCard[]>(() => {
-    const identity = projectedSections.identity
-    const ventures = projectedSections.ventures
-    const systems = projectedSections.systems
-
-    return [
-      {
-        kicker: 'Identity Signal',
-        title: identity?.summaryCards[0]?.value ?? 'Mission profile coming into focus',
-        body: identity?.heroSummary ?? 'Pulling the current identity projection from PunkRecords.',
-      },
-      {
-        kicker: 'Venture Pressure',
-        title: ventures?.summaryCards[0]?.value ?? 'Priority venture coming into focus',
-        body: ventures?.heroSummary ?? 'Surfacing venture pressure and next decision from real records.',
-      },
-      {
-        kicker: 'System Readiness',
-        title: systems?.summaryCards[0]?.value ?? 'Operations signal coming into focus',
-        body: systems?.heroSummary ?? 'Reading the current systems layer before presenting the command deck.',
-      },
-    ]
-  }, [projectedSections])
-
   const todayFocusStack = useMemo<TodayCommandItem[]>(() => {
     const identity = projectedSections.identity
     const vessel = projectedSections.vessel
@@ -1044,78 +1021,6 @@ function App() {
       },
     ]
   }, [projectedSections])
-
-  const todayOpportunity = useMemo<TodayCommandItem>(() => {
-    const ventures = projectedSections.ventures
-    const wealth = projectedSections.wealth
-    if (businessSummary.publishedToday > 0) {
-      return {
-        label: 'Opportunity',
-        title: `${businessSummary.publishedToday} shipped today`,
-        body: 'Turn recent output into distribution, proof, or a tighter next business move while momentum is fresh.',
-        page: 'business-command',
-        tone: 'opportunity',
-      }
-    }
-    return {
-      label: 'Opportunity',
-      title: ventures?.summaryCards[0]?.value ?? wealth?.summaryCards[3]?.value ?? 'Compound the highest-upside lane',
-      body: ventures?.dashboard?.actionRows[0]?.body ?? wealth?.dashboard?.actionRows[0]?.body ?? 'Aim effort at the move most likely to improve income, options, and long-term leverage.',
-      page: ventures ? 'ventures' : 'wealth',
-      tone: 'opportunity',
-    }
-  }, [businessSummary.publishedToday, projectedSections])
-
-  const todayRisk = useMemo<TodayCommandItem>(() => {
-    const systems = projectedSections.systems
-    const education = projectedSections.education
-    if ((queueHealth?.flagged_count ?? 0) > 0) {
-      return {
-        label: 'Risk',
-        title: `${queueHealth?.flagged_count ?? 0} flagged business item${queueHealth?.flagged_count === 1 ? '' : 's'}`,
-        body: topPendingReview ? `Resolve review pressure around ${topPendingReview.taskTitle} before the queue drifts.` : 'Business execution has flagged pressure that should be inspected before adding more work.',
-        page: topPendingReview ? 'review-dock' : 'business-command',
-        tone: 'risk',
-      }
-    }
-    return {
-      label: 'Risk',
-      title: systems?.summaryCards[0]?.value ?? education?.summaryCards[2]?.value ?? 'Attention spread',
-      body: systems?.dashboard?.operatingRows[2]?.body ?? education?.dashboard?.operatingRows[2]?.body ?? 'Too many active fronts can make the day feel busy without compounding.',
-      page: systems ? 'systems' : 'education',
-      tone: 'risk',
-    }
-  }, [projectedSections, queueHealth?.flagged_count, topPendingReview])
-
-  const todayNextMoves = useMemo<TodayCommandItem[]>(() => {
-    const systems = projectedSections.systems
-    const identity = projectedSections.identity
-    const wealth = projectedSections.wealth
-    const moves: TodayCommandItem[] = [
-      {
-        label: 'Next move',
-        title: systems?.dashboard?.actionRows[0]?.title ?? 'Clarify one open loop',
-        body: systems?.dashboard?.actionRows[0]?.body ?? 'Pick the one item that reduces the most drag and make it executable.',
-        page: 'systems',
-        tone: 'action',
-      },
-      {
-        label: 'Decision',
-        title: topPendingReview ? `Review ${topPendingReview.taskTitle}` : identity?.dashboard?.actionRows[0]?.title ?? 'Choose from alignment',
-        body: topPendingReview ? `Approve, deny, or annotate the top review item so automated work can keep moving with context.` : identity?.dashboard?.actionRows[0]?.body ?? 'Use the identity page to choose the action that reduces the current self gap.',
-        page: topPendingReview ? 'review-dock' : 'identity',
-        tone: topPendingReview ? 'risk' : 'action',
-      },
-      {
-        label: 'Leverage',
-        title: wealth?.dashboard?.actionRows[0]?.title ?? 'Prioritize leverage',
-        body: wealth?.dashboard?.actionRows[0]?.body ?? 'Favor the action that increases earning power, durable upside, or personal capacity.',
-        page: 'wealth',
-        tone: 'opportunity',
-      },
-    ]
-    return moves
-  }, [projectedSections, topPendingReview])
 
   function navigateToPage(page: AppPage) {
     setCurrentPage(page)
@@ -1558,13 +1463,13 @@ function App() {
   }
 
   return (
-    <div className="revamp-shell">
+    <div className={personalSection === 'home' && appMode === 'personal' ? 'revamp-shell home-shell' : 'revamp-shell'}>
       <div className="revamp-shell-bg" />
-      <header className="revamp-topbar">
+      <header className={personalSection === 'home' && appMode === 'personal' ? 'revamp-topbar home-topbar' : 'revamp-topbar'}>
         <div>
           <div className="revamp-kicker">Mitchell Control Center</div>
-          <h1>{pageLabel(currentPage)}</h1>
-          <p>{currentDirective.outcome}. {currentDirective.system}</p>
+          <h1>{personalSection === 'home' && appMode === 'personal' ? 'Home' : pageLabel(currentPage)}</h1>
+          {personalSection === 'home' && appMode === 'personal' ? null : <p>{currentDirective.outcome}. {currentDirective.system}</p>}
         </div>
         <div className="revamp-top-actions">
           <button className={appMode === 'personal' ? 'revamp-toggle active' : 'revamp-toggle'} onClick={() => navigateToPage('home')}>Personal</button>
@@ -1574,106 +1479,128 @@ function App() {
         </div>
       </header>
 
-      <section className="command-horizon" aria-label="Growth OS command horizon">
-        <div className="command-horizon-lead">
-          <span className="revamp-kicker">Growth OS Horizon</span>
-          <strong>{primaryNextMove}</strong>
-          <p>{currentDirective.usefulFor}</p>
-        </div>
-        <div className="command-horizon-cells">
-          {commandHorizonStats.map((item) => (
-            <article key={item.label} className="command-horizon-cell">
-              <span>{item.label}</span>
-              <strong>{item.value}</strong>
-              <p>{item.detail}</p>
+      {personalSection === 'home' && appMode === 'personal' ? null : (
+        <>
+          <section className="command-horizon" aria-label="Growth OS command horizon">
+            <div className="command-horizon-lead">
+              <span className="revamp-kicker">Growth OS Horizon</span>
+              <strong>{primaryNextMove}</strong>
+              <p>{currentDirective.usefulFor}</p>
+            </div>
+            <div className="command-horizon-cells">
+              {commandHorizonStats.map((item) => (
+                <article key={item.label} className="command-horizon-cell">
+                  <span>{item.label}</span>
+                  <strong>{item.value}</strong>
+                  <p>{item.detail}</p>
+                </article>
+              ))}
+            </div>
+            <button className="command-horizon-action" onClick={() => setCommandOpen(true)}>
+              <span>Command</span>
+              <strong>Ctrl K</strong>
+            </button>
+          </section>
+
+          <nav className="app-nav-shell" aria-label="Control center sections">
+            <section>
+              <div className="app-nav-heading">Personal Dashboards</div>
+              <div className="app-nav-grid">
+                {PERSONAL_NAV_ITEMS.map((item) => (
+                  <button key={item.page} className={currentPage === item.page ? 'app-nav-item active' : 'app-nav-item'} onClick={() => navigateToPage(item.page)}>
+                    <span>{item.label}</span>
+                    <small>{item.description}</small>
+                  </button>
+                ))}
+              </div>
+            </section>
+            <section>
+              <div className="app-nav-heading">Business Operations</div>
+              <div className="app-nav-grid business">
+                {BUSINESS_NAV_ITEMS.map((item) => (
+                  <button key={item.page} className={currentPage === item.page ? 'app-nav-item active' : 'app-nav-item'} onClick={() => navigateToPage(item.page)}>
+                    <span>{item.label}</span>
+                    <small>{item.description}</small>
+                  </button>
+                ))}
+              </div>
+            </section>
+          </nav>
+
+          <section className="daily-command-strip" aria-label="Current command summary">
+            <article className="daily-command-primary">
+              <span>Best next move</span>
+              <strong>{primaryNextMove}</strong>
+              <p>{currentDirective.usefulFor}</p>
             </article>
-          ))}
-        </div>
-        <button className="command-horizon-action" onClick={() => setCommandOpen(true)}>
-          <span>Command</span>
-          <strong>Ctrl K</strong>
-        </button>
-      </section>
+            <article>
+              <span>Signal quality</span>
+              <strong>{currentSignalQuality}</strong>
+              <p>{currentEvidenceLabel}</p>
+            </article>
+            <article>
+              <span>Cadence</span>
+              <strong>{currentDirective.cadence}</strong>
+              <p>Designed for fast scanning, then deeper action only when needed.</p>
+            </article>
+            <article className="daily-command-action">
+              <span>Command lane</span>
+              <strong>Ask, route, decide</strong>
+              <button className="revamp-command-btn solid" onClick={() => setCommandOpen(true)}>Open command</button>
+            </article>
+          </section>
 
-      <nav className="app-nav-shell" aria-label="Control center sections">
-        <section>
-          <div className="app-nav-heading">Personal Dashboards</div>
-          <div className="app-nav-grid">
-            {PERSONAL_NAV_ITEMS.map((item) => (
-              <button key={item.page} className={currentPage === item.page ? 'app-nav-item active' : 'app-nav-item'} onClick={() => navigateToPage(item.page)}>
-                <span>{item.label}</span>
-                <small>{item.description}</small>
-              </button>
-            ))}
-          </div>
-        </section>
-        <section>
-          <div className="app-nav-heading">Business Operations</div>
-          <div className="app-nav-grid business">
-            {BUSINESS_NAV_ITEMS.map((item) => (
-              <button key={item.page} className={currentPage === item.page ? 'app-nav-item active' : 'app-nav-item'} onClick={() => navigateToPage(item.page)}>
-                <span>{item.label}</span>
-                <small>{item.description}</small>
-              </button>
-            ))}
-          </div>
-        </section>
-      </nav>
-
-      <section className="daily-command-strip" aria-label="Current command summary">
-        <article className="daily-command-primary">
-          <span>Best next move</span>
-          <strong>{primaryNextMove}</strong>
-          <p>{currentDirective.usefulFor}</p>
-        </article>
-        <article>
-          <span>Signal quality</span>
-          <strong>{currentSignalQuality}</strong>
-          <p>{currentEvidenceLabel}</p>
-        </article>
-        <article>
-          <span>Cadence</span>
-          <strong>{currentDirective.cadence}</strong>
-          <p>Designed for fast scanning, then deeper action only when needed.</p>
-        </article>
-        <article className="daily-command-action">
-          <span>Command lane</span>
-          <strong>Ask, route, decide</strong>
-          <button className="revamp-command-btn solid" onClick={() => setCommandOpen(true)}>Open command</button>
-        </article>
-      </section>
-
-      <section className="revamp-status-ribbon">
-        <div><span>Current route</span><strong>{currentPath}</strong></div>
-        <div><span>Section</span><strong>{pageLabel(currentPage)}</strong></div>
-        <div><span>Mode</span><strong>{appMode === 'personal' ? 'Personal OS' : 'Business operations'}</strong></div>
-        <div><span>Navigation</span><strong>Direct pages active</strong></div>
-      </section>
+          <section className="revamp-status-ribbon">
+            <div><span>Current route</span><strong>{currentPath}</strong></div>
+            <div><span>Section</span><strong>{pageLabel(currentPage)}</strong></div>
+            <div><span>Mode</span><strong>{appMode === 'personal' ? 'Personal OS' : 'Business operations'}</strong></div>
+            <div><span>Navigation</span><strong>Direct pages active</strong></div>
+          </section>
+        </>
+      )}
 
       {appMode === 'personal' ? (
         personalSection === 'home' ? (
-          <main className="revamp-home-grid">
-            <section className="avatar-stage-card">
-              <div className="avatar-stage-copy">
-                <div className="revamp-kicker">Today Command Center</div>
-                <h2>Know what matters, why it matters, and where to move.</h2>
-                <p>The first screen compresses personal growth, business pressure, and runtime evidence into one daily operating decision.</p>
-              </div>
-              <div className="avatar-stage-shell">
-                <div className="avatar-stage-hud">
-                  <div>
-                    <span className="hud-label">Identity</span>
-                    <strong>{projectedSections.identity?.summaryCards[0]?.value ?? 'Identity profile loading'}</strong>
-                  </div>
-                  <div>
-                    <span className="hud-label">Business load</span>
-                    <strong>{queueHealth?.runnable_count ?? 0} runnable</strong>
-                  </div>
-                  <div>
-                    <span className="hud-label">Review pressure</span>
-                    <strong>{businessSummary.approvalsPending} pending</strong>
-                  </div>
-                </div>
+          <main className="home-constellation-screen" aria-label="Home control map">
+            <section className="home-telemetry-row" aria-label="Important information">
+              <button className="home-telemetry-primary" onClick={() => navigateToPage(todayFocusStack[0]?.page ?? 'identity')}>
+                <span>Next</span>
+                <strong>{todayFocusStack[0]?.title ?? primaryNextMove}</strong>
+              </button>
+              <article>
+                <span>Signal</span>
+                <strong>{currentSignalQuality}</strong>
+              </article>
+              <article>
+                <span>Queue</span>
+                <strong>{queueHealth?.runnable_count ?? 0} runnable</strong>
+              </article>
+              <article>
+                <span>Review</span>
+                <strong>{businessSummary.approvalsPending} pending</strong>
+              </article>
+              <button className="home-telemetry-command" onClick={() => setCommandOpen(true)}>
+                <span>Command</span>
+                <strong>Open</strong>
+              </button>
+            </section>
+
+            <section className="home-avatar-constellation" aria-label="Avatar section map">
+              <svg className="home-constellation-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                {HOME_CONSTELLATION_NODES.map((node) => (
+                  <g key={node.key}>
+                    <line
+                      className={`constellation-line ${node.tone}`}
+                      x1={node.x}
+                      y1={node.y}
+                      x2={node.anchorX}
+                      y2={node.anchorY}
+                    />
+                    <circle className={`constellation-anchor ${node.tone}`} cx={node.anchorX} cy={node.anchorY} r="0.72" />
+                  </g>
+                ))}
+              </svg>
+              <div className="home-avatar-core">
                 <div className="avatar-stage-visual premium-stage-frame">
                   <Suspense fallback={<div className="visual-loading">Preparing the avatar stage…</div>}>
                     <SpaceScene activeAgents={businessAgents.length} flaggedCount={queueHealth?.flagged_count ?? 0} />
@@ -1695,132 +1622,26 @@ function App() {
                     <AvatarModelScene modelPath={AVATAR_MODEL_PATH} />
                   </Suspense>
                 </div>
-                <div className="avatar-stage-signals">
-                  {homeSignalCards.map((card) => (
-                    <article key={card.kicker} className="home-signal-card">
-                      <span>{card.kicker}</span>
-                      <strong>{card.title}</strong>
-                      <p>{card.body}</p>
-                    </article>
-                  ))}
+                <div className="home-core-label">
+                  <span>Avatar Hub</span>
+                  <strong>{projectedSections.identity?.summaryCards[0]?.value ?? 'Identity profile loading'}</strong>
                 </div>
               </div>
-              <section className="today-command-center" aria-label="Today command center">
-                <div className="today-command-primary">
-                  <div className="today-command-header">
-                    <div>
-                      <span className="hud-label">Today focus stack</span>
-                      <strong>{todayFocusStack[0]?.title}</strong>
-                    </div>
-                    <button className="revamp-command-btn solid" onClick={() => setCommandOpen(true)}>Ask for next move</button>
-                  </div>
-                  <div className="today-focus-list">
-                    {todayFocusStack.map((item) => (
-                      <button key={`${item.label}-${item.title}`} className={`today-focus-item ${item.tone ?? 'calm'}`} onClick={() => item.page ? navigateToPage(item.page) : undefined}>
-                        <span>{item.label}</span>
-                        <strong>{item.title}</strong>
-                        <p>{item.body}</p>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <aside className="today-command-side">
-                  {[todayOpportunity, todayRisk].map((item) => (
-                    <button key={item.label} className={`today-insight-card ${item.tone ?? 'calm'}`} onClick={() => item.page ? navigateToPage(item.page) : undefined}>
-                      <span>{item.label}</span>
-                      <strong>{item.title}</strong>
-                      <p>{item.body}</p>
-                    </button>
-                  ))}
-                  <div className="today-pressure-grid">
-                    <article>
-                      <span>Runtime</span>
-                      <strong>{actionTrail.length}</strong>
-                      <p>Recent traced actions</p>
-                    </article>
-                    <article>
-                      <span>Review</span>
-                      <strong>{businessSummary.approvalsPending}</strong>
-                      <p>Pending decisions</p>
-                    </article>
-                    <article>
-                      <span>Queue</span>
-                      <strong>{queueHealth?.runnable_count ?? 0}</strong>
-                      <p>Runnable items</p>
-                    </article>
-                  </div>
-                </aside>
-              </section>
-              <section className="today-next-moves" aria-label="Next moves">
-                {todayNextMoves.map((item, index) => (
-                  <button key={`${item.label}-${item.title}`} className={`today-next-move ${item.tone ?? 'action'}`} onClick={() => item.page ? navigateToPage(item.page) : undefined}>
-                    <span>0{index + 1} · {item.label}</span>
-                    <strong>{item.title}</strong>
-                    <p>{item.body}</p>
+              {HOME_CONSTELLATION_NODES.map((node) => {
+                const sectionData = projectedSections[node.key]
+                return (
+                  <button
+                    key={node.key}
+                    className={`home-orbit-node node-${node.key} ${node.tier} ${node.tone}`}
+                    style={{ '--node-x': `${node.x}%`, '--node-y': `${node.y}%` } as CSSProperties}
+                    onClick={() => navigateToPage(node.key)}
+                  >
+                    <span>{node.signal}</span>
+                    <strong>{node.label}</strong>
+                    <small>{sectionData?.summaryCards[0]?.value ?? PAGE_DIRECTIVES[node.key].outcome}</small>
                   </button>
-                ))}
-              </section>
-              <section className="cross-domain-board home-cross-domain" aria-label="Cross-domain intelligence">
-                <article className="glass-panel cross-domain-prime">
-                  <div className="revamp-kicker">Cross-Domain Intelligence</div>
-                  <h3>See the leverage, not just the category.</h3>
-                  <p>These links show how one move can improve body, career, wealth, learning, relationships, systems, and business output at the same time.</p>
-                  <div className="confidence-row">
-                    <span>{crossDomainSummary.groundedCount} grounded</span>
-                    <span>{crossDomainSummary.missingCount} data gaps</span>
-                    <span>{crossDomainSummary.staleCount} stale</span>
-                  </div>
-                </article>
-                {currentCrossDomainInsights.map((item) => (
-                  <button key={item.title} className={`cross-domain-card ${item.tone}`} onClick={() => navigateToPage(item.pages[0])}>
-                    <span>{item.label}</span>
-                    <strong>{item.title}</strong>
-                    <p>{item.body}</p>
-                    <div className="cross-domain-card-proof">
-                      <small>Next: {item.recommendation}</small>
-                      <small>Evidence: {item.evidence}</small>
-                    </div>
-                    <div className="cross-domain-route-row">
-                      {item.pages.map((page) => (
-                        <em key={page}>{pageLabel(page)}</em>
-                      ))}
-                    </div>
-                  </button>
-                ))}
-              </section>
-              <div className="avatar-node-rack">
-                {PERSONAL_NODES.map((node) => (
-                  <button key={node.key} className={`avatar-node-pill ${node.tier}`} onClick={() => navigateToPage(node.key)}>{node.label}</button>
-                ))}
-              </div>
-              <div className="growth-loop-board">
-                {GROWTH_LOOP_CARDS.map((item, index) => (
-                  <button key={item.page} className="growth-loop-card" onClick={() => navigateToPage(item.page)}>
-                    <span>0{index + 1} · {item.label}</span>
-                    <strong>{item.command}</strong>
-                    <small>{item.result}</small>
-                  </button>
-                ))}
-              </div>
-            </section>
-
-            <section className="revamp-side-stack">
-              <article className="glass-panel focus-panel">
-                <div className="revamp-kicker">Personal Focus</div>
-                <h3>{projectedSections.identity?.summaryCards[1]?.value ?? 'Ideal self profile loading'}</h3>
-                <p>{projectedSections.identity?.summaryCards[1]?.note ?? 'Identity projections shape the home presentation around grounded personal context.'}</p>
-              </article>
-              <article className="glass-panel pulse-panel">
-                <div className="revamp-kicker">Business Pulse</div>
-                <h3>{queueHealth?.runnable_count ?? 0} runnable, {queueHealth?.flagged_count ?? 0} flagged</h3>
-                <p>{topPendingReview ? `Top review pressure: ${topPendingReview.taskTitle}` : 'The business grid is ready for the next workflow wave, with room to move the highest-leverage task forward.'}</p>
-              </article>
-              <RuntimeTrailPanel items={actionTrail} />
-              <article className="glass-panel principle-panel">
-                <div className="revamp-kicker">Simple Growth Logic</div>
-                <h3>Decide, execute, energize, compound</h3>
-                <p>The home page now acts like an operating map: it shows the most useful loop first, then lets each dedicated dashboard carry its own deeper work.</p>
-              </article>
+                )
+              })}
             </section>
           </main>
         ) : (
