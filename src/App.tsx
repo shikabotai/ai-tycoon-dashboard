@@ -39,7 +39,6 @@ type HomeConstellationNode = {
   y: number
   anchorX: number
   anchorY: number
-  signal: string
   tone: 'body' | 'mind' | 'ops' | 'growth' | 'capital' | 'connection'
 }
 type NavItem = { page: AppPage; label: string; description: string }
@@ -201,15 +200,15 @@ const PAGE_DIRECTIVES: Record<AppPage, PageDirective> = {
 }
 
 const HOME_CONSTELLATION_NODES: HomeConstellationNode[] = [
-  { key: 'identity', label: 'Identity', tier: 'core', x: 50, y: 5, anchorX: 50, anchorY: 30, signal: 'Mission', tone: 'mind' },
-  { key: 'vessel', label: 'Vessel', tier: 'core', x: 82, y: 28, anchorX: 57, anchorY: 43, signal: 'Body', tone: 'body' },
-  { key: 'systems', label: 'Systems', tier: 'core', x: 84, y: 56, anchorX: 61, anchorY: 54, signal: 'Loops', tone: 'ops' },
-  { key: 'ventures', label: 'Ventures', tier: 'core', x: 69, y: 82, anchorX: 55, anchorY: 67, signal: 'Upside', tone: 'growth' },
-  { key: 'career', label: 'Career', tier: 'core', x: 31, y: 82, anchorX: 45, anchorY: 67, signal: 'Leverage', tone: 'growth' },
-  { key: 'wealth', label: 'Wealth', tier: 'core', x: 16, y: 56, anchorX: 39, anchorY: 57, signal: 'Capital', tone: 'capital' },
-  { key: 'relationships', label: 'Relationships', tier: 'secondary', x: 18, y: 31, anchorX: 40, anchorY: 34, signal: 'Care', tone: 'connection' },
-  { key: 'education', label: 'Education', tier: 'secondary', x: 34, y: 18, anchorX: 45, anchorY: 34, signal: 'Study', tone: 'mind' },
-  { key: 'knowledge', label: 'Knowledge', tier: 'secondary', x: 66, y: 18, anchorX: 55, anchorY: 34, signal: 'Models', tone: 'mind' },
+  { key: 'identity', label: 'Identity', tier: 'core', x: 50, y: 5, anchorX: 50, anchorY: 30, tone: 'mind' },
+  { key: 'vessel', label: 'Vessel', tier: 'core', x: 82, y: 28, anchorX: 57, anchorY: 43, tone: 'body' },
+  { key: 'systems', label: 'Systems', tier: 'core', x: 84, y: 56, anchorX: 61, anchorY: 54, tone: 'ops' },
+  { key: 'ventures', label: 'Ventures', tier: 'core', x: 69, y: 82, anchorX: 55, anchorY: 67, tone: 'growth' },
+  { key: 'career', label: 'Career', tier: 'core', x: 31, y: 82, anchorX: 45, anchorY: 67, tone: 'growth' },
+  { key: 'wealth', label: 'Wealth', tier: 'core', x: 16, y: 56, anchorX: 39, anchorY: 57, tone: 'capital' },
+  { key: 'relationships', label: 'Relationships', tier: 'secondary', x: 18, y: 31, anchorX: 40, anchorY: 34, tone: 'connection' },
+  { key: 'education', label: 'Education', tier: 'secondary', x: 34, y: 18, anchorX: 45, anchorY: 34, tone: 'mind' },
+  { key: 'knowledge', label: 'Knowledge', tier: 'secondary', x: 66, y: 18, anchorX: 55, anchorY: 34, tone: 'mind' },
 ]
 
 function pageFromPath(pathname: string): AppPage {
@@ -1620,7 +1619,6 @@ function App() {
                 </div>
               </div>
               {HOME_CONSTELLATION_NODES.map((node) => {
-                const sectionData = projectedSections[node.key]
                 return (
                   <button
                     key={node.key}
@@ -1628,9 +1626,7 @@ function App() {
                     style={{ '--node-x': `${node.x}%`, '--node-y': `${node.y}%` } as CSSProperties}
                     onClick={() => navigateToPage(node.key)}
                   >
-                    <span>{node.signal}</span>
                     <strong>{node.label}</strong>
-                    <small>{sectionData?.summaryCards[0]?.value ?? PAGE_DIRECTIVES[node.key].outcome}</small>
                   </button>
                 )
               })}

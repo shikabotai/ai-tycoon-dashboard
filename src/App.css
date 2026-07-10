@@ -1077,8 +1077,8 @@ button {
   left: var(--node-x);
   top: var(--node-y);
   z-index: 4;
-  width: clamp(136px, 13vw, 178px);
-  min-height: 74px;
+  width: clamp(112px, 10vw, 148px);
+  min-height: 44px;
   transform: translate(-50%, -50%);
   border: 1px solid rgba(134, 176, 233, 0.28);
   border-radius: 8px;
@@ -1087,7 +1087,7 @@ button {
     rgba(4, 9, 16, 0.72);
   color: var(--text);
   padding: 10px 12px;
-  text-align: left;
+  text-align: center;
   box-shadow: 0 16px 38px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(12px);
   transition: transform 160ms ease, border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
@@ -1103,26 +1103,15 @@ button {
 }
 
 .home-orbit-node.secondary {
-  width: clamp(132px, 12vw, 166px);
+  width: clamp(112px, 10vw, 148px);
   border-color: rgba(164, 176, 192, 0.22);
 }
 
 .home-orbit-node strong {
   display: block;
-  margin-top: 6px;
   color: var(--text);
   font-size: clamp(0.92rem, 1.1vw, 1.08rem);
   line-height: 1.08;
-}
-
-.home-orbit-node small {
-  display: block;
-  margin-top: 7px;
-  color: #b7c6db;
-  font-size: 0.72rem;
-  line-height: 1.22;
-  max-height: 2.45em;
-  overflow: hidden;
 }
 
 .home-orbit-node.body {
@@ -2753,22 +2742,13 @@ button {
 
   .home-orbit-node {
     width: 106px;
-    min-height: 52px;
+    min-height: 42px;
     border-radius: 7px;
     padding: 7px 8px;
   }
 
-  .home-orbit-node span {
-    font-size: 0.52rem;
-  }
-
   .home-orbit-node strong {
-    margin-top: 4px;
     font-size: 0.78rem;
-  }
-
-  .home-orbit-node small {
-    display: none;
   }
 
   .node-identity {
