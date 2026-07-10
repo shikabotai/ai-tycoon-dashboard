@@ -68,7 +68,7 @@ function ExperimentPlatform() {
   })
 
   return (
-    <group position={[0, -2.24, 0]}>
+    <group position={[0, -1.55, 0]}>
       <pointLight position={[0, 0.28, 0]} color="#67e8ff" intensity={4.8} distance={4.2} />
       <mesh receiveShadow position={[0, -0.08, 0]}>
         <cylinderGeometry args={[1.62, 1.85, 0.18, 96]} />
