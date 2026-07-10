@@ -952,22 +952,11 @@ button {
   height: 100%;
   overflow: hidden;
   border-radius: 8px;
-  background:
-    linear-gradient(rgba(150, 190, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(150, 190, 255, 0.035) 1px, transparent 1px);
-  background-size: 34px 34px;
+  background: transparent;
 }
 
 .home-avatar-constellation::before {
-  content: '';
-  position: absolute;
-  inset: 6% 18%;
-  border: 1px solid rgba(132, 199, 255, 0.08);
-  border-radius: 50%;
-  box-shadow:
-    0 0 0 14px rgba(96, 178, 255, 0.018),
-    inset 0 0 72px rgba(98, 198, 255, 0.08);
-  pointer-events: none;
+  display: none;
 }
 
 .home-constellation-lines {
@@ -1049,9 +1038,7 @@ button {
 }
 
 .home-avatar-core .premium-stage-frame::before {
-  inset: 12%;
-  border-radius: 50%;
-  border-color: rgba(124, 202, 255, 0.1);
+  display: none;
 }
 
 .home-avatar-core .space-scene-caption,
@@ -2740,11 +2727,6 @@ button {
 
   .home-avatar-constellation {
     border-radius: 7px;
-    background-size: 24px 24px;
-  }
-
-  .home-avatar-constellation::before {
-    inset: 14% 6%;
   }
 
   .home-avatar-core {
@@ -2791,7 +2773,7 @@ button {
 
   .node-identity {
     left: 50% !important;
-    top: 6% !important;
+    top: 4% !important;
   }
 
   .node-vessel {
@@ -2825,13 +2807,13 @@ button {
   }
 
   .node-education {
-    left: 29% !important;
-    top: 10% !important;
+    left: 25% !important;
+    top: 15% !important;
   }
 
   .node-knowledge {
-    left: 71% !important;
-    top: 10% !important;
+    left: 75% !important;
+    top: 15% !important;
   }
 
   .constellation-line {

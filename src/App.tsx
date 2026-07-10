@@ -8,11 +8,6 @@ import { routeCommand } from './data/commandRouter'
 import type { CommandHandoffResponse } from './server/commandHandoffApi'
 import type { BusinessCommandResponse } from './server/commandRouteApi'
 
-const SpaceScene = lazy(async () => {
-  const mod = await import('./components/SpaceScene')
-  return { default: mod.SpaceScene }
-})
-
 const AvatarModelScene = lazy(async () => {
   const mod = await import('./components/AvatarModelScene')
   return { default: mod.AvatarModelScene }
@@ -1602,9 +1597,6 @@ function App() {
               </svg>
               <div className="home-avatar-core">
                 <div className="avatar-stage-visual premium-stage-frame">
-                  <Suspense fallback={<div className="visual-loading">Preparing the avatar stage…</div>}>
-                    <SpaceScene activeAgents={businessAgents.length} flaggedCount={queueHealth?.flagged_count ?? 0} />
-                  </Suspense>
                   <Suspense
                     fallback={
                       avatarAssetStatus !== 'missing' ? (
