@@ -20,7 +20,6 @@ type BusinessPage = 'business-command' | 'agents' | 'review-dock' | 'runtime-tra
 type AppPage = PersonalSection | BusinessPage
 type LoginState = { username: string; password: string }
 type PersonalSectionData = LiveProjectedSection
-type TodayCommandItem = { label: string; title: string; body: string; page?: AppPage; tone?: 'calm' | 'opportunity' | 'risk' | 'action' }
 type ProjectionHighlightCard = { title: string; text: string }
 type CommandHistoryEntry = { id: string; text: string; context: string; action?: BusinessCommandResponse['runtimeAction']; handoff?: CommandHandoffResponse }
 type CommandSuggestion = { label: string; prompt: string }
@@ -1193,44 +1192,6 @@ function App() {
     }))
   }, [currentPersonalData])
 
-  const todayFocusStack = useMemo<TodayCommandItem[]>(() => {
-    const identity = projectedSections.identity
-    const vessel = projectedSections.vessel
-    const systems = projectedSections.systems
-    const career = projectedSections.career
-
-    return [
-      {
-        label: 'Lead with',
-        title: identity?.summaryCards[1]?.value ?? identity?.summaryCards[0]?.value ?? 'Identity alignment',
-        body: identity?.dashboard?.actionRows[0]?.body ?? identity?.summaryCards[1]?.note ?? 'Choose from the person you are building before the day becomes reactive.',
-        page: 'identity',
-        tone: 'action',
-      },
-      {
-        label: 'Protect',
-        title: vessel?.summaryCards[1]?.value ?? vessel?.summaryCards[0]?.value ?? 'Body system',
-        body: vessel?.dashboard?.actionRows[0]?.body ?? vessel?.summaryCards[1]?.note ?? 'Keep energy, training, food, and recovery from becoming the hidden constraint.',
-        page: 'vessel',
-        tone: 'calm',
-      },
-      {
-        label: 'Clear',
-        title: systems?.summaryCards[0]?.value ?? 'Open loop pressure',
-        body: systems?.dashboard?.actionRows[0]?.body ?? systems?.summaryCards[0]?.note ?? 'Turn the most ambiguous obligation into one clean next action.',
-        page: 'systems',
-        tone: 'risk',
-      },
-      {
-        label: 'Convert',
-        title: career?.summaryCards[1]?.value ?? career?.summaryCards[0]?.value ?? 'Leverage work',
-        body: career?.dashboard?.actionRows[0]?.body ?? 'Convert shipped work into proof for income, role leverage, and reputation.',
-        page: 'career',
-        tone: 'opportunity',
-      },
-    ]
-  }, [projectedSections])
-
   function navigateToPage(page: AppPage) {
     setCurrentPage(page)
     setCommandOpen(false)
@@ -1906,29 +1867,6 @@ function App() {
       {appMode === 'personal' ? (
         personalSection === 'home' ? (
           <main className="home-constellation-screen" aria-label="Home control map">
-            <section className="home-telemetry-row" aria-label="Important information">
-              <button className="home-telemetry-primary" onClick={() => navigateToPage(todayFocusStack[0]?.page ?? 'identity')}>
-                <span>Next</span>
-                <strong>{todayFocusStack[0]?.title ?? primaryNextMove}</strong>
-              </button>
-              <article>
-                <span>Signal</span>
-                <strong>{currentSignalQuality}</strong>
-              </article>
-              <article>
-                <span>Queue</span>
-                <strong>{queueHealth?.runnable_count ?? 0} runnable</strong>
-              </article>
-              <article>
-                <span>Review</span>
-                <strong>{businessSummary.approvalsPending} pending</strong>
-              </article>
-              <button className="home-telemetry-command" onClick={() => setCommandOpen(true)}>
-                <span>Command</span>
-                <strong>Open</strong>
-              </button>
-            </section>
-
             <section className="home-avatar-constellation" aria-label="Avatar section map">
               <svg className="home-constellation-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
                 {HOME_CONSTELLATION_NODES.map((node) => (
