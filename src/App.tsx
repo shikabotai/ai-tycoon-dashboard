@@ -1981,32 +1981,6 @@ function App() {
                 )
               })}
             </section>
-            <section className="home-dashboard-index" aria-label="Personal dashboard directory">
-              <div className="home-dashboard-index-header">
-                <div>
-                  <div className="revamp-kicker">Category Dashboards</div>
-                  <h2>Every personal category has its own dashboard.</h2>
-                </div>
-                <button className="revamp-command-btn solid" onClick={() => navigateToPage('systems')}>Open dashboards</button>
-              </div>
-              <div className="home-dashboard-card-grid">
-                {PERSONAL_NAV_ITEMS.filter((item) => item.page !== 'home').map((item) => {
-                  const page = item.page as Exclude<PersonalSection, 'home'>
-                  const data = projectedSections[page]
-                  const dashboard = data?.dashboard ?? CORE_DASHBOARD_DEFINITIONS[page as CoreDashboardSection] ?? GROWTH_DASHBOARD_DEFINITIONS[page as GrowthDashboardSection]
-                  const primaryMetric = dashboard?.metrics[0]
-                  const primaryCard = typeof primaryMetric?.sourceCardIndex === 'number' ? data?.summaryCards[primaryMetric.sourceCardIndex] : undefined
-                  return (
-                    <button key={item.page} className="home-dashboard-card" onClick={() => navigateToPage(item.page)}>
-                      <span>{item.label} Dashboard</span>
-                      <strong>{dashboard?.headline ?? item.description}</strong>
-                      <p>{primaryCard ? `${primaryCard.label}: ${primaryCard.value}` : item.description}</p>
-                      <small>{sourceConfidence(data)}</small>
-                    </button>
-                  )
-                })}
-              </div>
-            </section>
           </main>
         ) : (
           <main className="revamp-detail-page">
