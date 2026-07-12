@@ -1884,19 +1884,18 @@ function App() {
               </svg>
               <div className="home-avatar-core">
                 <div className="avatar-stage-visual premium-stage-frame">
+                  {avatarAssetStatus !== 'missing' ? (
+                    <img
+                      className={`avatar-stage-asset ${avatarAssetStatus}`}
+                      src={AVATAR_ASSET_PATH}
+                      alt="Mitchell control center avatar"
+                      decoding="async"
+                      onLoad={() => setAvatarAssetStatus('ready')}
+                      onError={() => setAvatarAssetStatus('missing')}
+                    />
+                  ) : null}
                   <Suspense
-                    fallback={
-                      avatarAssetStatus !== 'missing' ? (
-                        <img
-                          className={`avatar-stage-asset ${avatarAssetStatus}`}
-                          src={AVATAR_ASSET_PATH}
-                          alt="Mitchell control center avatar"
-                          decoding="async"
-                          onLoad={() => setAvatarAssetStatus('ready')}
-                          onError={() => setAvatarAssetStatus('missing')}
-                        />
-                      ) : null
-                    }
+                    fallback={null}
                   >
                     <AvatarModelScene modelPath={AVATAR_MODEL_PATH} />
                   </Suspense>
