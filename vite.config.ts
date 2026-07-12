@@ -9,6 +9,7 @@ import { getProjectedSection } from './src/server/personalProjectionApi'
 const dashboardRoot = fileURLToPath(new URL('.', import.meta.url))
 
 export default defineConfig({
+  base: process.env.GITHUB_PAGES === 'true' ? '/ai-tycoon-dashboard/' : '/',
   server: {
     fs: {
       allow: [dashboardRoot, '/Users/shika/.openclaw/workspace/PunkRecords'],

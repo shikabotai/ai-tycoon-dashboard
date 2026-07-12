@@ -79,8 +79,9 @@ const LOCKOUT_MS = 10 * 60 * 1000
 const SESSION_KEY = 'control-center-auth'
 const LOGIN_STATE_KEY = 'control-center-login-state'
 const COMMAND_HISTORY_KEY = 'control-center-command-history'
-const AVATAR_ASSET_PATH = '/avatar/control-center-avatar.png'
-const AVATAR_MODEL_PATH = '/avatar/control-center-avatar.glb'
+const APP_BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '')
+const AVATAR_ASSET_PATH = appAssetPath('avatar/control-center-avatar.png')
+const AVATAR_MODEL_PATH = appAssetPath('avatar/control-center-avatar.glb')
 
 const PERSONAL_ROUTES: Record<PersonalSection, string> = {
   home: '/',
@@ -103,6 +104,22 @@ const BUSINESS_ROUTES: Record<BusinessPage, string> = {
 }
 
 const PAGE_ROUTES: Record<AppPage, string> = { ...PERSONAL_ROUTES, ...BUSINESS_ROUTES }
+
+function appAssetPath(path: string) {
+  return `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`
+}
+
+function browserPathForRoute(route: string) {
+  if (!APP_BASE_PATH) return route
+  return route === '/' ? `${APP_BASE_PATH}/` : `${APP_BASE_PATH}${route}`
+}
+
+function appPathFromBrowserPath(pathname: string) {
+  if (!APP_BASE_PATH) return pathname
+  if (pathname === APP_BASE_PATH) return '/'
+  if (pathname.startsWith(`${APP_BASE_PATH}/`)) return pathname.slice(APP_BASE_PATH.length) || '/'
+  return pathname
+}
 
 const PERSONAL_NAV_ITEMS: NavItem[] = [
   { page: 'home', label: 'Home', description: 'Operating overview' },
@@ -224,7 +241,7 @@ const HOME_CONSTELLATION_NODES: HomeConstellationNode[] = [
 ]
 
 function pageFromPath(pathname: string): AppPage {
-  const normalized = pathname.replace(/\/+$/, '') || '/'
+  const normalized = appPathFromBrowserPath(pathname).replace(/\/+$/, '') || '/'
   const match = (Object.entries(PAGE_ROUTES) as Array<[AppPage, string]>).find(([, path]) => path === normalized)
   return match?.[0] ?? 'home'
 }
@@ -1218,7 +1235,7 @@ function App() {
     setCurrentPage(page)
     setCommandOpen(false)
     if (typeof window === 'undefined') return
-    const nextPath = PAGE_ROUTES[page]
+    const nextPath = browserPathForRoute(PAGE_ROUTES[page])
     if (window.location.pathname !== nextPath) {
       window.history.pushState({}, '', nextPath)
     }
