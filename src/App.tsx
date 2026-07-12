@@ -50,6 +50,18 @@ type GrowthLoopDefinition = {
   compound: string
   cadence: string
 }
+type CategoryDashboardKind = 'vessel-cockpit' | 'identity-compass' | 'systems-triage' | 'venture-radar' | 'career-ladder' | 'wealth-flow' | 'education-runway' | 'knowledge-forge' | 'relationship-orbit'
+type CategorySignatureDashboard = {
+  kind: CategoryDashboardKind
+  eyebrow: string
+  title: string
+  readoutLabel: string
+  readoutSourceIndex: number
+  readoutUnit: string
+  mapLabel: string
+  mapItems: Array<{ label: string; sourceIndex: number }>
+  lenses: Array<{ label: string; title: string; body: string; sourceIndex: number }>
+}
 type CrossDomainInsight = {
   label: string
   title: string
@@ -261,6 +273,189 @@ const PERSONAL_SECTION_CONTENT: Record<Exclude<PersonalSection, 'home'>, { eyebr
   education: { eyebrow: 'Learning and school', title: 'Education', summaryCards: ['Program', 'Courses', 'Upcoming deadlines', 'Learning focus'], highlights: ['Program context', 'Course clarity', 'Visible without taking over the system'] },
   relationships: { eyebrow: 'Family and connection', title: 'Relationships', summaryCards: ['Priority snapshot', 'Connection health', 'Important people', 'Upcoming actions'], highlights: ['Family and partner vision', 'Actionable relationship focus', 'Sensitive content kept minimal'] },
   knowledge: { eyebrow: 'Mental models and references', title: 'Knowledge', summaryCards: ['Learning domains', 'Mental models', 'Recent knowledge', 'Knowledge gaps'], highlights: ['Business, finance, health, psychology', 'Knowledge browser from PunkRecords', 'Built for action'] },
+}
+
+const CATEGORY_SIGNATURE_DASHBOARDS: Record<Exclude<PersonalSection, 'home'>, CategorySignatureDashboard> = {
+  vessel: {
+    kind: 'vessel-cockpit',
+    eyebrow: 'Body cockpit',
+    title: 'Readiness, training, food, and recovery in one control surface.',
+    readoutLabel: 'Primary body signal',
+    readoutSourceIndex: 0,
+    readoutUnit: 'target',
+    mapLabel: 'Body lanes',
+    mapItems: [
+      { label: 'Lift', sourceIndex: 1 },
+      { label: 'Fuel', sourceIndex: 2 },
+      { label: 'Recover', sourceIndex: 3 },
+      { label: 'Physique', sourceIndex: 5 },
+    ],
+    lenses: [
+      { label: 'Train', title: 'Next session lock', body: 'Use the workout recency signal to decide whether training leads the day.', sourceIndex: 1 },
+      { label: 'Fuel', title: 'Nutrition compliance', body: 'Pair the body target with the latest food-log evidence before judging progress.', sourceIndex: 2 },
+      { label: 'Recover', title: 'Recovery blind spot', body: 'Keep sleep and energy marked as an explicit source gap until a real feed exists.', sourceIndex: 3 },
+    ],
+  },
+  identity: {
+    kind: 'identity-compass',
+    eyebrow: 'Identity compass',
+    title: 'Mission, ideal-self gap, and blockers arranged like a decision instrument.',
+    readoutLabel: 'Alignment anchor',
+    readoutSourceIndex: 2,
+    readoutUnit: 'theme',
+    mapLabel: 'Compass points',
+    mapItems: [
+      { label: 'Self', sourceIndex: 0 },
+      { label: 'Gap', sourceIndex: 1 },
+      { label: 'Mission', sourceIndex: 3 },
+      { label: 'Friction', sourceIndex: 4 },
+    ],
+    lenses: [
+      { label: 'Mission', title: 'Defend the top mission', body: 'Let the current year theme outrank reactive lower-priority pulls.', sourceIndex: 3 },
+      { label: 'Gap', title: 'Close one alignment gap', body: 'Pick the move that makes current behavior more like the ideal-self record.', sourceIndex: 1 },
+      { label: 'Blocker', title: 'Name the pressure', body: 'Translate environment or consistency friction into a concrete constraint.', sourceIndex: 4 },
+    ],
+  },
+  systems: {
+    kind: 'systems-triage',
+    eyebrow: 'Operations triage',
+    title: 'Open loops move through clarify, delegate, close, and automate lanes.',
+    readoutLabel: 'Open-loop pressure',
+    readoutSourceIndex: 0,
+    readoutUnit: 'loops',
+    mapLabel: 'Triage lanes',
+    mapItems: [
+      { label: 'Capture', sourceIndex: 0 },
+      { label: 'Close', sourceIndex: 1 },
+      { label: 'Compress', sourceIndex: 2 },
+      { label: 'Automate', sourceIndex: 3 },
+    ],
+    lenses: [
+      { label: 'Clarify', title: 'Clarify one open loop', body: 'Convert ambiguity into a decision, action, owner, or deletion.', sourceIndex: 0 },
+      { label: 'Compress', title: 'Reduce surface area', body: 'Use project sprawl as the signal to shrink the day’s active set.', sourceIndex: 2 },
+      { label: 'Automate', title: 'Upgrade the rollup', body: 'Make AI support remove loops while keeping approval boundaries visible.', sourceIndex: 3 },
+    ],
+  },
+  ventures: {
+    kind: 'venture-radar',
+    eyebrow: 'Portfolio radar',
+    title: 'A strategy radar that compresses many ideas into one highest-upside move.',
+    readoutLabel: 'Portfolio surface',
+    readoutSourceIndex: 0,
+    readoutUnit: 'lines',
+    mapLabel: 'Radar vectors',
+    mapItems: [
+      { label: 'Inventory', sourceIndex: 0 },
+      { label: 'Priority', sourceIndex: 1 },
+      { label: 'Goals', sourceIndex: 2 },
+      { label: 'Blocker', sourceIndex: 5 },
+    ],
+    lenses: [
+      { label: 'Rank', title: 'Name the priority venture', body: 'Favor momentum, upside, urgency, and cost instead of a long inventory.', sourceIndex: 4 },
+      { label: 'Ship', title: 'Execution over ideation', body: 'Push the selected line toward traction before adding another bet.', sourceIndex: 1 },
+      { label: 'Route', title: 'Send live work to Business Command', body: 'Keep this page strategic once a decision becomes operational execution.', sourceIndex: 5 },
+    ],
+  },
+  career: {
+    kind: 'career-ladder',
+    eyebrow: 'Leverage ladder',
+    title: 'Work becomes compensation, portfolio proof, interview stories, and reputation.',
+    readoutLabel: 'Trajectory signal',
+    readoutSourceIndex: 0,
+    readoutUnit: 'arc',
+    mapLabel: 'Ladder rungs',
+    mapItems: [
+      { label: 'Role', sourceIndex: 0 },
+      { label: 'Comp', sourceIndex: 1 },
+      { label: 'Credential', sourceIndex: 2 },
+      { label: 'Proof', sourceIndex: 5 },
+    ],
+    lenses: [
+      { label: 'Proof', title: 'Package shipped work', body: 'Turn live work into a portfolio entry, resume bullet, and interview story.', sourceIndex: 5 },
+      { label: 'Comp', title: 'Protect the comp move', body: 'Keep the higher-paying SWE path visible when choosing effort.', sourceIndex: 1 },
+      { label: 'Arc', title: 'Tie MSML to leverage', body: 'Use the credential path as a long-term technical position, not background pressure.', sourceIndex: 2 },
+    ],
+  },
+  wealth: {
+    kind: 'wealth-flow',
+    eyebrow: 'Capital flow',
+    title: 'Money decisions routed through income engines, runway, visibility, and leverage.',
+    readoutLabel: 'Capital priority',
+    readoutSourceIndex: 0,
+    readoutUnit: 'priority',
+    mapLabel: 'Allocation channels',
+    mapItems: [
+      { label: 'Earn', sourceIndex: 1 },
+      { label: 'Engines', sourceIndex: 3 },
+      { label: 'Runway', sourceIndex: 4 },
+      { label: 'Strategy', sourceIndex: 5 },
+    ],
+    lenses: [
+      { label: 'Earn', title: 'Prioritize leverage', body: 'Favor earning power, durable upside, or recurring surplus.', sourceIndex: 0 },
+      { label: 'See', title: 'Fix the visibility gap', body: 'The page should stay honest until balance, cashflow, and obligations exist.', sourceIndex: 4 },
+      { label: 'Route', title: 'Tie spend to strategy', body: 'Show whether the next spend supports career, health, or venture leverage.', sourceIndex: 5 },
+    ],
+  },
+  education: {
+    kind: 'education-runway',
+    eyebrow: 'Study runway',
+    title: 'Program context, checkpoint gaps, overload watch, and career value sequenced in order.',
+    readoutLabel: 'Program anchor',
+    readoutSourceIndex: 0,
+    readoutUnit: 'program',
+    mapLabel: 'Runway checkpoints',
+    mapItems: [
+      { label: 'Program', sourceIndex: 0 },
+      { label: 'Value', sourceIndex: 1 },
+      { label: 'Balance', sourceIndex: 2 },
+      { label: 'Deadline', sourceIndex: 5 },
+    ],
+    lenses: [
+      { label: 'Checkpoint', title: 'Protect the study lane', body: 'Make the next academic checkpoint explicit before it becomes vague pressure.', sourceIndex: 5 },
+      { label: 'Value', title: 'Connect school to leverage', body: 'Attach coursework to a real career or technical skill gain.', sourceIndex: 1 },
+      { label: 'Load', title: 'Watch overload', body: 'Balance study depth against shipping, health, and business execution.', sourceIndex: 4 },
+    ],
+  },
+  knowledge: {
+    kind: 'knowledge-forge',
+    eyebrow: 'Model forge',
+    title: 'References enter as raw material and leave as decision tools.',
+    readoutLabel: 'Learning domain',
+    readoutSourceIndex: 0,
+    readoutUnit: 'domain',
+    mapLabel: 'Forge stations',
+    mapItems: [
+      { label: 'Input', sourceIndex: 2 },
+      { label: 'Model', sourceIndex: 1 },
+      { label: 'Reference', sourceIndex: 3 },
+      { label: 'Decision', sourceIndex: 5 },
+    ],
+    lenses: [
+      { label: 'Extract', title: 'Extract one usable model', body: 'Turn the strongest note into a reusable decision rule.', sourceIndex: 1 },
+      { label: 'Refresh', title: 'Connect recency', body: 'Separate live learning from stale reference material.', sourceIndex: 2 },
+      { label: 'Apply', title: 'Tie reading to action', body: 'Keep books and references useful by attaching them to a decision.', sourceIndex: 4 },
+    ],
+  },
+  relationships: {
+    kind: 'relationship-orbit',
+    eyebrow: 'Care orbit',
+    title: 'Connection signals stay useful, respectful, and privacy-first.',
+    readoutLabel: 'Care posture',
+    readoutSourceIndex: 0,
+    readoutUnit: 'posture',
+    mapLabel: 'Care orbit',
+    mapItems: [
+      { label: 'Family', sourceIndex: 1 },
+      { label: 'Growth', sourceIndex: 2 },
+      { label: 'Context', sourceIndex: 3 },
+      { label: 'Privacy', sourceIndex: 5 },
+    ],
+    lenses: [
+      { label: 'Care', title: 'Choose one care action', body: 'Make connection concrete without exposing unnecessary private detail.', sourceIndex: 1 },
+      { label: 'Fit', title: 'Improve environment fit', body: 'Favor contexts that make good connection more likely.', sourceIndex: 3 },
+      { label: 'Protect', title: 'Keep raw detail private', body: 'Render patterns and reminders, not sensitive relationship logs.', sourceIndex: 5 },
+    ],
+  },
 }
 
 const GROWTH_LOOP_DEFINITIONS: Record<Exclude<PersonalSection, 'home'>, GrowthLoopDefinition> = {
@@ -744,6 +939,7 @@ function App() {
   const [selectedReviewTaskId, setSelectedReviewTaskId] = useState<string | null>(null)
   const [projectedSections, setProjectedSections] = useState<Partial<Record<PersonalProjectionKey, LiveProjectedSection>>>({})
   const [avatarAssetStatus, setAvatarAssetStatus] = useState<AvatarAssetStatus>('loading')
+  const [categoryLensIndex, setCategoryLensIndex] = useState<Partial<Record<Exclude<PersonalSection, 'home'>, number>>>({})
 
   const dashboardData = useDashboardData()
   const appMode: AppMode = isBusinessPage(currentPage) ? 'business' : 'personal'
@@ -891,6 +1087,8 @@ function App() {
       blockerBody: blocker?.detail ?? definition.blocker,
     }
   }, [currentPersonalData, currentSectionDashboard, personalSection])
+  const currentSignatureDashboard = personalSection === 'home' ? null : CATEGORY_SIGNATURE_DASHBOARDS[personalSection]
+  const currentSignatureLensIndex = personalSection === 'home' ? 0 : categoryLensIndex[personalSection] ?? 0
   const currentDirective = PAGE_DIRECTIVES[currentPage]
   const primaryNextMove = currentSectionDashboard?.actionRows[0]?.title ??
     (isBusinessPage(currentPage)
@@ -1439,6 +1637,137 @@ function App() {
     )
   }
 
+  function renderPersonalDashboardLead() {
+    if (personalSection === 'home' || !currentPersonalData || !currentSectionDashboard || !currentPersonalContent) return null
+
+    const sourceRows = currentSectionDashboard.evidenceRows.slice(0, 3)
+    const actionRows = currentSectionDashboard.actionRows.slice(0, 3)
+
+    return (
+      <section className={`category-dashboard-lead ${personalSection}`} aria-label={`${currentPersonalContent.title} dashboard`}>
+        <article className="category-dashboard-header">
+          <div>
+            <div className="revamp-kicker">{currentPersonalContent.title} Dashboard</div>
+            <h3>{currentSectionDashboard.headline}</h3>
+            <p>{currentDirective.system}</p>
+          </div>
+          <div className="category-dashboard-status">
+            <span>Signal quality</span>
+            <strong>{sourceConfidence(currentPersonalData)}</strong>
+            <small>{currentPersonalData.freshness?.label ?? 'Projected records'}</small>
+          </div>
+        </article>
+
+        <div className="category-dashboard-metrics">
+          {currentSectionDashboard.metrics.map((metric) => {
+            const card = currentPersonalData.summaryCards[metric.sourceCardIndex]
+            return (
+              <article key={metric.label} className={`category-dashboard-metric ${metric.priority}${card?.stale ? ' stale' : ''}`}>
+                <span>{metric.label}</span>
+                <strong>{card?.value ?? 'No signal yet'}</strong>
+                <p>{card?.note ?? 'This metric is waiting on source coverage.'}</p>
+              </article>
+            )
+          })}
+        </div>
+
+        <div className="category-dashboard-lanes">
+          <article className="category-dashboard-lane primary">
+            <div className="revamp-kicker">Action Lane</div>
+            {actionRows.map((item) => {
+              const card = typeof item.sourceCardIndex === 'number' ? currentPersonalData.summaryCards[item.sourceCardIndex] : undefined
+              return (
+                <div key={item.title} className={`category-dashboard-row${card?.stale ? ' stale' : ''}`}>
+                  <strong>{item.title}</strong>
+                  <p>{item.body}</p>
+                  {card ? <small>{card.label}: {card.value}</small> : null}
+                </div>
+              )
+            })}
+          </article>
+          <article className="category-dashboard-lane">
+            <div className="revamp-kicker">Evidence Lane</div>
+            {sourceRows.map((item) => {
+              const card = typeof item.sourceCardIndex === 'number' ? currentPersonalData.summaryCards[item.sourceCardIndex] : undefined
+              return (
+                <div key={item.title} className={`category-dashboard-row${card?.stale ? ' stale' : ''}`}>
+                  <strong>{item.title}</strong>
+                  <p>{item.body}</p>
+                  {card ? <small>{card.label}: {card.note}</small> : null}
+                </div>
+              )
+            })}
+          </article>
+        </div>
+      </section>
+    )
+  }
+
+  function renderCategorySignatureDashboard() {
+    if (personalSection === 'home' || !currentSignatureDashboard || !currentPersonalData) return null
+
+    const readoutCard = currentPersonalData.summaryCards[currentSignatureDashboard.readoutSourceIndex]
+    const selectedLens = currentSignatureDashboard.lenses[currentSignatureLensIndex] ?? currentSignatureDashboard.lenses[0]
+    const selectedLensCard = currentPersonalData.summaryCards[selectedLens.sourceIndex]
+    const action = currentSectionDashboard?.actionRows[0]
+
+    return (
+      <section className={`category-signature-dashboard ${currentSignatureDashboard.kind}`} aria-label={`${currentPersonalContent?.title} signature dashboard`}>
+        <article className="signature-prime">
+          <div className="signature-prime-copy">
+            <div className="revamp-kicker">{currentSignatureDashboard.eyebrow}</div>
+            <h3>{currentSignatureDashboard.title}</h3>
+            <p>{action?.body ?? currentDirective.usefulFor}</p>
+          </div>
+          <div className="signature-readout" aria-label={currentSignatureDashboard.readoutLabel}>
+            <span>{currentSignatureDashboard.readoutLabel}</span>
+            <strong>{readoutCard?.value ?? 'Resolving'}</strong>
+            <small>{currentSignatureDashboard.readoutUnit}</small>
+          </div>
+        </article>
+
+        <article className="signature-visual">
+          <div className="signature-map-label">{currentSignatureDashboard.mapLabel}</div>
+          <div className="signature-map">
+            {currentSignatureDashboard.mapItems.map((item, index) => {
+              const card = currentPersonalData.summaryCards[item.sourceIndex]
+              return (
+                <button
+                  key={item.label}
+                  className={`signature-map-node node-${index + 1}${card?.stale ? ' stale' : ''}`}
+                  onClick={() => setCategoryLensIndex((prev) => ({ ...prev, [personalSection]: index % currentSignatureDashboard.lenses.length }))}
+                >
+                  <span>{item.label}</span>
+                  <strong>{card?.value ?? 'No signal'}</strong>
+                </button>
+              )
+            })}
+          </div>
+        </article>
+
+        <article className="signature-lens-panel">
+          <div className="signature-lens-tabs" role="tablist" aria-label={`${currentPersonalContent?.title} dashboard lens`}>
+            {currentSignatureDashboard.lenses.map((lens, index) => (
+              <button
+                key={lens.label}
+                className={index === currentSignatureLensIndex ? 'active' : ''}
+                onClick={() => setCategoryLensIndex((prev) => ({ ...prev, [personalSection]: index }))}
+              >
+                {lens.label}
+              </button>
+            ))}
+          </div>
+          <div className="signature-lens-body">
+            <span>{selectedLensCard?.label ?? 'Selected signal'}</span>
+            <strong>{selectedLens.title}</strong>
+            <p>{selectedLens.body}</p>
+            <small>{selectedLensCard ? `${selectedLensCard.value}: ${selectedLensCard.note}` : 'This lens is waiting for stronger projection data.'}</small>
+          </div>
+        </article>
+      </section>
+    )
+  }
+
   if (!authed) {
     return (
       <div className="revamp-login-shell">
@@ -1475,81 +1804,85 @@ function App() {
 
       {personalSection === 'home' && appMode === 'personal' ? null : (
         <>
-          <section className="command-horizon" aria-label="Growth OS command horizon">
-            <div className="command-horizon-lead">
-              <span className="revamp-kicker">Growth OS Horizon</span>
-              <strong>{primaryNextMove}</strong>
-              <p>{currentDirective.usefulFor}</p>
-            </div>
-            <div className="command-horizon-cells">
-              {commandHorizonStats.map((item) => (
-                <article key={item.label} className="command-horizon-cell">
-                  <span>{item.label}</span>
-                  <strong>{item.value}</strong>
-                  <p>{item.detail}</p>
+          {appMode === 'business' ? (
+            <>
+              <section className="command-horizon" aria-label="Growth OS command horizon">
+                <div className="command-horizon-lead">
+                  <span className="revamp-kicker">Growth OS Horizon</span>
+                  <strong>{primaryNextMove}</strong>
+                  <p>{currentDirective.usefulFor}</p>
+                </div>
+                <div className="command-horizon-cells">
+                  {commandHorizonStats.map((item) => (
+                    <article key={item.label} className="command-horizon-cell">
+                      <span>{item.label}</span>
+                      <strong>{item.value}</strong>
+                      <p>{item.detail}</p>
+                    </article>
+                  ))}
+                </div>
+                <button className="command-horizon-action" onClick={() => setCommandOpen(true)}>
+                  <span>Command</span>
+                  <strong>Ctrl K</strong>
+                </button>
+              </section>
+
+              <nav className="app-nav-shell" aria-label="Control center sections">
+                <section>
+                  <div className="app-nav-heading">Personal Dashboards</div>
+                  <div className="app-nav-grid">
+                    {PERSONAL_NAV_ITEMS.map((item) => (
+                      <button key={item.page} className={currentPage === item.page ? 'app-nav-item active' : 'app-nav-item'} onClick={() => navigateToPage(item.page)}>
+                        <span>{item.label}</span>
+                        <small>{item.description}</small>
+                      </button>
+                    ))}
+                  </div>
+                </section>
+                <section>
+                  <div className="app-nav-heading">Business Operations</div>
+                  <div className="app-nav-grid business">
+                    {BUSINESS_NAV_ITEMS.map((item) => (
+                      <button key={item.page} className={currentPage === item.page ? 'app-nav-item active' : 'app-nav-item'} onClick={() => navigateToPage(item.page)}>
+                        <span>{item.label}</span>
+                        <small>{item.description}</small>
+                      </button>
+                    ))}
+                  </div>
+                </section>
+              </nav>
+
+              <section className="daily-command-strip" aria-label="Current command summary">
+                <article className="daily-command-primary">
+                  <span>Best next move</span>
+                  <strong>{primaryNextMove}</strong>
+                  <p>{currentDirective.usefulFor}</p>
                 </article>
-              ))}
-            </div>
-            <button className="command-horizon-action" onClick={() => setCommandOpen(true)}>
-              <span>Command</span>
-              <strong>Ctrl K</strong>
-            </button>
-          </section>
+                <article>
+                  <span>Signal quality</span>
+                  <strong>{currentSignalQuality}</strong>
+                  <p>{currentEvidenceLabel}</p>
+                </article>
+                <article>
+                  <span>Cadence</span>
+                  <strong>{currentDirective.cadence}</strong>
+                  <p>Designed for fast scanning, then deeper action only when needed.</p>
+                </article>
+                <article className="daily-command-action">
+                  <span>Command lane</span>
+                  <strong>Ask, route, decide</strong>
+                  <button className="revamp-command-btn solid" onClick={() => setCommandOpen(true)}>Open command</button>
+                </article>
+              </section>
 
-          <nav className="app-nav-shell" aria-label="Control center sections">
-            <section>
-              <div className="app-nav-heading">Personal Dashboards</div>
-              <div className="app-nav-grid">
-                {PERSONAL_NAV_ITEMS.map((item) => (
-                  <button key={item.page} className={currentPage === item.page ? 'app-nav-item active' : 'app-nav-item'} onClick={() => navigateToPage(item.page)}>
-                    <span>{item.label}</span>
-                    <small>{item.description}</small>
-                  </button>
-                ))}
-              </div>
-            </section>
-            <section>
-              <div className="app-nav-heading">Business Operations</div>
-              <div className="app-nav-grid business">
-                {BUSINESS_NAV_ITEMS.map((item) => (
-                  <button key={item.page} className={currentPage === item.page ? 'app-nav-item active' : 'app-nav-item'} onClick={() => navigateToPage(item.page)}>
-                    <span>{item.label}</span>
-                    <small>{item.description}</small>
-                  </button>
-                ))}
-              </div>
-            </section>
-          </nav>
-
-          <section className="daily-command-strip" aria-label="Current command summary">
-            <article className="daily-command-primary">
-              <span>Best next move</span>
-              <strong>{primaryNextMove}</strong>
-              <p>{currentDirective.usefulFor}</p>
-            </article>
-            <article>
-              <span>Signal quality</span>
-              <strong>{currentSignalQuality}</strong>
-              <p>{currentEvidenceLabel}</p>
-            </article>
-            <article>
-              <span>Cadence</span>
-              <strong>{currentDirective.cadence}</strong>
-              <p>Designed for fast scanning, then deeper action only when needed.</p>
-            </article>
-            <article className="daily-command-action">
-              <span>Command lane</span>
-              <strong>Ask, route, decide</strong>
-              <button className="revamp-command-btn solid" onClick={() => setCommandOpen(true)}>Open command</button>
-            </article>
-          </section>
-
-          <section className="revamp-status-ribbon">
-            <div><span>Current route</span><strong>{currentPath}</strong></div>
-            <div><span>Section</span><strong>{pageLabel(currentPage)}</strong></div>
-            <div><span>Mode</span><strong>{appMode === 'personal' ? 'Personal OS' : 'Business operations'}</strong></div>
-            <div><span>Navigation</span><strong>Direct pages active</strong></div>
-          </section>
+              <section className="revamp-status-ribbon">
+                <div><span>Current route</span><strong>{currentPath}</strong></div>
+                <div><span>Section</span><strong>{pageLabel(currentPage)}</strong></div>
+                <div><span>Mode</span><strong>Business operations</strong></div>
+                <div><span>Navigation</span><strong>Direct pages active</strong></div>
+              </section>
+            </>
+          ) : null}
         </>
       )}
 
@@ -1631,6 +1964,32 @@ function App() {
                 )
               })}
             </section>
+            <section className="home-dashboard-index" aria-label="Personal dashboard directory">
+              <div className="home-dashboard-index-header">
+                <div>
+                  <div className="revamp-kicker">Category Dashboards</div>
+                  <h2>Every personal category has its own dashboard.</h2>
+                </div>
+                <button className="revamp-command-btn solid" onClick={() => navigateToPage('systems')}>Open dashboards</button>
+              </div>
+              <div className="home-dashboard-card-grid">
+                {PERSONAL_NAV_ITEMS.filter((item) => item.page !== 'home').map((item) => {
+                  const page = item.page as Exclude<PersonalSection, 'home'>
+                  const data = projectedSections[page]
+                  const dashboard = data?.dashboard ?? CORE_DASHBOARD_DEFINITIONS[page as CoreDashboardSection] ?? GROWTH_DASHBOARD_DEFINITIONS[page as GrowthDashboardSection]
+                  const primaryMetric = dashboard?.metrics[0]
+                  const primaryCard = typeof primaryMetric?.sourceCardIndex === 'number' ? data?.summaryCards[primaryMetric.sourceCardIndex] : undefined
+                  return (
+                    <button key={item.page} className="home-dashboard-card" onClick={() => navigateToPage(item.page)}>
+                      <span>{item.label} Dashboard</span>
+                      <strong>{dashboard?.headline ?? item.description}</strong>
+                      <p>{primaryCard ? `${primaryCard.label}: ${primaryCard.value}` : item.description}</p>
+                      <small>{sourceConfidence(data)}</small>
+                    </button>
+                  )
+                })}
+              </div>
+            </section>
           </main>
         ) : (
           <main className="revamp-detail-page">
@@ -1647,6 +2006,8 @@ function App() {
                 <p>{currentDirective.usefulFor}</p>
               </aside>
             </section>
+            {renderCategorySignatureDashboard()}
+            {renderPersonalDashboardLead()}
             <section className="revamp-card-grid">
               {currentPersonalData?.summaryCards.map((card) => (
                 <article key={card.label} className={`glass-panel detail-signal-card${card.stale ? ' stale' : ''}`}>
