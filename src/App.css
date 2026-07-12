@@ -883,7 +883,7 @@ button {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   gap: clamp(8px, 1.25vw, 12px);
   height: calc(100svh - clamp(88px, 9.5vw, 104px));
   min-height: 0;
