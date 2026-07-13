@@ -78,7 +78,8 @@ const SESSION_KEY = 'control-center-auth'
 const LOGIN_STATE_KEY = 'control-center-login-state'
 const COMMAND_HISTORY_KEY = 'control-center-command-history'
 const APP_BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '')
-const AVATAR_MODEL_PATH = appAssetPath('avatar/control-center-avatar.glb')
+const AVATAR_MODEL_VERSION = 'model-7-20260712'
+const AVATAR_MODEL_PATH = `${appAssetPath('avatar/control-center-avatar.glb')}?v=${AVATAR_MODEL_VERSION}`
 
 const PERSONAL_ROUTES: Record<PersonalSection, string> = {
   home: '/',

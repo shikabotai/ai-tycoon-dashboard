@@ -176,5 +176,3 @@ export function AvatarModelScene({ modelPath }: AvatarModelSceneProps) {
     </div>
   )
 }
-
-useGLTF.preload('/avatar/control-center-avatar.glb')
