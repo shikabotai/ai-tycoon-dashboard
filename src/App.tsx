@@ -25,7 +25,6 @@ type CommandHistoryEntry = { id: string; text: string; context: string; action?:
 type CommandSuggestion = { label: string; prompt: string }
 type QuickAction = { label: string; detail: string; prompt?: string; page?: AppPage }
 type EmptyStateProps = { label: string; title: string; body: string }
-type AvatarAssetStatus = 'loading' | 'ready' | 'missing'
 type CoreDashboardSection = Extract<PersonalSection, 'vessel' | 'identity' | 'systems'>
 type GrowthDashboardSection = Extract<PersonalSection, 'ventures' | 'career' | 'wealth' | 'education' | 'knowledge' | 'relationships'>
 type CoreDashboardDefinition = ProjectedDashboard
@@ -79,7 +78,6 @@ const SESSION_KEY = 'control-center-auth'
 const LOGIN_STATE_KEY = 'control-center-login-state'
 const COMMAND_HISTORY_KEY = 'control-center-command-history'
 const APP_BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '')
-const AVATAR_ASSET_PATH = appAssetPath('avatar/control-center-avatar.png')
 const AVATAR_MODEL_PATH = appAssetPath('avatar/control-center-avatar.glb')
 
 const PERSONAL_ROUTES: Record<PersonalSection, string> = {
@@ -954,7 +952,6 @@ function App() {
   const [reviewNoteDrafts, setReviewNoteDrafts] = useState<Record<string, string>>({})
   const [selectedReviewTaskId, setSelectedReviewTaskId] = useState<string | null>(null)
   const [projectedSections, setProjectedSections] = useState<Partial<Record<PersonalProjectionKey, LiveProjectedSection>>>({})
-  const [avatarAssetStatus, setAvatarAssetStatus] = useState<AvatarAssetStatus>('loading')
   const [categoryLensIndex, setCategoryLensIndex] = useState<Partial<Record<Exclude<PersonalSection, 'home'>, number>>>({})
 
   const dashboardData = useDashboardData()
@@ -1884,16 +1881,6 @@ function App() {
               </svg>
               <div className="home-avatar-core">
                 <div className="avatar-stage-visual premium-stage-frame">
-                  {avatarAssetStatus !== 'missing' ? (
-                    <img
-                      className={`avatar-stage-asset ${avatarAssetStatus}`}
-                      src={AVATAR_ASSET_PATH}
-                      alt="Mitchell control center avatar"
-                      decoding="async"
-                      onLoad={() => setAvatarAssetStatus('ready')}
-                      onError={() => setAvatarAssetStatus('missing')}
-                    />
-                  ) : null}
                   <Suspense
                     fallback={null}
                   >
