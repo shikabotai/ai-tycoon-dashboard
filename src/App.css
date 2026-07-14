@@ -1043,14 +1043,6 @@ button {
   box-shadow: none;
 }
 
-.home-avatar-core .home-avatar-backstop {
-  bottom: clamp(26px, 5.5vh, 58px);
-  z-index: 1;
-  width: min(78%, 440px);
-  max-height: 76%;
-  opacity: 0.72;
-}
-
 .home-avatar-core .avatar-model-scene {
   z-index: 2;
 }
