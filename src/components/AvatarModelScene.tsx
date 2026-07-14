@@ -2,6 +2,7 @@ import { Canvas, useFrame } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import { type MutableRefObject, type PointerEvent, useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
+import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js'
 
 type AvatarModelSceneProps = {
   modelPath: string
@@ -21,10 +22,11 @@ const INERTIA_DECAY = 0.9
 
 function RotatingAvatar({ modelPath, rotationControl }: AvatarModelSceneProps & { rotationControl: AvatarRotationControl }) {
   const groupRef = useRef<THREE.Group>(null)
+  const mixerRef = useRef<THREE.AnimationMixer | null>(null)
   const gltf = useGLTF(modelPath)
 
   const scene = useMemo(() => {
-    const clonedScene = gltf.scene.clone(true)
+    const clonedScene = cloneSkeleton(gltf.scene)
     clonedScene.traverse((object) => {
       if (object instanceof THREE.Mesh) {
         object.castShadow = true
@@ -37,12 +39,33 @@ function RotatingAvatar({ modelPath, rotationControl }: AvatarModelSceneProps & 
   }, [gltf.scene])
 
   useEffect(() => {
+    if (!gltf.animations.length) {
+      mixerRef.current = null
+      return
+    }
+
+    const mixer = new THREE.AnimationMixer(scene)
+    const action = mixer.clipAction(gltf.animations[0])
+    action.reset()
+    action.play()
+    mixer.setTime(0)
+    mixerRef.current = mixer
+
+    return () => {
+      mixer.stopAllAction()
+      mixer.uncacheRoot(scene)
+      mixerRef.current = null
+    }
+  }, [gltf.animations, scene])
+
+  useEffect(() => {
     if (!groupRef.current) return
     groupRef.current.rotation.set(0, INITIAL_AVATAR_ROTATION, 0)
     rotationControl.targetY.current = INITIAL_AVATAR_ROTATION
   }, [rotationControl.targetY])
 
   useFrame((_, delta) => {
+    mixerRef.current?.update(delta)
     if (!groupRef.current) return
     if (rotationControl.dragging.current) {
       groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, rotationControl.targetY.current, 0.42)
