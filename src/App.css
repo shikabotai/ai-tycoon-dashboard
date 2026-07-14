@@ -774,26 +774,6 @@ button {
   pointer-events: none;
 }
 
-.avatar-stage-asset {
-  position: absolute;
-  left: 50%;
-  bottom: clamp(18px, 5%, 34px);
-  z-index: 2;
-  width: clamp(300px, 72%, 520px);
-  max-height: 88%;
-  object-fit: contain;
-  object-position: center bottom;
-  filter: drop-shadow(0 28px 46px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 34px rgba(99, 179, 255, 0.24));
-  opacity: 0;
-  pointer-events: none;
-  transform: translateX(-50%);
-  transition: opacity 220ms ease;
-}
-
-.avatar-stage-asset.ready {
-  opacity: 1;
-}
-
 .avatar-model-scene {
   position: absolute;
   inset: 0;
@@ -3108,11 +3088,6 @@ button {
 
   .avatar-stage-visual {
     min-height: 360px;
-  }
-
-  .avatar-stage-asset {
-    width: min(86%, 380px);
-    max-height: 86%;
   }
 
   .home-shell {
