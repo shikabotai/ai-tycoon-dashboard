@@ -78,7 +78,9 @@ const SESSION_KEY = 'control-center-auth'
 const LOGIN_STATE_KEY = 'control-center-login-state'
 const COMMAND_HISTORY_KEY = 'control-center-command-history'
 const APP_BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '')
+const AVATAR_IMAGE_VERSION = 'png-20260709'
 const AVATAR_MODEL_VERSION = 'model-7-20260712'
+const AVATAR_IMAGE_PATH = `${appAssetPath('avatar/control-center-avatar.png')}?v=${AVATAR_IMAGE_VERSION}`
 const AVATAR_MODEL_PATH = `${appAssetPath('avatar/control-center-avatar.glb')}?v=${AVATAR_MODEL_VERSION}`
 
 const PERSONAL_ROUTES: Record<PersonalSection, string> = {
@@ -1882,6 +1884,12 @@ function App() {
               </svg>
               <div className="home-avatar-core">
                 <div className="avatar-stage-visual premium-stage-frame">
+                  <img
+                    className="avatar-stage-asset home-avatar-backstop"
+                    src={AVATAR_IMAGE_PATH}
+                    alt="Mitchell control center avatar"
+                    decoding="async"
+                  />
                   <Suspense
                     fallback={null}
                   >
