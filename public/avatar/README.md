@@ -12,3 +12,4 @@ Expected asset:
 
 Fallback behavior:
 - The home stage renders the GLB model directly.
+- `control-center-avatar.png` is a transparent tombstone kept only to overwrite old cached/static deployments.
