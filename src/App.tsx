@@ -1907,6 +1907,73 @@ function App() {
     )
   }
 
+  function renderVesselPage() {
+    if (!currentPersonalData) return null
+
+    const findCard = (matcher: string) => currentPersonalData.summaryCards.find((card) => card.label.toLowerCase().includes(matcher))
+    const bodyMetric = findCard('weight') ?? currentPersonalData.summaryCards[0]
+    const training = findCard('workout') ?? currentPersonalData.summaryCards[1]
+    const nutrition = findCard('nutrition') ?? currentPersonalData.summaryCards[2]
+    const recovery = findCard('recovery') ?? currentPersonalData.summaryCards[3]
+    const discipline = findCard('discipline') ?? currentPersonalData.summaryCards[4]
+    const physique = findCard('physique') ?? currentPersonalData.summaryCards[5]
+    const nextActions = currentSectionDashboard?.actionRows ?? []
+    const lanes = [
+      { label: 'Body target', card: bodyMetric, tone: 'good' },
+      { label: 'Training', card: training, tone: training?.stale ? 'watch' : 'good' },
+      { label: 'Nutrition', card: nutrition, tone: nutrition?.stale ? 'watch' : 'good' },
+      { label: 'Recovery', card: recovery, tone: recovery?.stale ? 'stale' : 'watch' },
+    ]
+
+    return (
+      <section className="vessel-page" aria-label="Vessel dashboard">
+        <section className="vessel-hero">
+          <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
+          <div className="vessel-hero-copy">
+            <div className="revamp-kicker">{currentPersonalContent?.eyebrow}</div>
+            <h2>{physique?.value ?? currentPersonalContent?.title}</h2>
+            <p>{currentPersonalData.heroSummary}</p>
+          </div>
+          <aside className="vessel-readiness">
+            <span>Current signal</span>
+            <strong>{training?.value ?? 'Training signal pending'}</strong>
+            <p>{nutrition?.value ?? 'Nutrition signal pending'}</p>
+          </aside>
+        </section>
+
+        <section className="vessel-lane-grid" aria-label="Vessel operating lanes">
+          {lanes.map((lane) => (
+            <article key={lane.label} className={`vessel-lane-card ${lane.tone}${lane.card?.stale ? ' stale' : ''}`}>
+              <span>{lane.label}</span>
+              <strong>{lane.card?.value ?? 'No signal'}</strong>
+              <p>{lane.card?.note ?? 'Waiting for source projection.'}</p>
+            </article>
+          ))}
+        </section>
+
+        <section className="vessel-action-board" aria-label="Vessel next actions">
+          <article className="vessel-action-prime">
+            <span>Operating rule</span>
+            <strong>{discipline?.value ?? 'Consistency first'}</strong>
+            <p>{discipline?.note ?? currentDirective.usefulFor}</p>
+          </article>
+          <div className="vessel-action-list">
+            {nextActions.map((action) => {
+              const card = typeof action.sourceCardIndex === 'number' ? currentPersonalData.summaryCards[action.sourceCardIndex] : undefined
+              return (
+                <article key={action.title} className={card?.stale ? 'stale' : ''}>
+                  <span>{card?.label ?? 'Next action'}</span>
+                  <strong>{action.title}</strong>
+                  <p>{action.body}</p>
+                </article>
+              )
+            })}
+          </div>
+        </section>
+      </section>
+    )
+  }
+
   function renderCategorySignatureDashboard() {
     if (personalSection === 'home' || !currentSignatureDashboard || !currentPersonalData) return null
 
@@ -2152,7 +2219,7 @@ function App() {
                 </aside>
               </section>
             )}
-            {personalSection === 'identity' ? renderIdentityScorecardPage() : (
+            {personalSection === 'identity' ? renderIdentityScorecardPage() : personalSection === 'vessel' ? renderVesselPage() : (
               <>
                 {renderCategorySignatureDashboard()}
                 {renderPersonalDashboardLead()}

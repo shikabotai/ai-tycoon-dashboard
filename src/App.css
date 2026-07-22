@@ -1388,9 +1388,168 @@ button {
   gap: 14px;
 }
 
+.vessel-page {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.vessel-hero {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(220px, 0.32fr);
+  gap: 16px;
+  align-items: stretch;
+  border: 1px solid rgba(124, 178, 255, 0.16);
+  border-radius: 10px;
+  background: rgba(6, 11, 19, 0.82);
+  box-shadow: var(--shadow);
+  padding: 18px;
+  min-width: 0;
+}
+
+.vessel-hero .back-button {
+  align-self: start;
+}
+
+.vessel-hero-copy {
+  min-width: 0;
+}
+
+.vessel-hero-copy h2 {
+  margin: 6px 0 8px;
+  color: var(--text);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 0.98;
+}
+
+.vessel-hero-copy p {
+  margin: 0;
+  max-width: 780px;
+  color: var(--muted);
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
+
+.vessel-readiness,
+.vessel-lane-card,
+.vessel-action-prime,
+.vessel-action-list article {
+  border: 1px solid rgba(124, 178, 255, 0.16);
+  border-radius: 8px;
+  background: rgba(4, 9, 15, 0.66);
+  min-width: 0;
+}
+
+.vessel-readiness {
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  padding: 14px;
+}
+
+.vessel-readiness span,
+.vessel-lane-card span,
+.vessel-action-prime span,
+.vessel-action-list span {
+  color: #86a9df;
+  font-size: 0.72rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.vessel-readiness strong,
+.vessel-lane-card strong,
+.vessel-action-prime strong,
+.vessel-action-list strong {
+  color: var(--text);
+  line-height: 1.15;
+}
+
+.vessel-readiness strong {
+  font-size: 1.22rem;
+}
+
+.vessel-readiness p,
+.vessel-lane-card p,
+.vessel-action-prime p,
+.vessel-action-list p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.42;
+  overflow-wrap: anywhere;
+}
+
+.vessel-lane-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.vessel-lane-card {
+  display: grid;
+  align-content: start;
+  gap: 9px;
+  min-height: 166px;
+  padding: 15px;
+}
+
+.vessel-lane-card.good {
+  border-color: rgba(107, 216, 200, 0.26);
+}
+
+.vessel-lane-card.watch {
+  border-color: rgba(248, 197, 108, 0.28);
+}
+
+.vessel-lane-card.stale,
+.vessel-action-list article.stale {
+  border-color: rgba(255, 117, 117, 0.3);
+}
+
+.vessel-lane-card strong {
+  font-size: 1.35rem;
+}
+
+.vessel-action-board {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.42fr) minmax(0, 1fr);
+  gap: 12px;
+  min-width: 0;
+}
+
+.vessel-action-prime {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: 16px;
+}
+
+.vessel-action-prime strong {
+  font-size: 1.3rem;
+}
+
+.vessel-action-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.vessel-action-list article {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 16px;
+}
+
+.vessel-action-list strong {
+  font-size: 1rem;
+}
+
 .identity-simple-page {
   display: grid;
   gap: 14px;
+  min-width: 0;
 }
 
 .identity-statement-panel,
@@ -1400,6 +1559,7 @@ button {
   border-radius: 10px;
   background: rgba(6, 11, 19, 0.82);
   box-shadow: var(--shadow);
+  min-width: 0;
 }
 
 .identity-statement-panel {
@@ -1413,6 +1573,11 @@ button {
   justify-content: space-between;
   gap: 16px;
   align-items: start;
+  min-width: 0;
+}
+
+.identity-statement-head > div {
+  min-width: 0;
 }
 
 .identity-statement-head small {
@@ -1447,6 +1612,7 @@ button {
   font-size: 2rem;
   font-weight: 650;
   line-height: 1.08;
+  overflow-wrap: anywhere;
 }
 
 .identity-statement-panel textarea[readonly] {
@@ -1463,6 +1629,11 @@ button {
   gap: 16px;
   align-items: start;
   margin-bottom: 14px;
+  min-width: 0;
+}
+
+.identity-scorecard-head > div:first-child {
+  min-width: 0;
 }
 
 .identity-edit-toggle {
@@ -1523,6 +1694,7 @@ button {
 .identity-quality-copy {
   display: grid;
   gap: 7px;
+  min-width: 0;
 }
 
 .identity-quality-name {
@@ -1536,6 +1708,7 @@ button {
   color: var(--muted);
   font-size: 0.88rem;
   line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .identity-quality-action {
@@ -1546,6 +1719,7 @@ button {
   display: grid;
   gap: 8px;
   justify-items: end;
+  min-width: 0;
 }
 
 .identity-score-control strong {
@@ -1589,6 +1763,7 @@ button {
   color: var(--muted);
   font-size: 0.84rem;
   line-height: 1.42;
+  overflow-wrap: anywhere;
 }
 
 .identity-support-card button {
@@ -3052,6 +3227,20 @@ button {
     grid-template-columns: 1fr;
   }
 
+  .vessel-hero,
+  .vessel-action-board {
+    grid-template-columns: 1fr;
+  }
+
+  .vessel-hero .back-button {
+    width: fit-content;
+  }
+
+  .vessel-lane-grid,
+  .vessel-action-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .revamp-business-grid {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -3245,6 +3434,166 @@ button {
 
   .category-signature-dashboard {
     min-height: 0;
+  }
+
+  .identity-simple-page {
+    gap: 10px;
+  }
+
+  .vessel-page {
+    gap: 10px;
+  }
+
+  .vessel-hero {
+    gap: 12px;
+    border-radius: 8px;
+    padding: 14px;
+  }
+
+  .vessel-hero-copy h2 {
+    font-size: 1.8rem;
+    line-height: 1.02;
+  }
+
+  .vessel-hero-copy p {
+    font-size: 0.88rem;
+  }
+
+  .vessel-readiness {
+    padding: 12px;
+  }
+
+  .vessel-lane-grid,
+  .vessel-action-list {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .vessel-lane-card,
+  .vessel-action-prime,
+  .vessel-action-list article {
+    min-height: auto;
+    padding: 14px;
+  }
+
+  .vessel-lane-card strong {
+    font-size: 1.18rem;
+  }
+
+  .identity-statement-panel,
+  .identity-scorecard-panel,
+  .identity-support-card {
+    border-radius: 8px;
+  }
+
+  .identity-statement-panel {
+    padding: 14px;
+  }
+
+  .identity-statement-head {
+    display: grid;
+    gap: 6px;
+  }
+
+  .identity-statement-panel textarea {
+    min-height: 72px;
+    font-size: 1.28rem;
+    line-height: 1.16;
+  }
+
+  .identity-scorecard-panel {
+    padding: 14px;
+  }
+
+  .identity-scorecard-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: start;
+  }
+
+  .identity-scorecard-head h3 {
+    font-size: 1.08rem;
+    line-height: 1.18;
+  }
+
+  .identity-edit-toggle {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: start;
+    margin-left: 0;
+    padding: 8px 10px;
+    white-space: nowrap;
+  }
+
+  .identity-average {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-width: 0;
+    padding: 10px 12px;
+    text-align: left;
+  }
+
+  .identity-average strong {
+    margin-top: 0;
+    font-size: 1.45rem;
+  }
+
+  .identity-quality-list {
+    gap: 0;
+  }
+
+  .identity-quality-row {
+    gap: 10px;
+    padding: 14px 0 12px;
+  }
+
+  .identity-quality-name {
+    font-size: 0.98rem;
+  }
+
+  .identity-quality-meaning,
+  .identity-quality-action {
+    min-height: 34px;
+    font-size: 0.82rem;
+  }
+
+  .identity-score-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(124, 178, 255, 0.14);
+    background: rgba(4, 9, 15, 0.54);
+    padding: 10px 12px;
+  }
+
+  .identity-score-control strong {
+    font-size: 1.24rem;
+  }
+
+  .identity-score-control input[type='range'] {
+    min-width: 0;
+  }
+
+  .identity-support-strip {
+    gap: 10px;
+  }
+
+  .identity-support-card {
+    min-height: auto;
+    padding: 14px;
+  }
+
+  .identity-history-card {
+    min-height: 0;
+  }
+
+  .identity-score-chart {
+    height: 78px;
   }
 
   .signature-visual {
