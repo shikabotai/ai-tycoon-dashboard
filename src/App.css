@@ -1445,16 +1445,20 @@ button {
 
 .vessel-readiness {
   display: grid;
-  align-content: center;
-  gap: 8px;
+  grid-template-columns: minmax(124px, 0.42fr) minmax(0, 0.58fr);
+  gap: 12px;
   padding: 14px;
+  align-items: center;
 }
 
 .vessel-readiness span,
 .vessel-pillar-card span,
 .vessel-action-prime span,
 .vessel-action-list span,
-.vessel-source-strip span {
+.vessel-source-strip span,
+.vessel-weekly-drift span,
+.vessel-selected-action span,
+.vessel-mini-row span {
   color: #86a9df;
   font-size: 0.72rem;
   letter-spacing: 0;
@@ -1465,19 +1469,114 @@ button {
 .vessel-pillar-card strong,
 .vessel-action-prime strong,
 .vessel-action-list strong,
-.vessel-source-strip strong {
+.vessel-source-strip strong,
+.vessel-weekly-drift strong,
+.vessel-selected-action strong {
   color: var(--text);
   line-height: 1.15;
 }
 
-.vessel-readiness strong {
-  font-size: 1.22rem;
+.vessel-readiness-ring {
+  display: grid;
+  place-items: center;
+  width: min(100%, 150px);
+  aspect-ratio: 1;
+  margin-inline: auto;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, #070b11 0 48%, transparent 49%),
+    conic-gradient(#6bd8c8 0 26%, #7ea7ff 26% 50%, #d7a65b 50% 72%, #79d594 72% var(--vessel-readiness), rgba(255, 255, 255, 0.1) var(--vessel-readiness) 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 18px 38px rgba(0, 0, 0, 0.35);
+}
+
+.vessel-readiness-ring div {
+  display: grid;
+  place-items: center;
+  width: 72%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(13, 18, 26, 0.98), rgba(5, 8, 13, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.vessel-readiness-ring span {
+  color: #90a8c8;
+  font-size: 0.66rem;
+}
+
+.vessel-readiness-ring strong {
+  color: var(--text);
+  font-size: 2.2rem;
+  line-height: 0.9;
+}
+
+.vessel-ring-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.vessel-ring-actions button {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  color: var(--text);
+  text-align: left;
+  border: 1px solid rgba(241, 244, 248, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 9px 10px;
+  transition: border-color 0.16s, transform 0.16s, background 0.16s;
+}
+
+.vessel-ring-actions button:hover,
+.vessel-ring-actions button:focus-visible,
+.vessel-ring-actions button.active {
+  transform: translateY(-1px);
+  border-color: rgba(107, 216, 200, 0.6);
+  background: rgba(107, 216, 200, 0.1);
+}
+
+.vessel-ring-actions button.watch.active {
+  border-color: rgba(248, 197, 108, 0.55);
+  background: rgba(248, 197, 108, 0.1);
+}
+
+.vessel-ring-actions button.mind.active {
+  border-color: rgba(126, 167, 255, 0.55);
+  background: rgba(126, 167, 255, 0.1);
+}
+
+.vessel-ring-actions button.looks.active {
+  border-color: rgba(215, 166, 91, 0.55);
+  background: rgba(215, 166, 91, 0.1);
+}
+
+.vessel-ring-actions span {
+  color: #9eb5d3;
+  font-size: 0.66rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.vessel-ring-actions strong {
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.vessel-selected-action {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 7px;
+  padding-top: 2px;
 }
 
 .vessel-readiness p,
 .vessel-pillar-card p,
 .vessel-action-prime p,
-.vessel-action-list p {
+.vessel-action-list p,
+.vessel-weekly-drift p,
+.vessel-selected-action p {
   margin: 0;
   color: var(--muted);
   font-size: 0.86rem;
@@ -1494,7 +1593,7 @@ button {
 .vessel-pillar-card {
   display: grid;
   align-content: space-between;
-  gap: 18px;
+  gap: 14px;
   min-height: 210px;
   padding: 18px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -1534,6 +1633,18 @@ button {
 
 .vessel-pillar-card p {
   margin-top: 12px;
+}
+
+.vessel-mini-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.vessel-mini-row b {
+  color: var(--text);
+  font-size: 0.86rem;
 }
 
 .vessel-progress-track {
@@ -1613,6 +1724,82 @@ button {
 .vessel-source-strip strong {
   font-size: 0.92rem;
   overflow-wrap: anywhere;
+}
+
+.vessel-weekly-drift {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.34fr) minmax(0, 1fr);
+  gap: 14px;
+  border: 1px solid rgba(241, 244, 248, 0.1);
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(13, 17, 23, 0.88), rgba(5, 9, 15, 0.72));
+  padding: 16px;
+  min-width: 0;
+}
+
+.vessel-weekly-drift strong {
+  display: block;
+  margin-top: 7px;
+  font-size: 1.2rem;
+}
+
+.vessel-weekly-drift p {
+  margin-top: 7px;
+}
+
+.vessel-drift-grid {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.vessel-drift-row {
+  display: grid;
+  grid-template-columns: 58px repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  align-items: center;
+}
+
+.vessel-drift-row span {
+  color: #c5d4e8;
+}
+
+.vessel-drift-row i {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  height: 30px;
+  border-radius: 7px;
+  color: #718099;
+  font-style: normal;
+  font-size: 0.72rem;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.vessel-drift-row i.active {
+  color: #06100f;
+  background: #6bd8c8;
+  border-color: rgba(107, 216, 200, 0.72);
+}
+
+.vessel-drift-row.watch i.active {
+  background: #d7a65b;
+  border-color: rgba(215, 166, 91, 0.72);
+}
+
+.vessel-drift-row.mind i.active {
+  background: #7ea7ff;
+  border-color: rgba(126, 167, 255, 0.72);
+}
+
+.vessel-drift-row.looks i.active {
+  background: #d7a65b;
+  border-color: rgba(215, 166, 91, 0.72);
+}
+
+.vessel-drift-row i.dim {
+  opacity: 0.56;
 }
 
 .identity-simple-page {
@@ -3297,7 +3484,8 @@ button {
   }
 
   .vessel-hero,
-  .vessel-action-board {
+  .vessel-action-board,
+  .vessel-weekly-drift {
     grid-template-columns: 1fr;
   }
 
@@ -3530,6 +3718,7 @@ button {
   }
 
   .vessel-readiness {
+    grid-template-columns: minmax(130px, 0.36fr) minmax(0, 0.64fr);
     padding: 12px;
   }
 
@@ -3550,6 +3739,34 @@ button {
 
   .vessel-pillar-card strong {
     font-size: 1.18rem;
+  }
+
+  .vessel-readiness {
+    grid-template-columns: 1fr;
+  }
+
+  .vessel-readiness-ring {
+    width: min(54vw, 168px);
+  }
+
+  .vessel-ring-actions {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .vessel-ring-actions button {
+    text-align: center;
+    padding: 8px 6px;
+  }
+
+  .vessel-drift-row {
+    grid-template-columns: 48px repeat(7, minmax(24px, 1fr));
+    gap: 5px;
+  }
+
+  .vessel-drift-row i {
+    height: 26px;
+    border-radius: 6px;
+    font-size: 0.68rem;
   }
 
   .identity-statement-panel,

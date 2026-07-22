@@ -1012,6 +1012,7 @@ function App() {
   const [categoryLensIndex, setCategoryLensIndex] = useState<Partial<Record<Exclude<PersonalSection, 'home'>, number>>>({})
   const [identityQualityEdits, setIdentityQualityEdits] = useState<IdentityQuality[]>(() => loadStoredIdentityQualities([]))
   const [identityScoresEditable, setIdentityScoresEditable] = useState(false)
+  const [selectedVesselLane, setSelectedVesselLane] = useState('Workouts')
 
   const dashboardData = useDashboardData()
   const appMode: AppMode = isBusinessPage(currentPage) ? 'business' : 'personal'
@@ -1921,14 +1922,25 @@ function App() {
     const focus = findCard('focus') ?? currentPersonalData.summaryCards[5]
     const recovery = findCard('recovery') ?? currentPersonalData.summaryCards[7]
     const discipline = findCard('discipline') ?? mental
-    const physique = findCard('physique') ?? currentPersonalData.summaryCards[6]
     const nextActions = currentSectionDashboard?.actionRows ?? []
     const pillars = [
-      { label: 'Workouts', title: training?.value ?? 'Training signal pending', body: training?.note ?? 'Workout logs are the lead evidence source.', tone: training?.stale ? 'watch' : 'good', progress: '84%' },
-      { label: 'Nutrition', title: nutrition?.value ?? 'Nutrition signal pending', body: nutrition?.note ?? 'Food logging is the cut / recomp control surface.', tone: nutrition?.stale ? 'watch' : 'good', progress: '78%' },
-      { label: 'Mind', title: mental?.value ?? 'Mental reset pending', body: mental?.note ?? 'Focus, attention span, and meditation need a small daily baseline.', tone: mental?.stale ? 'watch' : 'mind', progress: '42%' },
-      { label: 'Looks', title: looks?.value ?? 'Routine signal pending', body: looks?.note ?? 'Grooming, skin, hair, and style should compound quietly from a simple routine.', tone: looks?.stale ? 'watch' : 'looks', progress: '64%' },
+      { label: 'Workouts', shortLabel: 'Train', title: training?.value ?? 'Training signal pending', body: training?.note ?? 'Workout logs are the lead evidence source.', tone: training?.stale ? 'watch' : 'good', progress: 84, action: nextActions[0]?.title ?? 'Lock the next lift', actionBody: nextActions[0]?.body ?? 'Decide the next session before the day starts drifting.' },
+      { label: 'Nutrition', shortLabel: 'Fuel', title: nutrition?.value ?? 'Nutrition signal pending', body: nutrition?.note ?? 'Food logging is the cut / recomp control surface.', tone: nutrition?.stale ? 'watch' : 'good', progress: 78, action: nextActions[1]?.title ?? 'Hit the protein floor', actionBody: nextActions[1]?.body ?? 'Keep the food signal simple: protein, calories, then consistency.' },
+      { label: 'Mind', shortLabel: 'Mind', title: mental?.value ?? 'Mental reset pending', body: mental?.note ?? 'Focus, attention span, and meditation need a small daily baseline.', tone: mental?.stale ? 'watch' : 'mind', progress: 42, action: nextActions[2]?.title ?? 'Run the focus reset', actionBody: nextActions[2]?.body ?? 'Brain dump, breathe, then protect one clean attention block.' },
+      { label: 'Looks', shortLabel: 'Looks', title: looks?.value ?? 'Routine signal pending', body: looks?.note ?? 'Grooming, skin, hair, and style should compound quietly from a simple routine.', tone: looks?.stale ? 'watch' : 'looks', progress: 64, action: nextActions[3]?.title ?? 'Do the appearance pass', actionBody: nextActions[3]?.body ?? 'Keep skin, hair, grooming, and fit checks visible as daily Vessel work.' },
     ]
+    const selectedPillar = pillars.find((pillar) => pillar.label === selectedVesselLane) ?? pillars[0]
+    const readinessAverage = Math.round(pillars.reduce((total, pillar) => total + pillar.progress, 0) / pillars.length)
+    const weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+    const weekRows = pillars.map((pillar, rowIndex) => ({
+      label: pillar.shortLabel,
+      tone: pillar.tone,
+      days: weekDays.map((day, dayIndex) => ({
+        day,
+        active: dayIndex <= Math.min(6, Math.floor((pillar.progress / 100) * 7) - 1),
+        dim: (dayIndex + rowIndex) % 5 === 0,
+      })),
+    }))
     const sourceItems = [bodyMetric, training, nutrition, mental, looks].filter(Boolean)
 
     return (
@@ -1941,9 +1953,33 @@ function App() {
             <p>{currentPersonalData.heroSummary}</p>
           </div>
           <aside className="vessel-readiness">
-            <span>Physique target</span>
-            <strong>{physique?.value ?? bodyMetric?.value ?? currentPersonalContent?.title}</strong>
-            <p>{bodyMetric?.note ?? 'Keep the body goal visible without crowding the day.'}</p>
+            <div
+              className="vessel-readiness-ring"
+              style={{ '--vessel-readiness': `${readinessAverage}%` } as CSSProperties}
+              aria-label={`Vessel readiness ${readinessAverage}%`}
+            >
+              <div>
+                <span>Ready</span>
+                <strong>{readinessAverage}</strong>
+              </div>
+            </div>
+            <div className="vessel-ring-actions" aria-label="Readiness lanes">
+              {pillars.map((pillar) => (
+                <button
+                  key={pillar.label}
+                  className={selectedPillar.label === pillar.label ? `active ${pillar.tone}` : pillar.tone}
+                  onClick={() => setSelectedVesselLane(pillar.label)}
+                >
+                  <span>{pillar.shortLabel}</span>
+                  <strong>{pillar.progress}%</strong>
+                </button>
+              ))}
+            </div>
+            <div className="vessel-selected-action">
+              <span>{selectedPillar.shortLabel} next move</span>
+              <strong>{selectedPillar.action}</strong>
+              <p>{selectedPillar.actionBody}</p>
+            </div>
           </aside>
         </section>
 
@@ -1959,7 +1995,11 @@ function App() {
                 <strong>{pillar.title}</strong>
                 <p>{pillar.body}</p>
               </div>
-              <div className="vessel-progress-track" aria-hidden="true"><i /></div>
+              <div className="vessel-mini-row">
+                <span>{pillar.shortLabel} status</span>
+                <b>{pillar.progress}%</b>
+              </div>
+              <div className="vessel-progress-track" style={{ '--vessel-progress': `${pillar.progress}%` } as CSSProperties} aria-hidden="true"><i /></div>
             </article>
           ))}
         </section>
@@ -1992,6 +2032,26 @@ function App() {
               <strong>{card.value}</strong>
             </article>
           ))}
+        </section>
+
+        <section className="vessel-weekly-drift" aria-label="Vessel weekly drift">
+          <div>
+            <span>Weekly drift</span>
+            <strong>Sharpening check</strong>
+            <p>Seven-day view for training, food, focus, and appearance routines.</p>
+          </div>
+          <div className="vessel-drift-grid">
+            {weekRows.map((row) => (
+              <div className={`vessel-drift-row ${row.tone}`} key={row.label}>
+                <span>{row.label}</span>
+                {row.days.map((day, index) => (
+                  <i key={`${row.label}-${day.day}-${index}`} className={day.active ? day.dim ? 'active dim' : 'active' : ''}>
+                    {day.day}
+                  </i>
+                ))}
+              </div>
+            ))}
+          </div>
         </section>
       </section>
     )
