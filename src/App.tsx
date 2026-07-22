@@ -1931,6 +1931,10 @@ function App() {
     ]
     const selectedPillar = pillars.find((pillar) => pillar.label === selectedVesselLane) ?? pillars[0]
     const readinessAverage = Math.round(pillars.reduce((total, pillar) => total + pillar.progress, 0) / pillars.length)
+    const handledCount = pillars.filter((pillar) => pillar.progress >= 70 && pillar.tone !== 'watch').length
+    const readinessState = readinessAverage >= 80 ? 'Locked in' : readinessAverage >= 65 ? 'Close the gaps' : 'Needs reset'
+    const topPillar = [...pillars].sort((a, b) => b.progress - a.progress)[0]
+    const laggingPillar = [...pillars].sort((a, b) => a.progress - b.progress)[0]
     const weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
     const weekRows = pillars.map((pillar, rowIndex) => ({
       label: pillar.shortLabel,
@@ -1942,6 +1946,11 @@ function App() {
       })),
     }))
     const sourceItems = [bodyMetric, training, nutrition, mental, looks].filter(Boolean)
+    const vesselStats = [
+      { label: 'Handled today', value: `${handledCount}/4`, note: 'Core lanes above the line' },
+      { label: 'Strongest', value: topPillar.shortLabel, note: `${topPillar.progress}% signal` },
+      { label: 'Needs attention', value: laggingPillar.shortLabel, note: `${laggingPillar.progress}% signal` },
+    ]
 
     return (
       <section className="vessel-page" aria-label="Vessel dashboard">
@@ -1949,8 +1958,17 @@ function App() {
           <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
           <div className="vessel-hero-copy">
             <div className="revamp-kicker">Vessel</div>
-            <h2>Train. Fuel. Focus.</h2>
+            <h2>Vessel OS</h2>
             <p>{currentPersonalData.heroSummary}</p>
+            <div className="vessel-hero-vitals" aria-label="Vessel quick readouts">
+              {vesselStats.map((stat) => (
+                <div key={stat.label}>
+                  <span>{stat.label}</span>
+                  <strong>{stat.value}</strong>
+                  <small>{stat.note}</small>
+                </div>
+              ))}
+            </div>
           </div>
           <aside className="vessel-readiness">
             <div
@@ -1959,7 +1977,7 @@ function App() {
               aria-label={`Vessel readiness ${readinessAverage}%`}
             >
               <div>
-                <span>Ready</span>
+                <span>{readinessState}</span>
                 <strong>{readinessAverage}</strong>
               </div>
             </div>
@@ -1995,6 +2013,13 @@ function App() {
                 <strong>{pillar.title}</strong>
                 <p>{pillar.body}</p>
               </div>
+              <button
+                className="vessel-pillar-select"
+                onClick={() => setSelectedVesselLane(pillar.label)}
+                aria-label={`Select ${pillar.label}`}
+              >
+                Next
+              </button>
               <div className="vessel-mini-row">
                 <span>{pillar.shortLabel} status</span>
                 <b>{pillar.progress}%</b>
