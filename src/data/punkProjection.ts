@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import type { IdentityQualityProjection, ProjectedSection, VesselMuscleGroupProjection } from './projectedTypes'
+import type { EducationDeadlineProjection, IdentityQualityProjection, ProjectedSection, VesselMuscleGroupProjection } from './projectedTypes'
 
 const PUNK_RECORDS_ROOT = '/Users/shika/.openclaw/workspace/PunkRecords'
 
@@ -497,26 +497,137 @@ export function buildWealthData(): ProjectedSection {
   }
 }
 
+function educationDeadlineStatus(dueAt: string): EducationDeadlineProjection['status'] {
+  const due = Date.parse(dueAt)
+  if (Number.isNaN(due)) return 'later'
+  const daysUntil = Math.ceil((due - Date.now()) / (1000 * 60 * 60 * 24))
+  if (daysUntil <= 5) return 'urgent'
+  if (daysUntil <= 14) return 'soon'
+  return 'later'
+}
+
+function parseEasternDeadline(value: string) {
+  const match = value.match(/(\d{4})-(\d{2})-(\d{2})\s+(\d{1,2}):(\d{2})\s+(AM|PM)\s+ET/i)
+  if (!match) return null
+  const [, year, month, day, hourRaw, minute, meridiem] = match
+  const hourNumber = Number(hourRaw)
+  const hour24 = meridiem.toUpperCase() === 'PM'
+    ? (hourNumber === 12 ? 12 : hourNumber + 12)
+    : (hourNumber === 12 ? 0 : hourNumber)
+  const dueAt = `${year}-${month}-${day}T${String(hour24).padStart(2, '0')}:${minute}:00-04:00`
+  let internalTarget = dueAt
+
+  if (hour24 === 7 && minute === '59') {
+    const targetDate = new Date(`${year}-${month}-${day}T12:00:00-04:00`)
+    targetDate.setDate(targetDate.getDate() - 1)
+    const targetYear = targetDate.getFullYear()
+    const targetMonth = String(targetDate.getMonth() + 1).padStart(2, '0')
+    const targetDay = String(targetDate.getDate()).padStart(2, '0')
+    internalTarget = `${targetYear}-${targetMonth}-${targetDay}T23:59:00-04:00`
+  }
+
+  return { dueAt, internalTarget }
+}
+
+function inferDeadlineKind(title: string): EducationDeadlineProjection['kind'] {
+  const lower = title.toLowerCase()
+  if (lower.includes('exam')) return 'exam'
+  if (lower.includes('quiz')) return 'quiz'
+  if (lower.includes('discussion')) return 'discussion'
+  if (lower.includes('extra credit')) return 'extra-credit'
+  if (lower.includes('report')) return 'report'
+  return 'assignment'
+}
+
+function educationDeadlinesFromCourse(markdown: string, courseCode: string, courseName: string) {
+  const section = markdown.match(/## Important Dates[\s\S]*?(?=\n## |\n### |$)/)?.[0] ?? ''
+  return section
+    .split('\n')
+    .map((line) => {
+      const match = line.match(/^-\s+\*\*([^*]+):\*\*\s+(.+?)\s+due\b/i)
+      if (!match) return null
+      const parsed = parseEasternDeadline(match[1])
+      if (!parsed) return null
+      const title = match[2].trim()
+      return {
+        id: slugify(`${courseCode}-${title}-${parsed.dueAt}`),
+        courseCode,
+        courseName,
+        title,
+        dueAt: parsed.dueAt,
+        internalTarget: parsed.internalTarget,
+        kind: inferDeadlineKind(title),
+        status: educationDeadlineStatus(parsed.dueAt),
+      }
+    })
+    .filter((deadline): deadline is EducationDeadlineProjection => Boolean(deadline))
+    .filter((deadline) => Date.parse(deadline.dueAt) >= Date.now() - (24 * 60 * 60 * 1000))
+    .sort((a, b) => Date.parse(a.dueAt) - Date.parse(b.dueAt))
+}
+
 export function buildEducationData(): ProjectedSection {
   const goals = readPunkFile('Personal Decision Engine/Goals/Goals Overview.md')
+  const gtOverview = readPunkFile('School/Masters GT/GT Overview.md')
+  const currentCourses = readPunkFile('School/School/Current Courses.md')
+  const machineLearning = readPunkFile('School/Masters GT/Courses/Machine Learning/CS7641 Machine Learning Overview.md')
   const degreeLine = goals.split('\n').find((line) => line.includes('Georgia Tech MSML completed')) ?? ''
+  const activeCourseLine = currentCourses.match(/\|\s*(CS7641 Machine Learning)\s*\|[^|]+\|\s*([^|]+?)\s*\|/) ?? gtOverview.match(/\|\s*(CS7641 — Machine Learning)\s*\|[^|]+\|\s*([^|]+?)\s*\|/)
+  const activeCourse = activeCourseLine?.[1]?.replace(' — ', ' ') ?? 'CS7641 Machine Learning'
+  const activeCourseStatus = activeCourseLine?.[2]?.trim() ?? 'In progress — Summer 2026'
+  const deadlineRule = machineLearning.match(/Internal deadline rule:\*\*\s+(.+)/)?.[1]?.trim()
+    ?? 'Treat 11:59 PM ET the prior night as the real target whenever Canvas shows an overnight close.'
+  const urgentDeadlines = educationDeadlinesFromCourse(machineLearning, 'CS7641', 'Machine Learning')
+
+  const coursePlan = [
+    { code: 'CS 8803 O17', name: 'Global Entrepreneurship', term: 'Spring 2026', status: 'taken' as const, role: 'free-elective' as const, difficulty: 3, why: 'Product and venture context already counted in the 10-course plan.' },
+    { code: 'CS 6310', name: 'Software Architecture & Design', term: 'Spring 2026', status: 'taken' as const, role: 'free-elective' as const, difficulty: 4, why: 'Useful architecture base for agent systems and scalable product work.' },
+    { code: 'CS 7641', name: 'Machine Learning', term: 'Summer 2026', status: 'active' as const, role: 'core' as const, difficulty: 8, why: 'Required ML core and foundation for later ML electives.' },
+    { code: 'CS 6515', name: 'Intro to Graduate Algorithms', term: 'Fall 2026', status: 'planned' as const, role: 'core' as const, difficulty: 9, why: 'Degree-safe algorithms anchor and hard thinking course.' },
+    { code: 'CS 6400', name: 'Database Systems Concepts and Design', term: 'Fall 2026', status: 'planned' as const, role: 'free-elective' as const, difficulty: 5, why: 'High ROI for agent memory, state, retrieval, logs, and persistence.' },
+    { code: 'CS 7643', name: 'Deep Learning', term: 'Spring 2027', status: 'planned' as const, role: 'ml-elective' as const, difficulty: 8, why: 'Strong modern AI depth.' },
+    { code: 'CS 6250', name: 'Computer Networks', term: 'Spring 2027', status: 'planned' as const, role: 'free-elective' as const, difficulty: 6, why: 'Useful infrastructure and service-communication foundation.' },
+    { code: 'CS 7650', name: 'Natural Language Processing', term: 'Summer 2027', status: 'planned' as const, role: 'ml-elective' as const, difficulty: 7, why: 'Directly relevant to agents and language-mediated workflows.' },
+    { code: 'CS 7646', name: 'Machine Learning for Trading', term: 'Fall 2027', status: 'planned' as const, role: 'ml-elective' as const, difficulty: 6, why: 'Applied ML elective with finance relevance.' },
+    { code: 'CS 6200', name: 'Introduction to Operating Systems', term: 'Fall 2027', status: 'planned' as const, role: 'free-elective' as const, difficulty: 7, why: 'Systems intuition for orchestration, processes, and resource management.' },
+  ]
+
+  const alternatives = [
+    { code: 'CSE 6250', name: 'Big Data for Health', difficulty: 7, bestFor: 'LifeArc and health-data relevance.' },
+    { code: 'CS 6476', name: 'Computer Vision', difficulty: 7, bestFor: 'Multimodal or vision pipeline interest.' },
+    { code: 'CS 7642', name: 'Reinforcement Learning', difficulty: 9, bestFor: 'More technical prestige if the semester can absorb pain.' },
+    { code: 'ISYE 6420', name: 'Bayesian Statistics', difficulty: 7, bestFor: 'Stronger statistical foundation.' },
+    { code: 'CSE 6242', name: 'Data and Visual Analytics', difficulty: 6, bestFor: 'Applied analytics with moderate load.' },
+    { code: 'CS 6750', name: 'Human-Computer Interaction', difficulty: 6, bestFor: 'Agent usability and product design.' },
+    { code: 'CS 7637', name: 'Knowledge-Based AI', difficulty: 5, bestFor: 'Structured reasoning and symbolic AI complement.' },
+    { code: 'CS 7210', name: 'Distributed Computing', difficulty: 10, bestFor: 'Maximum systems relevance with brutal workload.' },
+  ]
 
   return {
-    heroSummary: 'Education is a supporting but serious track, centered on completing the Georgia Tech MSML path while balancing career and execution priorities.',
+    heroSummary: 'Education is a deadline radar for active classes and a compact OMSCS course map for finishing the Machine Learning specialization without vague school stress.',
     summaryCards: [
       { label: 'Current program / course load', value: 'Georgia Tech MSML', note: degreeLine || 'The 5-year goals note keeps this degree path visible.' },
-      { label: 'Current courses', value: 'Pending academic source', note: 'Course-level data and deadlines need a dedicated academic source before they appear here.', stale: true },
-      { label: 'Upcoming deadlines', value: 'Pending academic source', note: 'Course-level timing needs a dedicated academic source before it appears here.', stale: true },
-      { label: 'Progress / completion status', value: 'In progress', note: 'The education track is active, not complete.' },
-      { label: 'Current learning focus', value: 'ML credibility + execution balance', note: 'Education supports long-term positioning and practical leverage.' },
-      { label: 'Academic priority level', value: 'Important but not primary', note: 'Current active life priorities still lean heavily toward execution and leverage.' },
+      { label: 'Current classes', value: activeCourse, note: activeCourseStatus },
+      { label: 'Most urgent deadline', value: urgentDeadlines[0]?.title ?? 'No upcoming deadline found', note: urgentDeadlines[0] ? `Due ${urgentDeadlines[0].dueAt}.` : 'Check Canvas and update Punk Records when new dates land.' },
+      { label: 'OMSCS course map', value: '2 taken / 1 active / 7 left', note: 'Ten-course plan follows the Machine Learning specialization path.' },
+      { label: 'Current learning focus', value: 'CS7641 + ML foundation', note: 'Communication quality and report clarity matter as much as working code.' },
+      { label: 'Academic priority level', value: 'Deadline-sensitive support lane', note: 'School stays visible through deadlines and course sequence, not generic motivation cards.' },
     ],
     highlights: [
-      'Education stays visible without dominating the control center.',
-      'The next layer is live academic detail and concrete milestones.',
-      'Current projection keeps the long-arc program in view.',
+      'Education prioritizes the next deadline across current classes.',
+      'The degree map shows two courses taken, one active, and seven left.',
+      'Alternatives stay available without cluttering the primary schedule.',
     ],
     freshness: summarizeFreshness('Education planning docs', 0, 45),
+    education: {
+      activeProgram: 'Georgia Tech OMSCS / MSML',
+      activeTerm: 'Summer 2026',
+      activeCourses: [activeCourse],
+      coursePlan,
+      alternatives,
+      urgentDeadlines,
+      deadlineRule,
+      planNote: 'The default map favors ML core requirements plus agent-builder systems depth. Use alternatives when workload, specialization fit, or interests change.',
+    },
   }
 }
 

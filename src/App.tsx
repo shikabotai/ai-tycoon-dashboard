@@ -849,6 +849,12 @@ function formatActionTime(value: string) {
   return date.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
 }
 
+function formatEducationDate(value: string) {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return 'Date pending'
+  return date.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })
+}
+
 function BusinessEmptyState({ label, title, body }: EmptyStateProps) {
   return (
     <div className="business-empty-state">
@@ -1012,6 +1018,7 @@ function App() {
   const [categoryLensIndex, setCategoryLensIndex] = useState<Partial<Record<Exclude<PersonalSection, 'home'>, number>>>({})
   const [identityQualityEdits, setIdentityQualityEdits] = useState<IdentityQuality[]>(() => loadStoredIdentityQualities([]))
   const [identityScoresEditable, setIdentityScoresEditable] = useState(false)
+  const [educationAlternativesOpen, setEducationAlternativesOpen] = useState(false)
   const dashboardData = useDashboardData()
   const appMode: AppMode = isBusinessPage(currentPage) ? 'business' : 'personal'
   const personalSection: PersonalSection = isBusinessPage(currentPage) ? 'home' : currentPage
@@ -2072,6 +2079,111 @@ function App() {
     )
   }
 
+  function renderEducationPage() {
+    if (!currentPersonalData) return null
+
+    const education = currentPersonalData.education
+    const urgentDeadlines = education?.urgentDeadlines ?? []
+    const coursePlan = education?.coursePlan ?? []
+    const alternatives = education?.alternatives ?? []
+    const activeCourse = coursePlan.find((course) => course.status === 'active')
+    const takenCount = coursePlan.filter((course) => course.status === 'taken').length
+    const activeCount = coursePlan.filter((course) => course.status === 'active').length
+    const leftCount = coursePlan.filter((course) => course.status === 'planned').length
+
+    return (
+      <section className="education-page" aria-label="Education dashboard">
+        <section className="education-hero">
+          <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
+          <div className="education-hero-copy">
+            <span>{education?.activeProgram ?? 'Georgia Tech OMSCS / MSML'}</span>
+            <strong>{activeCourse ? `${activeCourse.code} · ${activeCourse.name}` : currentPersonalData.summaryCards[1]?.value ?? 'Current course pending'}</strong>
+            <p>{education?.deadlineRule ?? 'Treat hard course dates as the dashboard source of truth.'}</p>
+          </div>
+          <div className="education-hero-stats" aria-label="Education course progress">
+            <div><span>Taken</span><strong>{takenCount}</strong></div>
+            <div><span>Active</span><strong>{activeCount}</strong></div>
+            <div><span>Left</span><strong>{leftCount}</strong></div>
+          </div>
+        </section>
+
+        <section className="education-deadline-panel" aria-label="Most urgent education deadlines">
+          <div className="education-panel-head">
+            <div>
+              <span>Course radar</span>
+              <strong>Most urgent deadlines</strong>
+            </div>
+            <small>{education?.activeTerm ?? 'Summer 2026'}</small>
+          </div>
+          <div className="education-deadline-list">
+            {urgentDeadlines.length ? urgentDeadlines.map((deadline, index) => (
+              <article className={`education-deadline-card ${deadline.status}`} key={deadline.id}>
+                <div className="education-deadline-rank">{index + 1}</div>
+                <div>
+                  <span>{deadline.courseCode} · {deadline.kind.replace('-', ' ')}</span>
+                  <strong>{deadline.title}</strong>
+                  <p>Due {formatEducationDate(deadline.dueAt)}</p>
+                  {deadline.internalTarget !== deadline.dueAt ? <small>Internal target: {formatEducationDate(deadline.internalTarget)}</small> : null}
+                </div>
+              </article>
+            )) : (
+              <article className="education-deadline-card later">
+                <div className="education-deadline-rank">0</div>
+                <div>
+                  <span>Course radar</span>
+                  <strong>No upcoming deadline found</strong>
+                  <p>Check Canvas and add the next current-class deadline to Punk Records.</p>
+                </div>
+              </article>
+            )}
+          </div>
+        </section>
+
+        <section className="education-course-map" aria-label="OMSCS ten course map">
+          <div className="education-panel-head">
+            <div>
+              <span>Masters map</span>
+              <strong>10-course OMSCS / MSML schedule</strong>
+            </div>
+            <button className="education-alt-toggle" onClick={() => setEducationAlternativesOpen((open) => !open)}>
+              {educationAlternativesOpen ? 'Hide alternatives' : 'See alternatives'}
+            </button>
+          </div>
+          <div className="education-course-grid">
+            {coursePlan.map((course, index) => (
+              <article className={`education-course-card ${course.status}`} key={`${course.code}-${course.term}`}>
+                <div className="education-course-topline">
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  <em>{course.term}</em>
+                </div>
+                <strong>{course.code}</strong>
+                <p>{course.name}</p>
+                <div className="education-course-meta">
+                  <span>{course.status}</span>
+                  <span>{course.role.replace('-', ' ')}</span>
+                  <span>{course.difficulty}/10</span>
+                </div>
+                <small>{course.why}</small>
+              </article>
+            ))}
+          </div>
+          <p className="education-plan-note">{education?.planNote}</p>
+          {educationAlternativesOpen ? (
+            <div className="education-alternatives" aria-label="Potential OMSCS course alternatives">
+              {alternatives.map((course) => (
+                <article key={course.code}>
+                  <span>{course.code} · {course.difficulty}/10</span>
+                  <strong>{course.name}</strong>
+                  <p>{course.bestFor}</p>
+                </article>
+              ))}
+            </div>
+          ) : null}
+        </section>
+      </section>
+    )
+  }
+
   function renderCategorySignatureDashboard() {
     if (personalSection === 'home' || !currentSignatureDashboard || !currentPersonalData) return null
 
@@ -2302,7 +2414,7 @@ function App() {
           </main>
         ) : (
           <main className="revamp-detail-page">
-            {personalSection === 'identity' || personalSection === 'vessel' ? null : (
+            {personalSection === 'identity' || personalSection === 'vessel' || personalSection === 'education' ? null : (
               <section className="revamp-detail-hero">
                 <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
                 <div>
@@ -2317,7 +2429,7 @@ function App() {
                 </aside>
               </section>
             )}
-            {personalSection === 'identity' ? renderIdentityScorecardPage() : personalSection === 'vessel' ? renderVesselPage() : (
+            {personalSection === 'identity' ? renderIdentityScorecardPage() : personalSection === 'vessel' ? renderVesselPage() : personalSection === 'education' ? renderEducationPage() : (
               <>
                 {renderCategorySignatureDashboard()}
                 {renderPersonalDashboardLead()}

@@ -99,6 +99,45 @@ export type VesselProjection = {
   }
 }
 
+export type EducationDeadlineProjection = {
+  id: string
+  courseCode: string
+  courseName: string
+  title: string
+  dueAt: string
+  internalTarget: string
+  kind: 'report' | 'quiz' | 'discussion' | 'exam' | 'extra-credit' | 'assignment'
+  status: 'urgent' | 'soon' | 'later'
+}
+
+export type EducationCourseProjection = {
+  code: string
+  name: string
+  term: string
+  status: 'taken' | 'active' | 'planned'
+  role: 'core' | 'ml-elective' | 'free-elective'
+  difficulty: number
+  why: string
+}
+
+export type EducationAlternativeProjection = {
+  code: string
+  name: string
+  difficulty: number
+  bestFor: string
+}
+
+export type EducationProjection = {
+  activeProgram: string
+  activeTerm: string
+  activeCourses: string[]
+  coursePlan: EducationCourseProjection[]
+  alternatives: EducationAlternativeProjection[]
+  urgentDeadlines: EducationDeadlineProjection[]
+  deadlineRule: string
+  planNote: string
+}
+
 export type ProjectedSection = {
   heroSummary: string
   summaryCards: ProjectedCard[]
@@ -114,4 +153,5 @@ export type ProjectedSection = {
   }
   identity?: IdentityProjection
   vessel?: VesselProjection
+  education?: EducationProjection
 }

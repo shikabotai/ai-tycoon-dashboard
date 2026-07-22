@@ -511,7 +511,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     }
   },
   "education": {
-    "heroSummary": "Education is a supporting but serious track, centered on completing the Georgia Tech MSML path while balancing career and execution priorities.",
+    "heroSummary": "Education is a deadline radar for active classes and a compact OMSCS course map for finishing the Machine Learning specialization without vague school stress.",
     "summaryCards": [
       {
         "label": "Current program / course load",
@@ -519,40 +519,243 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         "note": "| Georgia Tech MSML completed | Career | 2027 | In progress |"
       },
       {
-        "label": "Why it matters",
-        "value": "Long-term ML leverage",
-        "note": "Education is tied to future career leverage, not abstract credential collection."
+        "label": "Current classes",
+        "value": "CS7641 Machine Learning",
+        "note": "In progress — Summer 2026"
       },
       {
-        "label": "Current tradeoff",
-        "value": "Execution vs depth",
-        "note": "The challenge is balancing shipping pressure with sustained study."
+        "label": "Most urgent deadline",
+        "value": "UL Report",
+        "note": "Due 2026-07-27T07:59:00-04:00."
       },
       {
-        "label": "Support system",
-        "value": "Self-directed",
-        "note": "The next layer is concrete timelines, deliverables, and pacing."
+        "label": "OMSCS course map",
+        "value": "2 taken / 1 active / 7 left",
+        "note": "Ten-course plan follows the Machine Learning specialization path."
       },
       {
-        "label": "Biggest risk",
-        "value": "Overload / dilution",
-        "note": "Education can slip if too many business and career fronts are active at once."
+        "label": "Current learning focus",
+        "value": "CS7641 + ML foundation",
+        "note": "Communication quality and report clarity matter as much as working code."
       },
       {
-        "label": "Next education milestone",
-        "value": "Sustained completion path",
-        "note": "Future versions should show direct program checkpoints."
+        "label": "Academic priority level",
+        "value": "Deadline-sensitive support lane",
+        "note": "School stays visible through deadlines and course sequence, not generic motivation cards."
       }
     ],
     "highlights": [
-      "Education is strategic, not ornamental.",
-      "MSML is the clearest current anchor.",
-      "The next layer is deeper milestone extraction."
+      "Education prioritizes the next deadline across current classes.",
+      "The degree map shows two courses taken, one active, and seven left.",
+      "Alternatives stay available without cluttering the primary schedule."
     ],
     "freshness": {
       "label": "Education planning docs",
       "ageDays": 0,
       "stale": false
+    },
+    "education": {
+      "activeProgram": "Georgia Tech OMSCS / MSML",
+      "activeTerm": "Summer 2026",
+      "activeCourses": [
+        "CS7641 Machine Learning"
+      ],
+      "coursePlan": [
+        {
+          "code": "CS 8803 O17",
+          "name": "Global Entrepreneurship",
+          "term": "Spring 2026",
+          "status": "taken",
+          "role": "free-elective",
+          "difficulty": 3,
+          "why": "Product and venture context already counted in the 10-course plan."
+        },
+        {
+          "code": "CS 6310",
+          "name": "Software Architecture & Design",
+          "term": "Spring 2026",
+          "status": "taken",
+          "role": "free-elective",
+          "difficulty": 4,
+          "why": "Useful architecture base for agent systems and scalable product work."
+        },
+        {
+          "code": "CS 7641",
+          "name": "Machine Learning",
+          "term": "Summer 2026",
+          "status": "active",
+          "role": "core",
+          "difficulty": 8,
+          "why": "Required ML core and foundation for later ML electives."
+        },
+        {
+          "code": "CS 6515",
+          "name": "Intro to Graduate Algorithms",
+          "term": "Fall 2026",
+          "status": "planned",
+          "role": "core",
+          "difficulty": 9,
+          "why": "Degree-safe algorithms anchor and hard thinking course."
+        },
+        {
+          "code": "CS 6400",
+          "name": "Database Systems Concepts and Design",
+          "term": "Fall 2026",
+          "status": "planned",
+          "role": "free-elective",
+          "difficulty": 5,
+          "why": "High ROI for agent memory, state, retrieval, logs, and persistence."
+        },
+        {
+          "code": "CS 7643",
+          "name": "Deep Learning",
+          "term": "Spring 2027",
+          "status": "planned",
+          "role": "ml-elective",
+          "difficulty": 8,
+          "why": "Strong modern AI depth."
+        },
+        {
+          "code": "CS 6250",
+          "name": "Computer Networks",
+          "term": "Spring 2027",
+          "status": "planned",
+          "role": "free-elective",
+          "difficulty": 6,
+          "why": "Useful infrastructure and service-communication foundation."
+        },
+        {
+          "code": "CS 7650",
+          "name": "Natural Language Processing",
+          "term": "Summer 2027",
+          "status": "planned",
+          "role": "ml-elective",
+          "difficulty": 7,
+          "why": "Directly relevant to agents and language-mediated workflows."
+        },
+        {
+          "code": "CS 7646",
+          "name": "Machine Learning for Trading",
+          "term": "Fall 2027",
+          "status": "planned",
+          "role": "ml-elective",
+          "difficulty": 6,
+          "why": "Applied ML elective with finance relevance."
+        },
+        {
+          "code": "CS 6200",
+          "name": "Introduction to Operating Systems",
+          "term": "Fall 2027",
+          "status": "planned",
+          "role": "free-elective",
+          "difficulty": 7,
+          "why": "Systems intuition for orchestration, processes, and resource management."
+        }
+      ],
+      "alternatives": [
+        {
+          "code": "CSE 6250",
+          "name": "Big Data for Health",
+          "difficulty": 7,
+          "bestFor": "LifeArc and health-data relevance."
+        },
+        {
+          "code": "CS 6476",
+          "name": "Computer Vision",
+          "difficulty": 7,
+          "bestFor": "Multimodal or vision pipeline interest."
+        },
+        {
+          "code": "CS 7642",
+          "name": "Reinforcement Learning",
+          "difficulty": 9,
+          "bestFor": "More technical prestige if the semester can absorb pain."
+        },
+        {
+          "code": "ISYE 6420",
+          "name": "Bayesian Statistics",
+          "difficulty": 7,
+          "bestFor": "Stronger statistical foundation."
+        },
+        {
+          "code": "CSE 6242",
+          "name": "Data and Visual Analytics",
+          "difficulty": 6,
+          "bestFor": "Applied analytics with moderate load."
+        },
+        {
+          "code": "CS 6750",
+          "name": "Human-Computer Interaction",
+          "difficulty": 6,
+          "bestFor": "Agent usability and product design."
+        },
+        {
+          "code": "CS 7637",
+          "name": "Knowledge-Based AI",
+          "difficulty": 5,
+          "bestFor": "Structured reasoning and symbolic AI complement."
+        },
+        {
+          "code": "CS 7210",
+          "name": "Distributed Computing",
+          "difficulty": 10,
+          "bestFor": "Maximum systems relevance with brutal workload."
+        }
+      ],
+      "urgentDeadlines": [
+        {
+          "id": "cs7641-ul-report-2026-07-27t07-59-00-04-00",
+          "courseCode": "CS7641",
+          "courseName": "Machine Learning",
+          "title": "UL Report",
+          "dueAt": "2026-07-27T07:59:00-04:00",
+          "internalTarget": "2026-07-26T23:59:00-04:00",
+          "kind": "report",
+          "status": "urgent"
+        },
+        {
+          "id": "cs7641-ul-unit-quiz-2026-07-27t07-59-00-04-00",
+          "courseCode": "CS7641",
+          "courseName": "Machine Learning",
+          "title": "UL Unit Quiz",
+          "dueAt": "2026-07-27T07:59:00-04:00",
+          "internalTarget": "2026-07-26T23:59:00-04:00",
+          "kind": "quiz",
+          "status": "urgent"
+        },
+        {
+          "id": "cs7641-problem-set-extra-credit-2026-07-31t23-59-00-04-00",
+          "courseCode": "CS7641",
+          "courseName": "Machine Learning",
+          "title": "Problem Set extra credit",
+          "dueAt": "2026-07-31T23:59:00-04:00",
+          "internalTarget": "2026-07-31T23:59:00-04:00",
+          "kind": "extra-credit",
+          "status": "soon"
+        },
+        {
+          "id": "cs7641-ul-report-discussion-2026-08-03t07-59-00-04-00",
+          "courseCode": "CS7641",
+          "courseName": "Machine Learning",
+          "title": "UL Report Discussion",
+          "dueAt": "2026-08-03T07:59:00-04:00",
+          "internalTarget": "2026-08-02T23:59:00-04:00",
+          "kind": "discussion",
+          "status": "soon"
+        },
+        {
+          "id": "cs7641-final-exam-2026-08-06t23-59-00-04-00",
+          "courseCode": "CS7641",
+          "courseName": "Machine Learning",
+          "title": "Final Exam",
+          "dueAt": "2026-08-06T23:59:00-04:00",
+          "internalTarget": "2026-08-06T23:59:00-04:00",
+          "kind": "exam",
+          "status": "later"
+        }
+      ],
+      "deadlineRule": "Mitchell should treat **11:59 PM ET on the prior night** as the real target whenever Canvas shows an overnight grace-style close.",
+      "planNote": "The default map favors ML core requirements plus agent-builder systems depth. Use alternatives when workload, specialization fit, or interests change."
     }
   },
   "relationships": {
