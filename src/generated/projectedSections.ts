@@ -154,7 +154,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Looksmaxxing",
         "value": "Daily grooming system",
-        "note": "Stay aligned to the upcoming event calendar in [[Looksmaxxing Goals]]."
+        "note": "Quick tip: Make sure hair, beard, lips, and outfit look intentional"
       },
       {
         "label": "Focus / attention",

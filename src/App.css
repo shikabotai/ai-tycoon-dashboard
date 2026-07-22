@@ -1629,7 +1629,7 @@ button {
 
 .vessel-pillar-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
 
@@ -1856,6 +1856,34 @@ button {
   font-size: 0.78rem;
   font-style: normal;
   white-space: nowrap;
+}
+
+.vessel-looks-support {
+  display: grid;
+  gap: 8px;
+  border: 1px solid rgba(215, 166, 91, 0.22);
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(215, 166, 91, 0.1), rgba(255, 255, 255, 0.035));
+  padding: 14px 16px;
+}
+
+.vessel-looks-support span {
+  color: #d7a65b;
+  font-size: 0.72rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.vessel-looks-support strong {
+  color: var(--text);
+  font-size: 1.05rem;
+}
+
+.vessel-looks-support p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.42;
 }
 
 .vessel-action-board {

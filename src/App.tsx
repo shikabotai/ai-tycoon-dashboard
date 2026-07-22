@@ -1945,7 +1945,6 @@ function App() {
       { label: 'Workouts', shortLabel: 'Train', title: training?.value ?? 'Training signal pending', body: training?.note ?? 'Workout logs are the lead evidence source.', tone: training?.stale ? 'watch' : 'good', status: training?.stale ? 'Log next lift' : 'Logged', action: nextActions[0]?.title ?? 'Lock the next lift', actionBody: nextActions[0]?.body ?? 'Decide the next session before the day starts drifting.' },
       { label: 'Nutrition', shortLabel: 'Fuel', title: nutrition?.value ?? 'Nutrition signal pending', body: nutrition?.note ?? 'Food logging is the cut / recomp control surface.', tone: nutrition?.stale ? 'watch' : 'good', status: nutritionStatus, progress: proteinProgress, action: nextActions[1]?.title ?? 'Hit the protein floor', actionBody: nextActions[1]?.body ?? 'Keep the food signal simple: protein, calories, then consistency.' },
       { label: 'Mind', shortLabel: 'Mind', title: mental?.value ?? 'Mental reset pending', body: mental?.note ?? 'Focus, attention span, and meditation need a small daily baseline.', tone: mental?.stale ? 'watch' : 'mind', status: 'Reset available', action: nextActions[2]?.title ?? 'Run the focus reset', actionBody: nextActions[2]?.body ?? 'Brain dump, breathe, then protect one clean attention block.' },
-      { label: 'Looks', shortLabel: 'Looks', title: looks?.value ?? 'Routine signal pending', body: looks?.note ?? 'Grooming, skin, hair, and style should compound quietly from a simple routine.', tone: looks?.stale ? 'watch' : 'looks', status: 'Routine', action: nextActions[3]?.title ?? 'Do the appearance pass', actionBody: nextActions[3]?.body ?? 'Keep skin, hair, grooming, and fit checks visible as daily Vessel work.' },
     ]
     const selectedPillar = pillars.find((pillar) => pillar.label === selectedVesselLane) ?? pillars[0]
     const weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
@@ -2079,6 +2078,14 @@ function App() {
               ))}
             </div>
             <p className="vessel-muscle-note">{currentPersonalData.vessel?.musclePriorityNote}</p>
+          </section>
+        ) : null}
+
+        {looks ? (
+          <section className="vessel-looks-support" aria-label="Looks support">
+            <span>Looks support</span>
+            <strong>{looks.value}</strong>
+            <p>{looks.note}</p>
           </section>
         ) : null}
 

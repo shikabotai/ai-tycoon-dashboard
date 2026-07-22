@@ -355,6 +355,13 @@ function buildVesselData() {
     .map((line) => line.match(/^-\s+(.+)/)?.[1]?.trim())
     .filter(Boolean)?.[0] ?? 'Practical routine'
   const looksRoutineSignal = looksRoutine.includes('Daily Routine') ? 'Daily grooming system' : 'Appearance system'
+  const goingOutItems = (looksRoutine.match(/## Going-Out \/ Event Routine[\s\S]*?(?=\n## |$)/)?.[0] ?? '')
+    .split('\n')
+    .map((line) => line.match(/^-\s+(.+)/)?.[1]?.replace(/\*\*/g, '').trim())
+    .filter(Boolean)
+  const looksGoingOutTip = goingOutItems.find((item) => /intentional|hair|beard|outfit/i.test(item)) ?? goingOutItems[0] ?? null
+  const looksMorningTip = looksRoutine.match(/### Morning[\s\S]*?-\s+(.+?)(?=\n|$)/)?.[1]?.replace(/\*\*/g, '') ?? null
+  const looksQuickTip = looksGoingOutTip ?? looksMorningTip ?? looksFocus
   const muscleGroups = buildMuscleHeatmap()
 
   return {
@@ -364,7 +371,7 @@ function buildVesselData() {
       { label: 'Workout consistency', value: workoutDate ? `Last logged ${workoutDate}` : 'Awaiting workout log', note: workoutDate ? `${workoutAge} days since latest lift. Next: ${nextSession}.` : 'Workout evidence has not reached the control center yet.', stale: (workoutAge ?? 999) > 4 },
       { label: 'Nutrition consistency', value: nutritionDate ? `${latestProtein ? `${latestProtein}g protein` : `Logged ${nutritionDate}`}` : 'Awaiting nutrition log', note: nutritionDate ? `${latestCalories ? `${latestCalories} kcal logged. ` : ''}${nutritionAge} days since latest nutrition evidence.` : 'Nutrition evidence has not reached the control center yet.', stale: (nutritionAge ?? 999) > 3 },
       { label: 'Mental reset', value: mentalStack, note: 'Minimum viable stack: 5-minute brain dump, short breathing reset, and a real shutdown ritual.' },
-      { label: 'Looksmaxxing', value: looksRoutineSignal, note: looksFocus },
+      { label: 'Looksmaxxing', value: looksRoutineSignal, note: `Quick tip: ${looksQuickTip}` },
       { label: 'Focus / attention', value: focusTarget, note: 'Treat focus like a lift: measure time to first distraction and protect deep-work blocks.', stale: true },
       { label: 'Current physique goal', value: `${targetWeight} lb`, note: 'Lean, defined, and preserving muscle rather than swingy crash dieting.' },
       { label: 'Sleep / recovery', value: 'Best-effort projection', note: 'Sleep and recovery are estimated until direct recovery evidence is available.', stale: true },
