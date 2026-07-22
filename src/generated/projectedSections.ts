@@ -127,7 +127,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     }
   },
   "vessel": {
-    "heroSummary": "Current body system is in a cut / recomp, not lean bulk. phase with 154 lb as the latest working reference and a target range of 145–148 lb by September.",
+    "heroSummary": "A simple daily dashboard for the four Vessel levers: lift consistently, hit the food log, reset attention, and keep presentation sharp.",
     "summaryCards": [
       {
         "label": "Weight / body metrics",
@@ -137,36 +137,49 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Workout consistency",
         "value": "Last logged 2026-07-21",
-        "note": "1 days since latest workout evidence.",
+        "note": "1 days since latest lift. Next: pull-focused accessories or arms/rear delts, depending on leg recovery and schedule.",
         "stale": false
       },
       {
         "label": "Nutrition consistency",
-        "value": "Last logged 2026-07-22",
-        "note": "0 days since latest nutrition evidence.",
+        "value": "91g protein",
+        "note": "860 kcal logged. 0 days since latest nutrition evidence.",
         "stale": false
+      },
+      {
+        "label": "Mental reset",
+        "value": "Brain dump + breathwork",
+        "note": "Minimum viable stack: 5-minute brain dump, short breathing reset, and a real shutdown ritual."
+      },
+      {
+        "label": "Looksmaxxing",
+        "value": "Daily grooming system",
+        "note": "Stay aligned to the upcoming event calendar in [[Looksmaxxing Goals]]."
+      },
+      {
+        "label": "Focus / attention",
+        "value": "25+ min (Pomodoro block)",
+        "note": "Treat focus like a lift: measure time to first distraction and protect deep-work blocks.",
+        "stale": true
+      },
+      {
+        "label": "Current physique goal",
+        "value": "145–148 lb",
+        "note": "Lean, defined, and preserving muscle rather than swingy crash dieting."
       },
       {
         "label": "Sleep / recovery",
         "value": "Best-effort projection",
         "note": "Sleep and recovery are estimated until direct recovery evidence is available.",
         "stale": true
-      },
-      {
-        "label": "Mental state / discipline",
-        "value": "Consistency > intensity",
-        "note": "Current philosophy emphasizes making 3 sessions/week automatic first."
-      },
-      {
-        "label": "Current physique goal",
-        "value": "145–148 lb",
-        "note": "Lean, defined, and preserving muscle rather than swingy crash dieting."
       }
     ],
     "highlights": [
       "Latest workout evidence: 2026-07-21",
       "Latest nutrition evidence: 2026-07-22",
-      "Cut / recomp, not lean bulk."
+      "Cut / recomp, not lean bulk",
+      "Mental priority: focus, attention span, meditation, and phone friction",
+      "Looks priority: grooming, skin, hair, style, and event readiness"
     ],
     "freshness": {
       "label": "Vessel evidence",

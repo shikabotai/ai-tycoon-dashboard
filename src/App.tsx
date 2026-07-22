@@ -608,28 +608,30 @@ const CROSS_DOMAIN_INSIGHTS: CrossDomainInsight[] = [
 
 const CORE_DASHBOARD_DEFINITIONS: Record<CoreDashboardSection, CoreDashboardDefinition> = {
   vessel: {
-    headline: 'Body system operating board',
+    headline: 'Train, fuel, mind, looks',
     metrics: [
-      { label: 'Body target', sourceCardIndex: 0, priority: 'good' },
-      { label: 'Training recency', sourceCardIndex: 1, priority: 'watch' },
-      { label: 'Nutrition recency', sourceCardIndex: 2, priority: 'good' },
-      { label: 'Recovery coverage', sourceCardIndex: 3, priority: 'stale' },
+      { label: 'Workout recency', sourceCardIndex: 1, priority: 'good' },
+      { label: 'Nutrition signal', sourceCardIndex: 2, priority: 'good' },
+      { label: 'Mental reset', sourceCardIndex: 3, priority: 'watch' },
+      { label: 'Looks routine', sourceCardIndex: 4, priority: 'good' },
     ],
     operatingRows: [
-      { title: 'Cut / recomp lane', body: 'Keep the dashboard oriented around a controlled cut and visible muscle preservation, not a generic fitness feed.', sourceCardIndex: 5 },
-      { title: 'Training rhythm', body: 'Workout logs are the lead evidence source. If the latest lift log drifts, this page should treat consistency as the first correction.', sourceCardIndex: 1 },
-      { title: 'Nutrition compliance', body: 'Nutrition logs carry the current body-composition signal and should stay paired with the weight target.', sourceCardIndex: 2 },
-      { title: 'Recovery gap', body: 'Sleep and recovery remain a known data gap until a direct recovery source is connected.', sourceCardIndex: 3 },
+      { title: 'Workout rhythm', body: 'Make the next lift obvious from the latest workout log.', sourceCardIndex: 1 },
+      { title: 'Food log', body: 'Show protein and calories without turning the page into a spreadsheet.', sourceCardIndex: 2 },
+      { title: 'Attention reset', body: 'Give focus, meditation, and phone-friction the same importance as body metrics.', sourceCardIndex: 3 },
+      { title: 'Presentation system', body: 'Keep grooming, skin, hair, and style visible as compounding Vessel work.', sourceCardIndex: 4 },
     ],
     evidenceRows: [
-      { title: 'Fitness Overview', body: 'Anchors weight, physique goal, and body-system direction.', sourceCardIndex: 0 },
-      { title: 'Workout Logs', body: 'Shows the last training evidence and warns when the cadence gets stale.', sourceCardIndex: 1 },
-      { title: 'Nutrition Daily Logs', body: 'Shows food-tracking recency and whether the cut signal is being maintained.', sourceCardIndex: 2 },
+      { title: 'Workout Logs', body: 'Shows current execution and the next recommended session.', sourceCardIndex: 1 },
+      { title: 'Nutrition Daily Logs', body: 'Shows the current cut / recomp food signal.', sourceCardIndex: 2 },
+      { title: 'Mental Overview', body: 'Anchors focus, attention span, meditation, and shutdown practices.', sourceCardIndex: 3 },
+      { title: 'Looksmaxxing Routine', body: 'Anchors the daily appearance system and event-readiness layer.', sourceCardIndex: 4 },
     ],
     actionRows: [
-      { title: 'Protect the next workout', body: 'If training evidence is older than the target cadence, make the next lift the first operating move.', sourceCardIndex: 1 },
-      { title: 'Keep food logs current', body: 'Nutrition is useful only while the log stays fresh; stale data should be treated as the blocker.', sourceCardIndex: 2 },
-      { title: 'Add recovery source', body: 'The recovery card is intentionally flagged until sleep, energy, or readiness data is connected.', sourceCardIndex: 3 },
+      { title: 'Lock the next lift', body: 'Use the latest session note to pick the next workout instead of debating it.', sourceCardIndex: 1 },
+      { title: 'Keep protein visible', body: 'Make the food log answer one question fast: is the cut protected today?', sourceCardIndex: 2 },
+      { title: 'Run one mental rep', body: 'Brain dump, breathe, or meditate before attention gets eaten by the phone loop.', sourceCardIndex: 3 },
+      { title: 'Do the simple polish', body: 'Run the daily grooming / skincare routine so looksmaxxing compounds quietly.', sourceCardIndex: 4 },
     ],
   },
   identity: {
@@ -1914,48 +1916,60 @@ function App() {
     const bodyMetric = findCard('weight') ?? currentPersonalData.summaryCards[0]
     const training = findCard('workout') ?? currentPersonalData.summaryCards[1]
     const nutrition = findCard('nutrition') ?? currentPersonalData.summaryCards[2]
-    const recovery = findCard('recovery') ?? currentPersonalData.summaryCards[3]
-    const discipline = findCard('discipline') ?? currentPersonalData.summaryCards[4]
-    const physique = findCard('physique') ?? currentPersonalData.summaryCards[5]
+    const mental = findCard('mental') ?? findCard('mind') ?? currentPersonalData.summaryCards[3]
+    const looks = findCard('looks') ?? findCard('appearance') ?? findCard('grooming') ?? currentPersonalData.summaryCards[4]
+    const focus = findCard('focus') ?? currentPersonalData.summaryCards[5]
+    const recovery = findCard('recovery') ?? currentPersonalData.summaryCards[7]
+    const discipline = findCard('discipline') ?? mental
+    const physique = findCard('physique') ?? currentPersonalData.summaryCards[6]
     const nextActions = currentSectionDashboard?.actionRows ?? []
-    const lanes = [
-      { label: 'Body target', card: bodyMetric, tone: 'good' },
-      { label: 'Training', card: training, tone: training?.stale ? 'watch' : 'good' },
-      { label: 'Nutrition', card: nutrition, tone: nutrition?.stale ? 'watch' : 'good' },
-      { label: 'Recovery', card: recovery, tone: recovery?.stale ? 'stale' : 'watch' },
+    const pillars = [
+      { label: 'Workouts', title: training?.value ?? 'Training signal pending', body: training?.note ?? 'Workout logs are the lead evidence source.', tone: training?.stale ? 'watch' : 'good', progress: '84%' },
+      { label: 'Nutrition', title: nutrition?.value ?? 'Nutrition signal pending', body: nutrition?.note ?? 'Food logging is the cut / recomp control surface.', tone: nutrition?.stale ? 'watch' : 'good', progress: '78%' },
+      { label: 'Mind', title: mental?.value ?? 'Mental reset pending', body: mental?.note ?? 'Focus, attention span, and meditation need a small daily baseline.', tone: mental?.stale ? 'watch' : 'mind', progress: '42%' },
+      { label: 'Looks', title: looks?.value ?? 'Routine signal pending', body: looks?.note ?? 'Grooming, skin, hair, and style should compound quietly from a simple routine.', tone: looks?.stale ? 'watch' : 'looks', progress: '64%' },
     ]
+    const sourceItems = [bodyMetric, training, nutrition, mental, looks].filter(Boolean)
 
     return (
       <section className="vessel-page" aria-label="Vessel dashboard">
         <section className="vessel-hero">
           <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
           <div className="vessel-hero-copy">
-            <div className="revamp-kicker">{currentPersonalContent?.eyebrow}</div>
-            <h2>{physique?.value ?? currentPersonalContent?.title}</h2>
+            <div className="revamp-kicker">Vessel</div>
+            <h2>Train. Fuel. Focus.</h2>
             <p>{currentPersonalData.heroSummary}</p>
           </div>
           <aside className="vessel-readiness">
-            <span>Current signal</span>
-            <strong>{training?.value ?? 'Training signal pending'}</strong>
-            <p>{nutrition?.value ?? 'Nutrition signal pending'}</p>
+            <span>Physique target</span>
+            <strong>{physique?.value ?? bodyMetric?.value ?? currentPersonalContent?.title}</strong>
+            <p>{bodyMetric?.note ?? 'Keep the body goal visible without crowding the day.'}</p>
           </aside>
         </section>
 
-        <section className="vessel-lane-grid" aria-label="Vessel operating lanes">
-          {lanes.map((lane) => (
-            <article key={lane.label} className={`vessel-lane-card ${lane.tone}${lane.card?.stale ? ' stale' : ''}`}>
-              <span>{lane.label}</span>
-              <strong>{lane.card?.value ?? 'No signal'}</strong>
-              <p>{lane.card?.note ?? 'Waiting for source projection.'}</p>
+        <section className="vessel-pillar-grid" aria-label="Vessel priorities">
+          {pillars.map((pillar) => (
+            <article
+              key={pillar.label}
+              className={`vessel-pillar-card ${pillar.tone}`}
+              style={{ '--vessel-progress': pillar.progress } as CSSProperties}
+            >
+              <div>
+                <span>{pillar.label}</span>
+                <strong>{pillar.title}</strong>
+                <p>{pillar.body}</p>
+              </div>
+              <div className="vessel-progress-track" aria-hidden="true"><i /></div>
             </article>
           ))}
         </section>
 
         <section className="vessel-action-board" aria-label="Vessel next actions">
           <article className="vessel-action-prime">
-            <span>Operating rule</span>
-            <strong>{discipline?.value ?? 'Consistency first'}</strong>
-            <p>{discipline?.note ?? currentDirective.usefulFor}</p>
+            <span>Today</span>
+            <strong>{focus?.value ?? discipline?.value ?? 'One clean reset'}</strong>
+            <p>{focus?.note ?? discipline?.note ?? currentDirective.usefulFor}</p>
+            {recovery ? <small>{recovery.label}: {recovery.value}</small> : null}
           </article>
           <div className="vessel-action-list">
             {nextActions.map((action) => {
@@ -1969,6 +1983,15 @@ function App() {
               )
             })}
           </div>
+        </section>
+
+        <section className="vessel-source-strip" aria-label="Vessel source evidence">
+          {sourceItems.map((card) => (
+            <article key={card.label} className={card.stale ? 'stale' : ''}>
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+            </article>
+          ))}
         </section>
       </section>
     )
@@ -2204,7 +2227,7 @@ function App() {
           </main>
         ) : (
           <main className="revamp-detail-page">
-            {personalSection === 'identity' ? null : (
+            {personalSection === 'identity' || personalSection === 'vessel' ? null : (
               <section className="revamp-detail-hero">
                 <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
                 <div>

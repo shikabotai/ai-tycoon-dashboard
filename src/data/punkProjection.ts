@@ -95,28 +95,47 @@ function idealSelfQualities(ideal: string): IdentityQualityProjection[] {
 export function buildVesselData(): ProjectedSection {
   const fitness = readPunkFile('Vessel/Fitness/Fitness Overview.md')
   const nutrition = readPunkFile('Vessel/Nutrition/Nutrition Overview.md')
+  const mental = readPunkFile('Vessel/Mental/Mental Overview.md')
+  const looks = readPunkFile('Vessel/Looksmaxxing/Looksmaxxing Overview.md')
+  const looksRoutine = readPunkFile('Vessel/Looksmaxxing/Looksmaxxing Routine.md')
   const workoutDate = latestMarkdownDate('Vessel/Fitness/Workout Logs')
   const nutritionDate = latestMarkdownDate('Vessel/Nutrition/Daily Logs')
+  const latestWorkout = workoutDate ? readPunkFile(`Vessel/Fitness/Workout Logs/${workoutDate}.md`) : ''
+  const latestNutrition = nutritionDate ? readPunkFile(`Vessel/Nutrition/Daily Logs/${nutritionDate}.md`) : ''
   const workoutAge = daysSince(workoutDate)
   const nutritionAge = daysSince(nutritionDate)
   const currentWeight = fitness.match(/\| Weight \| ~?(\d+)/)?.[1] ?? '—'
   const targetWeight = fitness.match(/\| Weight \| .*?\| (\d+[-–]\d+) lbs by September \|/)?.[1] ?? '145–148'
-  const activeDirection = nutrition.match(/\*\*Active direction:\*\*\s*(.+)/)?.[1] ?? 'Cut / recomp'
+  const activeDirection = (nutrition.match(/\*\*Active direction:\*\*\s*(.+)/)?.[1] ?? 'Cut / recomp').replace(/\.$/, '')
+  const nextSession = latestWorkout.match(/Next session:\s*(.+)/)?.[1]?.replace(/\.$/, '') ?? 'Choose the next lift from the split'
+  const latestProtein = latestNutrition.match(/Protein:\s*~?([\d.]+)\s*g/i)?.[1]
+  const latestCalories = latestNutrition.match(/Calories:\s*~?([\d,]+)\s*kcal/i)?.[1]
+  const mentalStack = mental.includes('Minimum Viable Mental Health Stack') ? 'Brain dump + breathwork' : 'Mental reset'
+  const focusTarget = mental.match(/\| \*\*Time to first distraction\*\* \|[^|]+\|\s*([^|]+?)\s*\|/)?.[1]?.trim() ?? '25+ min'
+  const looksFocus = looks.match(/## Current Focus\s*([\s\S]*?)(?=\n---|\n## |$)/)?.[1]
+    ?.split('\n')
+    .map((line) => line.match(/^-\s+(.+)/)?.[1]?.trim())
+    .filter(Boolean)?.[0] ?? 'Practical routine'
+  const looksRoutineSignal = looksRoutine.includes('Daily Routine') ? 'Daily grooming system' : 'Appearance system'
 
   return {
-    heroSummary: `Current body system is in a ${activeDirection.toLowerCase()} phase with ${currentWeight} lb as the latest working reference and a target range of ${targetWeight} lb by September.`,
+    heroSummary: `A simple daily dashboard for the four Vessel levers: lift consistently, hit the food log, reset attention, and keep presentation sharp.`,
     summaryCards: [
       { label: 'Weight / body metrics', value: `${currentWeight} lb`, note: `Target ${targetWeight} lb by September from Fitness Overview.` },
-      { label: 'Workout consistency', value: workoutDate ? `Last logged ${workoutDate}` : 'Awaiting workout log', note: workoutDate ? `${workoutAge} days since latest workout evidence.` : 'Workout evidence has not reached the control center yet.', stale: (workoutAge ?? 999) > 4 },
-      { label: 'Nutrition consistency', value: nutritionDate ? `Last logged ${nutritionDate}` : 'Awaiting nutrition log', note: nutritionDate ? `${nutritionAge} days since latest nutrition evidence.` : 'Nutrition evidence has not reached the control center yet.', stale: (nutritionAge ?? 999) > 3 },
-      { label: 'Sleep / recovery', value: 'Best-effort projection', note: 'Sleep and recovery are estimated until direct recovery evidence is available.', stale: true },
-      { label: 'Mental state / discipline', value: 'Consistency > intensity', note: 'Current philosophy emphasizes making 3 sessions/week automatic first.' },
+      { label: 'Workout consistency', value: workoutDate ? `Last logged ${workoutDate}` : 'Awaiting workout log', note: workoutDate ? `${workoutAge} days since latest lift. Next: ${nextSession}.` : 'Workout evidence has not reached the control center yet.', stale: (workoutAge ?? 999) > 4 },
+      { label: 'Nutrition consistency', value: nutritionDate ? `${latestProtein ? `${latestProtein}g protein` : `Logged ${nutritionDate}`}` : 'Awaiting nutrition log', note: nutritionDate ? `${latestCalories ? `${latestCalories} kcal logged. ` : ''}${nutritionAge} days since latest nutrition evidence.` : 'Nutrition evidence has not reached the control center yet.', stale: (nutritionAge ?? 999) > 3 },
+      { label: 'Mental reset', value: mentalStack, note: 'Minimum viable stack: 5-minute brain dump, short breathing reset, and a real shutdown ritual.' },
+      { label: 'Looksmaxxing', value: looksRoutineSignal, note: looksFocus },
+      { label: 'Focus / attention', value: focusTarget, note: 'Treat focus like a lift: measure time to first distraction and protect deep-work blocks.', stale: true },
       { label: 'Current physique goal', value: `${targetWeight} lb`, note: 'Lean, defined, and preserving muscle rather than swingy crash dieting.' },
+      { label: 'Sleep / recovery', value: 'Best-effort projection', note: 'Sleep and recovery are estimated until direct recovery evidence is available.', stale: true },
     ],
     highlights: [
       `Latest workout evidence: ${workoutDate ?? 'missing'}`,
       `Latest nutrition evidence: ${nutritionDate ?? 'missing'}`,
       activeDirection,
+      'Mental priority: focus, attention span, meditation, and phone friction',
+      'Looks priority: grooming, skin, hair, style, and event readiness',
     ],
     freshness: summarizeFreshness('Vessel evidence', Math.min(workoutAge ?? 999, nutritionAge ?? 999), 4),
   }

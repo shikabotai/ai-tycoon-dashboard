@@ -3,28 +3,30 @@ import type { ProjectedContextItem, ProjectedDashboard, ProjectedSection, Projec
 
 export const projectedDashboardModel: Partial<Record<PersonalProjectionKey, ProjectedDashboard>> = {
   vessel: {
-    headline: 'Body system operating board',
+    headline: 'Train, fuel, mind, looks',
     metrics: [
-      { label: 'Body target', sourceCardIndex: 0, priority: 'good' },
-      { label: 'Training recency', sourceCardIndex: 1, priority: 'watch' },
-      { label: 'Nutrition recency', sourceCardIndex: 2, priority: 'good' },
-      { label: 'Recovery coverage', sourceCardIndex: 3, priority: 'stale' },
+      { label: 'Workout recency', sourceCardIndex: 1, priority: 'good' },
+      { label: 'Nutrition signal', sourceCardIndex: 2, priority: 'good' },
+      { label: 'Mental reset', sourceCardIndex: 3, priority: 'watch' },
+      { label: 'Looks routine', sourceCardIndex: 4, priority: 'good' },
     ],
     operatingRows: [
-      { title: 'Cut / recomp lane', body: 'Keep the page oriented around controlled body composition progress.', sourceCardIndex: 5 },
-      { title: 'Training rhythm', body: 'Workout logs are the lead evidence source for consistency.', sourceCardIndex: 1 },
-      { title: 'Nutrition compliance', body: 'Food logging stays paired with the weight target.', sourceCardIndex: 2 },
-      { title: 'Recovery gap', body: 'Sleep and recovery remain a known data gap until a direct source is connected.', sourceCardIndex: 3 },
+      { title: 'Workout rhythm', body: 'Make the next lift obvious from the latest workout log.', sourceCardIndex: 1 },
+      { title: 'Food log', body: 'Show protein and calories without turning the page into a spreadsheet.', sourceCardIndex: 2 },
+      { title: 'Attention reset', body: 'Give focus, meditation, and phone-friction the same importance as body metrics.', sourceCardIndex: 3 },
+      { title: 'Presentation system', body: 'Keep grooming, skin, hair, and style visible as compounding Vessel work.', sourceCardIndex: 4 },
     ],
     evidenceRows: [
-      { title: 'Fitness Overview', body: 'Anchors weight, physique goal, and body-system direction.', sourceCardIndex: 0 },
-      { title: 'Workout Logs', body: 'Shows the last training evidence and cadence.', sourceCardIndex: 1 },
-      { title: 'Nutrition Daily Logs', body: 'Shows food-tracking recency and consistency.', sourceCardIndex: 2 },
+      { title: 'Workout Logs', body: 'Shows current execution and the next recommended session.', sourceCardIndex: 1 },
+      { title: 'Nutrition Daily Logs', body: 'Shows the current cut / recomp food signal.', sourceCardIndex: 2 },
+      { title: 'Mental Overview', body: 'Anchors focus, attention span, meditation, and shutdown practices.', sourceCardIndex: 3 },
+      { title: 'Looksmaxxing Routine', body: 'Anchors the daily appearance system and event-readiness layer.', sourceCardIndex: 4 },
     ],
     actionRows: [
-      { title: 'Protect the next workout', body: 'Make the next lift the first correction when training drifts.', sourceCardIndex: 1 },
-      { title: 'Keep food logs current', body: 'Treat stale nutrition data as the blocker.', sourceCardIndex: 2 },
-      { title: 'Add recovery source', body: 'Connect sleep, energy, or readiness evidence.', sourceCardIndex: 3 },
+      { title: 'Lock the next lift', body: 'Use the latest session note to pick the next workout instead of debating it.', sourceCardIndex: 1 },
+      { title: 'Keep protein visible', body: 'Make the food log answer one question fast: is the cut protected today?', sourceCardIndex: 2 },
+      { title: 'Run one mental rep', body: 'Brain dump, breathe, or meditate before attention gets eaten by the phone loop.', sourceCardIndex: 3 },
+      { title: 'Do the simple polish', body: 'Run the daily grooming / skincare routine so looksmaxxing compounds quietly.', sourceCardIndex: 4 },
     ],
   },
   identity: {
