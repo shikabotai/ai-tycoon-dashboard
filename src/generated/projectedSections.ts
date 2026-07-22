@@ -135,21 +135,21 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         "note": "Target 145–148 lb by September from Fitness Overview."
       },
       {
-        "label": "Workout consistency",
-        "value": "Last logged 2026-07-21",
-        "note": "1 days since latest lift. Next: chest-focused work or light pull/rear delts, depending on shoulder and biceps recovery.",
+        "label": "Workout log source",
+        "value": "Workout log available",
+        "note": "Latest workout file: 2026-07-21.",
         "stale": false
       },
       {
-        "label": "Nutrition consistency",
+        "label": "Nutrition log source",
         "value": "91g protein",
-        "note": "860 kcal logged. 0 days since latest nutrition evidence.",
+        "note": "860 kcal logged. Latest nutrition file: 2026-07-22.",
         "stale": false
       },
       {
-        "label": "Meditation consistency",
-        "value": "No logged sessions yet",
-        "note": "5-minute sessions; 0 sessions logged."
+        "label": "Meditation log source",
+        "value": "Needs source entries",
+        "note": "0 meditation session files found."
       },
       {
         "label": "Current physique goal",

@@ -289,7 +289,7 @@ const COMMAND_SUGGESTIONS: Record<AppMode, CommandSuggestion[]> = {
 }
 
 const PERSONAL_SECTION_CONTENT: Record<Exclude<PersonalSection, 'home'>, { eyebrow: string; title: string; summaryCards: string[]; highlights: string[] }> = {
-  vessel: { eyebrow: 'Body and performance', title: 'Vessel', summaryCards: ['Weight / body metrics', 'Workout consistency', 'Nutrition consistency', 'Sleep / recovery'], highlights: ['Recent workouts and body trends', 'Cut / recomp progress', 'Stale-data warnings with best-effort status'] },
+  vessel: { eyebrow: 'Body and performance', title: 'Vessel', summaryCards: ['Body metrics', 'Workout log source', 'Nutrition log source', 'Meditation log source'], highlights: ['Recent workouts and body trends', 'Cut / recomp progress', 'Source-backed health signals'] },
   identity: { eyebrow: 'Internal command', title: 'Identity', summaryCards: ['Identity statement', 'Ideal self alignment', 'Current mission', 'Top active goals'], highlights: ['Ideal Self and Annual Goals', 'Decision Engine and blockers', 'Alignment-first momentum view'] },
   career: { eyebrow: 'Trajectory and leverage', title: 'Career', summaryCards: ['Career trajectory', 'Portfolio readiness', 'Job search status', 'Next milestone'], highlights: ['Career strategy overviews', 'Portfolio readiness', 'Real repo opportunities'] },
   wealth: { eyebrow: 'Capital and strategy', title: 'Wealth', summaryCards: ['Net worth', 'Cash / liquidity', 'Income snapshot', 'Financial priorities'], highlights: ['Budget and cashflow strategy', 'Current priorities surfaced fast', 'Balanced present and future view'] },
@@ -1012,8 +1012,6 @@ function App() {
   const [categoryLensIndex, setCategoryLensIndex] = useState<Partial<Record<Exclude<PersonalSection, 'home'>, number>>>({})
   const [identityQualityEdits, setIdentityQualityEdits] = useState<IdentityQuality[]>(() => loadStoredIdentityQualities([]))
   const [identityScoresEditable, setIdentityScoresEditable] = useState(false)
-  const [selectedVesselLane, setSelectedVesselLane] = useState('Workouts')
-
   const dashboardData = useDashboardData()
   const appMode: AppMode = isBusinessPage(currentPage) ? 'business' : 'personal'
   const personalSection: PersonalSection = isBusinessPage(currentPage) ? 'home' : currentPage
@@ -1920,9 +1918,7 @@ function App() {
       const parsed = Number(match[1].replace(/,/g, ''))
       return Number.isFinite(parsed) ? parsed : null
     }
-    const training = findCard('workout') ?? currentPersonalData.summaryCards[1]
     const nutrition = findCard('nutrition') ?? currentPersonalData.summaryCards[2]
-    const mental = findCard('mental') ?? findCard('mind') ?? currentPersonalData.summaryCards[3]
     const proteinTarget = 150
     const cutCalorieMax = 2400
     const proteinLogged = readNumber(nutrition?.value)
@@ -1934,20 +1930,12 @@ function App() {
       : caloriesLogged <= cutCalorieMax
         ? 'Under cut max'
         : 'Over cut max'
-    const nutritionStatus = proteinProgress === null ? 'Protein pending' : `${proteinProgress}% protein`
     const meditationPlan = currentPersonalData.vessel?.meditation
     const looksPlan = currentPersonalData.vessel?.looks
-    const meditationLastLabel = meditationPlan?.latestSessionDate ? `Last logged ${meditationPlan.latestSessionDate}` : 'No logged sessions yet'
+    const meditationLastLabel = meditationPlan?.latestSessionDate ? `Last logged ${meditationPlan.latestSessionDate}` : 'No meditation log yet'
     const meditationAction = meditationPlan?.nextRep ?? '5 min focused breathing after the morning brain dump'
     const meditationFallback = meditationPlan?.fallbackRep ?? 'Walking meditation or box breathing on unfocused days'
     const meditationReminderLabel = meditationPlan?.reminderWindows.length ? meditationPlan.reminderWindows.join(' / ') : '10:00 AM / 7:30 PM ET'
-    const nextLift = training?.note?.match(/Next:\s*(.+?)(?:\.|$)/)?.[1] ?? 'Use the latest workout log to choose the next lift'
-    const pillars = [
-      { label: 'Workouts', shortLabel: 'Train', title: training?.value ?? 'Training signal pending', body: training?.note ?? 'Workout logs are the lead evidence source.', tone: training?.stale ? 'watch' : 'good', status: training?.stale ? 'Log next lift' : 'Logged', action: 'Next lift', actionBody: nextLift },
-      { label: 'Nutrition', shortLabel: 'Fuel', title: nutrition?.value ?? 'Nutrition signal pending', body: nutrition?.note ?? 'Food logging is the cut / recomp control surface.', tone: nutrition?.stale ? 'watch' : 'good', status: nutritionStatus, progress: proteinProgress, action: 'Protein target', actionBody: proteinLogged === null ? `Get to ${proteinTarget}g protein today` : `${proteinLogged}g logged toward ${proteinTarget}g` },
-      { label: 'Mind', shortLabel: 'Mind', title: meditationLastLabel, body: mental?.note ?? 'Punk Records says to build consistency first with tiny daily mental reps.', tone: meditationPlan?.latestSessionDate ? 'mind' : 'watch', status: meditationPlan?.latestSessionDate ? 'Logged' : 'Inconsistent', action: 'Meditation rep', actionBody: meditationAction },
-    ]
-    const selectedPillar = pillars.find((pillar) => pillar.label === selectedVesselLane) ?? pillars[0]
     const muscleGroups = currentPersonalData.vessel?.muscleGroups ?? []
     const laggingMuscleGroups = muscleGroups
       .filter((group) => group.heat === 'missing' || group.heat === 'stale' || group.heat === 'touched')
@@ -1956,7 +1944,6 @@ function App() {
     const vesselStats = [
       { label: 'Protein today', value: proteinLogged === null ? '--' : `${proteinLogged}g`, note: proteinProgress === null ? `Target ${proteinTarget}g` : `${proteinProgress}% of ${proteinTarget}g target` },
       ...(isCutting ? [{ label: 'Calories today', value: caloriesLogged === null ? '--' : `${caloriesLogged} kcal`, note: caloriesLogged === null ? `Cut max ${cutCalorieMax} kcal` : `${calorieStatus}: ${cutCalorieMax} kcal` }] : []),
-      { label: 'Next lift', value: training?.stale ? 'Due' : 'Set', note: training?.note ?? 'Use the latest workout log for the next session.' },
     ]
 
     return (
@@ -1984,58 +1971,23 @@ function App() {
               </div>
             </div>
             <div className="vessel-ring-actions" aria-label="Nutrition targets">
-              <button className="active good" onClick={() => setSelectedVesselLane('Nutrition')}>
+              <div className="active good">
                 <span>Protein</span>
                 <strong>{proteinLogged === null ? `Target ${proteinTarget}g` : `${proteinLogged} / ${proteinTarget}g`}</strong>
-              </button>
+              </div>
               {isCutting ? (
-                <button className={caloriesLogged !== null && caloriesLogged > cutCalorieMax ? 'watch active' : 'good'} onClick={() => setSelectedVesselLane('Nutrition')}>
+                <div className={caloriesLogged !== null && caloriesLogged > cutCalorieMax ? 'watch active' : 'good'}>
                   <span>Calories</span>
                   <strong>{caloriesLogged === null ? `Max ${cutCalorieMax}` : `${caloriesLogged} / ${cutCalorieMax}`}</strong>
-                </button>
+                </div>
               ) : (
-                <button onClick={() => setSelectedVesselLane('Nutrition')}>
+                <div>
                   <span>Calories</span>
                   <strong>Not tracked</strong>
-                </button>
+                </div>
               )}
             </div>
-            <div className="vessel-selected-action">
-              <span>{selectedPillar.shortLabel} next move</span>
-              <strong>{selectedPillar.action}</strong>
-              <p>{selectedPillar.actionBody}</p>
-            </div>
           </aside>
-        </section>
-
-        <section className="vessel-pillar-grid" aria-label="Vessel priorities">
-          {pillars.map((pillar) => (
-            <article
-              key={pillar.label}
-              className={`vessel-pillar-card ${pillar.tone}`}
-              style={{ '--vessel-progress': pillar.progress } as CSSProperties}
-            >
-              <div>
-                <span>{pillar.label}</span>
-                <strong>{pillar.title}</strong>
-                <p>{pillar.body}</p>
-              </div>
-              <button
-                className="vessel-pillar-select"
-                onClick={() => setSelectedVesselLane(pillar.label)}
-                aria-label={`Select ${pillar.label}`}
-              >
-                Next
-              </button>
-              <div className="vessel-mini-row">
-                <span>{pillar.shortLabel} status</span>
-                <b>{pillar.status}</b>
-              </div>
-              {typeof pillar.progress === 'number' ? (
-                <div className="vessel-progress-track" style={{ '--vessel-progress': `${pillar.progress}%` } as CSSProperties} aria-hidden="true"><i /></div>
-              ) : null}
-            </article>
-          ))}
         </section>
 
         {muscleGroups.length ? (

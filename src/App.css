@@ -1559,7 +1559,7 @@ button {
   gap: 8px;
 }
 
-.vessel-ring-actions button {
+.vessel-ring-actions div {
   display: grid;
   gap: 4px;
   min-width: 0;
@@ -1569,28 +1569,24 @@ button {
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.04);
   padding: 9px 10px;
-  transition: border-color 0.16s, transform 0.16s, background 0.16s;
 }
 
-.vessel-ring-actions button:hover,
-.vessel-ring-actions button:focus-visible,
-.vessel-ring-actions button.active {
-  transform: translateY(-1px);
+.vessel-ring-actions div.active {
   border-color: rgba(107, 216, 200, 0.6);
   background: rgba(107, 216, 200, 0.1);
 }
 
-.vessel-ring-actions button.watch.active {
+.vessel-ring-actions div.watch.active {
   border-color: rgba(248, 197, 108, 0.55);
   background: rgba(248, 197, 108, 0.1);
 }
 
-.vessel-ring-actions button.mind.active {
+.vessel-ring-actions div.mind.active {
   border-color: rgba(126, 167, 255, 0.55);
   background: rgba(126, 167, 255, 0.1);
 }
 
-.vessel-ring-actions button.looks.active {
+.vessel-ring-actions div.looks.active {
   border-color: rgba(215, 166, 91, 0.55);
   background: rgba(215, 166, 91, 0.1);
 }

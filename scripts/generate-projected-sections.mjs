@@ -350,14 +350,12 @@ function buildVesselData() {
   const nutritionDate = latestMarkdownDate('Vessel/Nutrition/Daily Logs')
   const meditationDates = listMarkdownDates('Vessel/Mental/Meditation/Daily Logs')
   const meditationLatestDate = meditationDates.at(-1) ?? null
-  const latestWorkout = workoutDate ? readPunkFile(`Vessel/Fitness/Workout Logs/${workoutDate}.md`) : ''
   const latestNutrition = nutritionDate ? readPunkFile(`Vessel/Nutrition/Daily Logs/${nutritionDate}.md`) : ''
   const workoutAge = daysSince(workoutDate)
   const nutritionAge = daysSince(nutritionDate)
   const currentWeight = fitness.match(/\| Weight \| ~?(\d+)/)?.[1] ?? '—'
   const targetWeight = fitness.match(/\| Weight \| .*?\| (\d+[-–]\d+) lbs by September \|/)?.[1] ?? '145–148'
   const activeDirection = (nutrition.match(/\*\*Active direction:\*\*\s*(.+)/)?.[1] ?? 'Cut / recomp').replace(/\.$/, '')
-  const nextSession = latestWorkout.match(/Next session:\s*(.+)/)?.[1]?.replace(/\.$/, '') ?? 'Choose the next lift from the split'
   const latestProtein = latestNutrition.match(/Protein:\s*~?([\d.]+)\s*g/i)?.[1]
   const latestCalories = latestNutrition.match(/Calories:\s*~?([\d,]+)\s*kcal/i)?.[1]
   const mentalStack = mental.includes('Minimum Viable Mental Health Stack') ? 'Brain dump + breathwork' : 'Mental reset'
@@ -386,9 +384,9 @@ function buildVesselData() {
     heroSummary: `A simple daily dashboard for the four Vessel levers: lift consistently, hit the food log, reset attention, and keep presentation sharp.`,
     summaryCards: [
       { label: 'Weight / body metrics', value: `${currentWeight} lb`, note: `Target ${targetWeight} lb by September from Fitness Overview.` },
-      { label: 'Workout consistency', value: workoutDate ? `Last logged ${workoutDate}` : 'Awaiting workout log', note: workoutDate ? `${workoutAge} days since latest lift. Next: ${nextSession}.` : 'Workout evidence has not reached the control center yet.', stale: (workoutAge ?? 999) > 4 },
-      { label: 'Nutrition consistency', value: nutritionDate ? `${latestProtein ? `${latestProtein}g protein` : `Logged ${nutritionDate}`}` : 'Awaiting nutrition log', note: nutritionDate ? `${latestCalories ? `${latestCalories} kcal logged. ` : ''}${nutritionAge} days since latest nutrition evidence.` : 'Nutrition evidence has not reached the control center yet.', stale: (nutritionAge ?? 999) > 3 },
-      { label: 'Meditation consistency', value: meditationLatestDate ? `Last logged ${meditationLatestDate}` : 'No logged sessions yet', note: `${meditationSessionLength}; ${meditationDates.length} sessions logged.` },
+      { label: 'Workout log source', value: workoutDate ? 'Workout log available' : 'Awaiting workout log', note: workoutDate ? `Latest workout file: ${workoutDate}.` : 'No workout log file found yet.', stale: (workoutAge ?? 999) > 4 },
+      { label: 'Nutrition log source', value: nutritionDate ? `${latestProtein ? `${latestProtein}g protein` : `Logged ${nutritionDate}`}` : 'Awaiting nutrition log', note: nutritionDate ? `${latestCalories ? `${latestCalories} kcal logged. ` : ''}Latest nutrition file: ${nutritionDate}.` : 'No nutrition log file found yet.', stale: (nutritionAge ?? 999) > 3 },
+      { label: 'Meditation log source', value: meditationLatestDate ? `Logged ${meditationLatestDate}` : 'Needs source entries', note: `${meditationDates.length} meditation session files found.` },
       { label: 'Current physique goal', value: `${targetWeight} lb`, note: 'Lean, defined, and preserving muscle rather than swingy crash dieting.' },
     ],
     highlights: [
