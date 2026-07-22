@@ -1423,14 +1423,6 @@ button {
   line-height: 1.3;
 }
 
-.identity-statement-actions {
-  display: flex;
-  flex: 0 0 auto;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
 .identity-statement-panel span,
 .identity-support-card span {
   color: #86a9df;

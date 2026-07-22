@@ -79,7 +79,6 @@ const SESSION_KEY = 'control-center-auth'
 const LOGIN_STATE_KEY = 'control-center-login-state'
 const COMMAND_HISTORY_KEY = 'control-center-command-history'
 const IDENTITY_QUALITIES_KEY = 'control-center-identity-qualities'
-const IDENTITY_STATEMENT_KEY = 'control-center-identity-statement'
 const APP_BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '')
 const AVATAR_MODEL_VERSION = 'model-7-20260712'
 const AVATAR_MODEL_PATH = `${appAssetPath('avatar/control-center-avatar.glb')}?v=${AVATAR_MODEL_VERSION}`
@@ -993,11 +992,6 @@ function storeIdentityQualities(qualities: IdentityQuality[]) {
   window.localStorage.setItem(IDENTITY_QUALITIES_KEY, JSON.stringify(qualities))
 }
 
-function loadStoredIdentityStatementOverride() {
-  if (typeof window === 'undefined') return null
-  return window.localStorage.getItem(IDENTITY_STATEMENT_KEY)
-}
-
 function App() {
   const [authed, setAuthed] = useState(false)
   const [currentPage, setCurrentPage] = useState<AppPage>(() => typeof window === 'undefined' ? 'home' : pageFromPath(window.location.pathname))
@@ -1014,10 +1008,8 @@ function App() {
   const [selectedReviewTaskId, setSelectedReviewTaskId] = useState<string | null>(null)
   const [projectedSections, setProjectedSections] = useState<Partial<Record<PersonalProjectionKey, LiveProjectedSection>>>({})
   const [categoryLensIndex, setCategoryLensIndex] = useState<Partial<Record<Exclude<PersonalSection, 'home'>, number>>>({})
-  const [identityStatementOverride, setIdentityStatementOverride] = useState<string | null>(() => loadStoredIdentityStatementOverride())
   const [identityQualityEdits, setIdentityQualityEdits] = useState<IdentityQuality[]>(() => loadStoredIdentityQualities([]))
   const [identityScoresEditable, setIdentityScoresEditable] = useState(false)
-  const [identityStatementEditable, setIdentityStatementEditable] = useState(false)
 
   const dashboardData = useDashboardData()
   const appMode: AppMode = isBusinessPage(currentPage) ? 'business' : 'personal'
@@ -1053,15 +1045,6 @@ function App() {
   useEffect(() => {
     storeIdentityQualities(identityQualityEdits)
   }, [identityQualityEdits])
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    if (identityStatementOverride === null) {
-      window.localStorage.removeItem(IDENTITY_STATEMENT_KEY)
-      return
-    }
-    window.localStorage.setItem(IDENTITY_STATEMENT_KEY, identityStatementOverride)
-  }, [identityStatementOverride])
 
   useEffect(() => {
     let cancelled = false
@@ -1165,8 +1148,7 @@ function App() {
   const sourceIdentityStatement = sourceIdentityProjection?.statement
     ?? currentPersonalData?.summaryCards.find((card) => card.label.toLowerCase().includes('identity statement'))?.note
     ?? 'Calm, disciplined, focused, and happy every day.'
-  const identityStatement = identityStatementOverride ?? sourceIdentityStatement
-  const identityStatementIsOverridden = identityStatementOverride !== null
+  const identityStatement = sourceIdentityStatement
   const identityScoreHistory = sourceIdentityProjection?.scoreHistory?.length
     ? sourceIdentityProjection.scoreHistory
     : [{ label: 'Today', score: identityQualities.length ? Number((identityQualities.reduce((total, item) => total + item.score, 0) / identityQualities.length).toFixed(1)) : 0 }]
@@ -1812,37 +1794,12 @@ function App() {
           <div className="identity-statement-head">
             <div>
               <span>Identity statement</span>
-              <small>{identityStatementIsOverridden ? 'Manual override' : sourceIdentityProjection?.statementSource ?? 'Source projection'}</small>
-            </div>
-            <div className="identity-statement-actions">
-              {identityStatementIsOverridden ? (
-                <button
-                  className="revamp-command-btn"
-                  type="button"
-                  onClick={() => {
-                    setIdentityStatementOverride(null)
-                    setIdentityStatementEditable(false)
-                  }}
-                >
-                  Use source
-                </button>
-              ) : null}
-              <button
-                className={`revamp-command-btn identity-edit-toggle${identityStatementEditable ? ' active' : ''}`}
-                type="button"
-                onClick={() => {
-                  if (!identityStatementEditable && identityStatementOverride === null) setIdentityStatementOverride(sourceIdentityStatement)
-                  setIdentityStatementEditable((editable) => !editable)
-                }}
-              >
-                {identityStatementEditable ? 'Done' : 'Override'}
-              </button>
+              <small>{sourceIdentityProjection?.statementSource ?? 'Source projection'}</small>
             </div>
           </div>
           <textarea
             value={identityStatement}
-            readOnly={!identityStatementEditable}
-            onChange={(event) => setIdentityStatementOverride(event.target.value)}
+            readOnly
             aria-label="Identity statement"
           />
         </article>
