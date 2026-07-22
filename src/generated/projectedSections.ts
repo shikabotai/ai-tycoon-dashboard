@@ -4,7 +4,7 @@ import type { ProjectedSection } from '../data/projectedTypes'
 
 export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, ProjectedSection>> = {
   "identity": {
-    "heroSummary": "Identity tracks the standards from Ideal Self, the gaps that still need work, and the active goal most likely to prove it today.",
+    "heroSummary": "",
     "summaryCards": [
       {
         "label": "Current identity statement",

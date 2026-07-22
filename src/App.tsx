@@ -2180,19 +2180,21 @@ function App() {
           </main>
         ) : (
           <main className="revamp-detail-page">
-            <section className="revamp-detail-hero">
-              <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
-              <div>
-                <div className="revamp-kicker">{currentPersonalContent?.eyebrow}</div>
-                <h2>{currentPersonalContent?.title}</h2>
-                <p>{currentPersonalData?.heroSummary}</p>
-              </div>
-              <aside className="section-utility-card">
-                <span>{currentDirective.cadence}</span>
-                <strong>{currentDirective.outcome}</strong>
-                <p>{currentDirective.usefulFor}</p>
-              </aside>
-            </section>
+            {personalSection === 'identity' ? null : (
+              <section className="revamp-detail-hero">
+                <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
+                <div>
+                  <div className="revamp-kicker">{currentPersonalContent?.eyebrow}</div>
+                  <h2>{currentPersonalContent?.title}</h2>
+                  <p>{currentPersonalData?.heroSummary}</p>
+                </div>
+                <aside className="section-utility-card">
+                  <span>{currentDirective.cadence}</span>
+                  <strong>{currentDirective.outcome}</strong>
+                  <p>{currentDirective.usefulFor}</p>
+                </aside>
+              </section>
+            )}
             {personalSection === 'identity' ? renderIdentityScorecardPage() : (
               <>
                 {renderCategorySignatureDashboard()}

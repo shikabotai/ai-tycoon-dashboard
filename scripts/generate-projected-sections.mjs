@@ -136,7 +136,7 @@ function buildIdentityData(previous) {
     .slice(0, 3)
 
   return {
-    heroSummary: 'Identity tracks the standards from Ideal Self, the gaps that still need work, and the active goal most likely to prove it today.',
+    heroSummary: '',
     summaryCards: [
       { label: 'Current identity statement', value: 'Ideal Self source', note: identityStatement },
       { label: 'Ideal self alignment', value: 'Gap-aware', note: 'The page compares source standards against current gaps.' },

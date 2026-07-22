@@ -137,7 +137,7 @@ export function buildIdentityData(): ProjectedSection {
     : 0
 
   return {
-    heroSummary: `Identity tracks the standards you are trying to live, the gaps that still need work, and the active goal most likely to prove it today.`,
+    heroSummary: '',
     summaryCards: [
       { label: 'Current identity statement', value: 'Execution-era self', note: identityStatement },
       { label: 'Ideal self alignment', value: 'Gap-aware', note: 'The ideal self is useful when it changes behavior.' },
