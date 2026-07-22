@@ -137,7 +137,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Workout consistency",
         "value": "Last logged 2026-07-21",
-        "note": "1 days since latest lift. Next: pull-focused accessories or arms/rear delts, depending on leg recovery and schedule.",
+        "note": "1 days since latest lift. Next: chest-focused work or light pull/rear delts, depending on shoulder and biceps recovery.",
         "stale": false
       },
       {
@@ -185,6 +185,92 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       "label": "Vessel evidence",
       "ageDays": 0,
       "stale": false
+    },
+    "vessel": {
+      "muscleGroups": [
+        {
+          "id": "back",
+          "label": "Back",
+          "priority": "V-taper priority",
+          "recentSets": 33,
+          "lastHit": "2026-07-21",
+          "lastHitLabel": "1 day ago",
+          "heat": "hot",
+          "recommendation": "Keep one vertical pull and one row pattern active each week."
+        },
+        {
+          "id": "shoulders",
+          "label": "Shoulders",
+          "priority": "Width priority",
+          "recentSets": 13,
+          "lastHit": "2026-07-21",
+          "lastHitLabel": "1 day ago",
+          "heat": "hot",
+          "recommendation": "Keep lateral delts and rear delts visible for the shoulder-width goal."
+        },
+        {
+          "id": "chest",
+          "label": "Chest",
+          "priority": "Upper-chest priority",
+          "recentSets": 8,
+          "lastHit": "2026-07-17",
+          "lastHitLabel": "5 days ago",
+          "heat": "hot",
+          "recommendation": "Add pressing or fly work if chest has not shown up recently."
+        },
+        {
+          "id": "biceps",
+          "label": "Biceps",
+          "priority": "Arm detail",
+          "recentSets": 14,
+          "lastHit": "2026-07-21",
+          "lastHitLabel": "1 day ago",
+          "heat": "hot",
+          "recommendation": "Keep curls in the rotation, but do not let arms crowd out chest or legs."
+        },
+        {
+          "id": "triceps",
+          "label": "Triceps",
+          "priority": "Arm mass",
+          "recentSets": 14,
+          "lastHit": "2026-07-20",
+          "lastHitLabel": "2 days ago",
+          "heat": "hot",
+          "recommendation": "Use pushdowns or overhead work to keep arms full while cutting."
+        },
+        {
+          "id": "abs",
+          "label": "Abs",
+          "priority": "Lean-look priority",
+          "recentSets": 14,
+          "lastHit": "2026-07-21",
+          "lastHitLabel": "1 day ago",
+          "heat": "hot",
+          "recommendation": "Keep direct core work frequent while the cut reveals definition."
+        },
+        {
+          "id": "legs",
+          "label": "Legs",
+          "priority": "Balance priority",
+          "recentSets": 6,
+          "lastHit": "2026-07-21",
+          "lastHitLabel": "1 day ago",
+          "heat": "solid",
+          "recommendation": "Do not let the aesthetics push turn into skipping legs."
+        },
+        {
+          "id": "cardio",
+          "label": "Cardio",
+          "priority": "Cut support",
+          "recentSets": 0,
+          "lastHit": null,
+          "lastHitLabel": "No recent log",
+          "heat": "missing",
+          "recommendation": "Add Zone 2 when fat-loss support is missing from the week."
+        }
+      ],
+      "muscleWindowLabel": "Recent workout logs, weighted toward the last 7 days",
+      "musclePriorityNote": "Aesthetic priorities emphasize V-taper, shoulder width, upper chest, arms, visible abs, balanced legs, and enough cardio to support the cut."
     }
   },
   "systems": {

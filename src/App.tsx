@@ -1962,6 +1962,11 @@ function App() {
       })),
     }))
     const sourceItems = [bodyMetric, training, nutrition, mental, looks].filter(Boolean)
+    const muscleGroups = currentPersonalData.vessel?.muscleGroups ?? []
+    const laggingMuscleGroups = muscleGroups
+      .filter((group) => group.heat === 'missing' || group.heat === 'stale' || group.heat === 'touched')
+      .slice(0, 3)
+    const muscleFocusList = laggingMuscleGroups.length ? laggingMuscleGroups : [...muscleGroups].sort((a, b) => a.recentSets - b.recentSets).slice(0, 3)
     const vesselStats = [
       { label: 'Protein today', value: proteinLogged === null ? '--' : `${proteinLogged}g`, note: proteinProgress === null ? `Target ${proteinTarget}g` : `${proteinProgress}% of ${proteinTarget}g target` },
       ...(isCutting ? [{ label: 'Calories today', value: caloriesLogged === null ? '--' : `${caloriesLogged} kcal`, note: caloriesLogged === null ? `Cut max ${cutCalorieMax} kcal` : `${calorieStatus}: ${cutCalorieMax} kcal` }] : []),
@@ -2046,6 +2051,36 @@ function App() {
             </article>
           ))}
         </section>
+
+        {muscleGroups.length ? (
+          <section className="vessel-muscle-map" aria-label="Workout muscle heat map">
+            <div className="vessel-muscle-map-head">
+              <div>
+                <span>Workout heat map</span>
+                <strong>Muscle groups from logs</strong>
+                <p>{currentPersonalData.vessel?.muscleWindowLabel}</p>
+              </div>
+              <div className="vessel-muscle-focus">
+                <span>Needs balance</span>
+                <strong>{muscleFocusList.map((group) => group.label).join(' / ')}</strong>
+              </div>
+            </div>
+            <div className="vessel-muscle-grid">
+              {muscleGroups.map((group) => (
+                <article className={`vessel-muscle-card ${group.heat}`} key={group.id}>
+                  <div className="vessel-muscle-row">
+                    <i aria-hidden="true" />
+                    <strong>{group.label}</strong>
+                    <em>{group.recentSets} sets</em>
+                  </div>
+                  <span>{group.priority}</span>
+                  <p>{group.lastHitLabel}. {group.recommendation}</p>
+                </article>
+              ))}
+            </div>
+            <p className="vessel-muscle-note">{currentPersonalData.vessel?.musclePriorityNote}</p>
+          </section>
+        ) : null}
 
         <section className="vessel-action-board" aria-label="Vessel next actions">
           <article className="vessel-action-prime">

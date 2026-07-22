@@ -70,6 +70,23 @@ export type IdentityProjection = {
   lastUpdatedLabel: string
 }
 
+export type VesselMuscleGroupProjection = {
+  id: string
+  label: string
+  priority: string
+  recentSets: number
+  lastHit: string | null
+  lastHitLabel: string
+  heat: 'hot' | 'solid' | 'touched' | 'stale' | 'missing'
+  recommendation: string
+}
+
+export type VesselProjection = {
+  muscleGroups: VesselMuscleGroupProjection[]
+  muscleWindowLabel: string
+  musclePriorityNote: string
+}
+
 export type ProjectedSection = {
   heroSummary: string
   summaryCards: ProjectedCard[]
@@ -84,4 +101,5 @@ export type ProjectedSection = {
     stale: boolean
   }
   identity?: IdentityProjection
+  vessel?: VesselProjection
 }
