@@ -32,19 +32,19 @@ export const projectedDashboardModel: Partial<Record<PersonalProjectionKey, Proj
     metrics: [
       { label: 'Identity statement', sourceCardIndex: 0, priority: 'good' },
       { label: 'Alignment gap', sourceCardIndex: 1, priority: 'watch' },
-      { label: 'Year theme', sourceCardIndex: 2, priority: 'good' },
-      { label: 'Top mission', sourceCardIndex: 3, priority: 'good' },
+      { label: 'Current focus', sourceCardIndex: 2, priority: 'good' },
+      { label: 'Top active goal', sourceCardIndex: 3, priority: 'good' },
     ],
     operatingRows: [
       { title: 'Execution-era self', body: 'Frame identity around daily execution and emotional steadiness.', sourceCardIndex: 0 },
-      { title: 'Mission priority', body: 'Keep the year theme and 90-day focus above lower-priority pulls.', sourceCardIndex: 2 },
+      { title: 'Focus priority', body: 'Keep the lead goal visible before lower-priority pulls.', sourceCardIndex: 2 },
       { title: 'Ideal-self gap', body: 'Use the ideal self to expose gaps worth closing.', sourceCardIndex: 1 },
       { title: 'Decision pressure', body: 'Environment, consistency, and energy gaps belong here when they influence choices.', sourceCardIndex: 4 },
     ],
     evidenceRows: [
-      { title: 'Ideal Self', body: 'Compass for character, habits, presence, and confidence.', sourceCardIndex: 0 },
-      { title: 'Goals Overview', body: 'Supplies the immediate mission.', sourceCardIndex: 3 },
-      { title: 'Annual Goals', body: 'Keeps the current year theme visible.', sourceCardIndex: 2 },
+      { title: 'Ideal Self', body: 'Standards for character, habits, presence, and confidence.', sourceCardIndex: 0 },
+      { title: 'Goals Overview', body: 'Shows what should be proved next.', sourceCardIndex: 3 },
+      { title: 'Annual Goals', body: 'Keeps the larger focus visible.', sourceCardIndex: 2 },
     ],
     actionRows: [
       { title: 'Choose from alignment', body: 'Favor moves that reduce the current-self to ideal-self gap.', sourceCardIndex: 1 },

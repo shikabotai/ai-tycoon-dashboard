@@ -83,19 +83,19 @@ export function buildIdentityData(): ProjectedSection {
   const socialGap = ideal.match(/\| Social confidence \|[^\n]+\|[^\n]+\|([^|]+)\|/)?.[1]?.trim() ?? 'Rebuild social confidence in the right environment.'
 
   return {
-    heroSummary: `Identity is grounded in the ${mission} year theme, with ${topGoal.toLowerCase()} as the immediate mission and the ideal self acting as the compass.`,
+    heroSummary: `Identity tracks the standards you are trying to live, the gaps that still need work, and the active goal most likely to prove it today.`,
     summaryCards: [
       { label: 'Current identity statement', value: 'Execution-era self', note: identityStatement },
-      { label: 'Ideal self alignment', value: 'Gap-aware', note: 'The ideal self is treated as a grounded compass, not fantasy.' },
-      { label: 'Current mission / year theme', value: mission, note: `Current top mission: ${topGoal}.` },
+      { label: 'Ideal self alignment', value: 'Gap-aware', note: 'The ideal self is useful when it changes behavior.' },
+      { label: 'Current focus', value: mission, note: `Top active goal: ${topGoal}.` },
       { label: 'Top active goals', value: topGoal, note: 'Pulled from 90-day focus and annual goals.' },
       { label: 'Current dilemmas / blockers', value: 'Environment + consistency', note: socialGap },
       { label: 'Recent lessons / growth', value: 'Bridge current self to ideal self', note: physicalGap },
     ],
     highlights: [
-      `Year theme: ${mission}`,
-      `Top mission: ${topGoal}`,
-      'Ideal Self, Goals Overview, and Annual Goals are the main identity anchors.',
+      `Current focus: ${mission}`,
+      `Top active goal: ${topGoal}`,
+      'Ideal Self and Goals Overview are the main identity anchors.',
     ],
     freshness: summarizeFreshness('Identity planning docs', 0, 30),
   }

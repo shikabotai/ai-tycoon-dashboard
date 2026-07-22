@@ -4,7 +4,7 @@ import type { ProjectedSection } from '../data/projectedTypes'
 
 export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, ProjectedSection>> = {
   "identity": {
-    "heroSummary": "Identity is grounded in the Execution (ship + prep) year theme, with ship the software as the immediate mission and the ideal self acting as the compass.",
+    "heroSummary": "Identity tracks the standards you are trying to live, the gaps that still need work, and the active goal most likely to prove it today.",
     "summaryCards": [
       {
         "label": "Current identity statement",
@@ -14,12 +14,12 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Ideal self alignment",
         "value": "Gap-aware",
-        "note": "The ideal self is treated as a grounded compass, not fantasy."
+        "note": "The ideal self is useful when it changes behavior."
       },
       {
-        "label": "Current mission / year theme",
+        "label": "Current focus",
         "value": "Execution (ship + prep)",
-        "note": "Current top mission: Ship the software."
+        "note": "Top active goal: Ship the software."
       },
       {
         "label": "Top active goals",
@@ -38,9 +38,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       }
     ],
     "highlights": [
-      "Year theme: Execution (ship + prep)",
-      "Top mission: Ship the software",
-      "Ideal Self, Goals Overview, and Annual Goals are the main identity anchors."
+      "Current focus: Execution (ship + prep)",
+      "Top active goal: Ship the software",
+      "Ideal Self and Goals Overview are the main identity anchors."
     ],
     "freshness": {
       "label": "Identity planning docs",

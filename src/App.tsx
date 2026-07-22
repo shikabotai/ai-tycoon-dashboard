@@ -69,6 +69,15 @@ type CrossDomainInsight = {
   pages: Exclude<PersonalSection, 'home'>[]
   tone: 'leverage' | 'tradeoff' | 'evidence'
 }
+type IdentityQuality = {
+  id: string
+  name: string
+  score: number
+  tenMeans: string
+  nextAction: string
+}
+type IdentityScoreHistoryPoint = { label: string; score: number }
+type IdentityNightlyChange = { qualityId: string; delta: number; reason: string }
 
 const VALID_USERNAME = 'mthanath64'
 const VALID_PASSWORD = 'Mitch2002'
@@ -77,9 +86,35 @@ const LOCKOUT_MS = 10 * 60 * 1000
 const SESSION_KEY = 'control-center-auth'
 const LOGIN_STATE_KEY = 'control-center-login-state'
 const COMMAND_HISTORY_KEY = 'control-center-command-history'
+const IDENTITY_QUALITIES_KEY = 'control-center-identity-qualities'
+const IDENTITY_STATEMENT_KEY = 'control-center-identity-statement'
 const APP_BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '')
 const AVATAR_MODEL_VERSION = 'model-7-20260712'
 const AVATAR_MODEL_PATH = `${appAssetPath('avatar/control-center-avatar.glb')}?v=${AVATAR_MODEL_VERSION}`
+
+const DEFAULT_IDENTITY_QUALITIES: IdentityQuality[] = [
+  { id: 'discipline', name: 'Discipline', score: 6.2, tenMeans: 'Keeps promises without needing drama or motivation.', nextAction: 'Choose the top task and finish it before drifting.' },
+  { id: 'presence', name: 'Presence', score: 5.4, tenMeans: 'Fully here with people, work, and rest.', nextAction: 'Put the phone away during the next real moment.' },
+  { id: 'physical-confidence', name: 'Physical confidence', score: 4.3, tenMeans: 'Feels strong, lean, energetic, and comfortable in a room.', nextAction: 'Protect the next lift or nutrition log.' },
+  { id: 'social-confidence', name: 'Social confidence', score: 4.8, tenMeans: 'Warm, playful, grounded, and easy to connect with.', nextAction: 'Create one small moment of connection today.' },
+  { id: 'reliability', name: 'Reliability', score: 7.1, tenMeans: 'Does what he says, especially when no one is watching.', nextAction: 'Close one open promise before starting another.' },
+]
+
+const IDENTITY_SCORE_HISTORY: IdentityScoreHistoryPoint[] = [
+  { label: 'Thu', score: 5.3 },
+  { label: 'Fri', score: 5.4 },
+  { label: 'Sat', score: 5.5 },
+  { label: 'Sun', score: 5.4 },
+  { label: 'Mon', score: 5.5 },
+  { label: 'Tue', score: 5.6 },
+  { label: 'Today', score: 5.6 },
+]
+
+const IDENTITY_NIGHTLY_CHANGES: IdentityNightlyChange[] = [
+  { qualityId: 'discipline', delta: 0.1, reason: 'Meaningful software progress closed yesterday.' },
+  { qualityId: 'reliability', delta: 0.1, reason: 'Follow-through stayed visible under pressure.' },
+  { qualityId: 'presence', delta: -0.1, reason: 'Attention was easier to fragment than intended.' },
+]
 
 const PERSONAL_ROUTES: Record<PersonalSection, string> = {
   home: '/',
@@ -154,7 +189,7 @@ const PAGE_DIRECTIVES: Record<AppPage, PageDirective> = {
   },
   identity: {
     outcome: 'Act like the person you are building',
-    system: 'Mission, ideal-self gap, year theme, and blockers kept in one decision frame.',
+    system: 'Identity statement, score gaps, focus, and blockers kept in one decision frame.',
     usefulFor: 'Making choices from identity instead of mood or pressure.',
     cadence: 'Morning and reset moments',
   },
@@ -326,7 +361,7 @@ const CATEGORY_SIGNATURE_DASHBOARDS: Record<Exclude<PersonalSection, 'home'>, Ca
       { label: 'Friction', sourceIndex: 4 },
     ],
     lenses: [
-      { label: 'Mission', title: 'Defend the top mission', body: 'Let the current year theme outrank reactive lower-priority pulls.', sourceIndex: 3 },
+      { label: 'Focus', title: 'Defend the top goal', body: 'Let the lead active goal outrank reactive lower-priority pulls.', sourceIndex: 3 },
       { label: 'Gap', title: 'Close one alignment gap', body: 'Pick the move that makes current behavior more like the ideal-self record.', sourceIndex: 1 },
       { label: 'Blocker', title: 'Name the pressure', body: 'Translate environment or consistency friction into a concrete constraint.', sourceIndex: 4 },
     ],
@@ -627,19 +662,19 @@ const CORE_DASHBOARD_DEFINITIONS: Record<CoreDashboardSection, CoreDashboardDefi
     metrics: [
       { label: 'Identity statement', sourceCardIndex: 0, priority: 'good' },
       { label: 'Alignment gap', sourceCardIndex: 1, priority: 'watch' },
-      { label: 'Year theme', sourceCardIndex: 2, priority: 'good' },
-      { label: 'Top mission', sourceCardIndex: 3, priority: 'good' },
+      { label: 'Current focus', sourceCardIndex: 2, priority: 'good' },
+      { label: 'Top active goal', sourceCardIndex: 3, priority: 'good' },
     ],
     operatingRows: [
       { title: 'Execution-era self', body: 'Identity is framed as daily execution and emotional steadiness, not a motivational poster.', sourceCardIndex: 0 },
-      { title: 'Mission priority', body: 'The year theme and 90-day focus should stay visible before any lower-priority personal work.', sourceCardIndex: 2 },
+      { title: 'Focus priority', body: 'The lead goal should stay visible before lower-priority personal work.', sourceCardIndex: 2 },
       { title: 'Ideal-self gap', body: 'The ideal self is useful because it shows gaps to close, not because it pretends the gap is gone.', sourceCardIndex: 1 },
       { title: 'Decision pressure', body: 'Environment, consistency, and energy gaps belong on this page when they influence choices.', sourceCardIndex: 4 },
     ],
     evidenceRows: [
-      { title: 'Ideal Self', body: 'The main compass for character, habits, physical presence, and social confidence.', sourceCardIndex: 0 },
-      { title: 'Goals Overview', body: 'Supplies the immediate mission and keeps identity tied to execution.', sourceCardIndex: 3 },
-      { title: 'Annual Goals', body: 'Keeps the current year theme and long-arc priorities visible.', sourceCardIndex: 2 },
+      { title: 'Ideal Self', body: 'Standards for character, habits, physical presence, and social confidence.', sourceCardIndex: 0 },
+      { title: 'Goals Overview', body: 'Shows what should be proved next.', sourceCardIndex: 3 },
+      { title: 'Annual Goals', body: 'Keeps the larger focus and long-arc priorities visible.', sourceCardIndex: 2 },
     ],
     actionRows: [
       { title: 'Choose from alignment', body: 'Favor actions that reduce the gap between current self and ideal-self evidence.', sourceCardIndex: 1 },
@@ -938,6 +973,39 @@ function storeCommandHistory(history: CommandHistoryEntry[]) {
   window.localStorage.setItem(COMMAND_HISTORY_KEY, JSON.stringify(history.slice(0, 6)))
 }
 
+function loadStoredIdentityQualities(): IdentityQuality[] {
+  if (typeof window === 'undefined') return DEFAULT_IDENTITY_QUALITIES
+  try {
+    const raw = window.localStorage.getItem(IDENTITY_QUALITIES_KEY)
+    if (!raw) return DEFAULT_IDENTITY_QUALITIES
+    const parsed = JSON.parse(raw) as Partial<IdentityQuality>[]
+    if (!Array.isArray(parsed)) return DEFAULT_IDENTITY_QUALITIES
+
+    const qualities = parsed
+      .filter((item) => typeof item.id === 'string' && typeof item.name === 'string')
+      .map((item) => ({
+        id: item.id as string,
+        name: item.name as string,
+        score: typeof item.score === 'number' ? Math.min(10, Math.max(1, item.score)) : 5,
+        tenMeans: typeof item.tenMeans === 'string' ? item.tenMeans : 'The ideal version of this quality is clear and lived daily.',
+        nextAction: typeof item.nextAction === 'string' ? item.nextAction : 'Pick one small behavior that proves this today.',
+      }))
+    return qualities.length ? qualities : DEFAULT_IDENTITY_QUALITIES
+  } catch {
+    return DEFAULT_IDENTITY_QUALITIES
+  }
+}
+
+function storeIdentityQualities(qualities: IdentityQuality[]) {
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(IDENTITY_QUALITIES_KEY, JSON.stringify(qualities))
+}
+
+function loadStoredIdentityStatement() {
+  if (typeof window === 'undefined') return 'I am becoming someone who keeps promises to himself.'
+  return window.localStorage.getItem(IDENTITY_STATEMENT_KEY) ?? 'I am becoming someone who keeps promises to himself.'
+}
+
 function App() {
   const [authed, setAuthed] = useState(false)
   const [currentPage, setCurrentPage] = useState<AppPage>(() => typeof window === 'undefined' ? 'home' : pageFromPath(window.location.pathname))
@@ -954,6 +1022,9 @@ function App() {
   const [selectedReviewTaskId, setSelectedReviewTaskId] = useState<string | null>(null)
   const [projectedSections, setProjectedSections] = useState<Partial<Record<PersonalProjectionKey, LiveProjectedSection>>>({})
   const [categoryLensIndex, setCategoryLensIndex] = useState<Partial<Record<Exclude<PersonalSection, 'home'>, number>>>({})
+  const [identityStatement, setIdentityStatement] = useState(() => loadStoredIdentityStatement())
+  const [identityQualities, setIdentityQualities] = useState<IdentityQuality[]>(() => loadStoredIdentityQualities())
+  const [identityScoresEditable, setIdentityScoresEditable] = useState(false)
 
   const dashboardData = useDashboardData()
   const appMode: AppMode = isBusinessPage(currentPage) ? 'business' : 'personal'
@@ -985,6 +1056,15 @@ function App() {
   useEffect(() => {
     storeCommandHistory(commandHistory)
   }, [commandHistory])
+
+  useEffect(() => {
+    storeIdentityQualities(identityQualities)
+  }, [identityQualities])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    window.localStorage.setItem(IDENTITY_STATEMENT_KEY, identityStatement)
+  }, [identityStatement])
 
   useEffect(() => {
     let cancelled = false
@@ -1198,6 +1278,14 @@ function App() {
     if (window.location.pathname !== nextPath) {
       window.history.pushState({}, '', nextPath)
     }
+  }
+
+  function updateIdentityQuality(id: string, updates: Partial<IdentityQuality>) {
+    setIdentityQualities((prev) => prev.map((item) => (
+      item.id === id
+        ? { ...item, ...updates, score: updates.score === undefined ? item.score : Math.min(10, Math.max(1, updates.score)) }
+        : item
+    )))
   }
 
   useEffect(() => {
@@ -1679,6 +1767,139 @@ function App() {
     )
   }
 
+  function renderIdentityScorecardPage() {
+    const lowestQuality = identityQualities.length
+      ? identityQualities.reduce((lowest, item) => item.score < lowest.score ? item : lowest)
+      : null
+    const averageScore = identityQualities.length
+      ? identityQualities.reduce((total, item) => total + item.score, 0) / identityQualities.length
+      : 0
+    const chartMin = 1
+    const chartMax = 10
+    const chartWidth = 260
+    const chartHeight = 96
+    const chartPoints = IDENTITY_SCORE_HISTORY.map((point, index) => {
+      const x = IDENTITY_SCORE_HISTORY.length === 1 ? chartWidth / 2 : (index / (IDENTITY_SCORE_HISTORY.length - 1)) * chartWidth
+      const y = chartHeight - ((point.score - chartMin) / (chartMax - chartMin)) * chartHeight
+      return { ...point, x, y }
+    })
+    const chartPath = chartPoints.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`).join(' ')
+    const firstHistoryPoint = IDENTITY_SCORE_HISTORY[0]
+    const latestHistoryPoint = IDENTITY_SCORE_HISTORY[IDENTITY_SCORE_HISTORY.length - 1]
+
+    return (
+      <section className="identity-simple-page" aria-label="Ideal self scorecard">
+        <article className="identity-statement-panel">
+          <span>Identity statement</span>
+          <textarea
+            value={identityStatement}
+            onChange={(event) => setIdentityStatement(event.target.value)}
+            aria-label="Identity statement"
+          />
+        </article>
+
+        <article className="identity-scorecard-panel">
+          <div className="identity-scorecard-head">
+            <div>
+              <div className="revamp-kicker">Ideal Self Scorecard</div>
+              <h3>Track the person your daily evidence says you are becoming.</h3>
+            </div>
+            <button
+              className={`revamp-command-btn identity-edit-toggle${identityScoresEditable ? ' active' : ''}`}
+              type="button"
+              onClick={() => setIdentityScoresEditable((editable) => !editable)}
+            >
+              {identityScoresEditable ? 'Done' : 'Edit scores'}
+            </button>
+            <div className="identity-average">
+              <span>Average</span>
+              <strong>{averageScore.toFixed(1)}</strong>
+            </div>
+          </div>
+
+          <div className="identity-quality-list">
+            {identityQualities.map((quality) => (
+              <article key={quality.id} className="identity-quality-row">
+                <div className="identity-quality-copy">
+                  <input
+                    className="identity-quality-name"
+                    value={quality.name}
+                    onChange={(event) => updateIdentityQuality(quality.id, { name: event.target.value })}
+                    aria-label={`${quality.name} name`}
+                  />
+                  <textarea
+                    className="identity-quality-meaning"
+                    value={quality.tenMeans}
+                    onChange={(event) => updateIdentityQuality(quality.id, { tenMeans: event.target.value })}
+                    aria-label={`${quality.name} meaning`}
+                  />
+                  <textarea
+                    className="identity-quality-action"
+                    value={quality.nextAction}
+                    onChange={(event) => updateIdentityQuality(quality.id, { nextAction: event.target.value })}
+                    aria-label={`${quality.name} next action`}
+                  />
+                </div>
+                <div className="identity-score-control">
+                  <strong>{quality.score.toFixed(1)}</strong>
+                  <input
+                    type="range"
+                    min="1"
+                    max="10"
+                    step="0.1"
+                    value={quality.score}
+                    disabled={!identityScoresEditable}
+                    onChange={(event) => updateIdentityQuality(quality.id, { score: Number(event.target.value) })}
+                    aria-label={`${quality.name} score`}
+                  />
+                </div>
+              </article>
+            ))}
+          </div>
+        </article>
+
+        <section className="identity-support-strip" aria-label="Identity support">
+          <article className="identity-support-card">
+            <span>Biggest gap</span>
+            <strong>{lowestQuality?.name ?? 'No quality yet'}</strong>
+            <p>{lowestQuality?.nextAction ?? 'Add one quality to start.'}</p>
+          </article>
+          <article className="identity-support-card">
+            <span>Last nightly update</span>
+            <strong>Yesterday moved the scorecard by evidence.</strong>
+            <div className="identity-change-list">
+              {IDENTITY_NIGHTLY_CHANGES.map((change) => {
+                const quality = identityQualities.find((item) => item.id === change.qualityId)
+                return (
+                  <p key={change.qualityId}>
+                    <b>{change.delta > 0 ? '+' : ''}{change.delta.toFixed(1)} {quality?.name ?? change.qualityId}</b>
+                    {' '}
+                    {change.reason}
+                  </p>
+                )
+              })}
+            </div>
+          </article>
+          <article className="identity-support-card identity-history-card">
+            <span>Score history</span>
+            <strong>{firstHistoryPoint?.score.toFixed(1)} to {latestHistoryPoint?.score.toFixed(1)}</strong>
+            <svg className="identity-score-chart" viewBox={`0 0 ${chartWidth} ${chartHeight}`} role="img" aria-label="Seven day identity score trend">
+              <path d={`M 0 ${chartHeight - 12} H ${chartWidth}`} />
+              <path className="trend" d={chartPath} />
+              {chartPoints.map((point) => (
+                <circle key={point.label} cx={point.x} cy={point.y} r="3.5" />
+              ))}
+            </svg>
+            <div className="identity-chart-labels">
+              <span>{firstHistoryPoint?.label}</span>
+              <span>{latestHistoryPoint?.label}</span>
+            </div>
+          </article>
+        </section>
+      </section>
+    )
+  }
+
   function renderCategorySignatureDashboard() {
     if (personalSection === 'home' || !currentSignatureDashboard || !currentPersonalData) return null
 
@@ -1922,81 +2143,83 @@ function App() {
                 <p>{currentDirective.usefulFor}</p>
               </aside>
             </section>
-            {renderCategorySignatureDashboard()}
-            {renderPersonalDashboardLead()}
-            <section className="revamp-card-grid">
-              {currentPersonalData?.summaryCards.map((card) => (
-                <article key={card.label} className={`glass-panel detail-signal-card${card.stale ? ' stale' : ''}`}>
-                  <span>{card.label}</span>
-                  <strong>{card.value}</strong>
-                  <p>{card.note}</p>
-                </article>
-              ))}
-            </section>
-            {currentGrowthLoop ? (
-              <section className="personal-growth-loop" aria-label={`${currentPersonalContent?.title} growth loop`}>
-                <article className="glass-panel growth-loop-prime">
-                  <div className="revamp-kicker">{currentGrowthLoop.definition.cadence}</div>
-                  <h3>{currentGrowthLoop.definition.target}</h3>
-                  <p>{currentGrowthLoop.definition.compound}</p>
-                </article>
-                <article className="growth-loop-step">
-                  <span>Current signal</span>
-                  <strong>{currentGrowthLoop.progressValue}</strong>
-                  <p>{currentGrowthLoop.progressLabel}: {currentGrowthLoop.progressNote}</p>
-                </article>
-                <article className="growth-loop-step">
-                  <span>Ritual</span>
-                  <strong>{currentGrowthLoop.definition.ritual}</strong>
-                  <p>Repeatable, small, and designed to keep this domain moving without making the app feel heavy.</p>
-                </article>
-                <article className="growth-loop-step warning">
-                  <span>Blocker</span>
-                  <strong>{currentGrowthLoop.blockerLabel}</strong>
-                  <p>{currentGrowthLoop.blockerBody}</p>
-                </article>
-                <article className="growth-loop-step action">
-                  <span>Next logical move</span>
-                  <strong>{currentGrowthLoop.nextAction}</strong>
-                  <p>{currentGrowthLoop.nextActionBody}</p>
-                </article>
-              </section>
-            ) : null}
-            <section className="cross-domain-board detail-cross-domain" aria-label={`${currentPersonalContent?.title} cross-domain intelligence`}>
-              <article className="glass-panel cross-domain-prime">
-                <div className="revamp-kicker">Why This Matters</div>
-                <h3>{currentCrossDomainInsights[0]?.title ?? 'This domain affects the rest of the system.'}</h3>
-                <p>{currentCrossDomainInsights[0]?.body ?? 'The page stays useful by showing what this signal changes across the wider Growth OS.'}</p>
-                {currentCrossDomainInsights[0] ? (
-                  <div className="cross-domain-prime-proof">
-                    <strong>{currentCrossDomainInsights[0].recommendation}</strong>
-                    <small>{currentCrossDomainInsights[0].evidence}</small>
-                  </div>
+            {personalSection === 'identity' ? renderIdentityScorecardPage() : (
+              <>
+                {renderCategorySignatureDashboard()}
+                {renderPersonalDashboardLead()}
+                <section className="revamp-card-grid">
+                  {currentPersonalData?.summaryCards.map((card) => (
+                    <article key={card.label} className={`glass-panel detail-signal-card${card.stale ? ' stale' : ''}`}>
+                      <span>{card.label}</span>
+                      <strong>{card.value}</strong>
+                      <p>{card.note}</p>
+                    </article>
+                  ))}
+                </section>
+                {currentGrowthLoop ? (
+                  <section className="personal-growth-loop" aria-label={`${currentPersonalContent?.title} growth loop`}>
+                    <article className="glass-panel growth-loop-prime">
+                      <div className="revamp-kicker">{currentGrowthLoop.definition.cadence}</div>
+                      <h3>{currentGrowthLoop.definition.target}</h3>
+                      <p>{currentGrowthLoop.definition.compound}</p>
+                    </article>
+                    <article className="growth-loop-step">
+                      <span>Current signal</span>
+                      <strong>{currentGrowthLoop.progressValue}</strong>
+                      <p>{currentGrowthLoop.progressLabel}: {currentGrowthLoop.progressNote}</p>
+                    </article>
+                    <article className="growth-loop-step">
+                      <span>Ritual</span>
+                      <strong>{currentGrowthLoop.definition.ritual}</strong>
+                      <p>Repeatable, small, and designed to keep this domain moving without making the app feel heavy.</p>
+                    </article>
+                    <article className="growth-loop-step warning">
+                      <span>Blocker</span>
+                      <strong>{currentGrowthLoop.blockerLabel}</strong>
+                      <p>{currentGrowthLoop.blockerBody}</p>
+                    </article>
+                    <article className="growth-loop-step action">
+                      <span>Next logical move</span>
+                      <strong>{currentGrowthLoop.nextAction}</strong>
+                      <p>{currentGrowthLoop.nextActionBody}</p>
+                    </article>
+                  </section>
                 ) : null}
-                <div className="confidence-row">
-                  <span>{sourceConfidence(currentPersonalData ?? undefined)}</span>
-                  <span>{currentPersonalData?.freshness?.label ?? 'Projected records'}</span>
-                  <span>{currentPersonalData?.missingData?.length ?? 0} gaps</span>
-                </div>
-              </article>
-              {currentCrossDomainInsights.slice(1).map((item) => (
-                <button key={item.title} className={`cross-domain-card ${item.tone}`} onClick={() => navigateToPage(item.pages.find((page) => page !== personalSection) ?? item.pages[0])}>
-                  <span>{item.label}</span>
-                  <strong>{item.title}</strong>
-                  <p>{item.body}</p>
-                  <div className="cross-domain-card-proof">
-                    <small>Next: {item.recommendation}</small>
-                    <small>Evidence: {item.evidence}</small>
-                  </div>
-                  <div className="cross-domain-route-row">
-                    {item.pages.map((page) => (
-                      <em key={page}>{pageLabel(page)}</em>
-                    ))}
-                  </div>
-                </button>
-              ))}
-            </section>
-            <section className="section-dashboard-grid">
+                <section className="cross-domain-board detail-cross-domain" aria-label={`${currentPersonalContent?.title} cross-domain intelligence`}>
+                  <article className="glass-panel cross-domain-prime">
+                    <div className="revamp-kicker">Why This Matters</div>
+                    <h3>{currentCrossDomainInsights[0]?.title ?? 'This domain affects the rest of the system.'}</h3>
+                    <p>{currentCrossDomainInsights[0]?.body ?? 'The page stays useful by showing what this signal changes across the wider Growth OS.'}</p>
+                    {currentCrossDomainInsights[0] ? (
+                      <div className="cross-domain-prime-proof">
+                        <strong>{currentCrossDomainInsights[0].recommendation}</strong>
+                        <small>{currentCrossDomainInsights[0].evidence}</small>
+                      </div>
+                    ) : null}
+                    <div className="confidence-row">
+                      <span>{sourceConfidence(currentPersonalData ?? undefined)}</span>
+                      <span>{currentPersonalData?.freshness?.label ?? 'Projected records'}</span>
+                      <span>{currentPersonalData?.missingData?.length ?? 0} gaps</span>
+                    </div>
+                  </article>
+                  {currentCrossDomainInsights.slice(1).map((item) => (
+                    <button key={item.title} className={`cross-domain-card ${item.tone}`} onClick={() => navigateToPage(item.pages.find((page) => page !== personalSection) ?? item.pages[0])}>
+                      <span>{item.label}</span>
+                      <strong>{item.title}</strong>
+                      <p>{item.body}</p>
+                      <div className="cross-domain-card-proof">
+                        <small>Next: {item.recommendation}</small>
+                        <small>Evidence: {item.evidence}</small>
+                      </div>
+                      <div className="cross-domain-route-row">
+                        {item.pages.map((page) => (
+                          <em key={page}>{pageLabel(page)}</em>
+                        ))}
+                      </div>
+                    </button>
+                  ))}
+                </section>
+                <section className="section-dashboard-grid">
               {currentSectionDashboard ? (
                 <>
                   <article className={`glass-panel section-main-panel core-dashboard-panel${currentGrowthDashboard ? ' growth-dashboard-panel' : ''}`}>
@@ -2132,7 +2355,9 @@ function App() {
                   </article>
                 </>
               )}
-            </section>
+                </section>
+              </>
+            )}
           </main>
         )
       ) : dashboardData.loading ? (
