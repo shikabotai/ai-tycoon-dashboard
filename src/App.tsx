@@ -1891,16 +1891,17 @@ function App() {
                 </div>
                 <div className="identity-score-control">
                   <strong>{quality.score.toFixed(1)}</strong>
-                  <input
-                    type="range"
-                    min="1"
-                    max="10"
-                    step="0.1"
-                    value={quality.score}
-                    disabled={!identityScoresEditable}
-                    onChange={(event) => updateIdentityQuality(quality.id, { score: Number(event.target.value) })}
-                    aria-label={`${quality.name} score`}
-                  />
+                  {identityScoresEditable ? (
+                    <input
+                      type="range"
+                      min="1"
+                      max="10"
+                      step="0.1"
+                      value={quality.score}
+                      onChange={(event) => updateIdentityQuality(quality.id, { score: Number(event.target.value) })}
+                      aria-label={`${quality.name} score`}
+                    />
+                  ) : null}
                 </div>
               </article>
             ))}
