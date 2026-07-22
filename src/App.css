@@ -1408,6 +1408,29 @@ button {
   padding: 22px;
 }
 
+.identity-statement-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: start;
+}
+
+.identity-statement-head small {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.3;
+}
+
+.identity-statement-actions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .identity-statement-panel span,
 .identity-support-card span {
   color: #86a9df;
@@ -1432,6 +1455,10 @@ button {
   font-size: 2rem;
   font-weight: 650;
   line-height: 1.08;
+}
+
+.identity-statement-panel textarea[readonly] {
+  cursor: default;
 }
 
 .identity-scorecard-panel {

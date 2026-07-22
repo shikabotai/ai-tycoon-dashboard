@@ -2,7 +2,7 @@ import { Suspense, lazy, useEffect, useMemo, useState, type CSSProperties } from
 import './App.css'
 import { useDashboardData } from './hooks/useDashboardData'
 import { loadProjectedSection, type PersonalProjectionKey } from './data/personalProjectionClient'
-import type { ProjectedDashboard, ProjectedSection as LiveProjectedSection } from './data/projectedTypes'
+import type { IdentityQualityProjection, ProjectedDashboard, ProjectedSection as LiveProjectedSection } from './data/projectedTypes'
 import { sendBusinessCommand, sendCommandHandoff } from './data/businessCommandApi'
 import { routeCommand } from './data/commandRouter'
 import type { CommandHandoffResponse } from './server/commandHandoffApi'
@@ -69,15 +69,7 @@ type CrossDomainInsight = {
   pages: Exclude<PersonalSection, 'home'>[]
   tone: 'leverage' | 'tradeoff' | 'evidence'
 }
-type IdentityQuality = {
-  id: string
-  name: string
-  score: number
-  tenMeans: string
-  nextAction: string
-}
-type IdentityScoreHistoryPoint = { label: string; score: number }
-type IdentityNightlyChange = { qualityId: string; delta: number; reason: string }
+type IdentityQuality = IdentityQualityProjection
 
 const VALID_USERNAME = 'mthanath64'
 const VALID_PASSWORD = 'Mitch2002'
@@ -93,27 +85,11 @@ const AVATAR_MODEL_VERSION = 'model-7-20260712'
 const AVATAR_MODEL_PATH = `${appAssetPath('avatar/control-center-avatar.glb')}?v=${AVATAR_MODEL_VERSION}`
 
 const DEFAULT_IDENTITY_QUALITIES: IdentityQuality[] = [
-  { id: 'discipline', name: 'Discipline', score: 6.2, tenMeans: 'Keeps promises without needing drama or motivation.', nextAction: 'Choose the top task and finish it before drifting.' },
-  { id: 'presence', name: 'Presence', score: 5.4, tenMeans: 'Fully here with people, work, and rest.', nextAction: 'Put the phone away during the next real moment.' },
-  { id: 'physical-confidence', name: 'Physical confidence', score: 4.3, tenMeans: 'Feels strong, lean, energetic, and comfortable in a room.', nextAction: 'Protect the next lift or nutrition log.' },
-  { id: 'social-confidence', name: 'Social confidence', score: 4.8, tenMeans: 'Warm, playful, grounded, and easy to connect with.', nextAction: 'Create one small moment of connection today.' },
-  { id: 'reliability', name: 'Reliability', score: 7.1, tenMeans: 'Does what he says, especially when no one is watching.', nextAction: 'Close one open promise before starting another.' },
-]
-
-const IDENTITY_SCORE_HISTORY: IdentityScoreHistoryPoint[] = [
-  { label: 'Thu', score: 5.3 },
-  { label: 'Fri', score: 5.4 },
-  { label: 'Sat', score: 5.5 },
-  { label: 'Sun', score: 5.4 },
-  { label: 'Mon', score: 5.5 },
-  { label: 'Tue', score: 5.6 },
-  { label: 'Today', score: 5.6 },
-]
-
-const IDENTITY_NIGHTLY_CHANGES: IdentityNightlyChange[] = [
-  { qualityId: 'discipline', delta: 0.1, reason: 'Meaningful software progress closed yesterday.' },
-  { qualityId: 'reliability', delta: 0.1, reason: 'Follow-through stayed visible under pressure.' },
-  { qualityId: 'presence', delta: -0.1, reason: 'Attention was easier to fragment than intended.' },
+  { id: 'discipline', name: 'Discipline', score: 6.2, tenMeans: 'Keeps promises without needing drama or motivation.', nextAction: 'Choose the top task and finish it before drifting.', source: 'Fallback identity projection' },
+  { id: 'presence', name: 'Presence', score: 5.4, tenMeans: 'Fully here with people, work, and rest.', nextAction: 'Put the phone away during the next real moment.', source: 'Fallback identity projection' },
+  { id: 'physical-confidence', name: 'Physical confidence', score: 4.3, tenMeans: 'Feels strong, lean, energetic, and comfortable in a room.', nextAction: 'Protect the next lift or nutrition log.', source: 'Fallback identity projection' },
+  { id: 'social-confidence', name: 'Social confidence', score: 4.8, tenMeans: 'Warm, playful, grounded, and easy to connect with.', nextAction: 'Create one small moment of connection today.', source: 'Fallback identity projection' },
+  { id: 'reliability', name: 'Reliability', score: 7.1, tenMeans: 'Does what he says, especially when no one is watching.', nextAction: 'Close one open promise before starting another.', source: 'Fallback identity projection' },
 ]
 
 const PERSONAL_ROUTES: Record<PersonalSection, string> = {
@@ -973,26 +949,42 @@ function storeCommandHistory(history: CommandHistoryEntry[]) {
   window.localStorage.setItem(COMMAND_HISTORY_KEY, JSON.stringify(history.slice(0, 6)))
 }
 
-function loadStoredIdentityQualities(): IdentityQuality[] {
-  if (typeof window === 'undefined') return DEFAULT_IDENTITY_QUALITIES
+function normalizeIdentityQuality(item: Partial<IdentityQuality>, fallback: IdentityQuality): IdentityQuality {
+  return {
+    id: typeof item.id === 'string' ? item.id : fallback.id,
+    name: typeof item.name === 'string' ? item.name : fallback.name,
+    score: typeof item.score === 'number' ? Math.min(10, Math.max(1, item.score)) : fallback.score,
+    tenMeans: typeof item.tenMeans === 'string' ? item.tenMeans : fallback.tenMeans,
+    nextAction: typeof item.nextAction === 'string' ? item.nextAction : fallback.nextAction,
+    source: typeof item.source === 'string' ? item.source : fallback.source,
+  }
+}
+
+function loadStoredIdentityQualities(sourceQualities: IdentityQuality[] = DEFAULT_IDENTITY_QUALITIES): IdentityQuality[] {
+  if (typeof window === 'undefined') return sourceQualities
   try {
     const raw = window.localStorage.getItem(IDENTITY_QUALITIES_KEY)
-    if (!raw) return DEFAULT_IDENTITY_QUALITIES
+    if (!raw) return sourceQualities
     const parsed = JSON.parse(raw) as Partial<IdentityQuality>[]
-    if (!Array.isArray(parsed)) return DEFAULT_IDENTITY_QUALITIES
+    if (!Array.isArray(parsed)) return sourceQualities
 
-    const qualities = parsed
-      .filter((item) => typeof item.id === 'string' && typeof item.name === 'string')
-      .map((item) => ({
-        id: item.id as string,
-        name: item.name as string,
-        score: typeof item.score === 'number' ? Math.min(10, Math.max(1, item.score)) : 5,
-        tenMeans: typeof item.tenMeans === 'string' ? item.tenMeans : 'The ideal version of this quality is clear and lived daily.',
-        nextAction: typeof item.nextAction === 'string' ? item.nextAction : 'Pick one small behavior that proves this today.',
-      }))
-    return qualities.length ? qualities : DEFAULT_IDENTITY_QUALITIES
+    if (!sourceQualities.length) {
+      return parsed
+        .filter((item) => typeof item.id === 'string' && typeof item.name === 'string')
+        .map((item, index) => normalizeIdentityQuality(item, DEFAULT_IDENTITY_QUALITIES[index] ?? {
+          id: item.id as string,
+          name: item.name as string,
+          score: 5,
+          tenMeans: 'The ideal version of this quality is clear and lived daily.',
+          nextAction: 'Pick one small behavior that proves this today.',
+          source: 'Manual identity edit',
+        }))
+    }
+
+    const storedById = new Map(parsed.filter((item) => typeof item.id === 'string').map((item) => [item.id as string, item]))
+    return sourceQualities.map((sourceQuality) => normalizeIdentityQuality(storedById.get(sourceQuality.id) ?? {}, sourceQuality))
   } catch {
-    return DEFAULT_IDENTITY_QUALITIES
+    return sourceQualities
   }
 }
 
@@ -1001,9 +993,9 @@ function storeIdentityQualities(qualities: IdentityQuality[]) {
   window.localStorage.setItem(IDENTITY_QUALITIES_KEY, JSON.stringify(qualities))
 }
 
-function loadStoredIdentityStatement() {
-  if (typeof window === 'undefined') return 'I am becoming someone who keeps promises to himself.'
-  return window.localStorage.getItem(IDENTITY_STATEMENT_KEY) ?? 'I am becoming someone who keeps promises to himself.'
+function loadStoredIdentityStatementOverride() {
+  if (typeof window === 'undefined') return null
+  return window.localStorage.getItem(IDENTITY_STATEMENT_KEY)
 }
 
 function App() {
@@ -1022,9 +1014,10 @@ function App() {
   const [selectedReviewTaskId, setSelectedReviewTaskId] = useState<string | null>(null)
   const [projectedSections, setProjectedSections] = useState<Partial<Record<PersonalProjectionKey, LiveProjectedSection>>>({})
   const [categoryLensIndex, setCategoryLensIndex] = useState<Partial<Record<Exclude<PersonalSection, 'home'>, number>>>({})
-  const [identityStatement, setIdentityStatement] = useState(() => loadStoredIdentityStatement())
-  const [identityQualities, setIdentityQualities] = useState<IdentityQuality[]>(() => loadStoredIdentityQualities())
+  const [identityStatementOverride, setIdentityStatementOverride] = useState<string | null>(() => loadStoredIdentityStatementOverride())
+  const [identityQualityEdits, setIdentityQualityEdits] = useState<IdentityQuality[]>(() => loadStoredIdentityQualities([]))
   const [identityScoresEditable, setIdentityScoresEditable] = useState(false)
+  const [identityStatementEditable, setIdentityStatementEditable] = useState(false)
 
   const dashboardData = useDashboardData()
   const appMode: AppMode = isBusinessPage(currentPage) ? 'business' : 'personal'
@@ -1058,13 +1051,17 @@ function App() {
   }, [commandHistory])
 
   useEffect(() => {
-    storeIdentityQualities(identityQualities)
-  }, [identityQualities])
+    storeIdentityQualities(identityQualityEdits)
+  }, [identityQualityEdits])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
-    window.localStorage.setItem(IDENTITY_STATEMENT_KEY, identityStatement)
-  }, [identityStatement])
+    if (identityStatementOverride === null) {
+      window.localStorage.removeItem(IDENTITY_STATEMENT_KEY)
+      return
+    }
+    window.localStorage.setItem(IDENTITY_STATEMENT_KEY, identityStatementOverride)
+  }, [identityStatementOverride])
 
   useEffect(() => {
     let cancelled = false
@@ -1156,6 +1153,28 @@ function App() {
       highlights: currentPersonalContent.highlights,
     }
   }, [currentPersonalContent, personalSection, projectedSections])
+  const sourceIdentityProjection = personalSection === 'identity' ? currentPersonalData?.identity : undefined
+  const sourceIdentityQualities = useMemo(
+    () => sourceIdentityProjection?.qualities?.length ? sourceIdentityProjection.qualities : DEFAULT_IDENTITY_QUALITIES,
+    [sourceIdentityProjection],
+  )
+  const identityQualities = useMemo(() => {
+    const storedById = new Map(identityQualityEdits.map((item) => [item.id, item]))
+    return sourceIdentityQualities.map((sourceQuality) => normalizeIdentityQuality(storedById.get(sourceQuality.id) ?? {}, sourceQuality))
+  }, [identityQualityEdits, sourceIdentityQualities])
+  const sourceIdentityStatement = sourceIdentityProjection?.statement
+    ?? currentPersonalData?.summaryCards.find((card) => card.label.toLowerCase().includes('identity statement'))?.note
+    ?? 'Calm, disciplined, focused, and happy every day.'
+  const identityStatement = identityStatementOverride ?? sourceIdentityStatement
+  const identityStatementIsOverridden = identityStatementOverride !== null
+  const identityScoreHistory = sourceIdentityProjection?.scoreHistory?.length
+    ? sourceIdentityProjection.scoreHistory
+    : [{ label: 'Today', score: identityQualities.length ? Number((identityQualities.reduce((total, item) => total + item.score, 0) / identityQualities.length).toFixed(1)) : 0 }]
+  const identityNightlyChanges = sourceIdentityProjection?.nightlyChanges?.length
+    ? sourceIdentityProjection.nightlyChanges
+    : [{ qualityId: identityQualities[0]?.id ?? 'identity', delta: 0, reason: 'Source projection is ready for the next nightly refresh.' }]
+  const identityLastUpdatedLabel = sourceIdentityProjection?.lastUpdatedLabel ?? 'Latest source projection'
+
   const currentCoreDashboard = personalSection === 'vessel' || personalSection === 'identity' || personalSection === 'systems'
     ? CORE_DASHBOARD_DEFINITIONS[personalSection]
     : null
@@ -1281,7 +1300,7 @@ function App() {
   }
 
   function updateIdentityQuality(id: string, updates: Partial<IdentityQuality>) {
-    setIdentityQualities((prev) => prev.map((item) => (
+    setIdentityQualityEdits(identityQualities.map((item) => (
       item.id === id
         ? { ...item, ...updates, score: updates.score === undefined ? item.score : Math.min(10, Math.max(1, updates.score)) }
         : item
@@ -1778,22 +1797,52 @@ function App() {
     const chartMax = 10
     const chartWidth = 260
     const chartHeight = 96
-    const chartPoints = IDENTITY_SCORE_HISTORY.map((point, index) => {
-      const x = IDENTITY_SCORE_HISTORY.length === 1 ? chartWidth / 2 : (index / (IDENTITY_SCORE_HISTORY.length - 1)) * chartWidth
+    const chartPoints = identityScoreHistory.map((point, index) => {
+      const x = identityScoreHistory.length === 1 ? chartWidth / 2 : (index / (identityScoreHistory.length - 1)) * chartWidth
       const y = chartHeight - ((point.score - chartMin) / (chartMax - chartMin)) * chartHeight
       return { ...point, x, y }
     })
     const chartPath = chartPoints.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`).join(' ')
-    const firstHistoryPoint = IDENTITY_SCORE_HISTORY[0]
-    const latestHistoryPoint = IDENTITY_SCORE_HISTORY[IDENTITY_SCORE_HISTORY.length - 1]
+    const firstHistoryPoint = identityScoreHistory[0]
+    const latestHistoryPoint = identityScoreHistory[identityScoreHistory.length - 1]
 
     return (
       <section className="identity-simple-page" aria-label="Ideal self scorecard">
         <article className="identity-statement-panel">
-          <span>Identity statement</span>
+          <div className="identity-statement-head">
+            <div>
+              <span>Identity statement</span>
+              <small>{identityStatementIsOverridden ? 'Manual override' : sourceIdentityProjection?.statementSource ?? 'Source projection'}</small>
+            </div>
+            <div className="identity-statement-actions">
+              {identityStatementIsOverridden ? (
+                <button
+                  className="revamp-command-btn"
+                  type="button"
+                  onClick={() => {
+                    setIdentityStatementOverride(null)
+                    setIdentityStatementEditable(false)
+                  }}
+                >
+                  Use source
+                </button>
+              ) : null}
+              <button
+                className={`revamp-command-btn identity-edit-toggle${identityStatementEditable ? ' active' : ''}`}
+                type="button"
+                onClick={() => {
+                  if (!identityStatementEditable && identityStatementOverride === null) setIdentityStatementOverride(sourceIdentityStatement)
+                  setIdentityStatementEditable((editable) => !editable)
+                }}
+              >
+                {identityStatementEditable ? 'Done' : 'Override'}
+              </button>
+            </div>
+          </div>
           <textarea
             value={identityStatement}
-            onChange={(event) => setIdentityStatement(event.target.value)}
+            readOnly={!identityStatementEditable}
+            onChange={(event) => setIdentityStatementOverride(event.target.value)}
             aria-label="Identity statement"
           />
         </article>
@@ -1866,9 +1915,9 @@ function App() {
           </article>
           <article className="identity-support-card">
             <span>Last nightly update</span>
-            <strong>Yesterday moved the scorecard by evidence.</strong>
+            <strong>{identityLastUpdatedLabel}</strong>
             <div className="identity-change-list">
-              {IDENTITY_NIGHTLY_CHANGES.map((change) => {
+              {identityNightlyChanges.map((change) => {
                 const quality = identityQualities.find((item) => item.id === change.qualityId)
                 return (
                   <p key={change.qualityId}>

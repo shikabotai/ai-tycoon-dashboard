@@ -4,17 +4,17 @@ import type { ProjectedSection } from '../data/projectedTypes'
 
 export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, ProjectedSection>> = {
   "identity": {
-    "heroSummary": "Identity tracks the standards you are trying to live, the gaps that still need work, and the active goal most likely to prove it today.",
+    "heroSummary": "Identity tracks the standards from Ideal Self, the gaps that still need work, and the active goal most likely to prove it today.",
     "summaryCards": [
       {
         "label": "Current identity statement",
-        "value": "Execution-era self",
+        "value": "Ideal Self source",
         "note": "Calm, disciplined, focused, and happy every day."
       },
       {
         "label": "Ideal self alignment",
         "value": "Gap-aware",
-        "note": "The ideal self is useful when it changes behavior."
+        "note": "The page compares source standards against current gaps."
       },
       {
         "label": "Current focus",
@@ -29,12 +29,12 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Current dilemmas / blockers",
         "value": "Environment + consistency",
-        "note": "Source records are ready for deeper blocker extraction."
+        "note": ""
       },
       {
         "label": "Recent lessons / growth",
         "value": "Bridge current self to ideal self",
-        "note": "The identity plan remains the main growth lens."
+        "note": ""
       }
     ],
     "highlights": [
@@ -46,25 +46,105 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       "label": "Identity planning docs",
       "ageDays": 0,
       "stale": false
+    },
+    "identity": {
+      "statement": "Calm, disciplined, focused, and happy every day.",
+      "statementSource": "Personal Decision Engine / Ideal Self / Character & Habits",
+      "qualities": [
+        {
+          "id": "physical-presence-energy",
+          "name": "Physical presence / energy",
+          "score": 6.4,
+          "tenMeans": "Fit, high energy, confident",
+          "nextAction": "Vessel — lean bulk, training consistency",
+          "source": "Personal Decision Engine / Ideal Self"
+        },
+        {
+          "id": "social-confidence",
+          "name": "Social confidence",
+          "score": 5.9,
+          "tenMeans": "Magnetic, present, connecting",
+          "nextAction": "Environment change + deliberate social investment",
+          "source": "Personal Decision Engine / Ideal Self"
+        },
+        {
+          "id": "phone-habits",
+          "name": "Phone habits",
+          "score": 5.5,
+          "tenMeans": "Present, intentional use",
+          "nextAction": "Habits Overview — phone elimination protocol",
+          "source": "Personal Decision Engine / Ideal Self"
+        },
+        {
+          "id": "financial-situation",
+          "name": "Financial situation",
+          "score": 5,
+          "tenMeans": "Freedom, multiple income streams",
+          "nextAction": "Finance MOC + Ventures MOC — active work",
+          "source": "Personal Decision Engine / Ideal Self"
+        },
+        {
+          "id": "relationship",
+          "name": "Relationship",
+          "score": 4.6,
+          "tenMeans": "Partner by 30",
+          "nextAction": "Intentional dating when life is in the right city",
+          "source": "Personal Decision Engine / Ideal Self"
+        },
+        {
+          "id": "location",
+          "name": "Location",
+          "score": 4.1,
+          "tenMeans": "Energetic city, near family eventually",
+          "nextAction": "NYC or return to South FL — evaluate timeline",
+          "source": "Personal Decision Engine / Ideal Self"
+        }
+      ],
+      "scoreHistory": [
+        {
+          "label": "Jul 22",
+          "score": 5.3
+        }
+      ],
+      "nightlyChanges": [
+        {
+          "qualityId": "physical-presence-energy",
+          "delta": 0,
+          "reason": "Personal Decision Engine / Ideal Self refreshed; current gap: Vessel — lean bulk, training consistency"
+        },
+        {
+          "qualityId": "social-confidence",
+          "delta": 0,
+          "reason": "Personal Decision Engine / Ideal Self refreshed; current gap: Environment change + deliberate social investment"
+        },
+        {
+          "qualityId": "phone-habits",
+          "delta": 0,
+          "reason": "Personal Decision Engine / Ideal Self refreshed; current gap: Habits Overview — phone elimination protocol"
+        }
+      ],
+      "lastUpdatedLabel": "Nightly source refresh: Jul 22"
     }
   },
   "vessel": {
-    "heroSummary": "Current body system is in a cut / recomp, not lean bulk. phase with 155 lb as the latest working reference and a target range of 145\u2013148 lb by September.",
+    "heroSummary": "Current body system is in a cut / recomp, not lean bulk. phase with 154 lb as the latest working reference and a target range of 145–148 lb by September.",
     "summaryCards": [
       {
         "label": "Weight / body metrics",
-        "value": "155 lb",
-        "note": "Target 145\u2013148 lb by September from Fitness Overview."
+        "value": "154 lb",
+        "note": "Target 145–148 lb by September from Fitness Overview."
       },
       {
         "label": "Workout consistency",
-        "value": "Last logged 2026-06-30",
-        "note": "Workout evidence is pulled from latest markdown log."
+        "value": "Last logged 2026-07-21",
+        "note": "1 days since latest workout evidence.",
+        "stale": false
       },
       {
         "label": "Nutrition consistency",
-        "value": "Last logged 2026-07-03",
-        "note": "Nutrition evidence is pulled from latest markdown log."
+        "value": "Last logged 2026-07-22",
+        "note": "0 days since latest nutrition evidence.",
+        "stale": false
       },
       {
         "label": "Sleep / recovery",
@@ -75,17 +155,17 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Mental state / discipline",
         "value": "Consistency > intensity",
-        "note": "Current philosophy emphasizes sustainable rhythm first."
+        "note": "Current philosophy emphasizes making 3 sessions/week automatic first."
       },
       {
         "label": "Current physique goal",
-        "value": "145\u2013148 lb",
+        "value": "145–148 lb",
         "note": "Lean, defined, and preserving muscle rather than swingy crash dieting."
       }
     ],
     "highlights": [
-      "Latest workout evidence: 2026-06-30",
-      "Latest nutrition evidence: 2026-07-03",
+      "Latest workout evidence: 2026-07-21",
+      "Latest nutrition evidence: 2026-07-22",
       "Cut / recomp, not lean bulk."
     ],
     "freshness": {
@@ -185,6 +265,51 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       "stale": false
     }
   },
+  "career": {
+    "heroSummary": "Career is in a leverage-building phase, with job-search preparation and long-arc ML credentials both visible in the source planning system.",
+    "summaryCards": [
+      {
+        "label": "Current career trajectory",
+        "value": "In progress",
+        "note": "Land higher-paying SWE role or negotiate raise"
+      },
+      {
+        "label": "Primary career goal",
+        "value": "Higher-paying SWE role",
+        "note": "Target is stronger leverage through a raise or better offer."
+      },
+      {
+        "label": "Long-arc credential",
+        "value": "Georgia Tech MSML",
+        "note": "| Georgia Tech MSML completed | Career | 2027 | In progress |"
+      },
+      {
+        "label": "Skill-building progress",
+        "value": "MSML path active",
+        "note": "| Georgia Tech MSML completed | Career | 2027 | In progress |"
+      },
+      {
+        "label": "Current leverage opportunities",
+        "value": "Comp increase focus",
+        "note": "Target is a >$20k comp increase or stronger role leverage."
+      },
+      {
+        "label": "Next career milestone",
+        "value": "Interview-ready profile",
+        "note": "The next layer is direct portfolio, resume, and cadence evidence."
+      }
+    ],
+    "highlights": [
+      "Career blends income leverage with long-term ML positioning.",
+      "Annual goals and 5-year goals are the main current sources.",
+      "The next layer is direct evidence from portfolio, resume, and interview cadence."
+    ],
+    "freshness": {
+      "label": "Career planning docs",
+      "ageDays": 0,
+      "stale": false
+    }
+  },
   "knowledge": {
     "heroSummary": "Knowledge is execution-supportive rather than archival, with learning tied to decision quality, identity formation, and active goals.",
     "summaryCards": [
@@ -232,47 +357,48 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       "stale": false
     }
   },
-  "career": {
-    "heroSummary": "Career is in a leverage-building phase, with job-search preparation and long-arc ML credentials both visible in the source planning system.",
+  "wealth": {
+    "heroSummary": "Wealth is framed as leverage-building rather than passive tracking, with compensation growth and venture upside both acting as the main financial drivers.",
     "summaryCards": [
       {
-        "label": "Current career trajectory",
-        "value": "In progress",
-        "note": "Land higher-paying SWE role or negotiate raise"
+        "label": "Current financial priorities",
+        "value": "Increase leverage",
+        "note": "Comp growth and venture traction both matter on the current path."
       },
       {
-        "label": "Primary career goal",
-        "value": "Higher-paying SWE role",
-        "note": "Target is stronger leverage through a raise or better offer."
+        "label": "Cashflow strategy",
+        "value": "Earn more first",
+        "note": "The current system emphasizes higher income and upside before elaborate optimization."
       },
       {
-        "label": "Long-arc credential",
-        "value": "Georgia Tech MSML",
-        "note": "| Georgia Tech MSML completed | Career | 2027 | In progress |"
+        "label": "Wealth operating stance",
+        "value": "Selective accumulation",
+        "note": "Avoid distraction and focus on the highest-leverage growth paths."
       },
       {
-        "label": "Skill-building progress",
-        "value": "MSML path active",
-        "note": "| Georgia Tech MSML completed | Career | 2027 | In progress |"
+        "label": "Main wealth engines",
+        "value": "Career + ventures",
+        "note": "These are the clearest financial multipliers in the current plan."
       },
       {
-        "label": "Current leverage opportunities",
-        "value": "Comp increase focus",
-        "note": "Target is a >$20k comp increase or stronger role leverage."
+        "label": "Current blind spot",
+        "value": "Live net-worth visibility",
+        "note": "This section is waiting on stronger direct financial source integration.",
+        "stale": true
       },
       {
-        "label": "Next career milestone",
-        "value": "Interview-ready profile",
-        "note": "The next layer is direct portfolio, resume, and cadence evidence."
+        "label": "Next wealth milestone",
+        "value": "Stronger recurring surplus",
+        "note": "Future versions should surface explicit financial scoreboard data."
       }
     ],
     "highlights": [
-      "Career blends income leverage with long-term ML positioning.",
-      "Annual goals and 5-year goals are the main current sources.",
-      "The next layer is direct evidence from portfolio, resume, and interview cadence."
+      "Wealth is being treated as leverage, not vanity tracking.",
+      "The current plan is income- and venture-centric.",
+      "This section will benefit from deeper structured source integration later."
     ],
     "freshness": {
-      "label": "Career planning docs",
+      "label": "Wealth planning docs",
       "ageDays": 0,
       "stale": false
     }
@@ -318,52 +444,6 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "freshness": {
       "label": "Education planning docs",
-      "ageDays": 0,
-      "stale": false
-    }
-  },
-  "wealth": {
-    "heroSummary": "Wealth is framed as leverage-building rather than passive tracking, with compensation growth and venture upside both acting as the main financial drivers.",
-    "summaryCards": [
-      {
-        "label": "Current financial priorities",
-        "value": "Increase leverage",
-        "note": "Comp growth and venture traction both matter on the current path."
-      },
-      {
-        "label": "Cashflow strategy",
-        "value": "Earn more first",
-        "note": "The current system emphasizes higher income and upside before elaborate optimization."
-      },
-      {
-        "label": "Wealth operating stance",
-        "value": "Selective accumulation",
-        "note": "Avoid distraction and focus on the highest-leverage growth paths."
-      },
-      {
-        "label": "Main wealth engines",
-        "value": "Career + ventures",
-        "note": "These are the clearest financial multipliers in the current plan."
-      },
-      {
-        "label": "Current blind spot",
-        "value": "Live net-worth visibility",
-        "note": "This section is waiting on stronger direct financial source integration.",
-        "stale": true
-      },
-      {
-        "label": "Next wealth milestone",
-        "value": "Stronger recurring surplus",
-        "note": "Future versions should surface explicit financial scoreboard data."
-      }
-    ],
-    "highlights": [
-      "Wealth is being treated as leverage, not vanity tracking.",
-      "The current plan is income- and venture-centric.",
-      "This section will benefit from deeper structured source integration later."
-    ],
-    "freshness": {
-      "label": "Wealth planning docs",
       "ageDays": 0,
       "stale": false
     }

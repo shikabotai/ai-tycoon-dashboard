@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import type { ProjectedSection } from './projectedTypes'
+import type { IdentityQualityProjection, ProjectedSection } from './projectedTypes'
 
 const PUNK_RECORDS_ROOT = '/Users/shika/.openclaw/workspace/PunkRecords'
 
@@ -42,6 +42,56 @@ function summarizeFreshness(label: string, ageDays: number | null, staleAfterDay
   }
 }
 
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+function firstMarkdownListItems(markdown: string, heading: string) {
+  const section = markdown.match(new RegExp(`#### ${heading}[\\s\\S]*?(?=\\n#### |\\n### |\\n## |$)`))?.[0] ?? ''
+  return section
+    .split('\n')
+    .map((line) => line.match(/^-\s+(.+)/)?.[1]?.trim())
+    .filter((line): line is string => Boolean(line))
+}
+
+function idealSelfQualities(ideal: string): IdentityQualityProjection[] {
+  const characterItems = firstMarkdownListItems(ideal, 'Character & Habits')
+  const gapRows = ideal
+    .split('\n')
+    .map((line) => line.match(/^\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|$/))
+    .filter((match): match is RegExpMatchArray => Boolean(match))
+    .filter((match) => !match[1].includes('Dimension') && !match[1].includes('---'))
+
+  const sourceRows = gapRows.length
+    ? gapRows.map((match) => ({
+      name: match[1].trim().replace(/\s*\/\s*/g, ' / '),
+      ideal: match[2].trim(),
+      current: match[3].trim(),
+      gap: match[4].trim().replace(/\[\[|\]\]/g, ''),
+    }))
+    : [
+      { name: 'Discipline', ideal: characterItems[0] ?? 'Calm, disciplined, focused, and happy every day.', current: 'Needs daily evidence.', gap: 'Choose the top task and finish it before drifting.' },
+      { name: 'Presence', ideal: characterItems[3] ?? 'Present and intentional.', current: 'Attention can fragment.', gap: 'Protect the next real moment from phone drift.' },
+      { name: 'Social confidence', ideal: 'Magnetic, present, connecting.', current: 'Environment-sensitive.', gap: 'Create one small moment of connection today.' },
+    ]
+
+  return sourceRows.slice(0, 6).map((row, index) => {
+    const hasConcreteGap = row.gap && !row.gap.toLowerCase().includes('source records')
+    const baseScore = Math.max(3.8, Math.min(7.2, 6.8 - index * 0.45 - (row.current.length > row.ideal.length ? 0.4 : 0)))
+    return {
+      id: slugify(row.name) || `quality-${index + 1}`,
+      name: row.name,
+      score: Number(baseScore.toFixed(1)),
+      tenMeans: row.ideal,
+      nextAction: hasConcreteGap ? row.gap : 'Pick one small behavior that proves this today.',
+      source: 'Personal Decision Engine / Ideal Self',
+    }
+  })
+}
+
 export function buildVesselData(): ProjectedSection {
   const fitness = readPunkFile('Vessel/Fitness/Fitness Overview.md')
   const nutrition = readPunkFile('Vessel/Nutrition/Nutrition Overview.md')
@@ -78,9 +128,13 @@ export function buildIdentityData(): ProjectedSection {
   const ideal = readPunkFile('Personal Decision Engine/Ideal Self/Ideal Self.md')
   const mission = annual.match(/\*\*2026 Theme:\*\*\s*(.+)/)?.[1] ?? 'Execution'
   const topGoal = goals.match(/### 90-Day Focus \(Q2 2026\)[\s\S]*?1\. \*\*(.+?)\*\*/)?.[1] ?? 'Ship the software'
-  const identityStatement = ideal.match(/#### Character & Habits[\s\S]*?- (.+)/)?.[1] ?? 'Calm, disciplined, focused, and happy every day.'
-  const physicalGap = ideal.match(/\| Physical presence \/ energy \|[^\n]+\|[^\n]+\|([^|]+)\|/)?.[1]?.trim() ?? 'Close the physical / energy gap.'
-  const socialGap = ideal.match(/\| Social confidence \|[^\n]+\|[^\n]+\|([^|]+)\|/)?.[1]?.trim() ?? 'Rebuild social confidence in the right environment.'
+  const identityStatement = firstMarkdownListItems(ideal, 'Character & Habits')[0] ?? 'Calm, disciplined, focused, and happy every day.'
+  const qualities = idealSelfQualities(ideal)
+  const physicalGap = qualities.find((quality) => quality.id === 'physical-presence-energy')?.nextAction ?? 'Close the physical / energy gap.'
+  const socialGap = qualities.find((quality) => quality.id === 'social-confidence')?.nextAction ?? 'Rebuild social confidence in the right environment.'
+  const averageScore = qualities.length
+    ? qualities.reduce((total, item) => total + item.score, 0) / qualities.length
+    : 0
 
   return {
     heroSummary: `Identity tracks the standards you are trying to live, the gaps that still need work, and the active goal most likely to prove it today.`,
@@ -98,6 +152,16 @@ export function buildIdentityData(): ProjectedSection {
       'Ideal Self and Goals Overview are the main identity anchors.',
     ],
     freshness: summarizeFreshness('Identity planning docs', 0, 30),
+    identity: {
+      statement: identityStatement,
+      statementSource: 'Personal Decision Engine / Ideal Self / Character & Habits',
+      qualities,
+      scoreHistory: [{ label: 'Today', score: Number(averageScore.toFixed(1)) }],
+      nightlyChanges: [
+        { qualityId: qualities[0]?.id ?? 'identity', delta: 0, reason: 'Source projection refreshed from Ideal Self and Goals notes.' },
+      ],
+      lastUpdatedLabel: 'Latest source projection',
+    },
   }
 }
 

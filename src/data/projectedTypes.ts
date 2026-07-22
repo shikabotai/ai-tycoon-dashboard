@@ -41,6 +41,35 @@ export type ProjectedTimelineItem = {
   severity?: ProjectedSignalPriority
 }
 
+export type IdentityQualityProjection = {
+  id: string
+  name: string
+  score: number
+  tenMeans: string
+  nextAction: string
+  source: string
+}
+
+export type IdentityScoreHistoryPoint = {
+  label: string
+  score: number
+}
+
+export type IdentityNightlyChange = {
+  qualityId: string
+  delta: number
+  reason: string
+}
+
+export type IdentityProjection = {
+  statement: string
+  statementSource: string
+  qualities: IdentityQualityProjection[]
+  scoreHistory: IdentityScoreHistoryPoint[]
+  nightlyChanges: IdentityNightlyChange[]
+  lastUpdatedLabel: string
+}
+
 export type ProjectedSection = {
   heroSummary: string
   summaryCards: ProjectedCard[]
@@ -54,4 +83,5 @@ export type ProjectedSection = {
     ageDays: number | null
     stale: boolean
   }
+  identity?: IdentityProjection
 }
