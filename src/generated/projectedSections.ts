@@ -147,31 +147,14 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         "stale": false
       },
       {
-        "label": "Mental reset",
-        "value": "Brain dump + breathwork",
-        "note": "Minimum viable stack: 5-minute brain dump, short breathing reset, and a real shutdown ritual."
-      },
-      {
-        "label": "Looksmaxxing",
-        "value": "Daily grooming system",
-        "note": "Quick tip: Make sure hair, beard, lips, and outfit look intentional"
-      },
-      {
-        "label": "Focus / attention",
-        "value": "25+ min (Pomodoro block)",
-        "note": "Treat focus like a lift: measure time to first distraction and protect deep-work blocks.",
-        "stale": true
+        "label": "Meditation consistency",
+        "value": "No logged sessions yet",
+        "note": "5-minute sessions; 0 sessions logged."
       },
       {
         "label": "Current physique goal",
         "value": "145–148 lb",
         "note": "Lean, defined, and preserving muscle rather than swingy crash dieting."
-      },
-      {
-        "label": "Sleep / recovery",
-        "value": "Best-effort projection",
-        "note": "Sleep and recovery are estimated until direct recovery evidence is available.",
-        "stale": true
       }
     ],
     "highlights": [
@@ -270,7 +253,32 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         }
       ],
       "muscleWindowLabel": "Recent workout logs, weighted toward the last 7 days",
-      "musclePriorityNote": "Aesthetic priorities emphasize V-taper, shoulder width, upper chest, arms, visible abs, balanced legs, and enough cardio to support the cut."
+      "musclePriorityNote": "Aesthetic priorities emphasize V-taper, shoulder width, upper chest, arms, visible abs, balanced legs, and enough cardio to support the cut.",
+      "meditation": {
+        "latestSessionDate": null,
+        "sessionCount": 0,
+        "baseline": "5-minute sessions",
+        "nextRep": "5 min focused breathing after the morning brain dump",
+        "fallbackRep": "Walking meditation or box breathing on unfocused days",
+        "reminderWindows": [
+          "10:00 AM ET",
+          "7:30 PM ET"
+        ]
+      },
+      "looks": {
+        "daily": [
+          "Wash face with Vanicream Gentle Facial Cleanser",
+          "Apply Timeless 20% Vitamin C + E Ferulic Serum",
+          "Apply Belif The True Cream Aqua Bomb",
+          "Apply Beauty of Joseon Relief Sun SPF 50+"
+        ],
+        "goingOut": [
+          "Apply Too Faced Lip Injection Extreme if wanted",
+          "After moisturizer, press 2–3 drops of Josie Maran 100% Pure Argan Oil into the face",
+          "Wait about 5 minutes before going out",
+          "Apply Dolce & Gabbana The One"
+        ]
+      }
     }
   },
   "systems": {

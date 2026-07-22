@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import type { IdentityQualityProjection, ProjectedSection } from './projectedTypes'
+import type { IdentityQualityProjection, ProjectedSection, VesselMuscleGroupProjection } from './projectedTypes'
 
 const PUNK_RECORDS_ROOT = '/Users/shika/.openclaw/workspace/PunkRecords'
 
@@ -20,6 +20,27 @@ function latestMarkdownDate(relativeDir: string) {
   } catch {
     return null
   }
+}
+
+function listMarkdownDates(relativeDir: string) {
+  try {
+    const full = path.join(PUNK_RECORDS_ROOT, relativeDir)
+    return fs.readdirSync(full)
+      .filter((file: string) => file.endsWith('.md'))
+      .sort()
+      .map((file: string) => file.replace(/\.md$/, ''))
+  } catch {
+    return []
+  }
+}
+
+function markdownListItems(markdown: string, headingPattern: string, limit = 5) {
+  const section = markdown.match(new RegExp(`${headingPattern}[\\s\\S]*?(?=\\n## |$)`))?.[0] ?? ''
+  return section
+    .split('\n')
+    .map((line) => line.match(/^-\s+(.+)/)?.[1]?.replace(/\*\*/g, '').trim())
+    .filter((line): line is string => Boolean(line))
+    .slice(0, limit)
 }
 
 function daysSince(dateLike?: string | null) {
@@ -55,6 +76,160 @@ function firstMarkdownListItems(markdown: string, heading: string) {
     .split('\n')
     .map((line) => line.match(/^-\s+(.+)/)?.[1]?.trim())
     .filter((line): line is string => Boolean(line))
+}
+
+const muscleGroupDefinitions = [
+  {
+    id: 'back',
+    label: 'Back',
+    priority: 'V-taper priority',
+    targetSets: 10,
+    terms: ['lat', 'pulldown', 'pull-up', 'pull up', 'row', 't-bar', 'scapular', 'back extension'],
+    recommendation: 'Keep one vertical pull and one row pattern active each week.',
+  },
+  {
+    id: 'shoulders',
+    label: 'Shoulders',
+    priority: 'Width priority',
+    targetSets: 8,
+    terms: ['shoulder', 'lateral raise', 'rear delt', 'face pull', 'delt'],
+    recommendation: 'Keep lateral delts and rear delts visible for the shoulder-width goal.',
+  },
+  {
+    id: 'chest',
+    label: 'Chest',
+    priority: 'Upper-chest priority',
+    targetSets: 7,
+    terms: ['bench', 'incline press', 'chest', 'fly', 'pec'],
+    recommendation: 'Add pressing or fly work if chest has not shown up recently.',
+  },
+  {
+    id: 'biceps',
+    label: 'Biceps',
+    priority: 'Arm detail',
+    targetSets: 6,
+    terms: ['bicep', 'curl'],
+    recommendation: 'Keep curls in the rotation, but do not let arms crowd out chest or legs.',
+  },
+  {
+    id: 'triceps',
+    label: 'Triceps',
+    priority: 'Arm mass',
+    targetSets: 6,
+    terms: ['tricep', 'pushdown', 'skull crusher', 'overhead extension'],
+    recommendation: 'Use pushdowns or overhead work to keep arms full while cutting.',
+  },
+  {
+    id: 'abs',
+    label: 'Abs',
+    priority: 'Lean-look priority',
+    targetSets: 6,
+    terms: ['ab', 'core', 'crunch', 'leg raise'],
+    recommendation: 'Keep direct core work frequent while the cut reveals definition.',
+  },
+  {
+    id: 'legs',
+    label: 'Legs',
+    priority: 'Balance priority',
+    targetSets: 9,
+    terms: ['leg press', 'leg curl', 'leg extension', 'squat', 'romanian', 'rdl', 'hamstring', 'quad', 'glute', 'calf'],
+    recommendation: 'Do not let the aesthetics push turn into skipping legs.',
+  },
+  {
+    id: 'cardio',
+    label: 'Cardio',
+    priority: 'Cut support',
+    targetSets: 2,
+    terms: ['cardio', 'zone 2', 'walk', 'jog', 'run', 'bike', 'treadmill', 'stairmaster'],
+    recommendation: 'Add Zone 2 when fat-loss support is missing from the week.',
+  },
+]
+
+function workoutExerciseBlocks(markdown: string) {
+  const section = markdown.match(/## Exercises\s*([\s\S]*?)(?=\n## |$)/)?.[1] ?? ''
+  const blocks: Array<{ name: string, sets: number }> = []
+  const headingRegex = /^###\s+(.+)$/gm
+  const matches = [...section.matchAll(headingRegex)]
+
+  matches.forEach((match, index) => {
+    const start = (match.index ?? 0) + match[0].length
+    const end = index + 1 < matches.length ? matches[index + 1].index ?? section.length : section.length
+    const body = section.slice(start, end)
+    const sets = body.split('\n').filter((line) => /^-\s+/.test(line.trim())).length
+    blocks.push({ name: match[1].trim(), sets: Math.max(1, sets) })
+  })
+
+  return blocks
+}
+
+function matchesMuscleTerm(value: string, term: string) {
+  if (!value || !term) return false
+  if (term.length <= 4 && /^[a-z0-9]+$/.test(term)) {
+    return new RegExp(`\\b${term}\\b`).test(value)
+  }
+  return value.includes(term)
+}
+
+function buildMuscleHeatmap(): VesselMuscleGroupProjection[] {
+  const dates = listMarkdownDates('Vessel/Fitness/Workout Logs')
+  const today = Date.now()
+  const groups = muscleGroupDefinitions.map((group) => ({
+    ...group,
+    recentSets: 0,
+    lastHit: null as string | null,
+    exactSets: 0,
+  }))
+
+  dates.forEach((date) => {
+    const age = daysSince(date)
+    if (age === null || age > 28) return
+
+    const markdown = readPunkFile(`Vessel/Fitness/Workout Logs/${date}.md`)
+    const focus = markdown.match(/Focus:\s*(.+)/i)?.[1]?.toLowerCase() ?? ''
+    const exercises = workoutExerciseBlocks(markdown)
+
+    groups.forEach((group) => {
+      const matchedSets = exercises.reduce((total, exercise) => {
+        const name = exercise.name.toLowerCase()
+        return group.terms.some((term) => matchesMuscleTerm(name, term)) ? total + exercise.sets : total
+      }, 0)
+      const focusBonus = group.terms.some((term) => matchesMuscleTerm(focus, term)) ? 1 : 0
+      const totalSets = matchedSets + focusBonus
+      if (totalSets === 0) return
+
+      const weight = age <= 7 ? 1 : age <= 14 ? 0.65 : 0.35
+      group.exactSets += totalSets
+      group.recentSets += totalSets * weight
+      if (!group.lastHit || Date.parse(date) > Date.parse(group.lastHit)) {
+        group.lastHit = date
+      }
+    })
+  })
+
+  return groups.map((group) => {
+    const age = group.lastHit ? Math.max(0, Math.floor((today - Date.parse(group.lastHit)) / (1000 * 60 * 60 * 24))) : null
+    const recentSets = Math.round(group.recentSets)
+    const heat: VesselMuscleGroupProjection['heat'] = !group.lastHit
+      ? 'missing'
+      : age !== null && age > 14
+        ? 'stale'
+        : recentSets >= group.targetSets
+          ? 'hot'
+          : recentSets >= Math.ceil(group.targetSets * 0.6)
+            ? 'solid'
+            : 'touched'
+
+    return {
+      id: group.id,
+      label: group.label,
+      priority: group.priority,
+      recentSets,
+      lastHit: group.lastHit,
+      lastHitLabel: age === null ? 'No recent log' : age === 0 ? 'Today' : `${age} day${age === 1 ? '' : 's'} ago`,
+      heat,
+      recommendation: group.recommendation,
+    }
+  })
 }
 
 function idealSelfQualities(ideal: string): IdentityQualityProjection[] {
@@ -95,11 +270,12 @@ function idealSelfQualities(ideal: string): IdentityQualityProjection[] {
 export function buildVesselData(): ProjectedSection {
   const fitness = readPunkFile('Vessel/Fitness/Fitness Overview.md')
   const nutrition = readPunkFile('Vessel/Nutrition/Nutrition Overview.md')
-  const mental = readPunkFile('Vessel/Mental/Mental Overview.md')
-  const looks = readPunkFile('Vessel/Looksmaxxing/Looksmaxxing Overview.md')
   const looksRoutine = readPunkFile('Vessel/Looksmaxxing/Looksmaxxing Routine.md')
+  const meditationReminderRules = readPunkFile('Vessel/Mental/Meditation Reminder Rules.md')
   const workoutDate = latestMarkdownDate('Vessel/Fitness/Workout Logs')
   const nutritionDate = latestMarkdownDate('Vessel/Nutrition/Daily Logs')
+  const meditationDates = listMarkdownDates('Vessel/Mental/Meditation/Daily Logs')
+  const meditationLatestDate = meditationDates.at(-1) ?? null
   const latestWorkout = workoutDate ? readPunkFile(`Vessel/Fitness/Workout Logs/${workoutDate}.md`) : ''
   const latestNutrition = nutritionDate ? readPunkFile(`Vessel/Nutrition/Daily Logs/${nutritionDate}.md`) : ''
   const workoutAge = daysSince(workoutDate)
@@ -110,13 +286,13 @@ export function buildVesselData(): ProjectedSection {
   const nextSession = latestWorkout.match(/Next session:\s*(.+)/)?.[1]?.replace(/\.$/, '') ?? 'Choose the next lift from the split'
   const latestProtein = latestNutrition.match(/Protein:\s*~?([\d.]+)\s*g/i)?.[1]
   const latestCalories = latestNutrition.match(/Calories:\s*~?([\d,]+)\s*kcal/i)?.[1]
-  const mentalStack = mental.includes('Minimum Viable Mental Health Stack') ? 'Brain dump + breathwork' : 'Mental reset'
-  const focusTarget = mental.match(/\| \*\*Time to first distraction\*\* \|[^|]+\|\s*([^|]+?)\s*\|/)?.[1]?.trim() ?? '25+ min'
-  const looksFocus = looks.match(/## Current Focus\s*([\s\S]*?)(?=\n---|\n## |$)/)?.[1]
-    ?.split('\n')
-    .map((line) => line.match(/^-\s+(.+)/)?.[1]?.trim())
-    .filter(Boolean)?.[0] ?? 'Practical routine'
-  const looksRoutineSignal = looksRoutine.includes('Daily Routine') ? 'Daily grooming system' : 'Appearance system'
+  const muscleGroups = buildMuscleHeatmap()
+  const meditationSessionLength = meditationReminderRules.match(/Start with \*\*([^*]+)\*\*/)?.[1] ?? '5-minute sessions'
+  const morningReminder = meditationReminderRules.match(/Morning meditation reminder[\s\S]*?- Time:\s+\*\*([^*]+)\*\*/)?.[1]
+  const eveningReminder = meditationReminderRules.match(/Evening reset reminder[\s\S]*?- Time:\s+\*\*([^*]+)\*\*/)?.[1]
+  const reminderWindows = [morningReminder, eveningReminder].filter((item): item is string => Boolean(item))
+  const looksDaily = markdownListItems(looksRoutine, '## Daily Routine', 4)
+  const looksGoingOut = markdownListItems(looksRoutine, '## Going-Out / Event Routine', 4)
 
   return {
     heroSummary: `A simple daily dashboard for the four Vessel levers: lift consistently, hit the food log, reset attention, and keep presentation sharp.`,
@@ -124,11 +300,8 @@ export function buildVesselData(): ProjectedSection {
       { label: 'Weight / body metrics', value: `${currentWeight} lb`, note: `Target ${targetWeight} lb by September from Fitness Overview.` },
       { label: 'Workout consistency', value: workoutDate ? `Last logged ${workoutDate}` : 'Awaiting workout log', note: workoutDate ? `${workoutAge} days since latest lift. Next: ${nextSession}.` : 'Workout evidence has not reached the control center yet.', stale: (workoutAge ?? 999) > 4 },
       { label: 'Nutrition consistency', value: nutritionDate ? `${latestProtein ? `${latestProtein}g protein` : `Logged ${nutritionDate}`}` : 'Awaiting nutrition log', note: nutritionDate ? `${latestCalories ? `${latestCalories} kcal logged. ` : ''}${nutritionAge} days since latest nutrition evidence.` : 'Nutrition evidence has not reached the control center yet.', stale: (nutritionAge ?? 999) > 3 },
-      { label: 'Mental reset', value: mentalStack, note: 'Minimum viable stack: 5-minute brain dump, short breathing reset, and a real shutdown ritual.' },
-      { label: 'Looksmaxxing', value: looksRoutineSignal, note: looksFocus },
-      { label: 'Focus / attention', value: focusTarget, note: 'Treat focus like a lift: measure time to first distraction and protect deep-work blocks.', stale: true },
+      { label: 'Meditation consistency', value: meditationLatestDate ? `Last logged ${meditationLatestDate}` : 'No logged sessions yet', note: `${meditationSessionLength}; ${meditationDates.length} sessions logged.` },
       { label: 'Current physique goal', value: `${targetWeight} lb`, note: 'Lean, defined, and preserving muscle rather than swingy crash dieting.' },
-      { label: 'Sleep / recovery', value: 'Best-effort projection', note: 'Sleep and recovery are estimated until direct recovery evidence is available.', stale: true },
     ],
     highlights: [
       `Latest workout evidence: ${workoutDate ?? 'missing'}`,
@@ -138,6 +311,23 @@ export function buildVesselData(): ProjectedSection {
       'Looks priority: grooming, skin, hair, style, and event readiness',
     ],
     freshness: summarizeFreshness('Vessel evidence', Math.min(workoutAge ?? 999, nutritionAge ?? 999), 4),
+    vessel: {
+      muscleGroups,
+      muscleWindowLabel: 'Recent workout logs, weighted toward the last 7 days',
+      musclePriorityNote: 'Aesthetic priorities emphasize V-taper, shoulder width, upper chest, arms, visible abs, balanced legs, and enough cardio to support the cut.',
+      meditation: {
+        latestSessionDate: meditationLatestDate,
+        sessionCount: meditationDates.length,
+        baseline: meditationSessionLength,
+        nextRep: '5 min focused breathing after the morning brain dump',
+        fallbackRep: 'Walking meditation or box breathing on unfocused days',
+        reminderWindows,
+      },
+      looks: {
+        daily: looksDaily,
+        goingOut: looksGoingOut,
+      },
+    },
   }
 }
 

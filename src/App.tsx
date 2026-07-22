@@ -1920,15 +1920,9 @@ function App() {
       const parsed = Number(match[1].replace(/,/g, ''))
       return Number.isFinite(parsed) ? parsed : null
     }
-    const bodyMetric = findCard('weight') ?? currentPersonalData.summaryCards[0]
     const training = findCard('workout') ?? currentPersonalData.summaryCards[1]
     const nutrition = findCard('nutrition') ?? currentPersonalData.summaryCards[2]
     const mental = findCard('mental') ?? findCard('mind') ?? currentPersonalData.summaryCards[3]
-    const looks = findCard('looks') ?? findCard('appearance') ?? findCard('grooming') ?? currentPersonalData.summaryCards[4]
-    const focus = findCard('focus') ?? currentPersonalData.summaryCards[5]
-    const recovery = findCard('recovery') ?? currentPersonalData.summaryCards[7]
-    const discipline = findCard('discipline') ?? mental
-    const nextActions = currentSectionDashboard?.actionRows ?? []
     const proteinTarget = 150
     const cutCalorieMax = 2400
     const proteinLogged = readNumber(nutrition?.value)
@@ -1941,26 +1935,19 @@ function App() {
         ? 'Under cut max'
         : 'Over cut max'
     const nutritionStatus = proteinProgress === null ? 'Protein pending' : `${proteinProgress}% protein`
+    const meditationPlan = currentPersonalData.vessel?.meditation
+    const looksPlan = currentPersonalData.vessel?.looks
+    const meditationLastLabel = meditationPlan?.latestSessionDate ? `Last logged ${meditationPlan.latestSessionDate}` : 'No logged sessions yet'
+    const meditationAction = meditationPlan?.nextRep ?? '5 min focused breathing after the morning brain dump'
+    const meditationFallback = meditationPlan?.fallbackRep ?? 'Walking meditation or box breathing on unfocused days'
+    const meditationReminderLabel = meditationPlan?.reminderWindows.length ? meditationPlan.reminderWindows.join(' / ') : '10:00 AM / 7:30 PM ET'
+    const nextLift = training?.note?.match(/Next:\s*(.+?)(?:\.|$)/)?.[1] ?? 'Use the latest workout log to choose the next lift'
     const pillars = [
-      { label: 'Workouts', shortLabel: 'Train', title: training?.value ?? 'Training signal pending', body: training?.note ?? 'Workout logs are the lead evidence source.', tone: training?.stale ? 'watch' : 'good', status: training?.stale ? 'Log next lift' : 'Logged', action: nextActions[0]?.title ?? 'Lock the next lift', actionBody: nextActions[0]?.body ?? 'Decide the next session before the day starts drifting.' },
-      { label: 'Nutrition', shortLabel: 'Fuel', title: nutrition?.value ?? 'Nutrition signal pending', body: nutrition?.note ?? 'Food logging is the cut / recomp control surface.', tone: nutrition?.stale ? 'watch' : 'good', status: nutritionStatus, progress: proteinProgress, action: nextActions[1]?.title ?? 'Hit the protein floor', actionBody: nextActions[1]?.body ?? 'Keep the food signal simple: protein, calories, then consistency.' },
-      { label: 'Mind', shortLabel: 'Mind', title: mental?.value ?? 'Mental reset pending', body: mental?.note ?? 'Focus, attention span, and meditation need a small daily baseline.', tone: mental?.stale ? 'watch' : 'mind', status: 'Reset available', action: nextActions[2]?.title ?? 'Run the focus reset', actionBody: nextActions[2]?.body ?? 'Brain dump, breathe, then protect one clean attention block.' },
+      { label: 'Workouts', shortLabel: 'Train', title: training?.value ?? 'Training signal pending', body: training?.note ?? 'Workout logs are the lead evidence source.', tone: training?.stale ? 'watch' : 'good', status: training?.stale ? 'Log next lift' : 'Logged', action: 'Next lift', actionBody: nextLift },
+      { label: 'Nutrition', shortLabel: 'Fuel', title: nutrition?.value ?? 'Nutrition signal pending', body: nutrition?.note ?? 'Food logging is the cut / recomp control surface.', tone: nutrition?.stale ? 'watch' : 'good', status: nutritionStatus, progress: proteinProgress, action: 'Protein target', actionBody: proteinLogged === null ? `Get to ${proteinTarget}g protein today` : `${proteinLogged}g logged toward ${proteinTarget}g` },
+      { label: 'Mind', shortLabel: 'Mind', title: meditationLastLabel, body: mental?.note ?? 'Punk Records says to build consistency first with tiny daily mental reps.', tone: meditationPlan?.latestSessionDate ? 'mind' : 'watch', status: meditationPlan?.latestSessionDate ? 'Logged' : 'Inconsistent', action: 'Meditation rep', actionBody: meditationAction },
     ]
     const selectedPillar = pillars.find((pillar) => pillar.label === selectedVesselLane) ?? pillars[0]
-    const weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
-    const todayIndex = (new Date().getDay() + 6) % 7
-    const weekRows = pillars.map((pillar, rowIndex) => ({
-      label: pillar.shortLabel,
-      tone: pillar.tone,
-      days: weekDays.map((day, dayIndex) => ({
-        day,
-        active: pillar.label === 'Nutrition'
-          ? dayIndex === todayIndex && proteinProgress !== null
-          : !pillar.tone.includes('watch') && dayIndex === Math.min(6, 1 + rowIndex),
-        dim: (dayIndex + rowIndex) % 5 === 0,
-      })),
-    }))
-    const sourceItems = [bodyMetric, training, nutrition, mental, looks].filter(Boolean)
     const muscleGroups = currentPersonalData.vessel?.muscleGroups ?? []
     const laggingMuscleGroups = muscleGroups
       .filter((group) => group.heat === 'missing' || group.heat === 'stale' || group.heat === 'touched')
@@ -2081,62 +2068,53 @@ function App() {
           </section>
         ) : null}
 
-        {looks ? (
-          <section className="vessel-looks-support" aria-label="Looks support">
-            <span>Looks support</span>
-            <strong>{looks.value}</strong>
-            <p>{looks.note}</p>
-          </section>
-        ) : null}
-
-        <section className="vessel-action-board" aria-label="Vessel next actions">
-          <article className="vessel-action-prime">
-            <span>Today</span>
-            <strong>{focus?.value ?? discipline?.value ?? 'One clean reset'}</strong>
-            <p>{focus?.note ?? discipline?.note ?? currentDirective.usefulFor}</p>
-            {recovery ? <small>{recovery.label}: {recovery.value}</small> : null}
+        <section className="vessel-support-grid" aria-label="Vessel support systems">
+          <article className="vessel-meditation-card">
+            <div>
+              <span>Meditation consistency</span>
+              <strong>{meditationLastLabel}</strong>
+              <p>{meditationPlan?.sessionCount ? `${meditationPlan.sessionCount} logged sessions in Punk Records.` : 'The log exists, but consistency has not shown up in the data yet.'}</p>
+            </div>
+            <dl>
+              <div>
+                <dt>Baseline</dt>
+                <dd>{meditationPlan?.baseline ?? '5-minute sessions'}</dd>
+              </div>
+              <div>
+                <dt>Next rep</dt>
+                <dd>{meditationAction}</dd>
+              </div>
+              <div>
+                <dt>Fallback</dt>
+                <dd>{meditationFallback}</dd>
+              </div>
+              <div>
+                <dt>Reminder windows</dt>
+                <dd>{meditationReminderLabel}</dd>
+              </div>
+            </dl>
           </article>
-          <div className="vessel-action-list">
-            {nextActions.map((action) => {
-              const card = typeof action.sourceCardIndex === 'number' ? currentPersonalData.summaryCards[action.sourceCardIndex] : undefined
-              return (
-                <article key={action.title} className={card?.stale ? 'stale' : ''}>
-                  <span>{card?.label ?? 'Next action'}</span>
-                  <strong>{action.title}</strong>
-                  <p>{action.body}</p>
-                </article>
-              )
-            })}
-          </div>
-        </section>
-
-        <section className="vessel-source-strip" aria-label="Vessel source evidence">
-          {sourceItems.map((card) => (
-            <article key={card.label} className={card.stale ? 'stale' : ''}>
-              <span>{card.label}</span>
-              <strong>{card.value}</strong>
-            </article>
-          ))}
-        </section>
-
-        <section className="vessel-weekly-drift" aria-label="Vessel weekly drift">
-          <div>
-            <span>Weekly drift</span>
-            <strong>Sharpening check</strong>
-            <p>Seven-day view for training, food, focus, and appearance routines.</p>
-          </div>
-          <div className="vessel-drift-grid">
-            {weekRows.map((row) => (
-              <div className={`vessel-drift-row ${row.tone}`} key={row.label}>
-                <span>{row.label}</span>
-                {row.days.map((day, index) => (
-                  <i key={`${row.label}-${day.day}-${index}`} className={day.active ? day.dim ? 'active dim' : 'active' : ''}>
-                    {day.day}
-                  </i>
+          <article className="vessel-looks-card">
+            <div>
+              <span>Looks support</span>
+              <strong>Routine checklist</strong>
+              <p>Only concrete items from the looksmaxxing routine.</p>
+            </div>
+            <div className="vessel-check-columns">
+              <div>
+                <b>Daily</b>
+                {(looksPlan?.daily.length ? looksPlan.daily : ['Face wash', 'Moisturizer', 'SPF', 'Lip balm']).map((item) => (
+                  <p key={item}>{item}</p>
                 ))}
               </div>
-            ))}
-          </div>
+              <div>
+                <b>Going out</b>
+                {(looksPlan?.goingOut.length ? looksPlan.goingOut : ['Hair', 'Beard', 'Lips', 'Outfit intentional']).map((item) => (
+                  <p key={item}>{item}</p>
+                ))}
+              </div>
+            </div>
+          </article>
         </section>
       </section>
     )

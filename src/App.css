@@ -1886,6 +1886,118 @@ button {
   line-height: 1.42;
 }
 
+.vessel-support-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 12px;
+}
+
+.vessel-meditation-card,
+.vessel-looks-card {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-width: 0;
+  border: 1px solid rgba(241, 244, 248, 0.1);
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(16, 21, 29, 0.86), rgba(8, 11, 16, 0.94));
+  padding: 16px;
+}
+
+.vessel-meditation-card {
+  border-color: rgba(126, 167, 255, 0.18);
+}
+
+.vessel-looks-card {
+  border-color: rgba(215, 166, 91, 0.2);
+}
+
+.vessel-meditation-card span,
+.vessel-looks-card span {
+  color: #86a9df;
+  font-size: 0.72rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.vessel-looks-card span {
+  color: #d7a65b;
+}
+
+.vessel-meditation-card strong,
+.vessel-looks-card strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--text);
+  font-size: clamp(1.12rem, 1.8vw, 1.45rem);
+  line-height: 1.08;
+}
+
+.vessel-meditation-card p,
+.vessel-looks-card p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.42;
+}
+
+.vessel-meditation-card dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.vessel-meditation-card dl div,
+.vessel-check-columns div {
+  min-width: 0;
+  border: 1px solid rgba(241, 244, 248, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+  padding: 10px;
+}
+
+.vessel-meditation-card dt {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.vessel-meditation-card dd {
+  margin: 5px 0 0;
+  color: var(--text);
+  font-size: 0.86rem;
+  line-height: 1.32;
+}
+
+.vessel-check-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.vessel-check-columns b {
+  display: block;
+  color: var(--text);
+  font-size: 0.82rem;
+}
+
+.vessel-check-columns p {
+  position: relative;
+  margin: 8px 0 0;
+  padding-left: 14px;
+}
+
+.vessel-check-columns p::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 5px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #d7a65b;
+}
+
 .vessel-action-board {
   display: grid;
   grid-template-columns: minmax(240px, 0.36fr) minmax(0, 1fr);
@@ -3709,7 +3821,8 @@ button {
 
   .vessel-hero,
   .vessel-action-board,
-  .vessel-weekly-drift {
+  .vessel-weekly-drift,
+  .vessel-support-grid {
     grid-template-columns: 1fr;
   }
 
@@ -3981,7 +4094,8 @@ button {
   .vessel-pillar-grid,
   .vessel-source-strip,
   .vessel-muscle-grid,
-  .vessel-action-list {
+  .vessel-action-list,
+  .vessel-support-grid {
     grid-template-columns: 1fr;
     gap: 10px;
   }
@@ -3989,6 +4103,8 @@ button {
   .vessel-pillar-card,
   .vessel-muscle-map,
   .vessel-muscle-card,
+  .vessel-meditation-card,
+  .vessel-looks-card,
   .vessel-action-prime,
   .vessel-action-list article,
   .vessel-source-strip article {
@@ -4020,6 +4136,11 @@ button {
   .vessel-ring-actions button {
     text-align: center;
     padding: 8px 6px;
+  }
+
+  .vessel-meditation-card dl,
+  .vessel-check-columns {
+    grid-template-columns: 1fr;
   }
 
   .vessel-pillar-select {

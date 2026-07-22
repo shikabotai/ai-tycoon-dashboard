@@ -85,6 +85,18 @@ export type VesselProjection = {
   muscleGroups: VesselMuscleGroupProjection[]
   muscleWindowLabel: string
   musclePriorityNote: string
+  meditation?: {
+    latestSessionDate: string | null
+    sessionCount: number
+    baseline: string
+    nextRep: string
+    fallbackRep: string
+    reminderWindows: string[]
+  }
+  looks?: {
+    daily: string[]
+    goingOut: string[]
+  }
 }
 
 export type ProjectedSection = {

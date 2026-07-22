@@ -25,6 +25,15 @@ function latestMarkdownDate(relativeDir) {
   }
 }
 
+function markdownListItems(markdown, headingPattern, limit = 5) {
+  const section = markdown.match(new RegExp(`${headingPattern}[\\s\\S]*?(?=\\n## |$)`))?.[0] ?? ''
+  return section
+    .split('\n')
+    .map((line) => line.match(/^-\s+(.+)/)?.[1]?.replace(/\*\*/g, '').trim())
+    .filter(Boolean)
+    .slice(0, limit)
+}
+
 function listMarkdownDates(relativeDir) {
   try {
     const full = path.join(punkRoot, relativeDir)
@@ -336,8 +345,11 @@ function buildVesselData() {
   const mental = readPunkFile('Vessel/Mental/Mental Overview.md')
   const looks = readPunkFile('Vessel/Looksmaxxing/Looksmaxxing Overview.md')
   const looksRoutine = readPunkFile('Vessel/Looksmaxxing/Looksmaxxing Routine.md')
+  const meditationReminderRules = readPunkFile('Vessel/Mental/Meditation Reminder Rules.md')
   const workoutDate = latestMarkdownDate('Vessel/Fitness/Workout Logs')
   const nutritionDate = latestMarkdownDate('Vessel/Nutrition/Daily Logs')
+  const meditationDates = listMarkdownDates('Vessel/Mental/Meditation/Daily Logs')
+  const meditationLatestDate = meditationDates.at(-1) ?? null
   const latestWorkout = workoutDate ? readPunkFile(`Vessel/Fitness/Workout Logs/${workoutDate}.md`) : ''
   const latestNutrition = nutritionDate ? readPunkFile(`Vessel/Nutrition/Daily Logs/${nutritionDate}.md`) : ''
   const workoutAge = daysSince(workoutDate)
@@ -363,6 +375,12 @@ function buildVesselData() {
   const looksMorningTip = looksRoutine.match(/### Morning[\s\S]*?-\s+(.+?)(?=\n|$)/)?.[1]?.replace(/\*\*/g, '') ?? null
   const looksQuickTip = looksGoingOutTip ?? looksMorningTip ?? looksFocus
   const muscleGroups = buildMuscleHeatmap()
+  const meditationSessionLength = meditationReminderRules.match(/Start with \*\*([^*]+)\*\*/)?.[1] ?? '5-minute sessions'
+  const morningReminder = meditationReminderRules.match(/Morning meditation reminder[\s\S]*?- Time:\s+\*\*([^*]+)\*\*/)?.[1]
+  const eveningReminder = meditationReminderRules.match(/Evening reset reminder[\s\S]*?- Time:\s+\*\*([^*]+)\*\*/)?.[1]
+  const reminderWindows = [morningReminder, eveningReminder].filter(Boolean)
+  const looksDaily = markdownListItems(looksRoutine, '## Daily Routine', 4)
+  const looksGoingOut = markdownListItems(looksRoutine, '## Going-Out / Event Routine', 4)
 
   return {
     heroSummary: `A simple daily dashboard for the four Vessel levers: lift consistently, hit the food log, reset attention, and keep presentation sharp.`,
@@ -370,11 +388,8 @@ function buildVesselData() {
       { label: 'Weight / body metrics', value: `${currentWeight} lb`, note: `Target ${targetWeight} lb by September from Fitness Overview.` },
       { label: 'Workout consistency', value: workoutDate ? `Last logged ${workoutDate}` : 'Awaiting workout log', note: workoutDate ? `${workoutAge} days since latest lift. Next: ${nextSession}.` : 'Workout evidence has not reached the control center yet.', stale: (workoutAge ?? 999) > 4 },
       { label: 'Nutrition consistency', value: nutritionDate ? `${latestProtein ? `${latestProtein}g protein` : `Logged ${nutritionDate}`}` : 'Awaiting nutrition log', note: nutritionDate ? `${latestCalories ? `${latestCalories} kcal logged. ` : ''}${nutritionAge} days since latest nutrition evidence.` : 'Nutrition evidence has not reached the control center yet.', stale: (nutritionAge ?? 999) > 3 },
-      { label: 'Mental reset', value: mentalStack, note: 'Minimum viable stack: 5-minute brain dump, short breathing reset, and a real shutdown ritual.' },
-      { label: 'Looksmaxxing', value: looksRoutineSignal, note: `Quick tip: ${looksQuickTip}` },
-      { label: 'Focus / attention', value: focusTarget, note: 'Treat focus like a lift: measure time to first distraction and protect deep-work blocks.', stale: true },
+      { label: 'Meditation consistency', value: meditationLatestDate ? `Last logged ${meditationLatestDate}` : 'No logged sessions yet', note: `${meditationSessionLength}; ${meditationDates.length} sessions logged.` },
       { label: 'Current physique goal', value: `${targetWeight} lb`, note: 'Lean, defined, and preserving muscle rather than swingy crash dieting.' },
-      { label: 'Sleep / recovery', value: 'Best-effort projection', note: 'Sleep and recovery are estimated until direct recovery evidence is available.', stale: true },
     ],
     highlights: [
       `Latest workout evidence: ${workoutDate ?? 'missing'}`,
@@ -388,6 +403,18 @@ function buildVesselData() {
       muscleGroups,
       muscleWindowLabel: 'Recent workout logs, weighted toward the last 7 days',
       musclePriorityNote: 'Aesthetic priorities emphasize V-taper, shoulder width, upper chest, arms, visible abs, balanced legs, and enough cardio to support the cut.',
+      meditation: {
+        latestSessionDate: meditationLatestDate,
+        sessionCount: meditationDates.length,
+        baseline: meditationSessionLength,
+        nextRep: '5 min focused breathing after the morning brain dump',
+        fallbackRep: 'Walking meditation or box breathing on unfocused days',
+        reminderWindows,
+      },
+      looks: {
+        daily: looksDaily,
+        goingOut: looksGoingOut,
+      },
     },
   }
 }
