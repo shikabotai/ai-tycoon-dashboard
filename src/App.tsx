@@ -1914,6 +1914,12 @@ function App() {
     if (!currentPersonalData) return null
 
     const findCard = (matcher: string) => currentPersonalData.summaryCards.find((card) => card.label.toLowerCase().includes(matcher))
+    const readNumber = (value?: string) => {
+      const match = value?.match(/([\d,.]+)/)
+      if (!match) return null
+      const parsed = Number(match[1].replace(/,/g, ''))
+      return Number.isFinite(parsed) ? parsed : null
+    }
     const bodyMetric = findCard('weight') ?? currentPersonalData.summaryCards[0]
     const training = findCard('workout') ?? currentPersonalData.summaryCards[1]
     const nutrition = findCard('nutrition') ?? currentPersonalData.summaryCards[2]
@@ -1923,75 +1929,85 @@ function App() {
     const recovery = findCard('recovery') ?? currentPersonalData.summaryCards[7]
     const discipline = findCard('discipline') ?? mental
     const nextActions = currentSectionDashboard?.actionRows ?? []
+    const proteinTarget = 150
+    const cutCalorieMax = 2400
+    const proteinLogged = readNumber(nutrition?.value)
+    const caloriesLogged = readNumber(nutrition?.note?.match(/([\d,]+)\s*kcal/i)?.[0])
+    const proteinProgress = proteinLogged === null ? null : Math.min(100, Math.round((proteinLogged / proteinTarget) * 100))
+    const isCutting = currentPersonalData.highlights.some((highlight) => /cut|recomp/i.test(highlight))
+    const calorieStatus = caloriesLogged === null
+      ? 'Calories not logged'
+      : caloriesLogged <= cutCalorieMax
+        ? 'Under cut max'
+        : 'Over cut max'
+    const nutritionStatus = proteinProgress === null ? 'Protein pending' : `${proteinProgress}% protein`
     const pillars = [
-      { label: 'Workouts', shortLabel: 'Train', title: training?.value ?? 'Training signal pending', body: training?.note ?? 'Workout logs are the lead evidence source.', tone: training?.stale ? 'watch' : 'good', progress: 84, action: nextActions[0]?.title ?? 'Lock the next lift', actionBody: nextActions[0]?.body ?? 'Decide the next session before the day starts drifting.' },
-      { label: 'Nutrition', shortLabel: 'Fuel', title: nutrition?.value ?? 'Nutrition signal pending', body: nutrition?.note ?? 'Food logging is the cut / recomp control surface.', tone: nutrition?.stale ? 'watch' : 'good', progress: 78, action: nextActions[1]?.title ?? 'Hit the protein floor', actionBody: nextActions[1]?.body ?? 'Keep the food signal simple: protein, calories, then consistency.' },
-      { label: 'Mind', shortLabel: 'Mind', title: mental?.value ?? 'Mental reset pending', body: mental?.note ?? 'Focus, attention span, and meditation need a small daily baseline.', tone: mental?.stale ? 'watch' : 'mind', progress: 42, action: nextActions[2]?.title ?? 'Run the focus reset', actionBody: nextActions[2]?.body ?? 'Brain dump, breathe, then protect one clean attention block.' },
-      { label: 'Looks', shortLabel: 'Looks', title: looks?.value ?? 'Routine signal pending', body: looks?.note ?? 'Grooming, skin, hair, and style should compound quietly from a simple routine.', tone: looks?.stale ? 'watch' : 'looks', progress: 64, action: nextActions[3]?.title ?? 'Do the appearance pass', actionBody: nextActions[3]?.body ?? 'Keep skin, hair, grooming, and fit checks visible as daily Vessel work.' },
+      { label: 'Workouts', shortLabel: 'Train', title: training?.value ?? 'Training signal pending', body: training?.note ?? 'Workout logs are the lead evidence source.', tone: training?.stale ? 'watch' : 'good', status: training?.stale ? 'Log next lift' : 'Logged', action: nextActions[0]?.title ?? 'Lock the next lift', actionBody: nextActions[0]?.body ?? 'Decide the next session before the day starts drifting.' },
+      { label: 'Nutrition', shortLabel: 'Fuel', title: nutrition?.value ?? 'Nutrition signal pending', body: nutrition?.note ?? 'Food logging is the cut / recomp control surface.', tone: nutrition?.stale ? 'watch' : 'good', status: nutritionStatus, progress: proteinProgress, action: nextActions[1]?.title ?? 'Hit the protein floor', actionBody: nextActions[1]?.body ?? 'Keep the food signal simple: protein, calories, then consistency.' },
+      { label: 'Mind', shortLabel: 'Mind', title: mental?.value ?? 'Mental reset pending', body: mental?.note ?? 'Focus, attention span, and meditation need a small daily baseline.', tone: mental?.stale ? 'watch' : 'mind', status: 'Reset available', action: nextActions[2]?.title ?? 'Run the focus reset', actionBody: nextActions[2]?.body ?? 'Brain dump, breathe, then protect one clean attention block.' },
+      { label: 'Looks', shortLabel: 'Looks', title: looks?.value ?? 'Routine signal pending', body: looks?.note ?? 'Grooming, skin, hair, and style should compound quietly from a simple routine.', tone: looks?.stale ? 'watch' : 'looks', status: 'Routine', action: nextActions[3]?.title ?? 'Do the appearance pass', actionBody: nextActions[3]?.body ?? 'Keep skin, hair, grooming, and fit checks visible as daily Vessel work.' },
     ]
     const selectedPillar = pillars.find((pillar) => pillar.label === selectedVesselLane) ?? pillars[0]
-    const readinessAverage = Math.round(pillars.reduce((total, pillar) => total + pillar.progress, 0) / pillars.length)
-    const handledCount = pillars.filter((pillar) => pillar.progress >= 70 && pillar.tone !== 'watch').length
-    const readinessState = readinessAverage >= 80 ? 'Locked in' : readinessAverage >= 65 ? 'Close the gaps' : 'Needs reset'
-    const topPillar = [...pillars].sort((a, b) => b.progress - a.progress)[0]
-    const laggingPillar = [...pillars].sort((a, b) => a.progress - b.progress)[0]
     const weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+    const todayIndex = (new Date().getDay() + 6) % 7
     const weekRows = pillars.map((pillar, rowIndex) => ({
       label: pillar.shortLabel,
       tone: pillar.tone,
       days: weekDays.map((day, dayIndex) => ({
         day,
-        active: dayIndex <= Math.min(6, Math.floor((pillar.progress / 100) * 7) - 1),
+        active: pillar.label === 'Nutrition'
+          ? dayIndex === todayIndex && proteinProgress !== null
+          : !pillar.tone.includes('watch') && dayIndex === Math.min(6, 1 + rowIndex),
         dim: (dayIndex + rowIndex) % 5 === 0,
       })),
     }))
     const sourceItems = [bodyMetric, training, nutrition, mental, looks].filter(Boolean)
     const vesselStats = [
-      { label: 'Handled today', value: `${handledCount}/4`, note: 'Core lanes above the line' },
-      { label: 'Strongest', value: topPillar.shortLabel, note: `${topPillar.progress}% signal` },
-      { label: 'Needs attention', value: laggingPillar.shortLabel, note: `${laggingPillar.progress}% signal` },
+      { label: 'Protein today', value: proteinLogged === null ? '--' : `${proteinLogged}g`, note: proteinProgress === null ? `Target ${proteinTarget}g` : `${proteinProgress}% of ${proteinTarget}g target` },
+      ...(isCutting ? [{ label: 'Calories today', value: caloriesLogged === null ? '--' : `${caloriesLogged} kcal`, note: caloriesLogged === null ? `Cut max ${cutCalorieMax} kcal` : `${calorieStatus}: ${cutCalorieMax} kcal` }] : []),
+      { label: 'Next lift', value: training?.stale ? 'Due' : 'Set', note: training?.note ?? 'Use the latest workout log for the next session.' },
     ]
 
     return (
       <section className="vessel-page" aria-label="Vessel dashboard">
         <section className="vessel-hero">
           <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
-          <div className="vessel-hero-copy">
-            <div className="revamp-kicker">Vessel</div>
-            <h2>Vessel OS</h2>
-            <p>{currentPersonalData.heroSummary}</p>
-            <div className="vessel-hero-vitals" aria-label="Vessel quick readouts">
-              {vesselStats.map((stat) => (
-                <div key={stat.label}>
-                  <span>{stat.label}</span>
-                  <strong>{stat.value}</strong>
-                  <small>{stat.note}</small>
-                </div>
-              ))}
-            </div>
+          <div className="vessel-hero-vitals" aria-label="Vessel quick readouts">
+            {vesselStats.map((stat) => (
+              <div key={stat.label}>
+                <span>{stat.label}</span>
+                <strong>{stat.value}</strong>
+                <small>{stat.note}</small>
+              </div>
+            ))}
           </div>
           <aside className="vessel-readiness">
             <div
               className="vessel-readiness-ring"
-              style={{ '--vessel-readiness': `${readinessAverage}%` } as CSSProperties}
-              aria-label={`Vessel readiness ${readinessAverage}%`}
+              style={{ '--vessel-readiness': `${proteinProgress ?? 0}%` } as CSSProperties}
+              aria-label={proteinProgress === null ? 'Protein target pending' : `Protein target ${proteinProgress}%`}
             >
               <div>
-                <span>{readinessState}</span>
-                <strong>{readinessAverage}</strong>
+                <span>Protein</span>
+                <strong>{proteinProgress ?? '--'}%</strong>
               </div>
             </div>
-            <div className="vessel-ring-actions" aria-label="Readiness lanes">
-              {pillars.map((pillar) => (
-                <button
-                  key={pillar.label}
-                  className={selectedPillar.label === pillar.label ? `active ${pillar.tone}` : pillar.tone}
-                  onClick={() => setSelectedVesselLane(pillar.label)}
-                >
-                  <span>{pillar.shortLabel}</span>
-                  <strong>{pillar.progress}%</strong>
+            <div className="vessel-ring-actions" aria-label="Nutrition targets">
+              <button className="active good" onClick={() => setSelectedVesselLane('Nutrition')}>
+                <span>Protein</span>
+                <strong>{proteinLogged === null ? `Target ${proteinTarget}g` : `${proteinLogged} / ${proteinTarget}g`}</strong>
+              </button>
+              {isCutting ? (
+                <button className={caloriesLogged !== null && caloriesLogged > cutCalorieMax ? 'watch active' : 'good'} onClick={() => setSelectedVesselLane('Nutrition')}>
+                  <span>Calories</span>
+                  <strong>{caloriesLogged === null ? `Max ${cutCalorieMax}` : `${caloriesLogged} / ${cutCalorieMax}`}</strong>
                 </button>
-              ))}
+              ) : (
+                <button onClick={() => setSelectedVesselLane('Nutrition')}>
+                  <span>Calories</span>
+                  <strong>Not tracked</strong>
+                </button>
+              )}
             </div>
             <div className="vessel-selected-action">
               <span>{selectedPillar.shortLabel} next move</span>
@@ -2022,9 +2038,11 @@ function App() {
               </button>
               <div className="vessel-mini-row">
                 <span>{pillar.shortLabel} status</span>
-                <b>{pillar.progress}%</b>
+                <b>{pillar.status}</b>
               </div>
-              <div className="vessel-progress-track" style={{ '--vessel-progress': `${pillar.progress}%` } as CSSProperties} aria-hidden="true"><i /></div>
+              {typeof pillar.progress === 'number' ? (
+                <div className="vessel-progress-track" style={{ '--vessel-progress': `${pillar.progress}%` } as CSSProperties} aria-hidden="true"><i /></div>
+              ) : null}
             </article>
           ))}
         </section>

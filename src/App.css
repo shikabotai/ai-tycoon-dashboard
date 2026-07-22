@@ -1436,8 +1436,13 @@ button {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
-  margin-top: 18px;
-  max-width: 680px;
+  max-width: 720px;
+}
+
+.vessel-hero > .vessel-hero-vitals {
+  align-self: stretch;
+  margin-top: 0;
+  max-width: none;
 }
 
 .vessel-hero-vitals div {
