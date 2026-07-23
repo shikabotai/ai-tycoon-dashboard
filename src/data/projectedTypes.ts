@@ -134,7 +134,6 @@ export type EducationProjection = {
   coursePlan: EducationCourseProjection[]
   alternatives: EducationAlternativeProjection[]
   urgentDeadlines: EducationDeadlineProjection[]
-  deadlineRule: string
   planNote: string
 }
 

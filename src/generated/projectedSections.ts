@@ -758,7 +758,6 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "status": "later"
         }
       ],
-      "deadlineRule": "Mitchell should treat **11:59 PM ET on the prior night** as the real target whenever Canvas shows an overnight grace-style close.",
       "planNote": "The default map favors ML core requirements plus agent-builder systems depth. Use alternatives when workload, specialization fit, or interests change."
     }
   },

@@ -574,8 +574,6 @@ export function buildEducationData(): ProjectedSection {
   const activeCourseLine = currentCourses.match(/\|\s*(CS7641 Machine Learning)\s*\|[^|]+\|\s*([^|]+?)\s*\|/) ?? gtOverview.match(/\|\s*(CS7641 — Machine Learning)\s*\|[^|]+\|\s*([^|]+?)\s*\|/)
   const activeCourse = activeCourseLine?.[1]?.replace(' — ', ' ') ?? 'CS7641 Machine Learning'
   const activeCourseStatus = activeCourseLine?.[2]?.trim() ?? 'In progress — Summer 2026'
-  const deadlineRule = machineLearning.match(/Internal deadline rule:\*\*\s+(.+)/)?.[1]?.trim()
-    ?? 'Treat 11:59 PM ET the prior night as the real target whenever Canvas shows an overnight close.'
   const urgentDeadlines = educationDeadlinesFromCourse(machineLearning, 'CS7641', 'Machine Learning')
 
   const coursePlan = [
@@ -625,7 +623,6 @@ export function buildEducationData(): ProjectedSection {
       coursePlan,
       alternatives,
       urgentDeadlines,
-      deadlineRule,
       planNote: 'The default map favors ML core requirements plus agent-builder systems depth. Use alternatives when workload, specialization fit, or interests change.',
     },
   }

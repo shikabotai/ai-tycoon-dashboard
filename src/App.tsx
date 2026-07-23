@@ -2087,9 +2087,6 @@ function App() {
     const coursePlan = education?.coursePlan ?? []
     const alternatives = education?.alternatives ?? []
     const activeCourse = coursePlan.find((course) => course.status === 'active')
-    const takenCount = coursePlan.filter((course) => course.status === 'taken').length
-    const activeCount = coursePlan.filter((course) => course.status === 'active').length
-    const leftCount = coursePlan.filter((course) => course.status === 'planned').length
 
     return (
       <section className="education-page" aria-label="Education dashboard">
@@ -2098,12 +2095,6 @@ function App() {
           <div className="education-hero-copy">
             <span>{education?.activeProgram ?? 'Georgia Tech OMSCS / MSML'}</span>
             <strong>{activeCourse ? `${activeCourse.code} · ${activeCourse.name}` : currentPersonalData.summaryCards[1]?.value ?? 'Current course pending'}</strong>
-            <p>{education?.deadlineRule ?? 'Treat hard course dates as the dashboard source of truth.'}</p>
-          </div>
-          <div className="education-hero-stats" aria-label="Education course progress">
-            <div><span>Taken</span><strong>{takenCount}</strong></div>
-            <div><span>Active</span><strong>{activeCount}</strong></div>
-            <div><span>Left</span><strong>{leftCount}</strong></div>
           </div>
         </section>
 
