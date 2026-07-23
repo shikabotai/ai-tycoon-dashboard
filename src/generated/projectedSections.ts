@@ -146,8 +146,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       },
       {
         "label": "Nutrition log source",
-        "value": "169g protein",
-        "note": "1,795 kcal logged. Latest nutrition file: 2026-07-22.",
+        "value": "105g protein",
+        "note": "1,020 kcal logged. Latest nutrition file: 2026-07-23.",
         "stale": false
       },
       {
@@ -163,14 +163,14 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "highlights": [
       "Latest workout evidence: 2026-07-22",
-      "Latest nutrition evidence: 2026-07-22",
+      "Latest nutrition evidence: 2026-07-23",
       "Cut / recomp, not lean bulk",
       "Mental priority: focus, attention span, meditation, and phone friction",
       "Looks priority: grooming, skin, hair, style, and event readiness"
     ],
     "freshness": {
       "label": "Vessel evidence",
-      "ageDays": 1,
+      "ageDays": 0,
       "stale": false
     },
     "vessel": {
@@ -382,7 +382,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Career arc",
         "value": "In progress",
-        "note": "Founding Engineer to Project Lead with full-stack, infra, and ML ownership."
+        "note": "MVerify founding engineer to C/ML/cloud AI infra to LifeArc founding engineer."
       },
       {
         "label": "Comp / role target",
@@ -443,6 +443,12 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         "severity": "watch"
       },
       {
+        "label": "Promotion narrative risk",
+        "value": "Leadership gap",
+        "detail": "Leadership skills and business involvement; technical work is already strong. The dashboard should track visible business involvement, communication, and leadership proof before Sep 18, 2026 — 3-year anniversary.",
+        "severity": "watch"
+      },
+      {
         "label": "Networking gap",
         "value": "0 hot contacts",
         "detail": "Contact Tracker starts from zero, so warm outreach/referrals are the clearest missing channel.",
@@ -477,6 +483,12 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         "severity": "watch"
       },
       {
+        "label": "Promotion target",
+        "detail": "Senior SWE or Director of LifeArc decision point with Armando — President of Abacus Intel and direct boss.",
+        "recency": "Sep 18, 2026 — 3-year anniversary",
+        "severity": "watch"
+      },
+      {
         "label": "Offer deadline",
         "detail": "The target process should produce an offer before the hard deadline.",
         "recency": "Oct 31, 2026",
@@ -504,10 +516,10 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "id": "promotion",
               "label": "Promotion",
               "status": "active",
-              "progress": 35,
+              "progress": 48,
               "value": "Senior SWE or Director of LifeArc",
-              "detail": "Promotion story is anchored on LifeArc ownership and a target salary move from $90k base + $15k bonus + $10k stock (~$115k TC) to $140k total compensation.",
-              "nextAction": "Define the exact internal target title, promotion criteria, manager/stakeholder proof, and review date.",
+              "detail": "Target date is Sep 18, 2026 — 3-year anniversary; decision-maker is Armando — President of Abacus Intel and direct boss. Promotion story is anchored on LifeArc ownership and a target salary move from $90k base + $15k bonus + $10k stock (~$115k TC) to $140k total compensation.",
+              "nextAction": "Close the gap Armando is most likely to care about: Leadership skills and business involvement; technical work is already strong. Also prepare a response to Armando may see communication/social skills as the reason to keep Mitchell as an individual contributor.",
               "source": "Career Strategy Overview"
             },
             {
@@ -662,8 +674,14 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       "prompts": [
         {
           "label": "Promotion process",
-          "value": "Need process details",
-          "detail": "Promotion target is Senior SWE or Director of LifeArc with $140k total compensation; still need review date, decision-maker, written criteria, and proof packet requirements.",
+          "value": "Sep 18, 2026 — 3-year anniversary",
+          "detail": "Decision-maker: Armando — President of Abacus Intel and direct boss. Still need written criteria and proof packet requirements for Senior SWE or Director of LifeArc at $140k total compensation.",
+          "severity": "watch"
+        },
+        {
+          "label": "Leadership case",
+          "value": "Need proof plan",
+          "detail": "Biggest gap: Leadership skills and business involvement; technical work is already strong. Risk to manage: Age/title perception: other developers received Senior title around 3 years, but they were 30+ while Mitchell is much younger. Boss concern: Armando may see communication/social skills as the reason to keep Mitchell as an individual contributor.",
           "severity": "watch"
         },
         {

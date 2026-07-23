@@ -447,6 +447,11 @@ export function buildCareerData(): ProjectedSection {
   const compTarget = strategy.match(/\| Comp Target \|\s*([^|]+)\|/)?.[1]?.trim() ?? '$140k-$200k+ TC'
   const promotionTarget = strategy.match(/\| Internal promotion target \|\s*([^|]+)\|/)?.[1]?.trim() ?? targetRole
   const promotionCompTarget = strategy.match(/\| Promotion compensation target \|\s*([^|]+)\|/)?.[1]?.trim() ?? compTarget
+  const promotionTargetDate = strategy.match(/\| Promotion target date \|\s*([^|]+)\|/)?.[1]?.trim() ?? 'Sep 18, 2026 — 3-year anniversary'
+  const promotionDecisionMaker = strategy.match(/\| Promotion decision-maker \|\s*([^|]+)\|/)?.[1]?.trim() ?? 'Armando — President of Abacus Intel and direct boss'
+  const promotionGap = strategy.match(/\| Biggest promotion gap \|\s*([^|]+)\|/)?.[1]?.trim() ?? 'Leadership skills and business involvement'
+  const promotionRisk = strategy.match(/\| Promotion risk \|\s*([^|]+)\|/)?.[1]?.trim() ?? 'Age/title perception risk'
+  const bossConcern = strategy.match(/\| Boss concern to overcome \|\s*([^|]+)\|/)?.[1]?.trim() ?? 'Communication and social skills may be used to keep the role framed as individual contributor'
   const currentComp = jobSearch.match(/\*\*Current comp:\*\*\s*([^·\n]+)/)?.[1]?.trim() ?? '~$105k TC'
   const applicationsSent = jobSearch.match(/\| Applications sent \|\s*([^|]+)\|/)?.[1]?.trim() ?? applications.match(/\| Applied \|\s*([^|]+)\|/)?.[1]?.trim() ?? '0'
   const screensScheduled = jobSearch.match(/\| Screens scheduled \|\s*([^|]+)\|/)?.[1]?.trim() ?? '0'
@@ -495,10 +500,10 @@ export function buildCareerData(): ProjectedSection {
             id: 'promotion',
             label: 'Promotion',
             status: 'active',
-            progress: 35,
+            progress: 48,
             value: promotionTarget,
-            detail: `Promotion story is anchored on LifeArc ownership and a target salary move from ${salaryBump}.`,
-            nextAction: 'Define the exact internal target title, promotion criteria, manager/stakeholder proof, and review date.',
+            detail: `Target date is ${promotionTargetDate}; decision-maker is ${promotionDecisionMaker}. Promotion story is anchored on LifeArc ownership and a target salary move from ${salaryBump}.`,
+            nextAction: `Close the gap Armando is most likely to care about: ${promotionGap}. Also prepare a response to ${bossConcern}.`,
             source: 'Career Strategy Overview',
           },
           {
@@ -651,7 +656,8 @@ export function buildCareerData(): ProjectedSection {
       },
     ],
     prompts: [
-      { label: 'Promotion process', value: 'Need process details', detail: `Promotion target is ${promotionTarget} with ${promotionCompTarget}; still need review date, decision-maker, written criteria, and proof packet requirements.`, severity: 'watch' },
+      { label: 'Promotion process', value: promotionTargetDate, detail: `Decision-maker: ${promotionDecisionMaker}. Still need written criteria and proof packet requirements for ${promotionTarget} at ${promotionCompTarget}.`, severity: 'watch' },
+      { label: 'Leadership case', value: 'Need proof plan', detail: `Biggest gap: ${promotionGap}. Risk to manage: ${promotionRisk}. Boss concern: ${bossConcern}.`, severity: 'watch' },
       { label: 'On-job learning', value: 'Need live list', detail: 'Which current-job skills do you want to learn more of: infra, product, compliance, management, architecture, CI/CD, or something else?', severity: 'watch' },
       { label: 'Technical prep metrics', value: 'Need counters', detail: 'Add LeetCode solved count, system-design reps, mocks completed, and weak topics so progress can move from guessed to measured.', severity: 'stale' },
       { label: 'Public assets', value: `${brandActionCount + portfolioActionCount} open tasks`, detail: `Need real portfolio URL/visits, GitHub URL/followers, LinkedIn views, and whether the LifeArc case study can be public. Portfolio visits: ${portfolioVisits}.`, severity: 'stale' },
@@ -661,7 +667,7 @@ export function buildCareerData(): ProjectedSection {
   return {
     heroSummary: 'Career is now tracked across current-job growth, next-job search goals, and portfolio readiness so every section can move from rough notes into visible progress.',
     summaryCards: [
-      { label: 'Career arc', value: currentStatus || 'AI/ML product lead', note: trajectory.includes('Founding Engineer') ? 'Founding Engineer to Project Lead with full-stack, infra, and ML ownership.' : careerGoal },
+      { label: 'Career arc', value: currentStatus || 'AI/ML product lead', note: trajectory.includes('Founding Engineer') ? 'MVerify founding engineer to C/ML/cloud AI infra to LifeArc founding engineer.' : careerGoal },
       { label: 'Comp / role target', value: compTarget, note: `${currentComp} current baseline; target role is ${targetRole}.` },
       { label: 'Flagship proof', value: 'LifeArc', note: lifeArc.includes('100+ medical records per week') ? 'HIPAA AI platform, 100+ records/week, 70-90% faster review, $10-$100 internal run cost.' : 'LifeArc remains the centerpiece proof asset.' },
       { label: 'Proof packaging', value: `${proofActions.length} open asset lanes`, note: proofActions.length ? `Next assets: ${proofActions.slice(0, 4).join(', ')}.` : 'Resume, portfolio, LinkedIn, GitHub, and diagrams need upkeep.' },
@@ -679,6 +685,7 @@ export function buildCareerData(): ProjectedSection {
     freshness: summarizeFreshness('Career planning docs', 0, 30),
     blockers: [
       { label: 'Pipeline not active', value: `${applicationsSent} applications`, detail: 'Application Log and Job Search Overview show the search has not produced active screens yet.', severity: 'watch' },
+      { label: 'Promotion narrative risk', value: 'Leadership gap', detail: `${promotionGap}. The dashboard should track visible business involvement, communication, and leadership proof before ${promotionTargetDate}.`, severity: 'watch' },
       { label: 'Networking gap', value: `${hotContacts} hot contacts`, detail: 'Contact Tracker starts from zero, so warm outreach/referrals are the clearest missing channel.', severity: 'watch' },
       { label: 'Packaging gap', value: `${proofActions.length} asset lanes`, detail: 'Strong proprietary work needs public-safe proof assets: resume bullets, STAR stories, diagrams, case studies, and profile updates.', severity: 'watch' },
     ],
@@ -688,6 +695,7 @@ export function buildCareerData(): ProjectedSection {
     ],
     timeline: [
       { label: 'Search kickoff', detail: 'Job Search Overview marks the search as preparing and applying.', recency: 'Apr 1, 2026', severity: 'watch' },
+      { label: 'Promotion target', detail: `${promotionTarget} decision point with ${promotionDecisionMaker}.`, recency: promotionTargetDate, severity: 'watch' },
       { label: 'Offer deadline', detail: 'The target process should produce an offer before the hard deadline.', recency: targetOfferDate, severity: 'watch' },
       { label: 'MSML horizon', detail: 'Georgia Tech MSML remains the long-arc ML credential.', recency: 'Expected 2027', severity: 'good' },
     ],
