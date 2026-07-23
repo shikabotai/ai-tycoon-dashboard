@@ -445,6 +445,8 @@ export function buildCareerData(): ProjectedSection {
   const currentStatus = careerParts.length >= 4 ? careerParts[3] : 'In progress'
   const targetRole = strategy.match(/\| Title \|\s*([^|]+)\|/)?.[1]?.trim() ?? 'SWE II / SWE III · Full-Stack · Backend · ML Engineer'
   const compTarget = strategy.match(/\| Comp Target \|\s*([^|]+)\|/)?.[1]?.trim() ?? '$140k-$200k+ TC'
+  const promotionTarget = strategy.match(/\| Internal promotion target \|\s*([^|]+)\|/)?.[1]?.trim() ?? targetRole
+  const promotionCompTarget = strategy.match(/\| Promotion compensation target \|\s*([^|]+)\|/)?.[1]?.trim() ?? compTarget
   const currentComp = jobSearch.match(/\*\*Current comp:\*\*\s*([^·\n]+)/)?.[1]?.trim() ?? '~$105k TC'
   const applicationsSent = jobSearch.match(/\| Applications sent \|\s*([^|]+)\|/)?.[1]?.trim() ?? applications.match(/\| Applied \|\s*([^|]+)\|/)?.[1]?.trim() ?? '0'
   const screensScheduled = jobSearch.match(/\| Screens scheduled \|\s*([^|]+)\|/)?.[1]?.trim() ?? '0'
@@ -467,7 +469,7 @@ export function buildCareerData(): ProjectedSection {
     learning.includes('System Design') ? 'system design' : '',
     learning.includes('MSML') ? 'MSML' : '',
   ].filter(Boolean).join(' / ')
-  const salaryBump = `${currentComp} to ${compTarget}`
+  const salaryBump = `${currentComp} to ${promotionCompTarget}`
   const mappedTargetCompanyCount = (jobSearch.match(/^\| [^|\n]+ \| [^|\n]+ \| [^|\n]+ \| \[ \] Researching \|/gm) ?? []).length
   const portfolioSiteStatus = portfolio.match(/\| URL \|\s*([^|]+)\|/)?.[1]?.trim() ?? '[FILL IN or "Not yet built"]'
   const linkedinViews = personalBrand.match(/\| LinkedIn profile views \/ week \|\s*([^|]+)\|/)?.[1]?.trim() ?? 'Not tracked'
@@ -494,7 +496,7 @@ export function buildCareerData(): ProjectedSection {
             label: 'Promotion',
             status: 'active',
             progress: 35,
-            value: targetRole,
+            value: promotionTarget,
             detail: `Promotion story is anchored on LifeArc ownership and a target salary move from ${salaryBump}.`,
             nextAction: 'Define the exact internal target title, promotion criteria, manager/stakeholder proof, and review date.',
             source: 'Career Strategy Overview',
@@ -649,7 +651,7 @@ export function buildCareerData(): ProjectedSection {
       },
     ],
     prompts: [
-      { label: 'Current job promotion', value: 'Need exact target', detail: 'What is the exact promotion title, review date, decision-maker, and target raise/bump inside the current company?', severity: 'watch' },
+      { label: 'Promotion process', value: 'Need process details', detail: `Promotion target is ${promotionTarget} with ${promotionCompTarget}; still need review date, decision-maker, written criteria, and proof packet requirements.`, severity: 'watch' },
       { label: 'On-job learning', value: 'Need live list', detail: 'Which current-job skills do you want to learn more of: infra, product, compliance, management, architecture, CI/CD, or something else?', severity: 'watch' },
       { label: 'Technical prep metrics', value: 'Need counters', detail: 'Add LeetCode solved count, system-design reps, mocks completed, and weak topics so progress can move from guessed to measured.', severity: 'stale' },
       { label: 'Public assets', value: `${brandActionCount + portfolioActionCount} open tasks`, detail: `Need real portfolio URL/visits, GitHub URL/followers, LinkedIn views, and whether the LifeArc case study can be public. Portfolio visits: ${portfolioVisits}.`, severity: 'stale' },

@@ -387,7 +387,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Comp / role target",
         "value": "$140k–$200k+ TC",
-        "note": "~$105k TC current baseline; target role is SWE II / SWE III · Full-Stack · Backend · ML Engineer."
+        "note": "$90k base + $15k bonus + $10k stock (~$115k TC) current baseline; target role is SWE II / SWE III · Full-Stack · Backend · ML Engineer."
       },
       {
         "label": "Flagship proof",
@@ -505,8 +505,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "label": "Promotion",
               "status": "active",
               "progress": 35,
-              "value": "SWE II / SWE III · Full-Stack · Backend · ML Engineer",
-              "detail": "Promotion story is anchored on LifeArc ownership and a target salary move from ~$105k TC to $140k–$200k+ TC.",
+              "value": "Senior SWE or Director of LifeArc",
+              "detail": "Promotion story is anchored on LifeArc ownership and a target salary move from $90k base + $15k bonus + $10k stock (~$115k TC) to $140k total compensation.",
               "nextAction": "Define the exact internal target title, promotion criteria, manager/stakeholder proof, and review date.",
               "source": "Career Strategy Overview"
             },
@@ -554,7 +554,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "status": "planned",
               "progress": 66,
               "value": "$140k–$200k+ TC",
-              "detail": "Current baseline is ~$105k TC; minimum acceptable is documented as about $120k+ TC depending on location.",
+              "detail": "Current baseline is $90k base + $15k bonus + $10k stock (~$115k TC); minimum acceptable is documented as about $120k+ TC depending on location.",
               "nextAction": "Set hard floor, ideal base, ideal TC, and equity-risk tolerance for offer comparisons.",
               "source": "Job Search Overview"
             }
@@ -661,9 +661,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       ],
       "prompts": [
         {
-          "label": "Current job promotion",
-          "value": "Need exact target",
-          "detail": "What is the exact promotion title, review date, decision-maker, and target raise/bump inside the current company?",
+          "label": "Promotion process",
+          "value": "Need process details",
+          "detail": "Promotion target is Senior SWE or Director of LifeArc with $140k total compensation; still need review date, decision-maker, written criteria, and proof packet requirements.",
           "severity": "watch"
         },
         {
