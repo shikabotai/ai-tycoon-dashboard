@@ -459,6 +459,87 @@ function inferDeadlineKind(title) {
   return 'assignment'
 }
 
+function buildCareerData() {
+  const annualGoals = readPunkFile('Personal Decision Engine/Goals/Annual Goals.md')
+  const goalsOverview = readPunkFile('Personal Decision Engine/Goals/Goals Overview.md')
+  const strategy = readPunkFile('Career/Career Strategy/Career Strategy Overview.md')
+  const trajectory = readPunkFile('Career/Career Strategy/Career Trajectory.md')
+  const resume = readPunkFile('Career/Resume & CV/Resume Overview.md')
+  const jobSearch = readPunkFile('Career/Job Search Tracker/Job Search Overview.md')
+  const applications = readPunkFile('Career/Job Search Tracker/Application Log.md')
+  const contacts = readPunkFile('Career/Networking/Contact Tracker.md')
+  const portfolio = readPunkFile('Career/Projects Portfolio/Portfolio Overview.md')
+  const lifeArc = readPunkFile('Career/Projects Portfolio/LifeArc.md')
+  const starStories = readPunkFile('Career/Behavioral Interview Prep/STAR Story Bank.md')
+  const personalBrand = readPunkFile('Career/Personal Brand/Personal Brand Overview.md')
+  const learning = readPunkFile('Career/Skills & Certifications/Learning Roadmap.md')
+  const careerGoal = 'Land higher-paying SWE role or negotiate raise'
+  const careerLine = annualGoals.split('\n').find((line) => line.includes(careerGoal)) ?? ''
+  const fiveYearCareer = 'Georgia Tech MSML completed'
+  const longArcLine = goalsOverview.split('\n').find((line) => line.includes(fiveYearCareer)) ?? ''
+  const careerParts = careerLine.split('|').map((part) => part.trim()).filter(Boolean)
+  const currentStatus = careerParts.length >= 4 ? careerParts[3] : 'In progress'
+  const targetRole = strategy.match(/\| Title \|\s*([^|]+)\|/)?.[1]?.trim() ?? 'SWE II / SWE III · Full-Stack · Backend · ML Engineer'
+  const compTarget = strategy.match(/\| Comp Target \|\s*([^|]+)\|/)?.[1]?.trim() ?? '$140k-$200k+ TC'
+  const currentComp = jobSearch.match(/\*\*Current comp:\*\*\s*([^·\n]+)/)?.[1]?.trim() ?? '~$105k TC'
+  const applicationsSent = jobSearch.match(/\| Applications sent \|\s*([^|]+)\|/)?.[1]?.trim() ?? applications.match(/\| Applied \|\s*([^|]+)\|/)?.[1]?.trim() ?? '0'
+  const screensScheduled = jobSearch.match(/\| Screens scheduled \|\s*([^|]+)\|/)?.[1]?.trim() ?? '0'
+  const targetOfferDate = jobSearch.match(/\| Target offer date \|\s*([^|]+)\|/)?.[1]?.trim() ?? 'Oct 31, 2026'
+  const tierCompanyCount = (jobSearch.match(/\|\s*[^|\n]+\s*\|\s*[^|\n]+\s*\|\s*[^|\n]+\s*\|\s*\[\s*\]\s*Researching/g) ?? []).length
+  const starStoryCount = (starStories.match(/^#### Story \d+:/gm) ?? []).length
+  const hotContacts = contacts.match(/\| Hot \(active conversation\) \|\s*([^|]+)\|/)?.[1]?.trim() ?? '0'
+  const warmContacts = contacts.match(/\| Warm \(had real exchange\) \|\s*([^|]+)\|/)?.[1]?.trim() ?? '0'
+  const coldContacts = contacts.match(/\| Cold \(connected, no reply yet\) \|\s*([^|]+)\|/)?.[1]?.trim() ?? '0'
+  const linkedinConnections = personalBrand.match(/\| LinkedIn connections \|\s*\*\*([^*]+)\*\*/)?.[1]?.trim() ?? '600'
+  const proofActions = [
+    resume.includes('Create tailored versions') ? 'resume variants' : '',
+    portfolio.includes('Technical blog post') ? 'technical post' : '',
+    portfolio.includes('GitHub profile') ? 'GitHub profile' : '',
+    personalBrand.includes('LifeArc carousel') ? 'LifeArc carousel' : '',
+    lifeArc.includes('architecture diagram') ? 'architecture diagram' : '',
+  ].filter(Boolean)
+  const learningTracks = [
+    learning.includes('Neetcode 150') ? 'DSA' : '',
+    learning.includes('System Design') ? 'system design' : '',
+    learning.includes('MSML') ? 'MSML' : '',
+  ].filter(Boolean).join(' / ')
+
+  return {
+    heroSummary: 'Career is a leverage conversion system: package LifeArc and other shipped work into proof, then turn that proof into targeted outreach, interview readiness, and higher-comp role options.',
+    summaryCards: [
+      { label: 'Career arc', value: currentStatus || 'AI/ML product lead', note: trajectory.includes('Founding Engineer') ? 'Founding Engineer to Project Lead with full-stack, infra, and ML ownership.' : careerGoal },
+      { label: 'Comp / role target', value: compTarget, note: `${currentComp} current baseline; target role is ${targetRole}.` },
+      { label: 'Flagship proof', value: 'LifeArc', note: lifeArc.includes('100+ medical records per week') ? 'HIPAA AI platform, 100+ records/week, 70-90% faster review, $10-$100 internal run cost.' : 'LifeArc remains the centerpiece proof asset.' },
+      { label: 'Proof packaging', value: `${proofActions.length} open asset lanes`, note: proofActions.length ? `Next assets: ${proofActions.slice(0, 4).join(', ')}.` : 'Resume, portfolio, LinkedIn, GitHub, and diagrams need upkeep.' },
+      { label: 'Pipeline status', value: `${applicationsSent} apps / ${screensScheduled} screens`, note: `${tierCompanyCount || 10} target companies visible; target offer date ${targetOfferDate}.` },
+      { label: 'Networking CRM', value: `${hotContacts} hot / ${warmContacts} warm / ${coldContacts} cold`, note: 'Contact tracker is the referral and follow-up source of truth.' },
+      { label: 'Interview readiness', value: `${starStoryCount || 7} STAR stories`, note: learningTracks ? `Active prep lanes: ${learningTracks}.` : 'Track DSA, system design, and behavioral practice together.' },
+      { label: 'Brand visibility', value: `${linkedinConnections} LinkedIn connections`, note: 'Personal brand notes track LinkedIn, portfolio, GitHub, recruiter DMs, and recommendations.' },
+      { label: 'Credential path', value: 'Georgia Tech MSML', note: longArcLine || 'MSML is the long-arc ML differentiator, not a reason to wait.' },
+    ],
+    highlights: [
+      'LifeArc is the lead proof asset and should appear in resume, portfolio, STAR stories, LinkedIn, and interview narratives.',
+      'Job search execution should stay targeted: 20-30 strong companies, warm outreach first, applications in waves.',
+      'Readiness is a stack: proof packaging, networking, DSA, system design, behavioral stories, and personal brand need to move together.',
+    ],
+    freshness: summarizeFreshness('Career planning docs', 0, 30),
+    blockers: [
+      { label: 'Pipeline not active', value: `${applicationsSent} applications`, detail: 'Application Log and Job Search Overview show the search has not produced active screens yet.', severity: 'watch' },
+      { label: 'Networking gap', value: `${hotContacts} hot contacts`, detail: 'Contact Tracker starts from zero, so warm outreach/referrals are the clearest missing channel.', severity: 'watch' },
+      { label: 'Packaging gap', value: `${proofActions.length} asset lanes`, detail: 'Strong proprietary work needs public-safe proof assets: resume bullets, STAR stories, diagrams, case studies, and profile updates.', severity: 'watch' },
+    ],
+    missingData: [
+      { label: 'Live readiness scores', value: 'Manual sources only', detail: 'Resume variants, GitHub profile, portfolio visits, LinkedIn views, DSA reps, and system-design reps are not yet structured as dated metrics.', severity: 'stale' },
+      { label: 'Application activity', value: 'No dated entries', detail: 'Application Log has templates but no real company entries yet.', severity: 'watch' },
+    ],
+    timeline: [
+      { label: 'Search kickoff', detail: 'Job Search Overview marks the search as preparing and applying.', recency: 'Apr 1, 2026', severity: 'watch' },
+      { label: 'Offer deadline', detail: 'The target process should produce an offer before the hard deadline.', recency: targetOfferDate, severity: 'watch' },
+      { label: 'MSML horizon', detail: 'Georgia Tech MSML remains the long-arc ML credential.', recency: 'Expected 2027', severity: 'good' },
+    ],
+  }
+}
+
 function educationDeadlinesFromCourse(markdown, courseCode, courseName) {
   const section = markdown.match(/## Important Dates[\s\S]*?(?=\n## |\n### |$)/)?.[0] ?? ''
   return section
@@ -554,7 +635,7 @@ const generatedProjectedSections = {
   vessel: buildVesselData(),
   systems: previous.systems,
   ventures: previous.ventures,
-  career: previous.career,
+  career: buildCareerData(),
   knowledge: previous.knowledge,
   wealth: previous.wealth,
   education: buildEducationData(),

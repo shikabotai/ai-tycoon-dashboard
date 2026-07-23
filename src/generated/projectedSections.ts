@@ -377,49 +377,118 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     }
   },
   "career": {
-    "heroSummary": "Career is in a leverage-building phase, with job-search preparation and long-arc ML credentials both visible in the source planning system.",
+    "heroSummary": "Career is a leverage conversion system: package LifeArc and other shipped work into proof, then turn that proof into targeted outreach, interview readiness, and higher-comp role options.",
     "summaryCards": [
       {
-        "label": "Current career trajectory",
+        "label": "Career arc",
         "value": "In progress",
-        "note": "Land higher-paying SWE role or negotiate raise"
+        "note": "Founding Engineer to Project Lead with full-stack, infra, and ML ownership."
       },
       {
-        "label": "Primary career goal",
-        "value": "Higher-paying SWE role",
-        "note": "Target is stronger leverage through a raise or better offer."
+        "label": "Comp / role target",
+        "value": "$140k–$200k+ TC",
+        "note": "~$105k TC current baseline; target role is SWE II / SWE III · Full-Stack · Backend · ML Engineer."
       },
       {
-        "label": "Long-arc credential",
+        "label": "Flagship proof",
+        "value": "LifeArc",
+        "note": "HIPAA AI platform, 100+ records/week, 70-90% faster review, $10-$100 internal run cost."
+      },
+      {
+        "label": "Proof packaging",
+        "value": "4 open asset lanes",
+        "note": "Next assets: resume variants, technical post, GitHub profile, LifeArc carousel."
+      },
+      {
+        "label": "Pipeline status",
+        "value": "0 apps / 0 screens",
+        "note": "10 target companies visible; target offer date Oct 31, 2026."
+      },
+      {
+        "label": "Networking CRM",
+        "value": "0 hot / 0 warm / 0 cold",
+        "note": "Contact tracker is the referral and follow-up source of truth."
+      },
+      {
+        "label": "Interview readiness",
+        "value": "7 STAR stories",
+        "note": "Active prep lanes: DSA / system design / MSML."
+      },
+      {
+        "label": "Brand visibility",
+        "value": "600 LinkedIn connections",
+        "note": "Personal brand notes track LinkedIn, portfolio, GitHub, recruiter DMs, and recommendations."
+      },
+      {
+        "label": "Credential path",
         "value": "Georgia Tech MSML",
         "note": "| Georgia Tech MSML completed | Career | 2027 | In progress |"
-      },
-      {
-        "label": "Skill-building progress",
-        "value": "MSML path active",
-        "note": "| Georgia Tech MSML completed | Career | 2027 | In progress |"
-      },
-      {
-        "label": "Current leverage opportunities",
-        "value": "Comp increase focus",
-        "note": "Target is a >$20k comp increase or stronger role leverage."
-      },
-      {
-        "label": "Next career milestone",
-        "value": "Interview-ready profile",
-        "note": "The next layer is direct portfolio, resume, and cadence evidence."
       }
     ],
     "highlights": [
-      "Career blends income leverage with long-term ML positioning.",
-      "Annual goals and 5-year goals are the main current sources.",
-      "The next layer is direct evidence from portfolio, resume, and interview cadence."
+      "LifeArc is the lead proof asset and should appear in resume, portfolio, STAR stories, LinkedIn, and interview narratives.",
+      "Job search execution should stay targeted: 20-30 strong companies, warm outreach first, applications in waves.",
+      "Readiness is a stack: proof packaging, networking, DSA, system design, behavioral stories, and personal brand need to move together."
     ],
     "freshness": {
       "label": "Career planning docs",
       "ageDays": 0,
       "stale": false
-    }
+    },
+    "blockers": [
+      {
+        "label": "Pipeline not active",
+        "value": "0 applications",
+        "detail": "Application Log and Job Search Overview show the search has not produced active screens yet.",
+        "severity": "watch"
+      },
+      {
+        "label": "Networking gap",
+        "value": "0 hot contacts",
+        "detail": "Contact Tracker starts from zero, so warm outreach/referrals are the clearest missing channel.",
+        "severity": "watch"
+      },
+      {
+        "label": "Packaging gap",
+        "value": "4 asset lanes",
+        "detail": "Strong proprietary work needs public-safe proof assets: resume bullets, STAR stories, diagrams, case studies, and profile updates.",
+        "severity": "watch"
+      }
+    ],
+    "missingData": [
+      {
+        "label": "Live readiness scores",
+        "value": "Manual sources only",
+        "detail": "Resume variants, GitHub profile, portfolio visits, LinkedIn views, DSA reps, and system-design reps are not yet structured as dated metrics.",
+        "severity": "stale"
+      },
+      {
+        "label": "Application activity",
+        "value": "No dated entries",
+        "detail": "Application Log has templates but no real company entries yet.",
+        "severity": "watch"
+      }
+    ],
+    "timeline": [
+      {
+        "label": "Search kickoff",
+        "detail": "Job Search Overview marks the search as preparing and applying.",
+        "recency": "Apr 1, 2026",
+        "severity": "watch"
+      },
+      {
+        "label": "Offer deadline",
+        "detail": "The target process should produce an offer before the hard deadline.",
+        "recency": "Oct 31, 2026",
+        "severity": "watch"
+      },
+      {
+        "label": "MSML horizon",
+        "detail": "Georgia Tech MSML remains the long-arc ML credential.",
+        "recency": "Expected 2027",
+        "severity": "good"
+      }
+    ]
   },
   "knowledge": {
     "heroSummary": "Knowledge is execution-supportive rather than archival, with learning tied to decision quality, identity formation, and active goals.",

@@ -383,22 +383,23 @@ const CATEGORY_SIGNATURE_DASHBOARDS: Record<Exclude<PersonalSection, 'home'>, Ca
   },
   career: {
     kind: 'career-ladder',
-    eyebrow: 'Leverage ladder',
-    title: 'Work becomes compensation, portfolio proof, interview stories, and reputation.',
-    readoutLabel: 'Trajectory signal',
-    readoutSourceIndex: 0,
-    readoutUnit: 'arc',
-    mapLabel: 'Ladder rungs',
+    eyebrow: 'Proof engine',
+    title: 'Package the strongest work, then convert it into outreach, interviews, and offers.',
+    readoutLabel: 'Lead proof asset',
+    readoutSourceIndex: 2,
+    readoutUnit: 'proof',
+    mapLabel: 'Career engine',
     mapItems: [
-      { label: 'Role', sourceIndex: 0 },
-      { label: 'Comp', sourceIndex: 1 },
-      { label: 'Credential', sourceIndex: 2 },
-      { label: 'Proof', sourceIndex: 5 },
+      { label: 'Proof', sourceIndex: 2 },
+      { label: 'Package', sourceIndex: 3 },
+      { label: 'Pipeline', sourceIndex: 4 },
+      { label: 'Ready', sourceIndex: 6 },
     ],
     lenses: [
-      { label: 'Proof', title: 'Package shipped work', body: 'Turn live work into a portfolio entry, resume bullet, and interview story.', sourceIndex: 5 },
-      { label: 'Comp', title: 'Protect the comp move', body: 'Keep the higher-paying SWE path visible when choosing effort.', sourceIndex: 1 },
-      { label: 'Arc', title: 'Tie MSML to leverage', body: 'Use the credential path as a long-term technical position, not background pressure.', sourceIndex: 2 },
+      { label: 'Proof', title: 'Lead with LifeArc', body: 'Turn the HIPAA AI platform into the first resume, portfolio, LinkedIn, and interview proof block.', sourceIndex: 2 },
+      { label: 'Package', title: 'Close one asset gap', body: 'Ship one public-safe artifact: resume bullet, STAR story, architecture diagram, case study, GitHub polish, or LinkedIn feature.', sourceIndex: 3 },
+      { label: 'Pipeline', title: 'Move one target forward', body: 'Convert packaged proof into a researched target, warm outreach, tailored application, follow-up, screen, or offer step.', sourceIndex: 4 },
+      { label: 'Ready', title: 'Keep interviews trainable', body: 'Treat DSA, system design, and behavioral stories as one readiness stack tied to the target role profile.', sourceIndex: 6 },
     ],
   },
   wealth: {
@@ -2175,6 +2176,116 @@ function App() {
     )
   }
 
+  function renderCareerPage() {
+    if (!currentPersonalData) return null
+
+    const findCard = (matcher: string) => currentPersonalData.summaryCards.find((card) => card.label.toLowerCase().includes(matcher))
+    const proof = findCard('flagship') ?? currentPersonalData.summaryCards[2]
+    const packaging = findCard('packaging') ?? currentPersonalData.summaryCards[3]
+    const pipeline = findCard('pipeline') ?? currentPersonalData.summaryCards[4]
+    const networking = findCard('networking') ?? currentPersonalData.summaryCards[5]
+    const readiness = findCard('readiness') ?? currentPersonalData.summaryCards[6]
+    const brand = findCard('brand') ?? currentPersonalData.summaryCards[7]
+    const credential = findCard('credential') ?? currentPersonalData.summaryCards[8]
+    const compTarget = findCard('comp') ?? currentPersonalData.summaryCards[1]
+    const blockers = currentPersonalData.blockers ?? []
+    const missingData = currentPersonalData.missingData ?? []
+    const timeline = currentPersonalData.timeline ?? []
+    const proofLanes = [
+      { label: 'Resume', source: packaging, detail: 'Quantified bullet and tailored variant for the target role.' },
+      { label: 'Portfolio', source: proof, detail: 'Public-safe case study with architecture, constraints, and impact.' },
+      { label: 'Story', source: readiness, detail: 'STAR version that makes ownership, judgment, and tradeoffs easy to hear.' },
+      { label: 'Brand', source: brand, detail: 'LinkedIn/GitHub proof that recruiters can verify quickly.' },
+    ]
+    const pipelineStages = [
+      { label: 'Research', value: '10 visible', detail: 'Target companies already mapped from the Career notes.' },
+      { label: 'Outreach', value: networking?.value ?? '0 hot / 0 warm / 0 cold', detail: networking?.note ?? 'Warm intros and follow-ups are the missing channel.' },
+      { label: 'Apply', value: pipeline?.value ?? '0 apps / 0 screens', detail: pipeline?.note ?? 'Applications need dated entries before this becomes live.' },
+      { label: 'Interview', value: readiness?.value ?? '7 STAR stories', detail: readiness?.note ?? 'Keep DSA, system design, and behavioral reps together.' },
+      { label: 'Offer', value: timeline[1]?.recency ?? 'Oct 31, 2026', detail: timeline[1]?.detail ?? 'Use the offer deadline as the process anchor.' },
+    ]
+
+    return (
+      <section className="career-page" aria-label="Career dashboard">
+        <section className="career-hero">
+          <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
+          <div className="career-hero-copy">
+            <span>Proof engine</span>
+            <strong>{proof?.value ?? 'LifeArc'}</strong>
+            <p>{currentPersonalData.heroSummary}</p>
+          </div>
+          <aside className="career-target-card">
+            <span>Comp / role target</span>
+            <strong>{compTarget?.value ?? '$140k-$200k+ TC'}</strong>
+            <p>{compTarget?.note ?? 'Target higher-leverage SWE, backend, full-stack, or ML engineering roles.'}</p>
+          </aside>
+        </section>
+
+        <section className="career-proof-board" aria-label="Career proof packaging">
+          <article className="career-proof-primary">
+            <div className="revamp-kicker">Flagship Proof</div>
+            <h3>{proof?.value ?? 'LifeArc'}</h3>
+            <p>{proof?.note ?? 'Package the strongest shipped work into public-safe career evidence.'}</p>
+            <div className="career-proof-metrics">
+              <div><span>Pipeline</span><strong>{pipeline?.value ?? '0 apps / 0 screens'}</strong></div>
+              <div><span>Network</span><strong>{networking?.value ?? '0 hot / 0 warm / 0 cold'}</strong></div>
+              <div><span>Readiness</span><strong>{readiness?.value ?? '7 STAR stories'}</strong></div>
+            </div>
+          </article>
+          <div className="career-proof-lanes">
+            {proofLanes.map((lane) => (
+              <article key={lane.label} className="career-proof-lane">
+                <span>{lane.label}</span>
+                <strong>{lane.source?.value ?? 'Needs update'}</strong>
+                <p>{lane.detail}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="career-pipeline-panel" aria-label="Career pipeline stages">
+          <div className="career-panel-head">
+            <div>
+              <span>Search Ladder</span>
+              <strong>Proof to offer path</strong>
+            </div>
+            <small>{currentPersonalData.freshness?.label ?? 'Career planning docs'}</small>
+          </div>
+          <div className="career-stage-track">
+            {pipelineStages.map((stage, index) => (
+              <article key={stage.label} className={`career-stage-card ${index < 1 ? 'ready' : index < 4 ? 'watch' : 'target'}`}>
+                <em>{String(index + 1).padStart(2, '0')}</em>
+                <span>{stage.label}</span>
+                <strong>{stage.value}</strong>
+                <p>{stage.detail}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="career-readiness-grid" aria-label="Career readiness and gaps">
+          <article className="career-readiness-card">
+            <span>Interview stack</span>
+            <strong>{readiness?.value ?? '7 STAR stories'}</strong>
+            <p>{readiness?.note ?? 'Practice behavioral, DSA, and system design readiness as one stack.'}</p>
+          </article>
+          <article className="career-readiness-card">
+            <span>Credential path</span>
+            <strong>{credential?.value ?? 'Georgia Tech MSML'}</strong>
+            <p>{credential?.note ?? 'MSML supports the long-arc ML positioning.'}</p>
+          </article>
+          {(blockers.length ? blockers : missingData).slice(0, 3).map((item) => (
+            <article key={`${item.label}-${item.value}`} className={`career-readiness-card ${item.severity ?? 'watch'}`}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <p>{item.detail}</p>
+            </article>
+          ))}
+        </section>
+      </section>
+    )
+  }
+
   function renderCategorySignatureDashboard() {
     if (personalSection === 'home' || !currentSignatureDashboard || !currentPersonalData) return null
 
@@ -2405,7 +2516,7 @@ function App() {
           </main>
         ) : (
           <main className="revamp-detail-page">
-            {personalSection === 'identity' || personalSection === 'vessel' || personalSection === 'education' ? null : (
+            {personalSection === 'identity' || personalSection === 'vessel' || personalSection === 'career' || personalSection === 'education' ? null : (
               <section className="revamp-detail-hero">
                 <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
                 <div>
@@ -2420,7 +2531,7 @@ function App() {
                 </aside>
               </section>
             )}
-            {personalSection === 'identity' ? renderIdentityScorecardPage() : personalSection === 'vessel' ? renderVesselPage() : personalSection === 'education' ? renderEducationPage() : (
+            {personalSection === 'identity' ? renderIdentityScorecardPage() : personalSection === 'vessel' ? renderVesselPage() : personalSection === 'career' ? renderCareerPage() : personalSection === 'education' ? renderEducationPage() : (
               <>
                 {renderCategorySignatureDashboard()}
                 {renderPersonalDashboardLead()}

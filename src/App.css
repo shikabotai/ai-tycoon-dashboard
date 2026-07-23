@@ -2000,6 +2000,244 @@ button {
   min-width: 0;
 }
 
+.career-page {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.career-hero,
+.career-proof-board,
+.career-pipeline-panel,
+.career-readiness-card {
+  min-width: 0;
+  border: 1px solid rgba(241, 244, 248, 0.1);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(16, 21, 29, 0.92), rgba(7, 10, 15, 0.95));
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.career-hero {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(260px, 0.36fr);
+  gap: 16px;
+  align-items: stretch;
+  padding: 18px;
+  background:
+    linear-gradient(135deg, rgba(103, 224, 178, 0.12), rgba(255, 255, 255, 0) 38%),
+    linear-gradient(270deg, rgba(255, 174, 96, 0.08), rgba(255, 255, 255, 0) 44%),
+    linear-gradient(180deg, rgba(18, 23, 31, 0.94), rgba(7, 10, 15, 0.95));
+}
+
+.career-hero .back-button {
+  align-self: start;
+}
+
+.career-hero-copy,
+.career-target-card,
+.career-proof-primary,
+.career-proof-lane,
+.career-stage-card,
+.career-readiness-card {
+  min-width: 0;
+}
+
+.career-hero-copy span,
+.career-target-card span,
+.career-proof-metrics span,
+.career-proof-lane span,
+.career-panel-head span,
+.career-stage-card span,
+.career-readiness-card span {
+  color: #86a9df;
+  font-size: 0.72rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.career-hero-copy strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--text);
+  font-size: clamp(2rem, 4vw, 4.2rem);
+  line-height: 0.95;
+  overflow-wrap: anywhere;
+}
+
+.career-hero-copy p,
+.career-target-card p,
+.career-proof-primary p,
+.career-proof-lane p,
+.career-stage-card p,
+.career-readiness-card p {
+  margin: 9px 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.42;
+}
+
+.career-target-card {
+  display: grid;
+  align-content: space-between;
+  gap: 16px;
+  border-radius: 9px;
+  border: 1px solid rgba(103, 224, 178, 0.24);
+  background: rgba(4, 9, 15, 0.66);
+  padding: 16px;
+}
+
+.career-target-card strong {
+  display: block;
+  color: var(--text);
+  font-size: clamp(1.25rem, 2vw, 1.72rem);
+  line-height: 1.04;
+  overflow-wrap: anywhere;
+}
+
+.career-proof-board {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.1fr);
+  gap: 14px;
+  padding: 16px;
+}
+
+.career-proof-primary {
+  display: grid;
+  align-content: space-between;
+  gap: 16px;
+  min-height: 280px;
+  border-radius: 9px;
+  border: 1px solid rgba(103, 224, 178, 0.24);
+  background:
+    linear-gradient(135deg, rgba(103, 224, 178, 0.1), transparent 50%),
+    rgba(5, 10, 18, 0.78);
+  padding: 18px;
+}
+
+.career-proof-primary h3 {
+  margin: 8px 0 0;
+  color: var(--text);
+  font-size: clamp(1.65rem, 3vw, 3rem);
+  line-height: 0.98;
+}
+
+.career-proof-metrics,
+.career-proof-lanes,
+.career-stage-track,
+.career-readiness-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.career-proof-metrics {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.career-proof-metrics div,
+.career-proof-lane,
+.career-stage-card {
+  border: 1px solid rgba(120, 166, 235, 0.16);
+  border-radius: 8px;
+  background: rgba(6, 11, 19, 0.7);
+  padding: 12px;
+}
+
+.career-proof-metrics strong,
+.career-proof-lane strong,
+.career-stage-card strong,
+.career-readiness-card strong {
+  display: block;
+  margin-top: 7px;
+  color: var(--text);
+  font-size: 0.98rem;
+  line-height: 1.18;
+  overflow-wrap: anywhere;
+}
+
+.career-proof-lanes {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.career-pipeline-panel {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+}
+
+.career-panel-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: end;
+  min-width: 0;
+}
+
+.career-panel-head strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--text);
+  font-size: clamp(1.18rem, 2vw, 1.65rem);
+  line-height: 1.06;
+}
+
+.career-panel-head small {
+  color: #b8cef0;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.career-stage-track {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.career-stage-card {
+  min-height: 174px;
+}
+
+.career-stage-card.ready {
+  border-color: rgba(103, 224, 178, 0.32);
+}
+
+.career-stage-card.watch {
+  border-color: rgba(109, 177, 255, 0.3);
+}
+
+.career-stage-card.target {
+  border-color: rgba(255, 174, 96, 0.36);
+}
+
+.career-stage-card em {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-bottom: 14px;
+  border-radius: 8px;
+  background: rgba(126, 167, 255, 0.14);
+  color: var(--text);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.career-readiness-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.career-readiness-card {
+  min-height: 162px;
+  padding: 14px;
+}
+
+.career-readiness-card.watch {
+  border-color: rgba(255, 174, 96, 0.34);
+  background: linear-gradient(180deg, rgba(31, 21, 12, 0.58), rgba(8, 11, 17, 0.88));
+}
+
+.career-readiness-card.stale {
+  border-color: rgba(255, 117, 117, 0.34);
+  background: linear-gradient(180deg, rgba(38, 13, 18, 0.56), rgba(8, 11, 17, 0.88));
+}
+
 .education-hero,
 .education-deadline-panel,
 .education-course-map {
@@ -4076,11 +4314,14 @@ button {
   .vessel-action-board,
   .vessel-weekly-drift,
   .vessel-support-grid,
+  .career-hero,
+  .career-proof-board,
   .education-hero {
     grid-template-columns: 1fr;
   }
 
   .vessel-hero .back-button,
+  .career-hero .back-button,
   .education-hero .back-button {
     width: fit-content;
   }
@@ -4089,6 +4330,8 @@ button {
   .vessel-source-strip,
   .vessel-muscle-grid,
   .vessel-action-list,
+  .career-stage-track,
+  .career-readiness-grid,
   .education-deadline-list,
   .education-course-grid,
   .education-alternatives {
@@ -4306,11 +4549,16 @@ button {
     gap: 10px;
   }
 
+  .career-page {
+    gap: 10px;
+  }
+
   .education-page {
     gap: 10px;
   }
 
   .vessel-hero,
+  .career-hero,
   .education-hero {
     gap: 12px;
     border-radius: 8px;
@@ -4331,8 +4579,42 @@ button {
     line-height: 1.05;
   }
 
+  .career-hero-copy strong {
+    font-size: 2rem;
+    line-height: 0.98;
+  }
+
   .education-hero-copy p {
     font-size: 0.88rem;
+  }
+
+  .career-proof-board,
+  .career-pipeline-panel {
+    padding: 14px;
+  }
+
+  .career-proof-primary,
+  .career-proof-lane,
+  .career-stage-card,
+  .career-readiness-card {
+    min-height: auto;
+    padding: 14px;
+  }
+
+  .career-proof-metrics,
+  .career-proof-lanes,
+  .career-stage-track,
+  .career-readiness-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .career-panel-head {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .career-panel-head small {
+    white-space: normal;
   }
 
   .vessel-hero-vitals {
