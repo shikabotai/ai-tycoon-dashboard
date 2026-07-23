@@ -118,6 +118,7 @@ function appAssetPath(path: string) {
 }
 
 function browserPathForRoute(route: string) {
+  if (APP_BASE_PATH) return route === '/' ? `${APP_BASE_PATH}/` : `${APP_BASE_PATH}/#${route}`
   if (!APP_BASE_PATH) return route
   return route === '/' ? `${APP_BASE_PATH}/` : `${APP_BASE_PATH}${route}`
 }
@@ -252,6 +253,12 @@ function pageFromPath(pathname: string): AppPage {
   const normalized = appPathFromBrowserPath(pathname).replace(/\/+$/, '') || '/'
   const match = (Object.entries(PAGE_ROUTES) as Array<[AppPage, string]>).find(([, path]) => path === normalized)
   return match?.[0] ?? 'home'
+}
+
+function pageFromBrowserLocation() {
+  if (typeof window === 'undefined') return 'home'
+  if (window.location.hash.startsWith('#/')) return pageFromPath(window.location.hash.slice(1))
+  return pageFromPath(window.location.pathname)
 }
 
 function isBusinessPage(page: AppPage): page is BusinessPage {
@@ -1003,7 +1010,7 @@ function storeIdentityQualities(qualities: IdentityQuality[]) {
 
 function App() {
   const [authed, setAuthed] = useState(false)
-  const [currentPage, setCurrentPage] = useState<AppPage>(() => typeof window === 'undefined' ? 'home' : pageFromPath(window.location.pathname))
+  const [currentPage, setCurrentPage] = useState<AppPage>(() => pageFromBrowserLocation())
   const [commandOpen, setCommandOpen] = useState(false)
   const [commandValue, setCommandValue] = useState('')
   const [login, setLogin] = useState<LoginState>({ username: '', password: '' })
@@ -1037,9 +1044,13 @@ function App() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return
-    const handlePopstate = () => setCurrentPage(pageFromPath(window.location.pathname))
-    window.addEventListener('popstate', handlePopstate)
-    return () => window.removeEventListener('popstate', handlePopstate)
+    const handleRouteChange = () => setCurrentPage(pageFromBrowserLocation())
+    window.addEventListener('popstate', handleRouteChange)
+    window.addEventListener('hashchange', handleRouteChange)
+    return () => {
+      window.removeEventListener('popstate', handleRouteChange)
+      window.removeEventListener('hashchange', handleRouteChange)
+    }
   }, [])
 
   useEffect(() => {
