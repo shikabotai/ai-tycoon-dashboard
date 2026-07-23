@@ -503,12 +503,10 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "career": {
       "headline": "Career",
-      "targetSummary": "",
       "categories": [
         {
           "id": "current-job",
           "title": "Current Job",
-          "summary": "Use the current role to win promotion leverage and extract high-value learning from LifeArc, infra, compliance, and stakeholder ownership.",
           "sections": [
             {
               "id": "promotion",
@@ -533,7 +531,6 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         {
           "id": "job-search",
           "title": "Job Search",
-          "summary": "Keep the next-job goal visible: role fit, location fit, compensation fit, and pipeline movement.",
           "sections": [
             {
               "id": "target-role",
@@ -567,7 +564,6 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         {
           "id": "portfolio",
           "title": "Portfolio",
-          "summary": "Package proof into the assets that make interviews easier: prep, stories, public profiles, projects, resume, and cover letters.",
           "sections": [
             {
               "id": "technical-interview-prep",

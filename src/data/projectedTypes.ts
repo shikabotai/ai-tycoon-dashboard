@@ -152,13 +152,11 @@ export type CareerSectionProjection = {
 export type CareerCategoryProjection = {
   id: 'current-job' | 'job-search' | 'portfolio'
   title: string
-  summary: string
   sections: CareerSectionProjection[]
 }
 
 export type CareerProjection = {
   headline: string
-  targetSummary: string
   categories: CareerCategoryProjection[]
   prompts: ProjectedContextItem[]
 }

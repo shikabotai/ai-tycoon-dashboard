@@ -2206,11 +2206,7 @@ function App() {
           {categories.map((category) => (
             <article key={category.id} className={`career-category-panel ${category.id}`}>
               <div className="career-panel-head">
-                <div>
-                  <span>{category.title}</span>
-                  <strong>{category.sections.length} tracked sections</strong>
-                </div>
-                <small>Open-ended career area</small>
+                <strong>{category.title}</strong>
               </div>
 
               <div className="career-section-grid">

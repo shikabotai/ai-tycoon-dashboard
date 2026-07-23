@@ -489,12 +489,10 @@ export function buildCareerData(): ProjectedSection {
   const behavioralStoryCount = starStoryCount || 7
   const careerProjection: CareerProjection = {
     headline: 'Career',
-    targetSummary: '',
     categories: [
       {
         id: 'current-job',
         title: 'Current Job',
-        summary: 'Use the current role to win promotion leverage and extract high-value learning from LifeArc, infra, compliance, and stakeholder ownership.',
         sections: [
           {
             id: 'promotion',
@@ -519,7 +517,6 @@ export function buildCareerData(): ProjectedSection {
       {
         id: 'job-search',
         title: 'Job Search',
-        summary: 'Keep the next-job goal visible: role fit, location fit, compensation fit, and pipeline movement.',
         sections: [
           {
             id: 'target-role',
@@ -553,7 +550,6 @@ export function buildCareerData(): ProjectedSection {
       {
         id: 'portfolio',
         title: 'Portfolio',
-        summary: 'Package proof into the assets that make interviews easier: prep, stories, public profiles, projects, resume, and cover letters.',
         sections: [
           {
             id: 'technical-interview-prep',
