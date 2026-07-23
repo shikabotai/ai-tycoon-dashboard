@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import type { EducationDeadlineProjection, IdentityQualityProjection, ProjectedSection, VesselMuscleGroupProjection } from './projectedTypes'
+import type { CareerProjection, EducationDeadlineProjection, IdentityQualityProjection, ProjectedSection, VesselMuscleGroupProjection } from './projectedTypes'
 
 const PUNK_RECORDS_ROOT = '/Users/shika/.openclaw/workspace/PunkRecords'
 
@@ -467,9 +467,197 @@ export function buildCareerData(): ProjectedSection {
     learning.includes('System Design') ? 'system design' : '',
     learning.includes('MSML') ? 'MSML' : '',
   ].filter(Boolean).join(' / ')
+  const salaryBump = `${currentComp} to ${compTarget}`
+  const mappedTargetCompanyCount = (jobSearch.match(/^\| [^|\n]+ \| [^|\n]+ \| [^|\n]+ \| \[ \] Researching \|/gm) ?? []).length
+  const portfolioSiteStatus = portfolio.match(/\| URL \|\s*([^|]+)\|/)?.[1]?.trim() ?? '[FILL IN or "Not yet built"]'
+  const linkedinViews = personalBrand.match(/\| LinkedIn profile views \/ week \|\s*([^|]+)\|/)?.[1]?.trim() ?? 'Not tracked'
+  const githubFollowers = personalBrand.match(/\| GitHub followers \|\s*([^|]+)\|/)?.[1]?.trim() ?? '0'
+  const portfolioVisits = personalBrand.match(/\| Portfolio unique visits \/ month \|\s*([^|]+)\|/)?.[1]?.trim() ?? 'Not tracking yet'
+  const resumeActionCount = (resume.match(/^- \[ \]/gm) ?? []).length
+  const brandActionCount = (personalBrand.match(/^- \[ \]/gm) ?? []).length
+  const portfolioActionCount = (portfolio.match(/^- \[ \]/gm) ?? []).length
+  const starPracticeDone = starStories.includes('[x] Fill in all metric placeholders')
+  const behavioralStoryCount = starStoryCount || 7
+  const careerProjection: CareerProjection = {
+    headline: 'Career command center',
+    targetSummary: `${targetRole} in NYC or remote-first, with ${compTarget} target comp and LifeArc as the lead proof asset.`,
+    overallProgress: 34,
+    categories: [
+      {
+        id: 'current-job',
+        title: 'Current Job',
+        summary: 'Use the current role to win promotion leverage and extract high-value learning from LifeArc, infra, compliance, and stakeholder ownership.',
+        progress: 38,
+        sections: [
+          {
+            id: 'promotion',
+            label: 'Promotion',
+            status: 'active',
+            progress: 35,
+            value: targetRole,
+            detail: `Promotion story is anchored on LifeArc ownership and a target salary move from ${salaryBump}.`,
+            nextAction: 'Define the exact internal target title, promotion criteria, manager/stakeholder proof, and review date.',
+            source: 'Career Strategy Overview',
+          },
+          {
+            id: 'learning',
+            label: 'Learning',
+            status: 'active',
+            progress: 42,
+            value: learningTracks || 'DSA / system design / MSML',
+            detail: 'Current role learning should compound through HIPAA compliance, AWS/GCP ML infra, product ownership, stakeholder communication, CI/CD, and distributed systems.',
+            nextAction: 'Log what you are learning on the job separately from external interview prep, then pick the next on-job skill gap.',
+            source: 'Learning Roadmap',
+          },
+        ],
+      },
+      {
+        id: 'job-search',
+        title: 'Job Search',
+        summary: 'Keep the next-job goal visible: role fit, location fit, compensation fit, and pipeline movement.',
+        progress: 28,
+        sections: [
+          {
+            id: 'target-role',
+            label: 'Target Role',
+            status: 'planned',
+            progress: 62,
+            value: targetRole,
+            detail: `Best-fit roles are SWE II/SWE III, full-stack, backend, and ML-adjacent engineering roles at larger teams. ${mappedTargetCompanyCount || tierCompanyCount || 10} target companies are already visible.`,
+            nextAction: 'Rank the target role variants so resume, portfolio, and applications do not pull in different directions.',
+            source: 'Career Strategy Overview',
+          },
+          {
+            id: 'location',
+            label: 'Location',
+            status: 'planned',
+            progress: 70,
+            value: 'NYC preferred / remote-first acceptable',
+            detail: 'Punk Records is clear that NYC or remote-first are preferred, with no low-cost-city relocation.',
+            nextAction: 'Add must-have location constraints: hybrid tolerance, commute radius, relocation timing, and remote minimums.',
+            source: 'Job Search Overview',
+          },
+          {
+            id: 'compensation',
+            label: 'Compensation',
+            status: 'planned',
+            progress: 66,
+            value: compTarget,
+            detail: `Current baseline is ${currentComp}; minimum acceptable is documented as about $120k+ TC depending on location.`,
+            nextAction: 'Set hard floor, ideal base, ideal TC, and equity-risk tolerance for offer comparisons.',
+            source: 'Job Search Overview',
+          },
+        ],
+      },
+      {
+        id: 'portfolio',
+        title: 'Portfolio',
+        summary: 'Package proof into the assets that make interviews easier: prep, stories, public profiles, projects, resume, and cover letters.',
+        progress: 31,
+        sections: [
+          {
+            id: 'technical-interview-prep',
+            label: 'Technical interview prep',
+            status: 'active',
+            progress: learning.includes('Week 0/8') ? 12 : 24,
+            value: 'DSA + system design',
+            detail: learning.includes('Neetcode 150') ? 'Neetcode 150 and System Design Primer are selected, but reps are not yet logged as structured metrics.' : 'Technical prep source exists, but needs a sharper live metric.',
+            nextAction: 'Add solved problem count, weak topics, mock count, and next system design prompt.',
+            source: 'Learning Roadmap',
+          },
+          {
+            id: 'star-stories',
+            label: 'STAR stories',
+            status: starPracticeDone ? 'active' : 'planned',
+            progress: starPracticeDone ? 68 : 52,
+            value: `${behavioralStoryCount} stories`,
+            detail: 'LifeArc, HIPAA, ambiguity, tradeoffs, MSML, conflict, and judgment stories exist as a strong story bank.',
+            nextAction: 'Practice each story aloud and add follow-up answers for what you would do differently.',
+            source: 'STAR Story Bank',
+          },
+          {
+            id: 'behavioral-interview-prep',
+            label: 'Behavioral interview prep',
+            status: 'planned',
+            progress: 34,
+            value: 'Non-STAR answers mapped',
+            detail: 'Why leave, tell me about yourself, and 5-year positioning are noted, but not yet drilled outside STAR format.',
+            nextAction: 'Create a short non-STAR answer bank for motivation, values, collaboration style, and role fit.',
+            source: 'STAR Story Bank',
+          },
+          {
+            id: 'portfolio-website',
+            label: 'Portfolio website',
+            status: portfolioSiteStatus.includes('Not yet') || portfolioSiteStatus.includes('FILL') ? 'missing' : 'active',
+            progress: portfolioSiteStatus.includes('In progress') ? 35 : 18,
+            value: portfolioSiteStatus,
+            detail: 'Portfolio strategy is defined around LifeArc, proprietary-work narrative, side projects, and MSML projects.',
+            nextAction: 'Add the real portfolio URL, analytics status, and the first LifeArc case-study milestone.',
+            source: 'Portfolio Overview',
+          },
+          {
+            id: 'linkedin',
+            label: 'LinkedIn',
+            status: 'active',
+            progress: linkedinViews.includes('Not') ? 32 : 48,
+            value: `${linkedinConnections} connections`,
+            detail: `Profile views are ${linkedinViews}; the headline/about copy and LifeArc carousel tasks are drafted but not finished.`,
+            nextAction: 'Refresh headline/about, add featured proof, and record weekly profile views.',
+            source: 'Personal Brand Overview',
+          },
+          {
+            id: 'github',
+            label: 'GitHub',
+            status: githubFollowers === '0' ? 'missing' : 'planned',
+            progress: githubFollowers === '0' ? 16 : 30,
+            value: `${githubFollowers} followers`,
+            detail: 'GitHub profile polish, pinned repos, README, architecture diagram, and public signal are still open.',
+            nextAction: 'Pin best repos and add a recruiter-readable README/proof block.',
+            source: 'Personal Brand Overview',
+          },
+          {
+            id: 'projects',
+            label: 'Projects',
+            status: 'active',
+            progress: 54,
+            value: 'LifeArc flagship',
+            detail: proofActions.length ? `Open proof lanes: ${proofActions.join(', ')}.` : 'LifeArc is strongest, but public-safe assets still need packaging.',
+            nextAction: 'Create public-safe LifeArc case study with architecture, constraints, metrics, and tradeoffs.',
+            source: 'Portfolio Overview',
+          },
+          {
+            id: 'resume',
+            label: 'Resume',
+            status: resumeActionCount > 0 ? 'active' : 'done',
+            progress: resumeActionCount > 0 ? 62 : 88,
+            value: `${Math.max(0, 3 - resumeActionCount)} / 3 variants ready-ish`,
+            detail: 'Master bullet bank and metrics are strong; final format and tailored PDFs still need completion.',
+            nextAction: 'Choose final format and produce General SWE, ML/AI, and Health Tech variants.',
+            source: 'Resume Overview',
+          },
+          {
+            id: 'cover-letter',
+            label: 'Cover letter',
+            status: 'missing',
+            progress: 10,
+            value: 'Templates referenced',
+            detail: 'Cover letter templates are referenced by the search docs, but no structured template data is being pulled into the dashboard yet.',
+            nextAction: 'Add or wire Cover Letter Templates into Punk Records so Tier 1 applications can use a reusable base.',
+            source: 'Job Search Overview',
+          },
+        ],
+      },
+    ],
+    prompts: [
+      { label: 'Current job promotion', value: 'Need exact target', detail: 'What is the exact promotion title, review date, decision-maker, and target raise/bump inside the current company?', severity: 'watch' },
+      { label: 'On-job learning', value: 'Need live list', detail: 'Which current-job skills do you want to learn more of: infra, product, compliance, management, architecture, CI/CD, or something else?', severity: 'watch' },
+      { label: 'Technical prep metrics', value: 'Need counters', detail: 'Add LeetCode solved count, system-design reps, mocks completed, and weak topics so progress can move from guessed to measured.', severity: 'stale' },
+      { label: 'Public assets', value: `${brandActionCount + portfolioActionCount} open tasks`, detail: `Need real portfolio URL/visits, GitHub URL/followers, LinkedIn views, and whether the LifeArc case study can be public. Portfolio visits: ${portfolioVisits}.`, severity: 'stale' },
+    ],
+  }
 
   return {
-    heroSummary: 'Career is a leverage conversion system: package LifeArc and other shipped work into proof, then turn that proof into targeted outreach, interview readiness, and higher-comp role options.',
+    heroSummary: 'Career is now tracked across current-job growth, next-job search goals, and portfolio readiness so every section can move from rough notes into visible progress.',
     summaryCards: [
       { label: 'Career arc', value: currentStatus || 'AI/ML product lead', note: trajectory.includes('Founding Engineer') ? 'Founding Engineer to Project Lead with full-stack, infra, and ML ownership.' : careerGoal },
       { label: 'Comp / role target', value: compTarget, note: `${currentComp} current baseline; target role is ${targetRole}.` },
@@ -501,6 +689,7 @@ export function buildCareerData(): ProjectedSection {
       { label: 'Offer deadline', detail: 'The target process should produce an offer before the hard deadline.', recency: targetOfferDate, severity: 'watch' },
       { label: 'MSML horizon', detail: 'Georgia Tech MSML remains the long-arc ML credential.', recency: 'Expected 2027', severity: 'good' },
     ],
+    career: careerProjection,
   }
 }
 

@@ -2007,12 +2007,14 @@ button {
 }
 
 .career-hero,
-.career-proof-board,
-.career-pipeline-panel,
-.career-readiness-card {
+.career-category-card,
+.career-category-panel,
+.career-prompt-panel,
+.career-section-card,
+.career-prompt-card {
   min-width: 0;
   border: 1px solid rgba(241, 244, 248, 0.1);
-  border-radius: 12px;
+  border-radius: 8px;
   background: linear-gradient(180deg, rgba(16, 21, 29, 0.92), rgba(7, 10, 15, 0.95));
   box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
@@ -2035,20 +2037,20 @@ button {
 
 .career-hero-copy,
 .career-target-card,
-.career-proof-primary,
-.career-proof-lane,
-.career-stage-card,
-.career-readiness-card {
+.career-category-card,
+.career-category-panel,
+.career-section-card,
+.career-prompt-card {
   min-width: 0;
 }
 
 .career-hero-copy span,
 .career-target-card span,
-.career-proof-metrics span,
-.career-proof-lane span,
+.career-category-card span,
 .career-panel-head span,
-.career-stage-card span,
-.career-readiness-card span {
+.career-section-topline span,
+.career-next-action span,
+.career-prompt-card span {
   color: #86a9df;
   font-size: 0.72rem;
   letter-spacing: 0;
@@ -2066,10 +2068,10 @@ button {
 
 .career-hero-copy p,
 .career-target-card p,
-.career-proof-primary p,
-.career-proof-lane p,
-.career-stage-card p,
-.career-readiness-card p {
+.career-category-card p,
+.career-section-card p,
+.career-next-action p,
+.career-prompt-card p {
   margin: 9px 0 0;
   color: var(--muted);
   font-size: 0.86rem;
@@ -2094,74 +2096,88 @@ button {
   overflow-wrap: anywhere;
 }
 
-.career-proof-board {
+.career-category-overview {
   display: grid;
-  grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.1fr);
-  gap: 14px;
-  padding: 16px;
-}
-
-.career-proof-primary {
-  display: grid;
-  align-content: space-between;
-  gap: 16px;
-  min-height: 280px;
-  border-radius: 9px;
-  border: 1px solid rgba(103, 224, 178, 0.24);
-  background:
-    linear-gradient(135deg, rgba(103, 224, 178, 0.1), transparent 50%),
-    rgba(5, 10, 18, 0.78);
-  padding: 18px;
-}
-
-.career-proof-primary h3 {
-  margin: 8px 0 0;
-  color: var(--text);
-  font-size: clamp(1.65rem, 3vw, 3rem);
-  line-height: 0.98;
-}
-
-.career-proof-metrics,
-.career-proof-lanes,
-.career-stage-track,
-.career-readiness-grid {
-  display: grid;
-  gap: 10px;
-}
-
-.career-proof-metrics {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
 }
 
-.career-proof-metrics div,
-.career-proof-lane,
-.career-stage-card {
-  border: 1px solid rgba(120, 166, 235, 0.16);
-  border-radius: 8px;
-  background: rgba(6, 11, 19, 0.7);
-  padding: 12px;
+.career-category-card {
+  display: grid;
+  gap: 12px;
+  align-content: space-between;
+  min-height: 168px;
+  padding: 14px;
 }
 
-.career-proof-metrics strong,
-.career-proof-lane strong,
-.career-stage-card strong,
-.career-readiness-card strong {
+.career-category-card.current-job,
+.career-category-panel.current-job {
+  border-color: rgba(103, 224, 178, 0.24);
+}
+
+.career-category-card.job-search,
+.career-category-panel.job-search {
+  border-color: rgba(109, 177, 255, 0.24);
+}
+
+.career-category-card.portfolio,
+.career-category-panel.portfolio {
+  border-color: rgba(255, 174, 96, 0.25);
+}
+
+.career-category-card > div {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.career-category-card strong,
+.career-section-card strong,
+.career-prompt-card strong {
   display: block;
-  margin-top: 7px;
   color: var(--text);
-  font-size: 0.98rem;
-  line-height: 1.18;
+  font-size: 1rem;
+  line-height: 1.16;
   overflow-wrap: anywhere;
 }
 
-.career-proof-lanes {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+.career-category-card > div > strong {
+  font-size: 1.45rem;
 }
 
-.career-pipeline-panel {
+.career-category-card small,
+.career-section-card small,
+.career-panel-head small {
+  color: #b8cef0;
+  font-size: 0.78rem;
+}
+
+.career-progress-track {
+  width: 100%;
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(120, 166, 235, 0.14);
+}
+
+.career-progress-track i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #67e0b2, #6db1ff);
+}
+
+.career-category-stack {
+  display: grid;
+  gap: 12px;
+}
+
+.career-category-panel,
+.career-prompt-panel {
   display: grid;
   gap: 14px;
-  padding: 16px;
+  padding: 14px;
 }
 
 .career-panel-head {
@@ -2180,60 +2196,94 @@ button {
   line-height: 1.06;
 }
 
-.career-panel-head small {
-  color: #b8cef0;
-  font-size: 0.82rem;
-  white-space: nowrap;
+.career-section-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
 }
 
-.career-stage-track {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+.career-category-panel.current-job .career-section-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.career-stage-card {
-  min-height: 174px;
+.career-section-card {
+  display: grid;
+  gap: 11px;
+  align-content: start;
+  min-height: 248px;
+  border-color: rgba(120, 166, 235, 0.16);
+  background: rgba(6, 11, 19, 0.7);
+  padding: 13px;
 }
 
-.career-stage-card.ready {
-  border-color: rgba(103, 224, 178, 0.32);
+.career-section-card.done,
+.career-section-card.active {
+  border-color: rgba(103, 224, 178, 0.3);
 }
 
-.career-stage-card.watch {
+.career-section-card.planned {
   border-color: rgba(109, 177, 255, 0.3);
 }
 
-.career-stage-card.target {
-  border-color: rgba(255, 174, 96, 0.36);
+.career-section-card.blocked,
+.career-section-card.missing {
+  border-color: rgba(255, 117, 117, 0.34);
+  background: linear-gradient(180deg, rgba(38, 13, 18, 0.46), rgba(8, 11, 17, 0.88));
 }
 
-.career-stage-card em {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  margin-bottom: 14px;
-  border-radius: 8px;
-  background: rgba(126, 167, 255, 0.14);
-  color: var(--text);
+.career-section-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.career-section-topline em {
+  flex: 0 0 auto;
+  border: 1px solid rgba(120, 166, 235, 0.22);
+  border-radius: 999px;
+  padding: 4px 8px;
+  color: #d6e5fb;
+  background: rgba(126, 167, 255, 0.1);
+  font-size: 0.72rem;
   font-style: normal;
-  font-weight: 700;
+  line-height: 1;
+  text-transform: capitalize;
 }
 
-.career-readiness-grid {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+.career-section-card > strong {
+  min-height: 38px;
+  font-size: 1.04rem;
 }
 
-.career-readiness-card {
-  min-height: 162px;
-  padding: 14px;
+.career-next-action {
+  margin-top: auto;
+  border-top: 1px solid rgba(241, 244, 248, 0.08);
+  padding-top: 10px;
 }
 
-.career-readiness-card.watch {
+.career-next-action p {
+  margin-top: 5px;
+  color: #d8e6f7;
+}
+
+.career-prompt-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.career-prompt-card {
+  min-height: 154px;
+  padding: 13px;
+}
+
+.career-prompt-card.watch {
   border-color: rgba(255, 174, 96, 0.34);
   background: linear-gradient(180deg, rgba(31, 21, 12, 0.58), rgba(8, 11, 17, 0.88));
 }
 
-.career-readiness-card.stale {
+.career-prompt-card.stale {
   border-color: rgba(255, 117, 117, 0.34);
   background: linear-gradient(180deg, rgba(38, 13, 18, 0.56), rgba(8, 11, 17, 0.88));
 }
@@ -4315,7 +4365,9 @@ button {
   .vessel-weekly-drift,
   .vessel-support-grid,
   .career-hero,
-  .career-proof-board,
+  .career-category-overview,
+  .career-section-grid,
+  .career-prompt-grid,
   .education-hero {
     grid-template-columns: 1fr;
   }
@@ -4330,8 +4382,6 @@ button {
   .vessel-source-strip,
   .vessel-muscle-grid,
   .vessel-action-list,
-  .career-stage-track,
-  .career-readiness-grid,
   .education-deadline-list,
   .education-course-grid,
   .education-alternatives {
@@ -4588,23 +4638,22 @@ button {
     font-size: 0.88rem;
   }
 
-  .career-proof-board,
-  .career-pipeline-panel {
+  .career-category-panel,
+  .career-prompt-panel {
     padding: 14px;
   }
 
-  .career-proof-primary,
-  .career-proof-lane,
-  .career-stage-card,
-  .career-readiness-card {
+  .career-category-card,
+  .career-section-card,
+  .career-prompt-card {
     min-height: auto;
     padding: 14px;
   }
 
-  .career-proof-metrics,
-  .career-proof-lanes,
-  .career-stage-track,
-  .career-readiness-grid {
+  .career-category-overview,
+  .career-section-grid,
+  .career-category-panel.current-job .career-section-grid,
+  .career-prompt-grid {
     grid-template-columns: 1fr;
   }
 

@@ -2179,108 +2179,98 @@ function App() {
   function renderCareerPage() {
     if (!currentPersonalData) return null
 
-    const findCard = (matcher: string) => currentPersonalData.summaryCards.find((card) => card.label.toLowerCase().includes(matcher))
-    const proof = findCard('flagship') ?? currentPersonalData.summaryCards[2]
-    const packaging = findCard('packaging') ?? currentPersonalData.summaryCards[3]
-    const pipeline = findCard('pipeline') ?? currentPersonalData.summaryCards[4]
-    const networking = findCard('networking') ?? currentPersonalData.summaryCards[5]
-    const readiness = findCard('readiness') ?? currentPersonalData.summaryCards[6]
-    const brand = findCard('brand') ?? currentPersonalData.summaryCards[7]
-    const credential = findCard('credential') ?? currentPersonalData.summaryCards[8]
-    const compTarget = findCard('comp') ?? currentPersonalData.summaryCards[1]
-    const blockers = currentPersonalData.blockers ?? []
-    const missingData = currentPersonalData.missingData ?? []
-    const timeline = currentPersonalData.timeline ?? []
-    const proofLanes = [
-      { label: 'Resume', source: packaging, detail: 'Quantified bullet and tailored variant for the target role.' },
-      { label: 'Portfolio', source: proof, detail: 'Public-safe case study with architecture, constraints, and impact.' },
-      { label: 'Story', source: readiness, detail: 'STAR version that makes ownership, judgment, and tradeoffs easy to hear.' },
-      { label: 'Brand', source: brand, detail: 'LinkedIn/GitHub proof that recruiters can verify quickly.' },
-    ]
-    const pipelineStages = [
-      { label: 'Research', value: '10 visible', detail: 'Target companies already mapped from the Career notes.' },
-      { label: 'Outreach', value: networking?.value ?? '0 hot / 0 warm / 0 cold', detail: networking?.note ?? 'Warm intros and follow-ups are the missing channel.' },
-      { label: 'Apply', value: pipeline?.value ?? '0 apps / 0 screens', detail: pipeline?.note ?? 'Applications need dated entries before this becomes live.' },
-      { label: 'Interview', value: readiness?.value ?? '7 STAR stories', detail: readiness?.note ?? 'Keep DSA, system design, and behavioral reps together.' },
-      { label: 'Offer', value: timeline[1]?.recency ?? 'Oct 31, 2026', detail: timeline[1]?.detail ?? 'Use the offer deadline as the process anchor.' },
-    ]
+    const career = currentPersonalData.career
+    const categories = career?.categories ?? []
+    const prompts = career?.prompts ?? currentPersonalData.missingData ?? []
+    const statusLabel = (status: string) => status.replace('-', ' ')
+    const progressStyle = (progress: number) => ({ width: `${Math.max(0, Math.min(progress, 100))}%` })
+    const totalSections = categories.reduce((sum, category) => sum + category.sections.length, 0)
+    const activeSections = categories.reduce((sum, category) => sum + category.sections.filter((section) => section.status === 'active' || section.status === 'done').length, 0)
 
     return (
       <section className="career-page" aria-label="Career dashboard">
         <section className="career-hero">
           <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
           <div className="career-hero-copy">
-            <span>Proof engine</span>
-            <strong>{proof?.value ?? 'LifeArc'}</strong>
-            <p>{currentPersonalData.heroSummary}</p>
+            <span>Career command center</span>
+            <strong>{career?.headline ?? 'Career dashboard'}</strong>
+            <p>{career?.targetSummary ?? currentPersonalData.heroSummary}</p>
           </div>
           <aside className="career-target-card">
-            <span>Comp / role target</span>
-            <strong>{compTarget?.value ?? '$140k-$200k+ TC'}</strong>
-            <p>{compTarget?.note ?? 'Target higher-leverage SWE, backend, full-stack, or ML engineering roles.'}</p>
+            <span>Overall progress</span>
+            <strong>{career?.overallProgress ?? 34}%</strong>
+            <p>{activeSections} of {totalSections} sections are active or ready. Missing details are called out below.</p>
           </aside>
         </section>
 
-        <section className="career-proof-board" aria-label="Career proof packaging">
-          <article className="career-proof-primary">
-            <div className="revamp-kicker">Flagship Proof</div>
-            <h3>{proof?.value ?? 'LifeArc'}</h3>
-            <p>{proof?.note ?? 'Package the strongest shipped work into public-safe career evidence.'}</p>
-            <div className="career-proof-metrics">
-              <div><span>Pipeline</span><strong>{pipeline?.value ?? '0 apps / 0 screens'}</strong></div>
-              <div><span>Network</span><strong>{networking?.value ?? '0 hot / 0 warm / 0 cold'}</strong></div>
-              <div><span>Readiness</span><strong>{readiness?.value ?? '7 STAR stories'}</strong></div>
-            </div>
-          </article>
-          <div className="career-proof-lanes">
-            {proofLanes.map((lane) => (
-              <article key={lane.label} className="career-proof-lane">
-                <span>{lane.label}</span>
-                <strong>{lane.source?.value ?? 'Needs update'}</strong>
-                <p>{lane.detail}</p>
-              </article>
-            ))}
-          </div>
+        <section className="career-category-overview" aria-label="Career category progress">
+          {categories.map((category) => (
+            <article key={category.id} className={`career-category-card ${category.id}`}>
+              <div>
+                <span>{category.title}</span>
+                <strong>{category.progress}%</strong>
+              </div>
+              <p>{category.summary}</p>
+              <div className="career-progress-track" aria-hidden="true">
+                <i style={progressStyle(category.progress)} />
+              </div>
+              <small>{category.sections.length} sections</small>
+            </article>
+          ))}
         </section>
 
-        <section className="career-pipeline-panel" aria-label="Career pipeline stages">
+        <section className="career-category-stack" aria-label="Career categories">
+          {categories.map((category) => (
+            <article key={category.id} className={`career-category-panel ${category.id}`}>
+              <div className="career-panel-head">
+                <div>
+                  <span>{category.title}</span>
+                  <strong>{category.progress}% complete</strong>
+                </div>
+                <small>{category.sections.length} tracked sections</small>
+              </div>
+
+              <div className="career-section-grid">
+                {category.sections.map((section) => (
+                  <article key={section.id} className={`career-section-card ${section.status}`}>
+                    <div className="career-section-topline">
+                      <span>{section.label}</span>
+                      <em>{statusLabel(section.status)}</em>
+                    </div>
+                    <strong>{section.value}</strong>
+                    <div className="career-progress-track" aria-label={`${section.label} ${section.progress}% complete`}>
+                      <i style={progressStyle(section.progress)} />
+                    </div>
+                    <p>{section.detail}</p>
+                    <div className="career-next-action">
+                      <span>Next</span>
+                      <p>{section.nextAction}</p>
+                    </div>
+                    <small>{section.source}</small>
+                  </article>
+                ))}
+              </div>
+            </article>
+          ))}
+        </section>
+
+        <section className="career-prompt-panel" aria-label="Career data prompts">
           <div className="career-panel-head">
             <div>
-              <span>Search Ladder</span>
-              <strong>Proof to offer path</strong>
+              <span>Prompt Mitchell</span>
+              <strong>Missing from Punk Records</strong>
             </div>
             <small>{currentPersonalData.freshness?.label ?? 'Career planning docs'}</small>
           </div>
-          <div className="career-stage-track">
-            {pipelineStages.map((stage, index) => (
-              <article key={stage.label} className={`career-stage-card ${index < 1 ? 'ready' : index < 4 ? 'watch' : 'target'}`}>
-                <em>{String(index + 1).padStart(2, '0')}</em>
-                <span>{stage.label}</span>
-                <strong>{stage.value}</strong>
-                <p>{stage.detail}</p>
+          <div className="career-prompt-grid">
+            {prompts.slice(0, 4).map((prompt) => (
+              <article key={`${prompt.label}-${prompt.value}`} className={`career-prompt-card ${prompt.severity ?? 'watch'}`}>
+                <span>{prompt.label}</span>
+                <strong>{prompt.value}</strong>
+                <p>{prompt.detail}</p>
               </article>
             ))}
           </div>
-        </section>
-
-        <section className="career-readiness-grid" aria-label="Career readiness and gaps">
-          <article className="career-readiness-card">
-            <span>Interview stack</span>
-            <strong>{readiness?.value ?? '7 STAR stories'}</strong>
-            <p>{readiness?.note ?? 'Practice behavioral, DSA, and system design readiness as one stack.'}</p>
-          </article>
-          <article className="career-readiness-card">
-            <span>Credential path</span>
-            <strong>{credential?.value ?? 'Georgia Tech MSML'}</strong>
-            <p>{credential?.note ?? 'MSML supports the long-arc ML positioning.'}</p>
-          </article>
-          {(blockers.length ? blockers : missingData).slice(0, 3).map((item) => (
-            <article key={`${item.label}-${item.value}`} className={`career-readiness-card ${item.severity ?? 'watch'}`}>
-              <span>{item.label}</span>
-              <strong>{item.value}</strong>
-              <p>{item.detail}</p>
-            </article>
-          ))}
         </section>
       </section>
     )

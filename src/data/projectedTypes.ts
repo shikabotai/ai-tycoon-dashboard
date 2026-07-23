@@ -137,6 +137,35 @@ export type EducationProjection = {
   planNote: string
 }
 
+export type CareerSectionStatus = 'done' | 'active' | 'planned' | 'blocked' | 'missing'
+
+export type CareerSectionProjection = {
+  id: string
+  label: string
+  status: CareerSectionStatus
+  progress: number
+  value: string
+  detail: string
+  nextAction: string
+  source: string
+}
+
+export type CareerCategoryProjection = {
+  id: 'current-job' | 'job-search' | 'portfolio'
+  title: string
+  summary: string
+  progress: number
+  sections: CareerSectionProjection[]
+}
+
+export type CareerProjection = {
+  headline: string
+  targetSummary: string
+  overallProgress: number
+  categories: CareerCategoryProjection[]
+  prompts: ProjectedContextItem[]
+}
+
 export type ProjectedSection = {
   heroSummary: string
   summaryCards: ProjectedCard[]
@@ -153,4 +182,5 @@ export type ProjectedSection = {
   identity?: IdentityProjection
   vessel?: VesselProjection
   education?: EducationProjection
+  career?: CareerProjection
 }

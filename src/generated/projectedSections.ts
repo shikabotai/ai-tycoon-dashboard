@@ -377,7 +377,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     }
   },
   "career": {
-    "heroSummary": "Career is a leverage conversion system: package LifeArc and other shipped work into proof, then turn that proof into targeted outreach, interview readiness, and higher-comp role options.",
+    "heroSummary": "Career is now tracked across current-job growth, next-job search goals, and portfolio readiness so every section can move from rough notes into visible progress.",
     "summaryCards": [
       {
         "label": "Career arc",
@@ -488,7 +488,204 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         "recency": "Expected 2027",
         "severity": "good"
       }
-    ]
+    ],
+    "career": {
+      "headline": "Career command center",
+      "targetSummary": "SWE II / SWE III · Full-Stack · Backend · ML Engineer in NYC or remote-first, with $140k–$200k+ TC target comp and LifeArc as the lead proof asset.",
+      "overallProgress": 34,
+      "categories": [
+        {
+          "id": "current-job",
+          "title": "Current Job",
+          "summary": "Use the current role to win promotion leverage and extract high-value learning from LifeArc, infra, compliance, and stakeholder ownership.",
+          "progress": 38,
+          "sections": [
+            {
+              "id": "promotion",
+              "label": "Promotion",
+              "status": "active",
+              "progress": 35,
+              "value": "SWE II / SWE III · Full-Stack · Backend · ML Engineer",
+              "detail": "Promotion story is anchored on LifeArc ownership and a target salary move from ~$105k TC to $140k–$200k+ TC.",
+              "nextAction": "Define the exact internal target title, promotion criteria, manager/stakeholder proof, and review date.",
+              "source": "Career Strategy Overview"
+            },
+            {
+              "id": "learning",
+              "label": "Learning",
+              "status": "active",
+              "progress": 42,
+              "value": "DSA / system design / MSML",
+              "detail": "Current role learning should compound through HIPAA compliance, AWS/GCP ML infra, product ownership, stakeholder communication, CI/CD, and distributed systems.",
+              "nextAction": "Log what you are learning on the job separately from external interview prep, then pick the next on-job skill gap.",
+              "source": "Learning Roadmap"
+            }
+          ]
+        },
+        {
+          "id": "job-search",
+          "title": "Job Search",
+          "summary": "Keep the next-job goal visible: role fit, location fit, compensation fit, and pipeline movement.",
+          "progress": 28,
+          "sections": [
+            {
+              "id": "target-role",
+              "label": "Target Role",
+              "status": "planned",
+              "progress": 62,
+              "value": "SWE II / SWE III · Full-Stack · Backend · ML Engineer",
+              "detail": "Best-fit roles are SWE II/SWE III, full-stack, backend, and ML-adjacent engineering roles at larger teams. 10 target companies are already visible.",
+              "nextAction": "Rank the target role variants so resume, portfolio, and applications do not pull in different directions.",
+              "source": "Career Strategy Overview"
+            },
+            {
+              "id": "location",
+              "label": "Location",
+              "status": "planned",
+              "progress": 70,
+              "value": "NYC preferred / remote-first acceptable",
+              "detail": "Punk Records is clear that NYC or remote-first are preferred, with no low-cost-city relocation.",
+              "nextAction": "Add must-have location constraints: hybrid tolerance, commute radius, relocation timing, and remote minimums.",
+              "source": "Job Search Overview"
+            },
+            {
+              "id": "compensation",
+              "label": "Compensation",
+              "status": "planned",
+              "progress": 66,
+              "value": "$140k–$200k+ TC",
+              "detail": "Current baseline is ~$105k TC; minimum acceptable is documented as about $120k+ TC depending on location.",
+              "nextAction": "Set hard floor, ideal base, ideal TC, and equity-risk tolerance for offer comparisons.",
+              "source": "Job Search Overview"
+            }
+          ]
+        },
+        {
+          "id": "portfolio",
+          "title": "Portfolio",
+          "summary": "Package proof into the assets that make interviews easier: prep, stories, public profiles, projects, resume, and cover letters.",
+          "progress": 31,
+          "sections": [
+            {
+              "id": "technical-interview-prep",
+              "label": "Technical interview prep",
+              "status": "active",
+              "progress": 12,
+              "value": "DSA + system design",
+              "detail": "Neetcode 150 and System Design Primer are selected, but reps are not yet logged as structured metrics.",
+              "nextAction": "Add solved problem count, weak topics, mock count, and next system design prompt.",
+              "source": "Learning Roadmap"
+            },
+            {
+              "id": "star-stories",
+              "label": "STAR stories",
+              "status": "active",
+              "progress": 68,
+              "value": "7 stories",
+              "detail": "LifeArc, HIPAA, ambiguity, tradeoffs, MSML, conflict, and judgment stories exist as a strong story bank.",
+              "nextAction": "Practice each story aloud and add follow-up answers for what you would do differently.",
+              "source": "STAR Story Bank"
+            },
+            {
+              "id": "behavioral-interview-prep",
+              "label": "Behavioral interview prep",
+              "status": "planned",
+              "progress": 34,
+              "value": "Non-STAR answers mapped",
+              "detail": "Why leave, tell me about yourself, and 5-year positioning are noted, but not yet drilled outside STAR format.",
+              "nextAction": "Create a short non-STAR answer bank for motivation, values, collaboration style, and role fit.",
+              "source": "STAR Story Bank"
+            },
+            {
+              "id": "portfolio-website",
+              "label": "Portfolio website",
+              "status": "missing",
+              "progress": 18,
+              "value": "[FILL IN or \"Not yet built\"]",
+              "detail": "Portfolio strategy is defined around LifeArc, proprietary-work narrative, side projects, and MSML projects.",
+              "nextAction": "Add the real portfolio URL, analytics status, and the first LifeArc case-study milestone.",
+              "source": "Portfolio Overview"
+            },
+            {
+              "id": "linkedin",
+              "label": "LinkedIn",
+              "status": "active",
+              "progress": 32,
+              "value": "600 connections",
+              "detail": "Profile views are Not currently tracked (assume <20); the headline/about copy and LifeArc carousel tasks are drafted but not finished.",
+              "nextAction": "Refresh headline/about, add featured proof, and record weekly profile views.",
+              "source": "Personal Brand Overview"
+            },
+            {
+              "id": "github",
+              "label": "GitHub",
+              "status": "missing",
+              "progress": 16,
+              "value": "0 followers",
+              "detail": "GitHub profile polish, pinned repos, README, architecture diagram, and public signal are still open.",
+              "nextAction": "Pin best repos and add a recruiter-readable README/proof block.",
+              "source": "Personal Brand Overview"
+            },
+            {
+              "id": "projects",
+              "label": "Projects",
+              "status": "active",
+              "progress": 54,
+              "value": "LifeArc flagship",
+              "detail": "Open proof lanes: resume variants, technical post, GitHub profile, LifeArc carousel.",
+              "nextAction": "Create public-safe LifeArc case study with architecture, constraints, metrics, and tradeoffs.",
+              "source": "Portfolio Overview"
+            },
+            {
+              "id": "resume",
+              "label": "Resume",
+              "status": "active",
+              "progress": 62,
+              "value": "0 / 3 variants ready-ish",
+              "detail": "Master bullet bank and metrics are strong; final format and tailored PDFs still need completion.",
+              "nextAction": "Choose final format and produce General SWE, ML/AI, and Health Tech variants.",
+              "source": "Resume Overview"
+            },
+            {
+              "id": "cover-letter",
+              "label": "Cover letter",
+              "status": "missing",
+              "progress": 10,
+              "value": "Templates referenced",
+              "detail": "Cover letter templates are referenced by the search docs, but no structured template data is being pulled into the dashboard yet.",
+              "nextAction": "Add or wire Cover Letter Templates into Punk Records so Tier 1 applications can use a reusable base.",
+              "source": "Job Search Overview"
+            }
+          ]
+        }
+      ],
+      "prompts": [
+        {
+          "label": "Current job promotion",
+          "value": "Need exact target",
+          "detail": "What is the exact promotion title, review date, decision-maker, and target raise/bump inside the current company?",
+          "severity": "watch"
+        },
+        {
+          "label": "On-job learning",
+          "value": "Need live list",
+          "detail": "Which current-job skills do you want to learn more of: infra, product, compliance, management, architecture, CI/CD, or something else?",
+          "severity": "watch"
+        },
+        {
+          "label": "Technical prep metrics",
+          "value": "Need counters",
+          "detail": "Add LeetCode solved count, system-design reps, mocks completed, and weak topics so progress can move from guessed to measured.",
+          "severity": "stale"
+        },
+        {
+          "label": "Public assets",
+          "value": "11 open tasks",
+          "detail": "Need real portfolio URL/visits, GitHub URL/followers, LinkedIn views, and whether the LifeArc case study can be public. Portfolio visits: Not tracking yet.",
+          "severity": "stale"
+        }
+      ]
+    }
   },
   "knowledge": {
     "heroSummary": "Knowledge is execution-supportive rather than archival, with learning tied to decision quality, identity formation, and active goals.",
