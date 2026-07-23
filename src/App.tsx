@@ -2199,6 +2199,7 @@ function App() {
     const career = currentPersonalData.career
     const categories = career?.categories ?? []
     const prompts = career?.prompts ?? currentPersonalData.missingData ?? []
+    const starStoryBank = career?.starStories ?? []
     const statusLabel = (status: string) => status.replace('-', ' ')
     const toggleCareerCategory = (categoryId: string) => {
       setExpandedCareerCategories((current) => ({
@@ -2263,6 +2264,43 @@ function App() {
                                 <span>Next</span>
                                 <p>{section.nextAction}</p>
                               </div>
+                              {section.id === 'star-stories' && starStoryBank.length ? (
+                                <div className="career-story-bank" aria-label="STAR story bank">
+                                  {starStoryBank.map((story) => (
+                                    <details key={story.id} className="career-story-item">
+                                      <summary>
+                                        <strong>{story.title}</strong>
+                                        <span>{story.bestFor[0] ?? 'Behavioral story'}</span>
+                                      </summary>
+                                      {story.tags.length ? (
+                                        <div className="career-story-tags">
+                                          {story.tags.slice(0, 5).map((tag) => (
+                                            <span key={`${story.id}-${tag}`}>{tag}</span>
+                                          ))}
+                                        </div>
+                                      ) : null}
+                                      <dl>
+                                        <div>
+                                          <dt>S</dt>
+                                          <dd>{story.situation || 'Needs details in Punk Records.'}</dd>
+                                        </div>
+                                        <div>
+                                          <dt>T</dt>
+                                          <dd>{story.task || 'Needs details in Punk Records.'}</dd>
+                                        </div>
+                                        <div>
+                                          <dt>A</dt>
+                                          <dd>{story.action || 'Needs details in Punk Records.'}</dd>
+                                        </div>
+                                        <div>
+                                          <dt>R</dt>
+                                          <dd>{story.result || 'Needs details in Punk Records.'}</dd>
+                                        </div>
+                                      </dl>
+                                    </details>
+                                  ))}
+                                </div>
+                              ) : null}
                               <small>{section.source}</small>
                             </div>
                           ) : null}

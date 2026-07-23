@@ -149,6 +149,17 @@ export type CareerSectionProjection = {
   source: string
 }
 
+export type CareerStarStoryProjection = {
+  id: string
+  title: string
+  tags: string[]
+  bestFor: string[]
+  situation: string
+  task: string
+  action: string
+  result: string
+}
+
 export type CareerCategoryProjection = {
   id: 'current-job' | 'job-search' | 'portfolio'
   title: string
@@ -158,6 +169,7 @@ export type CareerCategoryProjection = {
 export type CareerProjection = {
   headline: string
   categories: CareerCategoryProjection[]
+  starStories: CareerStarStoryProjection[]
   prompts: ProjectedContextItem[]
 }
 

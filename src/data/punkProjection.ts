@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import type { CareerProjection, EducationDeadlineProjection, IdentityQualityProjection, ProjectedSection, VesselMuscleGroupProjection } from './projectedTypes'
+import type { CareerProjection, CareerStarStoryProjection, EducationDeadlineProjection, IdentityQualityProjection, ProjectedSection, VesselMuscleGroupProjection } from './projectedTypes'
 
 const PUNK_RECORDS_ROOT = '/Users/shika/.openclaw/workspace/PunkRecords'
 
@@ -423,6 +423,68 @@ export function buildVenturesData(): ProjectedSection {
   }
 }
 
+function parseStarStoryFields(block: string, occurrence = 0) {
+  const tagStarts = [...block.matchAll(/\*\*Tags:\*\*/g)].map((match) => match.index ?? 0)
+  const scopedBlock = tagStarts.length > occurrence
+    ? block.slice(tagStarts[occurrence], tagStarts[occurrence + 1] ?? block.length)
+    : block
+  const readField = (field: 'S' | 'T' | 'A' | 'R') => {
+    const match = scopedBlock.match(new RegExp(`\\*\\*${field}:\\*\\*\\s*([\\s\\S]*?)(?=\\n\\n\\*\\*[STAR]:\\*\\*|\\n\\n\\*\\*Tags:\\*\\*|\\n\\n\\*\\*Best for:\\*\\*|\\n\\n---|$)`))
+    return match?.[1]?.replace(/\s+/g, ' ').trim() ?? ''
+  }
+  const tags = scopedBlock.match(/\*\*Tags:\*\*\s*([^\n]+)/)?.[1]
+    ?.split(/\s+/)
+    .map((tag) => tag.replace(/^#/, '').trim())
+    .filter(Boolean) ?? []
+  const bestFor = scopedBlock.match(/\*\*Best for:\*\*\s*([^\n]+)/)?.[1]
+    ?.split(/\s*·\s*/)
+    .map((question) => question.replace(/^"|"$/g, '').trim())
+    .filter(Boolean) ?? []
+
+  return {
+    tags,
+    bestFor,
+    situation: readField('S'),
+    task: readField('T'),
+    action: readField('A'),
+    result: readField('R'),
+  }
+}
+
+function parseStarStories(markdown: string): CareerStarStoryProjection[] {
+  const headings = [...markdown.matchAll(/^#### Story (\d+):\s*(.+)$/gm)]
+  const sourceOrderStories = headings.map((heading, index) => {
+    const number = heading[1]
+    const title = heading[2].trim()
+    const start = (heading.index ?? 0) + heading[0].length
+    const storyMapIndex = markdown.indexOf('\n### Story-to-Question Map')
+    const end = headings[index + 1]?.index ?? (storyMapIndex > start ? storyMapIndex : markdown.length)
+    const fields = parseStarStoryFields(markdown.slice(start, end))
+
+    return {
+      id: `story-${number}`,
+      title,
+      ...fields,
+    }
+  }).filter((story) => story.title)
+
+  const storySevenWithFailure = sourceOrderStories.find((story) => story.id === 'story-7')
+  const misplacedFailureStory = storySevenWithFailure
+    ? markdown.slice(markdown.indexOf('#### Story 7:')).match(/\*\*Tags:\*\*\s*#failure[\s\S]*?(?=\n\n---|\n\n### Story-to-Question Map|$)/)?.[0]
+    : ''
+  if (misplacedFailureStory || storySevenWithFailure?.situation) {
+    return sourceOrderStories.map((story) => {
+      if (story.id !== 'story-6' || story.situation) return story
+      return {
+        ...story,
+        ...(misplacedFailureStory ? parseStarStoryFields(misplacedFailureStory) : parseStarStoryFields(markdown.slice(markdown.indexOf('#### Story 7:')), 1)),
+      }
+    })
+  }
+
+  return sourceOrderStories
+}
+
 export function buildCareerData(): ProjectedSection {
   const annualGoals = readPunkFile('Personal Decision Engine/Goals/Annual Goals.md')
   const goalsOverview = readPunkFile('Personal Decision Engine/Goals/Goals Overview.md')
@@ -487,6 +549,7 @@ export function buildCareerData(): ProjectedSection {
   const portfolioActionCount = (portfolio.match(/^- \[ \]/gm) ?? []).length
   const starPracticeDone = starStories.includes('[x] Fill in all metric placeholders')
   const behavioralStoryCount = starStoryCount || 7
+  const starStoryBank = parseStarStories(starStories)
   const careerProjection: CareerProjection = {
     headline: 'Career',
     categories: [
@@ -635,6 +698,7 @@ export function buildCareerData(): ProjectedSection {
         ],
       },
     ],
+    starStories: starStoryBank,
     prompts: [
       { label: 'Promotion process', value: promotionTargetDate, detail: `Decision-maker: ${promotionDecisionMaker}. Still need written criteria and proof packet requirements for ${promotionTarget} at ${promotionCompTarget}.`, severity: 'watch' },
       { label: 'Leadership case', value: 'Weekly proof packet', detail: `Main visibility points: ${socialSkillVisibility}. Leadership target: ${leadershipTarget}. Risk to manage: ${promotionRisk}.`, severity: 'watch' },

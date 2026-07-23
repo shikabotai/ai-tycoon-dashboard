@@ -649,6 +649,140 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           ]
         }
       ],
+      "starStories": [
+        {
+          "id": "story-1",
+          "title": "Leading LifeArc from 0→1 (Ownership / Initiative)",
+          "tags": [
+            "leadership",
+            "ownership",
+            "initiative",
+            "ambiguity",
+            "technical-decision"
+          ],
+          "bestFor": [
+            "Tell me about a time you took ownership.",
+            "Describe a project you led.",
+            "Tell me about a time you worked with minimal direction."
+          ],
+          "situation": "I was a founding engineer at a small tech team (~20 people) inside a life settlement company. The company had a clear business pain: reviewing medical records for underwriting was slow, expensive, and done manually.",
+          "task": "I identified the opportunity and proposed building an AI-powered platform — LifeArc — to automate this process. I was given the green light and became the sole technical lead with no senior engineer to report to technically.",
+          "action": "I made every architectural decision from scratch: chose GCP for the LLM layer (Gemini) because we could get a HIPAA BAA from Google — allowing us to legally process PHI through an LLM. Used AWS Medical Comprehend for structured medical entity extraction (ICD codes, diagnoses, medications). Built a FastAPI backend on AWS EC2, PostgreSQL on RDS, and a React portal for end users. I also designed a life expectancy model combining actuarial datasets with the AI-extracted medical features.",
+          "result": "Delivered a production system that now processes 100+ medical records every week. It cut turnaround from multi-week, $1,000+ third-party estimates to 10–60 minutes at $10–$100 per record, saving the underwriting team hours per file. The company plans to scale it as a core product offering."
+        },
+        {
+          "id": "story-2",
+          "title": "HIPAA Compliance Problem (Problem-Solving / Technical Depth)",
+          "tags": [
+            "problemsolving",
+            "technical",
+            "compliance",
+            "research",
+            "ambiguity"
+          ],
+          "bestFor": [
+            "Tell me about a difficult technical problem.",
+            "When did you have to learn something completely new?",
+            "Tell me about a constraint you had to work within."
+          ],
+          "situation": "When building LifeArc, I wanted to use an LLM (Gemini) to summarize medical records. But medical records contain Protected Health Information (PHI) — meaning I couldn't just send them to a third-party API without HIPAA compliance in place.",
+          "task": "I had to figure out how to legally and securely run PHI through an LLM in a production system — something most engineers have never done.",
+          "action": "I researched the HIPAA BAA (Business Associate Agreement) process — a legal framework that makes a cloud provider responsible for PHI they process. I discovered Google Cloud offered a HIPAA BAA for Gemini, which made it the right choice over OpenAI (which didn't have a BAA at the time). I set up the GCP project with encryption at rest and in transit, strict access controls, audit logging, and a no-PHI-in-logs policy. I documented the full compliance approach and got it reviewed.",
+          "result": "LifeArc became a HIPAA-compliant production system that legally processes real patient medical records. This was the key unlock that made the whole product possible — and it's now a genuine differentiator in my profile. Most engineers at my stage have no exposure to regulated data environments."
+        },
+        {
+          "id": "story-3",
+          "title": "Founding Engineer — Adapting to Ambiguity (Adaptability)",
+          "tags": [
+            "adaptability",
+            "ambiguity",
+            "startup",
+            "growth",
+            "initiative"
+          ],
+          "bestFor": [
+            "Tell me about a time you worked in a fast-moving or unstructured environment.",
+            "How do you handle ambiguity?"
+          ],
+          "situation": "I joined [Company] as one of the first engineers on a greenfield SaaS product with a small team, no established processes, and a fast-moving roadmap.",
+          "task": "I needed to contribute meaningfully from day one without the guardrails of a large engineering org — no design docs, no sprint planning, no code review culture yet.",
+          "action": "I quickly took ownership of the frontend, established patterns for how we structured React components and handled state, and started proposing lightweight processes (PR reviews, basic documentation) as the team grew. When LifeArc emerged as an opportunity, I proactively scoped it and proposed it rather than waiting to be assigned.",
+          "result": "Grew from frontend IC to full-stack engineer to project lead in 2.5 years — without a formal promotion process, by demonstrating ownership at each stage. LifeArc is the direct result of operating with initiative in an ambiguous environment."
+        },
+        {
+          "id": "story-4",
+          "title": "Dual AI Pipeline Design (Technical Decision-Making)",
+          "tags": [
+            "systemdesign",
+            "technical",
+            "architecture",
+            "tradeoffs"
+          ],
+          "bestFor": [
+            "Tell me about a technical decision you made and why.",
+            "Describe a time you had to choose between two approaches."
+          ],
+          "situation": "When designing LifeArc's medical record processing, I needed to extract both narrative summaries AND structured data (ICD codes, medications, diagnoses) from unstructured clinical documents.",
+          "task": "Decide on the right architecture for the extraction pipeline.",
+          "action": "I evaluated two options: (1) Use only Gemini to extract everything via prompt engineering — fast to build but unreliable for structured entity extraction at scale. (2) Use a two-layer approach — Gemini for narrative summarization where LLM excels, and AWS Medical Comprehend (a purpose-built medical NLP service) for structured entity extraction where precision matters. I chose option 2 because reliability and accuracy of ICD coding was critical for the underwriting use case — wrong codes have real business impact.",
+          "result": "The two-layer pipeline delivered both readable summaries for reviewers AND highly accurate structured data for downstream models. The tradeoff (added complexity) was justified by the quality gain in a domain where mistakes are costly."
+        },
+        {
+          "id": "story-5",
+          "title": "Working on Graduate School While Employed Full-Time (Work Ethic / Growth)",
+          "tags": [
+            "workethic",
+            "growth",
+            "learning",
+            "commitment",
+            "discipline"
+          ],
+          "bestFor": [
+            "Tell me about a time you committed to self-improvement.",
+            "How do you manage competing priorities?"
+          ],
+          "situation": "I started Georgia Tech's MSML program part-time while working full-time as a founding engineer and leading LifeArc.",
+          "task": "Complete a rigorous graduate program (one of the most competitive in the country for ML) while managing significant professional responsibility.",
+          "action": "I treat the MSML like a second job with dedicated time blocks. I apply concepts from coursework directly to LifeArc where possible — closing the gap between academic ML and applied systems. I've had to make tradeoffs (fewer social commitments, strict schedule discipline) but treat the investment as compounding.",
+          "result": "Currently in progress — [X courses completed]. The MSML is deepening the ML foundations behind the work I'm already doing professionally, and is the long-term credential that opens ML Engineer and AI-adjacent roles."
+        },
+        {
+          "id": "story-6",
+          "title": "Protecting LifeArc Releases When Data Was Thin (Failure / Judgment)",
+          "tags": [
+            "failure",
+            "judgment",
+            "quality",
+            "communication"
+          ],
+          "bestFor": [
+            "Tell me about a time something didn’t go as planned.",
+            "Describe a time you had to make a tough call under a deadline."
+          ],
+          "situation": "Early in the LifeArc build, the first life expectancy model performed well overall, but we saw a handful of outlier predictions that were wildly incorrect. Those results would have been dangerous for underwriting decisions, yet we had a hard deadline to deploy the tool internally and no quick way to expand the dataset.",
+          "task": "Figure out how to launch on time without surfacing predictions we couldn’t stand behind.",
+          "action": "I introduced two guardrails: (1) only display a result if the case’s age/gender/primary-impairment bucket had sufficient historical data, and (2) hide predictions when the min/max range of similar cases exceeded a threshold. I also communicated the gap to stakeholders and documented a data-enrichment plan to expand coverage next.",
+          "result": "We launched on time with stakeholder trust intact — accuracy remained the priority, and hiding low-confidence results was the right tradeoff. Leadership appreciated the plan for expanding the dataset so we could increase coverage in future iterations."
+        },
+        {
+          "id": "story-7",
+          "title": "Aligning a Coworker Around LifeArc’s Deadline (Conflict / Collaboration)",
+          "tags": [
+            "conflict",
+            "collaboration",
+            "influence",
+            "communication"
+          ],
+          "bestFor": [
+            "Tell me about a time you dealt with a difficult teammate.",
+            "How do you handle conflict or misalignment?"
+          ],
+          "situation": "LifeArc had a hard internal deadline from the founders, and another engineer was assigned to help me deploy the backend to AWS. He wasn’t prioritizing it and communication lagged, which put the release at risk.",
+          "task": "I needed to get the deployment done on time without poisoning the working relationship.",
+          "action": "Instead of escalating or blaming, I invited him to lunch daily so we could build rapport and I could walk him through why the project mattered. The casual setting opened up communication, he understood the stakes, and we aligned on a concrete plan.",
+          "result": "Turnaround time improved immediately, the deployment landed before the stakeholder deadline, and the relationship got stronger rather than strained."
+        }
+      ],
       "prompts": [
         {
           "label": "Promotion process",
