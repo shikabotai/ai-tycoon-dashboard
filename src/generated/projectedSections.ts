@@ -104,6 +104,10 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         {
           "label": "Jul 22",
           "score": 5.3
+        },
+        {
+          "label": "Jul 23",
+          "score": 5.3
         }
       ],
       "nightlyChanges": [
@@ -123,7 +127,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "reason": "Personal Decision Engine / Ideal Self refreshed; current gap: Habits Overview — phone elimination protocol"
         }
       ],
-      "lastUpdatedLabel": "Nightly source refresh: Jul 22"
+      "lastUpdatedLabel": "Nightly source refresh: Jul 23"
     }
   },
   "vessel": {
@@ -137,13 +141,13 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Workout log source",
         "value": "Workout log available",
-        "note": "Latest workout file: 2026-07-21.",
+        "note": "Latest workout file: 2026-07-22.",
         "stale": false
       },
       {
         "label": "Nutrition log source",
-        "value": "91g protein",
-        "note": "860 kcal logged. Latest nutrition file: 2026-07-22.",
+        "value": "169g protein",
+        "note": "1,795 kcal logged. Latest nutrition file: 2026-07-22.",
         "stale": false
       },
       {
@@ -158,7 +162,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       }
     ],
     "highlights": [
-      "Latest workout evidence: 2026-07-21",
+      "Latest workout evidence: 2026-07-22",
       "Latest nutrition evidence: 2026-07-22",
       "Cut / recomp, not lean bulk",
       "Mental priority: focus, attention span, meditation, and phone friction",
@@ -166,7 +170,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "freshness": {
       "label": "Vessel evidence",
-      "ageDays": 0,
+      "ageDays": 1,
       "stale": false
     },
     "vessel": {
@@ -175,9 +179,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "back",
           "label": "Back",
           "priority": "V-taper priority",
-          "recentSets": 33,
+          "recentSets": 31,
           "lastHit": "2026-07-21",
-          "lastHitLabel": "1 day ago",
+          "lastHitLabel": "2 days ago",
           "heat": "hot",
           "recommendation": "Keep one vertical pull and one row pattern active each week."
         },
@@ -187,7 +191,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "Width priority",
           "recentSets": 13,
           "lastHit": "2026-07-21",
-          "lastHitLabel": "1 day ago",
+          "lastHitLabel": "2 days ago",
           "heat": "hot",
           "recommendation": "Keep lateral delts and rear delts visible for the shoulder-width goal."
         },
@@ -195,9 +199,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "chest",
           "label": "Chest",
           "priority": "Upper-chest priority",
-          "recentSets": 8,
+          "recentSets": 7,
           "lastHit": "2026-07-17",
-          "lastHitLabel": "5 days ago",
+          "lastHitLabel": "6 days ago",
           "heat": "hot",
           "recommendation": "Add pressing or fly work if chest has not shown up recently."
         },
@@ -207,7 +211,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "Arm detail",
           "recentSets": 14,
           "lastHit": "2026-07-21",
-          "lastHitLabel": "1 day ago",
+          "lastHitLabel": "2 days ago",
           "heat": "hot",
           "recommendation": "Keep curls in the rotation, but do not let arms crowd out chest or legs."
         },
@@ -217,7 +221,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "Arm mass",
           "recentSets": 14,
           "lastHit": "2026-07-20",
-          "lastHitLabel": "2 days ago",
+          "lastHitLabel": "3 days ago",
           "heat": "hot",
           "recommendation": "Use pushdowns or overhead work to keep arms full while cutting."
         },
@@ -227,7 +231,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "Lean-look priority",
           "recentSets": 14,
           "lastHit": "2026-07-21",
-          "lastHitLabel": "1 day ago",
+          "lastHitLabel": "2 days ago",
           "heat": "hot",
           "recommendation": "Keep direct core work frequent while the cut reveals definition."
         },
@@ -237,7 +241,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "Balance priority",
           "recentSets": 6,
           "lastHit": "2026-07-21",
-          "lastHitLabel": "1 day ago",
+          "lastHitLabel": "2 days ago",
           "heat": "solid",
           "recommendation": "Do not let the aesthetics push turn into skipping legs."
         },
