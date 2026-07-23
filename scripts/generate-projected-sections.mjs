@@ -524,8 +524,8 @@ function buildCareerData() {
   const starPracticeDone = starStories.includes('[x] Fill in all metric placeholders')
   const behavioralStoryCount = starStoryCount || 7
   const careerProjection = {
-    headline: 'Career command center',
-    targetSummary: `${targetRole} in NYC or remote-first, with ${compTarget} target comp and LifeArc as the lead proof asset.`,
+    headline: 'Career',
+    targetSummary: '',
     categories: [
       {
         id: 'current-job',

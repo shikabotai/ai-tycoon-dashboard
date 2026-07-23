@@ -2021,18 +2021,21 @@ button {
 
 .career-hero {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) minmax(260px, 0.36fr);
+  grid-template-columns: auto minmax(0, 1fr);
   gap: 16px;
-  align-items: stretch;
-  padding: 18px;
-  background:
-    linear-gradient(135deg, rgba(103, 224, 178, 0.12), rgba(255, 255, 255, 0) 38%),
-    linear-gradient(270deg, rgba(255, 174, 96, 0.08), rgba(255, 255, 255, 0) 44%),
-    linear-gradient(180deg, rgba(18, 23, 31, 0.94), rgba(7, 10, 15, 0.95));
+  align-items: center;
+  padding: 14px 16px;
 }
 
 .career-hero .back-button {
   align-self: start;
+}
+
+.career-hero h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: 1.35rem;
+  line-height: 1.1;
 }
 
 .career-hero-copy,

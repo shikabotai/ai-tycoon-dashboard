@@ -2194,36 +2194,12 @@ function App() {
     const categories = career?.categories ?? []
     const prompts = career?.prompts ?? currentPersonalData.missingData ?? []
     const statusLabel = (status: string) => status.replace('-', ' ')
-    const totalSections = categories.reduce((sum, category) => sum + category.sections.length, 0)
-    const activeSections = categories.reduce((sum, category) => sum + category.sections.filter((section) => section.status === 'active' || section.status === 'done').length, 0)
 
     return (
       <section className="career-page" aria-label="Career dashboard">
         <section className="career-hero">
           <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
-          <div className="career-hero-copy">
-            <span>Career command center</span>
-            <strong>{career?.headline ?? 'Career dashboard'}</strong>
-            <p>{career?.targetSummary ?? currentPersonalData.heroSummary}</p>
-          </div>
-          <aside className="career-target-card">
-            <span>Open-ended tracker</span>
-            <strong>{totalSections} sections</strong>
-            <p>{activeSections} sections are active or ready. This page tracks direction, proof, and next actions without pretending career has a fixed finish line.</p>
-          </aside>
-        </section>
-
-        <section className="career-category-overview" aria-label="Career categories">
-          {categories.map((category) => (
-            <article key={category.id} className={`career-category-card ${category.id}`}>
-              <div>
-                <span>{category.title}</span>
-                <strong>{category.sections.length} sections</strong>
-              </div>
-              <p>{category.summary}</p>
-              <small>Track status, evidence, and next action</small>
-            </article>
-          ))}
+          <h2>Career</h2>
         </section>
 
         <section className="career-category-stack" aria-label="Career categories">

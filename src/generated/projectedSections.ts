@@ -502,8 +502,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       }
     ],
     "career": {
-      "headline": "Career command center",
-      "targetSummary": "SWE II / SWE III · Full-Stack · Backend · ML Engineer in NYC or remote-first, with $140k–$200k+ TC target comp and LifeArc as the lead proof asset.",
+      "headline": "Career",
+      "targetSummary": "",
       "categories": [
         {
           "id": "current-job",
