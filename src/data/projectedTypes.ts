@@ -143,7 +143,6 @@ export type CareerSectionProjection = {
   id: string
   label: string
   status: CareerSectionStatus
-  progress: number
   value: string
   detail: string
   nextAction: string
@@ -154,14 +153,12 @@ export type CareerCategoryProjection = {
   id: 'current-job' | 'job-search' | 'portfolio'
   title: string
   summary: string
-  progress: number
   sections: CareerSectionProjection[]
 }
 
 export type CareerProjection = {
   headline: string
   targetSummary: string
-  overallProgress: number
   categories: CareerCategoryProjection[]
   prompts: ProjectedContextItem[]
 }
