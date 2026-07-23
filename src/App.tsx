@@ -1027,6 +1027,12 @@ function App() {
   const [identityQualityEdits, setIdentityQualityEdits] = useState<IdentityQuality[]>(() => loadStoredIdentityQualities([]))
   const [identityScoresEditable, setIdentityScoresEditable] = useState(false)
   const [educationAlternativesOpen, setEducationAlternativesOpen] = useState(false)
+  const [expandedCareerCategories, setExpandedCareerCategories] = useState<Record<string, boolean>>({
+    'current-job': true,
+    'job-search': false,
+    portfolio: false,
+  })
+  const [expandedCareerSections, setExpandedCareerSections] = useState<Record<string, boolean>>({})
   const dashboardData = useDashboardData()
   const appMode: AppMode = isBusinessPage(currentPage) ? 'business' : 'personal'
   const personalSection: PersonalSection = isBusinessPage(currentPage) ? 'home' : currentPage
@@ -2194,6 +2200,18 @@ function App() {
     const categories = career?.categories ?? []
     const prompts = career?.prompts ?? currentPersonalData.missingData ?? []
     const statusLabel = (status: string) => status.replace('-', ' ')
+    const toggleCareerCategory = (categoryId: string) => {
+      setExpandedCareerCategories((current) => ({
+        ...current,
+        [categoryId]: !(current[categoryId] ?? false),
+      }))
+    }
+    const toggleCareerSection = (sectionId: string) => {
+      setExpandedCareerSections((current) => ({
+        ...current,
+        [sectionId]: !(current[sectionId] ?? false),
+      }))
+    }
 
     return (
       <section className="career-page" aria-label="Career dashboard">
@@ -2203,31 +2221,59 @@ function App() {
         </section>
 
         <section className="career-category-stack" aria-label="Career categories">
-          {categories.map((category) => (
-            <article key={category.id} className={`career-category-panel ${category.id}`}>
-              <div className="career-panel-head">
-                <strong>{category.title}</strong>
-              </div>
+          {categories.map((category) => {
+            const categoryOpen = expandedCareerCategories[category.id] ?? false
 
-              <div className="career-section-grid">
-                {category.sections.map((section) => (
-                  <article key={section.id} className={`career-section-card ${section.status}`}>
-                    <div className="career-section-topline">
-                      <span>{section.label}</span>
-                      <em>{statusLabel(section.status)}</em>
-                    </div>
-                    <strong>{section.value}</strong>
-                    <p>{section.detail}</p>
-                    <div className="career-next-action">
-                      <span>Next</span>
-                      <p>{section.nextAction}</p>
-                    </div>
-                    <small>{section.source}</small>
-                  </article>
-                ))}
-              </div>
-            </article>
-          ))}
+            return (
+              <article key={category.id} className={`career-category-panel ${category.id}`}>
+                <button
+                  className="career-category-toggle"
+                  type="button"
+                  aria-expanded={categoryOpen}
+                  onClick={() => toggleCareerCategory(category.id)}
+                >
+                  <span>{categoryOpen ? '-' : '+'}</span>
+                  <strong>{category.title}</strong>
+                  <small>{category.sections.length} sections</small>
+                </button>
+
+                {categoryOpen ? (
+                  <div className="career-section-grid">
+                    {category.sections.map((section) => {
+                      const sectionOpen = expandedCareerSections[section.id] ?? false
+
+                      return (
+                        <article key={section.id} className={`career-section-card ${section.status} ${sectionOpen ? 'open' : ''}`}>
+                          <button
+                            className="career-section-toggle"
+                            type="button"
+                            aria-expanded={sectionOpen}
+                            onClick={() => toggleCareerSection(section.id)}
+                          >
+                            <div className="career-section-topline">
+                              <span>{section.label}</span>
+                              <em>{statusLabel(section.status)}</em>
+                            </div>
+                            <strong>{section.value}</strong>
+                          </button>
+                          {sectionOpen ? (
+                            <div className="career-section-body">
+                              <p>{section.detail}</p>
+                              <div className="career-next-action">
+                                <span>Next</span>
+                                <p>{section.nextAction}</p>
+                              </div>
+                              <small>{section.source}</small>
+                            </div>
+                          ) : null}
+                        </article>
+                      )
+                    })}
+                  </div>
+                ) : null}
+              </article>
+            )
+          })}
         </section>
 
         <section className="career-prompt-panel" aria-label="Career data prompts">

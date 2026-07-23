@@ -2184,6 +2184,53 @@ button {
   line-height: 1.06;
 }
 
+.career-category-toggle,
+.career-section-toggle {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.career-category-toggle {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 0;
+}
+
+.career-category-toggle > span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(120, 166, 235, 0.28);
+  border-radius: 999px;
+  color: #d6e5fb;
+  background: rgba(126, 167, 255, 0.1);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.career-category-toggle strong {
+  display: block;
+  color: var(--text);
+  font-size: clamp(1.18rem, 2vw, 1.65rem);
+  line-height: 1.06;
+  overflow-wrap: anywhere;
+}
+
+.career-category-toggle small {
+  color: #b8cef0;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
 .career-section-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2198,10 +2245,31 @@ button {
   display: grid;
   gap: 11px;
   align-content: start;
-  min-height: 248px;
+  min-height: 118px;
   border-color: rgba(120, 166, 235, 0.16);
   background: rgba(6, 11, 19, 0.7);
   padding: 13px;
+}
+
+.career-section-card.open {
+  min-height: 248px;
+}
+
+.career-section-toggle {
+  display: grid;
+  gap: 11px;
+  padding: 0;
+}
+
+.career-section-toggle:hover strong,
+.career-section-toggle:focus-visible strong {
+  color: #ffffff;
+}
+
+.career-category-toggle:focus-visible,
+.career-section-toggle:focus-visible {
+  outline: 2px solid rgba(109, 177, 255, 0.7);
+  outline-offset: 4px;
 }
 
 .career-section-card.done,
@@ -2242,6 +2310,20 @@ button {
 .career-section-card > strong {
   min-height: 38px;
   font-size: 1.04rem;
+}
+
+.career-section-toggle > strong {
+  display: block;
+  min-height: 38px;
+  color: var(--text);
+  font-size: 1.04rem;
+  line-height: 1.16;
+  overflow-wrap: anywhere;
+}
+
+.career-section-body {
+  display: grid;
+  gap: 11px;
 }
 
 .career-next-action {
