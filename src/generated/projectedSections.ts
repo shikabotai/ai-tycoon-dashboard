@@ -445,7 +445,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Promotion narrative risk",
         "value": "Leadership gap",
-        "detail": "Leadership skills and business involvement; technical work is already strong. The dashboard should track visible business involvement, communication, and leadership proof before Sep 18, 2026 — 3-year anniversary.",
+        "detail": "Leadership skills and business involvement; technical work is already strong. Communication is most visible in Sprint meetings, LifeArc weekly calls, LifeArc demos, and talks with executives; target behavior: Be more professional and leader-like so Armando stops seeing Mitchell as a kid.",
         "severity": "watch"
       },
       {
@@ -463,7 +463,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "missingData": [
       {
-        "label": "Live readiness scores",
+        "label": "Live prep metrics",
         "value": "Manual sources only",
         "detail": "Resume variants, GitHub profile, portfolio visits, LinkedIn views, DSA reps, and system-design reps are not yet structured as dated metrics.",
         "severity": "stale"
@@ -484,7 +484,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       },
       {
         "label": "Promotion target",
-        "detail": "Senior SWE or Director of LifeArc decision point with Armando — President of Abacus Intel and direct boss.",
+        "detail": "Senior SWE or Director of LifeArc decision point with Armando — President of Abacus Intel and direct boss; proof packet cadence is Weekly checklist leading up to Sep 18, 2026.",
         "recency": "Sep 18, 2026 — 3-year anniversary",
         "severity": "watch"
       },
@@ -519,7 +519,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "progress": 48,
               "value": "Senior SWE or Director of LifeArc",
               "detail": "Target date is Sep 18, 2026 — 3-year anniversary; decision-maker is Armando — President of Abacus Intel and direct boss. Promotion story is anchored on LifeArc ownership and a target salary move from $90k base + $15k bonus + $10k stock (~$115k TC) to $140k total compensation.",
-              "nextAction": "Close the gap Armando is most likely to care about: Leadership skills and business involvement; technical work is already strong. Also prepare a response to Armando may see communication/social skills as the reason to keep Mitchell as an individual contributor.",
+              "nextAction": "Build a weekly proof packet: technical wins, business involvement, communication moments, and LifeArc evidence. Cadence: Weekly checklist leading up to Sep 18, 2026.",
               "source": "Career Strategy Overview"
             },
             {
@@ -680,8 +680,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         },
         {
           "label": "Leadership case",
-          "value": "Need proof plan",
-          "detail": "Biggest gap: Leadership skills and business involvement; technical work is already strong. Risk to manage: Age/title perception: other developers received Senior title around 3 years, but they were 30+ while Mitchell is much younger. Boss concern: Armando may see communication/social skills as the reason to keep Mitchell as an individual contributor.",
+          "value": "Weekly proof packet",
+          "detail": "Main visibility points: Sprint meetings, LifeArc weekly calls, LifeArc demos, and talks with executives. Leadership target: Be more professional and leader-like so Armando stops seeing Mitchell as a kid. Risk to manage: Age/title perception: other developers received Senior title around 3 years, but they were 30+ while Mitchell is much younger.",
           "severity": "watch"
         },
         {
@@ -693,7 +693,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         {
           "label": "Technical prep metrics",
           "value": "Need counters",
-          "detail": "Add LeetCode solved count, system-design reps, mocks completed, and weak topics so progress can move from guessed to measured.",
+          "detail": "Add LeetCode solved count, system-design reps, mocks completed, and weak topics so the tracker uses real activity instead of guesses.",
           "severity": "stale"
         },
         {

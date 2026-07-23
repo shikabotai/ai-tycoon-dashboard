@@ -2194,7 +2194,6 @@ function App() {
     const categories = career?.categories ?? []
     const prompts = career?.prompts ?? currentPersonalData.missingData ?? []
     const statusLabel = (status: string) => status.replace('-', ' ')
-    const progressStyle = (progress: number) => ({ width: `${Math.max(0, Math.min(progress, 100))}%` })
     const totalSections = categories.reduce((sum, category) => sum + category.sections.length, 0)
     const activeSections = categories.reduce((sum, category) => sum + category.sections.filter((section) => section.status === 'active' || section.status === 'done').length, 0)
 
@@ -2208,24 +2207,21 @@ function App() {
             <p>{career?.targetSummary ?? currentPersonalData.heroSummary}</p>
           </div>
           <aside className="career-target-card">
-            <span>Overall progress</span>
-            <strong>{career?.overallProgress ?? 34}%</strong>
-            <p>{activeSections} of {totalSections} sections are active or ready. Missing details are called out below.</p>
+            <span>Open-ended tracker</span>
+            <strong>{totalSections} sections</strong>
+            <p>{activeSections} sections are active or ready. This page tracks direction, proof, and next actions without pretending career has a fixed finish line.</p>
           </aside>
         </section>
 
-        <section className="career-category-overview" aria-label="Career category progress">
+        <section className="career-category-overview" aria-label="Career categories">
           {categories.map((category) => (
             <article key={category.id} className={`career-category-card ${category.id}`}>
               <div>
                 <span>{category.title}</span>
-                <strong>{category.progress}%</strong>
+                <strong>{category.sections.length} sections</strong>
               </div>
               <p>{category.summary}</p>
-              <div className="career-progress-track" aria-hidden="true">
-                <i style={progressStyle(category.progress)} />
-              </div>
-              <small>{category.sections.length} sections</small>
+              <small>Track status, evidence, and next action</small>
             </article>
           ))}
         </section>
@@ -2236,9 +2232,9 @@ function App() {
               <div className="career-panel-head">
                 <div>
                   <span>{category.title}</span>
-                  <strong>{category.progress}% complete</strong>
+                  <strong>{category.sections.length} tracked sections</strong>
                 </div>
-                <small>{category.sections.length} tracked sections</small>
+                <small>Open-ended career area</small>
               </div>
 
               <div className="career-section-grid">
@@ -2249,9 +2245,6 @@ function App() {
                       <em>{statusLabel(section.status)}</em>
                     </div>
                     <strong>{section.value}</strong>
-                    <div className="career-progress-track" aria-label={`${section.label} ${section.progress}% complete`}>
-                      <i style={progressStyle(section.progress)} />
-                    </div>
                     <p>{section.detail}</p>
                     <div className="career-next-action">
                       <span>Next</span>
