@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import type { CareerProjection, CareerStarStoryProjection, EducationDeadlineProjection, IdentityQualityProjection, ProjectedSection, SystemsTaskProjection, VesselMuscleGroupProjection } from './projectedTypes'
+import type { CareerProjection, CareerStarStoryProjection, ConnectionLaneProjection, ConnectionPersonProjection, ConnectionPriority, EducationDeadlineProjection, IdentityQualityProjection, ProjectedSection, SystemsTaskProjection, VesselMuscleGroupProjection } from './projectedTypes'
 
 const PUNK_RECORDS_ROOT = '/Users/shika/.openclaw/workspace/PunkRecords'
 
@@ -53,6 +53,89 @@ function daysSince(dateLike?: string | null) {
 function countMatches(input: string, needle: string) {
   if (!input || !needle) return 0
   return input.split(needle).length - 1
+}
+
+function stripMarkdown(value: string) {
+  return value
+    .replace(/\*\*/g, '')
+    .replace(/\[\[|\]\]/g, '')
+    .replace(/\u{1F534}|\u{1F7E1}|\u{1F7E2}/gu, '')
+    .replace(/\u202f/g, ' ')
+    .trim()
+}
+
+function priorityFromCell(value: string): ConnectionPriority {
+  if (/active/i.test(value)) return 'active'
+  if (/high|\u{1F534}/iu.test(value)) return 'high'
+  if (/medium|\u{1F7E1}/iu.test(value)) return 'medium'
+  return 'low'
+}
+
+function laneFromCategory(category: string) {
+  if (/romantic/i.test(category)) return 'Romantic'
+  if (/co-?founder|venture/i.test(category)) return 'Co-founders / ventures'
+  if (/coworker|boss|mentor|professional/i.test(category)) return 'Career network'
+  if (/orlando/i.test(category)) return 'Orlando local'
+  if (/hometown|south florida|sf indian|dance team|college|close friend/i.test(category)) return 'Friends and home base'
+  return 'General network'
+}
+
+function nextConnectionAction(person: string, category: string, lastContact: string, lane: string) {
+  if (/romantic/i.test(category)) return 'Keep the active thread warm with one simple plan or check-in.'
+  if (/co-?founder|venture/i.test(category)) return 'Add one non-work touchpoint around the next venture conversation.'
+  if (/coworker|boss|mentor|professional/i.test(category)) return 'Create one lightweight work or career-context touchpoint.'
+  if (/orlando/i.test(`${category} ${lane}`)) return 'Turn this from surface-level into one real local hangout.'
+  if (/2026-01-01|winter break|college reunion/i.test(lastContact)) return `Send ${person} one low-friction catch-up text.`
+  if (/home visits/i.test(lastContact)) return 'Anchor the next touchpoint around the next South Florida visit.'
+  return `Send ${person} one specific, low-pressure check-in.`
+}
+
+function parseConnectionsTable(markdown: string): ConnectionPersonProjection[] {
+  return markdown
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith('|') && !line.includes('---') && !line.includes('Person | Category'))
+    .map((line) => line.split('|').slice(1, -1).map(stripMarkdown))
+    .filter((cells) => cells.length >= 6)
+    .map(([person, category, location, closeness, lastContact, priorityCell]) => {
+      const lane = laneFromCategory(category)
+      const priority = priorityFromCell(priorityCell)
+      const dormant = !/active|work|weekly|late mar 2026|home visits/i.test(lastContact) && priority !== 'low'
+      return {
+        id: slugify(`${person}-${category}`),
+        person,
+        category,
+        location,
+        closeness,
+        lastContact,
+        priority,
+        lane,
+        nextAction: nextConnectionAction(person, category, lastContact, lane),
+        dormant,
+      }
+    })
+}
+
+function buildConnectionLanes(people: ConnectionPersonProjection[]): ConnectionLaneProjection[] {
+  const laneOrder = ['Romantic', 'Friends and home base', 'Co-founders / ventures', 'Career network', 'Orlando local', 'General network']
+  return laneOrder
+    .map((lane) => {
+      const lanePeople = people.filter((person) => person.lane === lane)
+      const strongest = lanePeople
+        .filter((person) => person.priority === 'active' || person.priority === 'high' || /high/i.test(person.closeness))
+        .slice(0, 3)
+      const dormant = lanePeople.filter((person) => person.dormant).slice(0, 3)
+      const lead = dormant[0] ?? strongest[0] ?? lanePeople[0]
+      return {
+        id: slugify(lane),
+        title: lane,
+        count: lanePeople.length,
+        strongest,
+        dormant,
+        nextAction: lead ? lead.nextAction : 'Add people to this lane before it can produce a next action.',
+      }
+    })
+    .filter((lane) => lane.count > 0)
 }
 
 function parseOperationsTasks(markdown: string): SystemsTaskProjection[] {
@@ -1151,5 +1234,68 @@ export function buildRelationshipsData(): ProjectedSection {
       'This page stays intentionally lighter than the execution-heavy sections.',
     ],
     freshness: summarizeFreshness('Relationship planning docs', 0, 45),
+  }
+}
+
+export function buildConnectionsData(): ProjectedSection {
+  const connections = readPunkFile('Connections/Connections MOC.md')
+  const careerNetworking = readPunkFile('Career/Networking/Contact Tracker.md')
+  const family = readPunkFile('Family/Family MOC.md')
+  const people = parseConnectionsTable(connections)
+  const lanes = buildConnectionLanes(people)
+  const highPriority = people.filter((person) => person.priority === 'active' || person.priority === 'high')
+  const dormantImportant = people.filter((person) => person.dormant).slice(0, 5)
+  const localBase = people.filter((person) => /orlando/i.test(`${person.location} ${person.category}`)).slice(0, 5)
+  const topReachOuts = [
+    ...people.filter((person) => person.priority === 'active'),
+    ...dormantImportant,
+    ...highPriority.filter((person) => !person.dormant),
+    ...localBase,
+  ]
+    .filter((person, index, list) => list.findIndex((item) => item.id === person.id) === index)
+    .slice(0, 3)
+  const expectedProfiles = Math.max(0, (connections.match(/├──|└──/g) ?? []).length - 1)
+  const existingProfiles = people.length
+  const careerContacts = careerNetworking.match(/\| Total contacts \|\s*(\d+)/)?.[1] ?? '0'
+  const familyPeople = countMatches(family, '|') > 0 ? countMatches(family, '\n|') - 2 : 0
+
+  return {
+    heroSummary: `${people.length} mapped people, ${topReachOuts.length} reach-outs, ${lanes.length} lanes.`,
+    summaryCards: [
+      { label: 'Mapped people', value: `${people.length}`, note: `${lanes.length} life lanes from Connections MOC.` },
+      { label: 'Top reach-outs', value: `${topReachOuts.length}`, note: topReachOuts[0]?.nextAction ?? 'No reach-out candidates yet.' },
+      { label: 'Dormant important', value: `${dormantImportant.length}`, note: dormantImportant[0] ? `${dormantImportant[0].person}: ${dormantImportant[0].lastContact}` : 'No dormant high-priority ties found.' },
+      { label: 'Orlando local base', value: `${localBase.length}`, note: localBase[0]?.nextAction ?? 'Add local connections or hangout targets.' },
+      { label: 'Career contacts', value: careerContacts, note: 'Career Networking contact tracker is still mostly a template.', stale: careerContacts === '0' },
+      { label: 'Source depth', value: `${existingProfiles}/${expectedProfiles || existingProfiles}`, note: 'The MOC references future profile folders; most individual notes are not present yet.', stale: expectedProfiles > existingProfiles },
+    ],
+    highlights: [
+      'Pick three people to touch this week.',
+      'Use lanes to see where the network is strong, thin, local, or dormant.',
+      'Keep Relationships for deeper family/partner meaning; use Connections as the operational social graph.',
+    ],
+    freshness: summarizeFreshness('Connections MOC', 0, 60),
+    blockers: [
+      { label: 'Profile depth', value: 'MOC-only', detail: 'The source references individual connection profiles, but the current folder has only the Connections MOC.', severity: 'watch' },
+      { label: 'Career CRM', value: `${careerContacts} contacts`, detail: 'Professional contact tracker exists but has no real contact rows yet.', severity: 'stale' },
+    ],
+    missingData: [
+      { label: 'Last-touch precision', value: 'Mixed formats', detail: 'Some last-contact values are dates, some are broad phrases like work or home visits.', severity: 'watch' },
+      { label: 'Next actions', value: 'Inferred', detail: 'Next actions are currently inferred from category and recency until profile notes exist.', severity: 'watch' },
+      { label: 'Family bridge', value: `${familyPeople} rows nearby`, detail: 'Family data exists in a separate category and can be joined more deeply later.', severity: 'watch' },
+    ],
+    connections: {
+      headline: 'Reach-out radar + life lanes',
+      posture: 'Weekly touchpoints',
+      topReachOuts,
+      lanes,
+      localBase,
+      dormantImportant,
+      sourceCoverage: {
+        existingProfiles,
+        expectedProfiles: expectedProfiles || existingProfiles,
+        note: 'Build individual profiles later only for people who matter enough to track context.',
+      },
+    },
   }
 }

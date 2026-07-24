@@ -227,6 +227,31 @@ export const projectedDashboardModel: Partial<Record<PersonalProjectionKey, Proj
       { title: 'Keep the page minimal', body: 'Future integrations should summarize, not expose raw notes.', sourceCardIndex: 5 },
     ],
   },
+  connections: {
+    headline: 'Reach-out radar and life-lane graph',
+    metrics: [
+      { label: 'Mapped people', sourceCardIndex: 0, priority: 'good' },
+      { label: 'Reach-outs', sourceCardIndex: 1, priority: 'good' },
+      { label: 'Dormant ties', sourceCardIndex: 2, priority: 'watch' },
+      { label: 'Local base', sourceCardIndex: 3, priority: 'watch' },
+    ],
+    operatingRows: [
+      { title: 'Reach-out radar first', body: 'Answer who deserves a touchpoint this week before showing the whole graph.', sourceCardIndex: 1 },
+      { title: 'Life lanes second', body: 'Sort people by the role they play: friends, co-founders, career, Orlando, home base, and romantic.', sourceCardIndex: 0 },
+      { title: 'Local roots matter', body: 'Orlando ties stay visible because the source notes call out weak local depth.', sourceCardIndex: 3 },
+      { title: 'Do not fake a CRM', body: 'Source depth is limited, so the dashboard shows gaps instead of pretending every profile exists.', sourceCardIndex: 5 },
+    ],
+    evidenceRows: [
+      { title: 'Connections MOC', body: 'Primary source for people, categories, locations, closeness, last contact, and priority.', sourceCardIndex: 0 },
+      { title: 'Career contact tracker', body: 'Professional CRM exists but is still mostly empty.', sourceCardIndex: 4 },
+      { title: 'Profile depth gap', body: 'Individual connection notes are the next source upgrade after the dashboard proves useful.', sourceCardIndex: 5 },
+    ],
+    actionRows: [
+      { title: 'Send the top touchpoint', body: 'Use the first radar item to pick one low-friction message or plan.', sourceCardIndex: 1 },
+      { title: 'Strengthen one local tie', body: 'Choose an Orlando connection and turn surface contact into a concrete hangout.', sourceCardIndex: 3 },
+      { title: 'Create only useful profiles', body: 'Add individual notes for the few people who need real context, not everyone.', sourceCardIndex: 5 },
+    ],
+  },
 }
 
 function severityFromCard(stale?: boolean): ProjectedSignalPriority {

@@ -13,6 +13,7 @@ const PERSONAL_ENDPOINTS = {
   wealth: personalApiPath('/api/personal/wealth'),
   education: personalApiPath('/api/personal/education'),
   relationships: personalApiPath('/api/personal/relationships'),
+  connections: personalApiPath('/api/personal/connections'),
 } as const
 
 export type PersonalProjectionKey = keyof typeof PERSONAL_ENDPOINTS

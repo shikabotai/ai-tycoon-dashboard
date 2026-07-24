@@ -25,7 +25,7 @@ export default defineConfig({
     {
       name: 'punkrecords-projection-api',
       configureServer(server) {
-        const personalRoutes = ['vessel', 'identity', 'systems', 'ventures', 'career', 'knowledge', 'wealth', 'education', 'relationships'] as const
+        const personalRoutes = ['vessel', 'identity', 'systems', 'ventures', 'career', 'knowledge', 'wealth', 'education', 'relationships', 'connections'] as const
         for (const key of personalRoutes) {
           server.middlewares.use(`/api/personal/${key}`, (_req, res) => {
             const section = getProjectedSection(key)

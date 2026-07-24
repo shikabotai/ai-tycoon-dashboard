@@ -266,6 +266,44 @@ export type WealthProjection = {
   }
 }
 
+export type ConnectionPriority = 'active' | 'high' | 'medium' | 'low'
+
+export type ConnectionPersonProjection = {
+  id: string
+  person: string
+  category: string
+  location: string
+  closeness: string
+  lastContact: string
+  priority: ConnectionPriority
+  lane: string
+  nextAction: string
+  dormant: boolean
+}
+
+export type ConnectionLaneProjection = {
+  id: string
+  title: string
+  count: number
+  strongest: ConnectionPersonProjection[]
+  dormant: ConnectionPersonProjection[]
+  nextAction: string
+}
+
+export type ConnectionsProjection = {
+  headline: string
+  posture: string
+  topReachOuts: ConnectionPersonProjection[]
+  lanes: ConnectionLaneProjection[]
+  localBase: ConnectionPersonProjection[]
+  dormantImportant: ConnectionPersonProjection[]
+  sourceCoverage: {
+    existingProfiles: number
+    expectedProfiles: number
+    note: string
+  }
+}
+
 export type ProjectedSection = {
   heroSummary: string
   summaryCards: ProjectedCard[]
@@ -285,4 +323,5 @@ export type ProjectedSection = {
   education?: EducationProjection
   career?: CareerProjection
   wealth?: WealthProjection
+  connections?: ConnectionsProjection
 }

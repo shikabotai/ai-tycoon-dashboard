@@ -1,4 +1,4 @@
-import { buildCareerData, buildEducationData, buildIdentityData, buildKnowledgeData, buildRelationshipsData, buildSystemsData, buildVesselData, buildVenturesData, buildWealthData } from '../data/punkProjection'
+import { buildCareerData, buildConnectionsData, buildEducationData, buildIdentityData, buildKnowledgeData, buildRelationshipsData, buildSystemsData, buildVesselData, buildVenturesData, buildWealthData } from '../data/punkProjection'
 import { attachProjectedDashboard } from '../data/projectedDashboardModel'
 import type { ProjectedSection } from '../data/projectedTypes'
 import type { PersonalProjectionKey } from '../data/personalProjectionClient'
@@ -13,6 +13,7 @@ const PERSONAL_BUILDERS: Record<PersonalProjectionKey, () => ProjectedSection> =
   wealth: buildWealthData,
   education: buildEducationData,
   relationships: buildRelationshipsData,
+  connections: buildConnectionsData,
 }
 
 export function getProjectedSection(key: PersonalProjectionKey): ProjectedSection | null {

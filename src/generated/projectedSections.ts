@@ -3,8 +3,8 @@ import { attachProjectedDashboard } from '../data/projectedDashboardModel'
 import type { ProjectedSection, ProjectionSnapshot } from '../data/projectedTypes'
 
 export const generatedProjectionSnapshot: ProjectionSnapshot = {
-  "generatedAt": "2026-07-24T21:10:25.039Z",
-  "generatedAtLabel": "Jul 24, 2026, 5:10 PM EDT",
+  "generatedAt": "2026-07-24T23:26:22.274Z",
+  "generatedAtLabel": "Jul 24, 2026, 7:26 PM EDT",
   "source": "PunkRecords",
   "updateMode": "Nightly static projection"
 } as ProjectionSnapshot
@@ -152,13 +152,13 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Workout log source",
         "value": "Workout log available",
-        "note": "Latest workout file: 2026-07-22.",
+        "note": "Latest workout file: 2026-07-24.",
         "stale": false
       },
       {
         "label": "Nutrition log source",
-        "value": "95g protein",
-        "note": "1,170 kcal logged. Latest nutrition file: 2026-07-24.",
+        "value": "138g protein",
+        "note": "1,335 kcal logged. Latest nutrition file: 2026-07-24.",
         "stale": false
       },
       {
@@ -173,7 +173,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       }
     ],
     "highlights": [
-      "Latest workout evidence: 2026-07-22",
+      "Latest workout evidence: 2026-07-24",
       "Latest nutrition evidence: 2026-07-24",
       "Cut / recomp, not lean bulk",
       "Mental priority: focus, attention span, meditation, and phone friction",
@@ -190,9 +190,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "back",
           "label": "Back",
           "priority": "V-taper priority",
-          "recentSets": 30,
-          "lastHit": "2026-07-21",
-          "lastHitLabel": "3 days ago",
+          "recentSets": 33,
+          "lastHit": "2026-07-24",
+          "lastHitLabel": "Today",
           "heat": "hot",
           "recommendation": "Keep one vertical pull and one row pattern active each week."
         },
@@ -200,9 +200,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "shoulders",
           "label": "Shoulders",
           "priority": "Width priority",
-          "recentSets": 13,
-          "lastHit": "2026-07-21",
-          "lastHitLabel": "3 days ago",
+          "recentSets": 16,
+          "lastHit": "2026-07-24",
+          "lastHitLabel": "Today",
           "heat": "hot",
           "recommendation": "Keep lateral delts and rear delts visible for the shoulder-width goal."
         },
@@ -210,9 +210,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "chest",
           "label": "Chest",
           "priority": "Upper-chest priority",
-          "recentSets": 7,
-          "lastHit": "2026-07-17",
-          "lastHitLabel": "7 days ago",
+          "recentSets": 16,
+          "lastHit": "2026-07-24",
+          "lastHitLabel": "Today",
           "heat": "hot",
           "recommendation": "Add pressing or fly work if chest has not shown up recently."
         },
@@ -260,10 +260,10 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "cardio",
           "label": "Cardio",
           "priority": "Cut support",
-          "recentSets": 0,
-          "lastHit": null,
-          "lastHitLabel": "No recent log",
-          "heat": "missing",
+          "recentSets": 3,
+          "lastHit": "2026-07-24",
+          "lastHitLabel": "Today",
+          "heat": "hot",
           "recommendation": "Add Zone 2 when fat-loss support is missing from the week."
         }
       ],
@@ -1782,6 +1782,421 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       "label": "Relationship planning docs",
       "ageDays": 0,
       "stale": false
+    }
+  },
+  "connections": {
+    "heroSummary": "20 mapped people, 3 reach-outs, 6 lanes.",
+    "summaryCards": [
+      {
+        "label": "Mapped people",
+        "value": "20",
+        "note": "6 life lanes from Connections MOC."
+      },
+      {
+        "label": "Top reach-outs",
+        "value": "3",
+        "note": "Keep the active thread warm with one simple plan or check-in."
+      },
+      {
+        "label": "Dormant important",
+        "value": "5",
+        "note": "Lohith: 2026-01-01 (college reunion)"
+      },
+      {
+        "label": "Orlando local base",
+        "value": "5",
+        "note": "Keep the active thread warm with one simple plan or check-in."
+      },
+      {
+        "label": "Career contacts",
+        "value": "0",
+        "note": "Career Networking contact tracker is still mostly a template.",
+        "stale": true
+      },
+      {
+        "label": "Source depth",
+        "value": "20/21",
+        "note": "The MOC references future profile folders; most individual notes are not present yet.",
+        "stale": true
+      }
+    ],
+    "highlights": [
+      "Pick three people to touch this week.",
+      "Use lanes to see where the network is strong, thin, local, or dormant.",
+      "Keep Relationships for deeper family/partner meaning; use Connections as the operational social graph."
+    ],
+    "freshness": {
+      "label": "Connections MOC",
+      "ageDays": 0,
+      "stale": false
+    },
+    "blockers": [
+      {
+        "label": "Profile depth",
+        "value": "MOC-only",
+        "detail": "The source references individual connection profiles, but the current folder has only the Connections MOC.",
+        "severity": "watch"
+      },
+      {
+        "label": "Career CRM",
+        "value": "0 contacts",
+        "detail": "Professional contact tracker exists but has no real contact rows yet.",
+        "severity": "stale"
+      }
+    ],
+    "missingData": [
+      {
+        "label": "Last-touch precision",
+        "value": "Mixed formats",
+        "detail": "Some last-contact values are dates, some are broad phrases like work or home visits.",
+        "severity": "watch"
+      },
+      {
+        "label": "Next actions",
+        "value": "Inferred",
+        "detail": "Next actions are currently inferred from category and recency until profile notes exist.",
+        "severity": "watch"
+      },
+      {
+        "label": "Family bridge",
+        "value": "20 rows nearby",
+        "detail": "Family data exists in a separate category and can be joined more deeply later.",
+        "severity": "watch"
+      }
+    ],
+    "connections": {
+      "headline": "Reach-out radar + life lanes",
+      "posture": "Weekly touchpoints",
+      "topReachOuts": [
+        {
+          "id": "melanie-romantic",
+          "person": "Melanie",
+          "category": "Romantic",
+          "location": "Orlando",
+          "closeness": "High — talking 4 months",
+          "lastContact": "Late Mar 2026 (Pokémon Unite)",
+          "priority": "active",
+          "lane": "Romantic",
+          "nextAction": "Keep the active thread warm with one simple plan or check-in.",
+          "dormant": false
+        },
+        {
+          "id": "lohith-close-friend",
+          "person": "Lohith",
+          "category": "Close friend",
+          "location": "Houston",
+          "closeness": "Medium — drifting with distance",
+          "lastContact": "2026-01-01 (college reunion)",
+          "priority": "medium",
+          "lane": "Friends and home base",
+          "nextAction": "Send Lohith one low-friction catch-up text.",
+          "dormant": true
+        },
+        {
+          "id": "mehul-dance-team-close",
+          "person": "Mehul",
+          "category": "Dance team / close",
+          "location": "South Florida",
+          "closeness": "High — co-captain",
+          "lastContact": "2026-01-01 (winter break)",
+          "priority": "high",
+          "lane": "Friends and home base",
+          "nextAction": "Send Mehul one low-friction catch-up text.",
+          "dormant": true
+        }
+      ],
+      "lanes": [
+        {
+          "id": "romantic",
+          "title": "Romantic",
+          "count": 1,
+          "strongest": [
+            {
+              "id": "melanie-romantic",
+              "person": "Melanie",
+              "category": "Romantic",
+              "location": "Orlando",
+              "closeness": "High — talking 4 months",
+              "lastContact": "Late Mar 2026 (Pokémon Unite)",
+              "priority": "active",
+              "lane": "Romantic",
+              "nextAction": "Keep the active thread warm with one simple plan or check-in.",
+              "dormant": false
+            }
+          ],
+          "dormant": [],
+          "nextAction": "Keep the active thread warm with one simple plan or check-in."
+        },
+        {
+          "id": "friends-and-home-base",
+          "title": "Friends and home base",
+          "count": 9,
+          "strongest": [
+            {
+              "id": "josh-close-friend",
+              "person": "Josh",
+              "category": "Close friend",
+              "location": "South Florida",
+              "closeness": "High — old roommate",
+              "lastContact": "Late Mar 2026 (Pokémon Unite)",
+              "priority": "high",
+              "lane": "Friends and home base",
+              "nextAction": "Send Josh one specific, low-pressure check-in.",
+              "dormant": false
+            },
+            {
+              "id": "mehul-dance-team-close",
+              "person": "Mehul",
+              "category": "Dance team / close",
+              "location": "South Florida",
+              "closeness": "High — co-captain",
+              "lastContact": "2026-01-01 (winter break)",
+              "priority": "high",
+              "lane": "Friends and home base",
+              "nextAction": "Send Mehul one low-friction catch-up text.",
+              "dormant": true
+            }
+          ],
+          "dormant": [
+            {
+              "id": "lohith-close-friend",
+              "person": "Lohith",
+              "category": "Close friend",
+              "location": "Houston",
+              "closeness": "Medium — drifting with distance",
+              "lastContact": "2026-01-01 (college reunion)",
+              "priority": "medium",
+              "lane": "Friends and home base",
+              "nextAction": "Send Lohith one low-friction catch-up text.",
+              "dormant": true
+            },
+            {
+              "id": "mehul-dance-team-close",
+              "person": "Mehul",
+              "category": "Dance team / close",
+              "location": "South Florida",
+              "closeness": "High — co-captain",
+              "lastContact": "2026-01-01 (winter break)",
+              "priority": "high",
+              "lane": "Friends and home base",
+              "nextAction": "Send Mehul one low-friction catch-up text.",
+              "dormant": true
+            },
+            {
+              "id": "shravya-college-friend",
+              "person": "Shravya",
+              "category": "College friend",
+              "location": "Texas",
+              "closeness": "Medium",
+              "lastContact": "2026-01-01 (college reunion)",
+              "priority": "medium",
+              "lane": "Friends and home base",
+              "nextAction": "Send Shravya one low-friction catch-up text.",
+              "dormant": true
+            }
+          ],
+          "nextAction": "Send Lohith one low-friction catch-up text."
+        },
+        {
+          "id": "co-founders-ventures",
+          "title": "Co-founders / ventures",
+          "count": 4,
+          "strongest": [
+            {
+              "id": "vj-co-founder-friend",
+              "person": "VJ",
+              "category": "Co-founder + friend",
+              "location": "Seattle",
+              "closeness": "High — dance team + Matchup",
+              "lastContact": "Active (venture)",
+              "priority": "high",
+              "lane": "Co-founders / ventures",
+              "nextAction": "Add one non-work touchpoint around the next venture conversation.",
+              "dormant": false
+            },
+            {
+              "id": "varun-co-founder-friend",
+              "person": "Varun",
+              "category": "Co-founder + friend",
+              "location": "South Florida area",
+              "closeness": "High — dance team + Matchup",
+              "lastContact": "Active (venture)",
+              "priority": "high",
+              "lane": "Co-founders / ventures",
+              "nextAction": "Add one non-work touchpoint around the next venture conversation.",
+              "dormant": false
+            }
+          ],
+          "dormant": [],
+          "nextAction": "Add one non-work touchpoint around the next venture conversation."
+        },
+        {
+          "id": "career-network",
+          "title": "Career network",
+          "count": 4,
+          "strongest": [],
+          "dormant": [],
+          "nextAction": "Create one lightweight work or career-context touchpoint."
+        },
+        {
+          "id": "orlando-local",
+          "title": "Orlando local",
+          "count": 1,
+          "strongest": [],
+          "dormant": [],
+          "nextAction": "Turn this from surface-level into one real local hangout."
+        },
+        {
+          "id": "general-network",
+          "title": "General network",
+          "count": 1,
+          "strongest": [
+            {
+              "id": "sf-indian-group-social-group",
+              "person": "SF Indian group",
+              "category": "Social group",
+              "location": "South Florida",
+              "closeness": "Collective close",
+              "lastContact": "Home visits",
+              "priority": "high",
+              "lane": "General network",
+              "nextAction": "Anchor the next touchpoint around the next South Florida visit.",
+              "dormant": false
+            }
+          ],
+          "dormant": [],
+          "nextAction": "Anchor the next touchpoint around the next South Florida visit."
+        }
+      ],
+      "localBase": [
+        {
+          "id": "melanie-romantic",
+          "person": "Melanie",
+          "category": "Romantic",
+          "location": "Orlando",
+          "closeness": "High — talking 4 months",
+          "lastContact": "Late Mar 2026 (Pokémon Unite)",
+          "priority": "active",
+          "lane": "Romantic",
+          "nextAction": "Keep the active thread warm with one simple plan or check-in.",
+          "dormant": false
+        },
+        {
+          "id": "david-orlando-friend",
+          "person": "David",
+          "category": "Orlando friend",
+          "location": "Orlando",
+          "closeness": "Low — haven't hung out",
+          "lastContact": "2026-01-01 (college reunion)",
+          "priority": "low",
+          "lane": "Orlando local",
+          "nextAction": "Turn this from surface-level into one real local hangout.",
+          "dormant": false
+        },
+        {
+          "id": "jinan-coworker",
+          "person": "Jinan",
+          "category": "Coworker",
+          "location": "Orlando",
+          "closeness": "Surface",
+          "lastContact": "Work",
+          "priority": "low",
+          "lane": "Career network",
+          "nextAction": "Create one lightweight work or career-context touchpoint.",
+          "dormant": false
+        },
+        {
+          "id": "jennifer-coworker",
+          "person": "Jennifer",
+          "category": "Coworker",
+          "location": "Orlando",
+          "closeness": "Surface",
+          "lastContact": "Work",
+          "priority": "low",
+          "lane": "Career network",
+          "nextAction": "Create one lightweight work or career-context touchpoint.",
+          "dormant": false
+        },
+        {
+          "id": "alejandro-coworker",
+          "person": "Alejandro",
+          "category": "Coworker",
+          "location": "Orlando",
+          "closeness": "Surface",
+          "lastContact": "Work",
+          "priority": "low",
+          "lane": "Career network",
+          "nextAction": "Create one lightweight work or career-context touchpoint.",
+          "dormant": false
+        }
+      ],
+      "dormantImportant": [
+        {
+          "id": "lohith-close-friend",
+          "person": "Lohith",
+          "category": "Close friend",
+          "location": "Houston",
+          "closeness": "Medium — drifting with distance",
+          "lastContact": "2026-01-01 (college reunion)",
+          "priority": "medium",
+          "lane": "Friends and home base",
+          "nextAction": "Send Lohith one low-friction catch-up text.",
+          "dormant": true
+        },
+        {
+          "id": "mehul-dance-team-close",
+          "person": "Mehul",
+          "category": "Dance team / close",
+          "location": "South Florida",
+          "closeness": "High — co-captain",
+          "lastContact": "2026-01-01 (winter break)",
+          "priority": "high",
+          "lane": "Friends and home base",
+          "nextAction": "Send Mehul one low-friction catch-up text.",
+          "dormant": true
+        },
+        {
+          "id": "shravya-college-friend",
+          "person": "Shravya",
+          "category": "College friend",
+          "location": "Texas",
+          "closeness": "Medium",
+          "lastContact": "2026-01-01 (college reunion)",
+          "priority": "medium",
+          "lane": "Friends and home base",
+          "nextAction": "Send Shravya one low-friction catch-up text.",
+          "dormant": true
+        },
+        {
+          "id": "teja-college-friend",
+          "person": "Teja",
+          "category": "College friend",
+          "location": "Chicago",
+          "closeness": "Medium",
+          "lastContact": "2026-01-01 (college reunion)",
+          "priority": "medium",
+          "lane": "Friends and home base",
+          "nextAction": "Send Teja one low-friction catch-up text.",
+          "dormant": true
+        },
+        {
+          "id": "anjali-college-friend-josh-s-gf",
+          "person": "Anjali",
+          "category": "College friend (Josh's GF)",
+          "location": "South Florida (lives with Josh)",
+          "closeness": "Medium",
+          "lastContact": "2026-01-01 (college reunion)",
+          "priority": "medium",
+          "lane": "Friends and home base",
+          "nextAction": "Send Anjali one low-friction catch-up text.",
+          "dormant": true
+        }
+      ],
+      "sourceCoverage": {
+        "existingProfiles": 20,
+        "expectedProfiles": 21,
+        "note": "Build individual profiles later only for people who matter enough to track context."
+      }
     }
   }
 } as Partial<Record<PersonalProjectionKey, ProjectedSection>>
