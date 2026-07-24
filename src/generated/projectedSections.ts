@@ -108,6 +108,10 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         {
           "label": "Jul 23",
           "score": 5.3
+        },
+        {
+          "label": "Jul 24",
+          "score": 5.3
         }
       ],
       "nightlyChanges": [
@@ -127,7 +131,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "reason": "Personal Decision Engine / Ideal Self refreshed; current gap: Habits Overview — phone elimination protocol"
         }
       ],
-      "lastUpdatedLabel": "Nightly source refresh: Jul 23"
+      "lastUpdatedLabel": "Nightly source refresh: Jul 24"
     }
   },
   "vessel": {
@@ -1301,7 +1305,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "dueAt": "2026-08-06T23:59:00-04:00",
           "internalTarget": "2026-08-06T23:59:00-04:00",
           "kind": "exam",
-          "status": "later"
+          "status": "soon"
         }
       ],
       "planNote": "The default map favors ML core requirements plus agent-builder systems depth. Use alternatives when workload, specialization fit, or interests change."
