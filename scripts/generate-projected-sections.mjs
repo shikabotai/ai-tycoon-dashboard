@@ -882,7 +882,6 @@ function buildWealthData() {
     heroSummary: 'Wealth is a money scoreboard: current net worth, growth over time, monthly surplus, and the real value of work hours after expenses.',
     summaryCards: [
       { label: 'Current net worth', value: currentNetWorth, note: 'Mitchell supplied this as the working current estimate on July 23, 2026.' },
-      { label: 'Baseline net worth', value: '$100,600', note: 'Punk Records baseline from March 2026, kept for growth comparison.' },
       { label: 'Monthly net income', value: monthlyNetIncome, note: 'Punk Records W-2 net income estimate.' },
       { label: 'Monthly expenses', value: monthlyExpenses, note: 'Using the Punk Records fixed + variable monthly budget estimate.' },
       { label: 'Monthly surplus', value: monthlySurplus, note: 'Net income minus estimated expenses before hourly split.' },
@@ -896,16 +895,16 @@ function buildWealthData() {
     missingData: [
       { label: 'Job hours', value: 'Need weekly average', detail: 'Needed to calculate real hourly value from saved money.', severity: 'watch' },
       { label: 'Freelance hours', value: 'Need weekly average', detail: 'Track separately from job hours so paid side work does not blur the W-2 picture.', severity: 'watch' },
-      { label: 'Net-worth history', value: 'Need monthly snapshots', detail: 'The page has March 2026 and current estimates, but needs ongoing monthly entries for a real trend.', severity: 'watch' },
+      { label: 'Net-worth history', value: 'Need monthly snapshots', detail: 'Ongoing monthly entries are needed for a real trend line.', severity: 'watch' },
     ],
     wealth: {
       headline: 'Wealth Command Center',
       asOf: 'July 23, 2026',
       accounts: [
         { label: 'Current net worth', value: currentNetWorth, note: 'Working current estimate.' },
-        { label: 'March baseline', value: '$100,600', note: 'Punk Records baseline.' },
-        { label: 'Change since March', value: '+$9,400', note: 'Approximate growth from baseline to current estimate.' },
         { label: 'Liabilities', value: '$0', note: 'Punk Records listed no liabilities.' },
+        { label: 'Monthly saved', value: monthlySurplus, note: 'Estimated surplus available to grow net worth.' },
+        { label: 'Next snapshot', value: 'Pending', note: 'Add the next balance update to start the trend line.' },
       ],
       hourly: {
         monthlyNetIncome,
@@ -922,11 +921,11 @@ function buildWealthData() {
           id: 'net-worth',
           title: 'Net Worth Ledger',
           kicker: 'Scoreboard',
-          summary: 'Track whether total wealth is actually growing, using the March baseline and current estimate as the first two anchors.',
+          summary: 'Track whether total wealth is actually growing with recurring account snapshots.',
           metrics: [
             { label: 'Current', value: currentNetWorth, note: 'Working estimate.' },
-            { label: 'Baseline', value: '$100,600', note: 'March 2026 Punk Records.' },
-            { label: 'Growth', value: '+$9,400', note: 'Approximate change since baseline.' },
+            { label: 'Liabilities', value: '$0', note: 'No liabilities listed in Punk Records.' },
+            { label: 'Next snapshot', value: 'Pending', note: 'Needed before a useful growth chart exists.' },
           ],
           nextAction: 'Add a monthly snapshot row with cash, investments, stock, vehicle, and liabilities.',
         },
