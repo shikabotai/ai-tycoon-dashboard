@@ -6,9 +6,12 @@
   "scripts": {
     "dev": "vite",
     "generate:projections": "node scripts/generate-projected-sections.mjs",
+    "refresh:punkrecords": "node scripts/refresh-punkrecords-site.mjs",
+    "refresh:punkrecords:deploy": "node scripts/refresh-punkrecords-site.mjs --deploy=github-pages",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "deploy:github-pages": "node scripts/deploy-github-pages.mjs",
     "deploy:vercel": "vercel --prod",
     "deploy:netlify": "netlify deploy --build --prod"
   },

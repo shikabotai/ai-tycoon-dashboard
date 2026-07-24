@@ -1,6 +1,13 @@
 import type { PersonalProjectionKey } from '../data/personalProjectionClient'
 import { attachProjectedDashboard } from '../data/projectedDashboardModel'
-import type { ProjectedSection } from '../data/projectedTypes'
+import type { ProjectedSection, ProjectionSnapshot } from '../data/projectedTypes'
+
+export const generatedProjectionSnapshot: ProjectionSnapshot = {
+  "generatedAt": "2026-07-24T21:10:25.039Z",
+  "generatedAtLabel": "Jul 24, 2026, 5:10 PM EDT",
+  "source": "PunkRecords",
+  "updateMode": "Nightly static projection"
+} as ProjectionSnapshot
 
 export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, ProjectedSection>> = {
   "identity": {
@@ -150,8 +157,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       },
       {
         "label": "Nutrition log source",
-        "value": "105g protein",
-        "note": "1,020 kcal logged. Latest nutrition file: 2026-07-23.",
+        "value": "95g protein",
+        "note": "1,170 kcal logged. Latest nutrition file: 2026-07-24.",
         "stale": false
       },
       {
@@ -167,14 +174,14 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "highlights": [
       "Latest workout evidence: 2026-07-22",
-      "Latest nutrition evidence: 2026-07-23",
+      "Latest nutrition evidence: 2026-07-24",
       "Cut / recomp, not lean bulk",
       "Mental priority: focus, attention span, meditation, and phone friction",
       "Looks priority: grooming, skin, hair, style, and event readiness"
     ],
     "freshness": {
       "label": "Vessel evidence",
-      "ageDays": 1,
+      "ageDays": 0,
       "stale": false
     },
     "vessel": {
@@ -290,49 +297,422 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     }
   },
   "systems": {
-    "heroSummary": "Systems is grounded in the Operations Task Board with 0 open checklist items visible and 0 completed ones captured in the source note.",
+    "heroSummary": "3 focus / 5 stale / 23 later",
     "summaryCards": [
       {
-        "label": "Operations board",
-        "value": "0 open",
-        "note": "Derived from checklist items in Operations Task Board."
+        "label": "Focus",
+        "value": "3",
+        "note": "Choose primary resume format & finalize master PDF"
       },
       {
-        "label": "Closed loops",
-        "value": "0 completed",
-        "note": "Completed checklist count from the same operating board."
+        "label": "Cleanup",
+        "value": "5",
+        "note": "Choose primary resume format & finalize master PDF"
       },
       {
-        "label": "Venture surface area",
-        "value": "13 listed lines",
-        "note": "Quick proxy for active venture inventory in Ventures MOC."
+        "label": "Waiting",
+        "value": "5",
+        "note": "Schedule weekly 30-min career review block"
       },
       {
-        "label": "Automation posture",
-        "value": "Manual + AI-assisted",
-        "note": "The systems layer blends human judgment with AI support."
+        "label": "Quick",
+        "value": "C-07",
+        "note": "Choose primary resume format & finalize master PDF"
       },
       {
-        "label": "Operating principle",
-        "value": "Capture > clarify > execute",
-        "note": "The goal is a practical operations layer, not a decorative dashboard."
+        "label": "Done",
+        "value": "18",
+        "note": "Closed source items"
       },
       {
-        "label": "Current systems need",
-        "value": "Better live rollups",
-        "note": "This page is now ready for richer projection modules beyond simple counts.",
-        "stale": true
+        "label": "Ventures",
+        "value": "13",
+        "note": "Source rows"
       }
     ],
     "highlights": [
-      "Operations Task Board is the main systems anchor.",
-      "Ventures MOC helps expose cross-project surface area.",
-      "This page should evolve into the daily operational command layer."
+      "Do these first.",
+      "Clean stale dates.",
+      "Leave the rest queued."
     ],
     "freshness": {
       "label": "Operations board evidence",
       "ageDays": 0,
       "stale": false
+    },
+    "blockers": [
+      {
+        "label": "C-07",
+        "value": "Choose primary resume format & finalize master PDF",
+        "detail": "Career / NOW / 2026-06-04",
+        "severity": "stale"
+      },
+      {
+        "label": "C-02",
+        "value": "Set dated milestones for the dual-track plan",
+        "detail": "Career / NEXT / 2026-05-25",
+        "severity": "stale"
+      },
+      {
+        "label": "C-06",
+        "value": "Create first entries in Application Log + cadence blocks",
+        "detail": "Career / NEXT / 2026-05-25",
+        "severity": "stale"
+      }
+    ],
+    "systems": {
+      "headline": "Current work",
+      "operatingMode": "Source-backed task view",
+      "pressureLabel": "Old dates present",
+      "closureRate": 0,
+      "staleAction": "C-07",
+      "automationPosture": {
+        "label": "Read-only",
+        "detail": "Source rows only.",
+        "nextUpgrade": "Direct edits later."
+      },
+      "topFocus": [
+        {
+          "id": "C-07",
+          "title": "Choose primary resume format & finalize master PDF",
+          "domain": "Career",
+          "lane": "now",
+          "status": "In progress",
+          "dueReview": "2026-06-04",
+          "source": "[[Resume Overview]]",
+          "notes": "Resume creation is now the fifth-highest priority, behind Freon, e-books/newsletter, lectures, and dishwasher setup.",
+          "stale": true,
+          "quick": true
+        },
+        {
+          "id": "E-02",
+          "title": "Start watching the CS7641 machine learning lectures again",
+          "domain": "Education",
+          "lane": "now",
+          "status": "In progress",
+          "dueReview": "2026-06-16",
+          "source": "[[CS7641 Machine Learning Overview]]",
+          "notes": "Lecture catch-up is still important, but now sits behind customer validation and starting the ML discussion.",
+          "stale": true,
+          "quick": false
+        },
+        {
+          "id": "O-10",
+          "title": "[O] Do laundry",
+          "domain": "Operations",
+          "lane": "now",
+          "status": "Not started",
+          "dueReview": "2026-06-18",
+          "source": "Personal logistics",
+          "notes": "Run a full load and clear the clothing friction before it compounds.",
+          "stale": true,
+          "quick": true
+        }
+      ],
+      "nextQueue": [
+        {
+          "id": "C-02",
+          "title": "Set dated milestones for the dual-track plan",
+          "domain": "Career",
+          "lane": "next",
+          "status": "Not started",
+          "dueReview": "2026-05-25",
+          "source": "[[Career Strategy Overview]]",
+          "notes": "Assign concrete dates to resume, networking, applications, and broader career-option building.",
+          "stale": true,
+          "quick": false
+        },
+        {
+          "id": "C-06",
+          "title": "Create first entries in Application Log + cadence blocks",
+          "domain": "Career",
+          "lane": "next",
+          "status": "Not started",
+          "dueReview": "2026-05-25",
+          "source": "[[Job Search Overview]], [[Application Log]]",
+          "notes": "Add the first real entries and define a sustainable recurring cadence.",
+          "stale": true,
+          "quick": false
+        },
+        {
+          "id": "C-03",
+          "title": "Schedule weekly 30-min career review block",
+          "domain": "Career",
+          "lane": "next",
+          "status": "Not scheduled",
+          "dueReview": "Not set",
+          "source": "[[Career Strategy Overview]]",
+          "notes": "Calendar entry + recurring reminder.",
+          "stale": false,
+          "quick": true
+        },
+        {
+          "id": "C-20",
+          "title": "Add LifeArc (and safe assets) to portfolio/GitHub",
+          "domain": "Career",
+          "lane": "next",
+          "status": "Planning",
+          "dueReview": "Not set",
+          "source": "[[LifeArc]], [[Portfolio Overview]]",
+          "notes": "",
+          "stale": false,
+          "quick": false
+        },
+        {
+          "id": "C-21",
+          "title": "Practice each STAR story aloud (90–120s)",
+          "domain": "Career",
+          "lane": "next",
+          "status": "Not started",
+          "dueReview": "Not set",
+          "source": "[[STAR Story Bank]]",
+          "notes": "",
+          "stale": false,
+          "quick": false
+        }
+      ],
+      "waitingOrBlocked": [
+        {
+          "id": "C-03",
+          "title": "Schedule weekly 30-min career review block",
+          "domain": "Career",
+          "lane": "next",
+          "status": "Not scheduled",
+          "dueReview": "Not set",
+          "source": "[[Career Strategy Overview]]",
+          "notes": "Calendar entry + recurring reminder.",
+          "stale": false,
+          "quick": true
+        },
+        {
+          "id": "C-20",
+          "title": "Add LifeArc (and safe assets) to portfolio/GitHub",
+          "domain": "Career",
+          "lane": "next",
+          "status": "Planning",
+          "dueReview": "Not set",
+          "source": "[[LifeArc]], [[Portfolio Overview]]",
+          "notes": "",
+          "stale": false,
+          "quick": false
+        },
+        {
+          "id": "C-27",
+          "title": "Revisit SWOT and adjust every 6 months",
+          "domain": "Career",
+          "lane": "backlog",
+          "status": "Scheduled check TBD",
+          "dueReview": "Not set",
+          "source": "[[SWOT Analysis]]",
+          "notes": "",
+          "stale": false,
+          "quick": false
+        },
+        {
+          "id": "C-29",
+          "title": "Decide on public portfolio site long-term direction",
+          "domain": "Career",
+          "lane": "backlog",
+          "status": "Pending after C-20",
+          "dueReview": "Not set",
+          "source": "[[Portfolio Overview]]",
+          "notes": "",
+          "stale": false,
+          "quick": false
+        },
+        {
+          "id": "F-25",
+          "title": "Prepare to discuss S-Corp viability + crypto tax tooling with CPA",
+          "domain": "Financial",
+          "lane": "next",
+          "status": "Pending",
+          "dueReview": "Not set",
+          "source": "[[Tax Strategy Overview]]",
+          "notes": "",
+          "stale": false,
+          "quick": false
+        }
+      ],
+      "quickWins": [
+        {
+          "id": "C-07",
+          "title": "Choose primary resume format & finalize master PDF",
+          "domain": "Career",
+          "lane": "now",
+          "status": "In progress",
+          "dueReview": "2026-06-04",
+          "source": "[[Resume Overview]]",
+          "notes": "Resume creation is now the fifth-highest priority, behind Freon, e-books/newsletter, lectures, and dishwasher setup.",
+          "stale": true,
+          "quick": true
+        },
+        {
+          "id": "C-03",
+          "title": "Schedule weekly 30-min career review block",
+          "domain": "Career",
+          "lane": "next",
+          "status": "Not scheduled",
+          "dueReview": "Not set",
+          "source": "[[Career Strategy Overview]]",
+          "notes": "Calendar entry + recurring reminder.",
+          "stale": false,
+          "quick": true
+        },
+        {
+          "id": "O-10",
+          "title": "[O] Do laundry",
+          "domain": "Operations",
+          "lane": "now",
+          "status": "Not started",
+          "dueReview": "2026-06-18",
+          "source": "Personal logistics",
+          "notes": "Run a full load and clear the clothing friction before it compounds.",
+          "stale": true,
+          "quick": true
+        },
+        {
+          "id": "O-23",
+          "title": "Book Apple appointment to fix AirPod",
+          "domain": "Operations",
+          "lane": "now",
+          "status": "Scheduled",
+          "dueReview": "2026-07-22 6:00 PM",
+          "source": "Personal logistics",
+          "notes": "Apple / Genius Bar appointment for AirPods is scheduled for Wednesday, 2026-07-22 at 6:00 PM.",
+          "stale": true,
+          "quick": true
+        },
+        {
+          "id": "O-25",
+          "title": "Buy suit pants this weekend",
+          "domain": "Operations",
+          "lane": "now",
+          "status": "Not started",
+          "dueReview": "2026-07-14",
+          "source": "Personal logistics / wardrobe",
+          "notes": "First try on current suit/travel clothes. Buy replacement clothes Monday or Tuesday only if the current suit/clothes do not fit or look right.",
+          "stale": true,
+          "quick": true
+        }
+      ],
+      "staleItems": [
+        {
+          "id": "C-07",
+          "title": "Choose primary resume format & finalize master PDF",
+          "domain": "Career",
+          "lane": "now",
+          "status": "In progress",
+          "dueReview": "2026-06-04",
+          "source": "[[Resume Overview]]",
+          "notes": "Resume creation is now the fifth-highest priority, behind Freon, e-books/newsletter, lectures, and dishwasher setup.",
+          "stale": true,
+          "quick": true
+        },
+        {
+          "id": "C-02",
+          "title": "Set dated milestones for the dual-track plan",
+          "domain": "Career",
+          "lane": "next",
+          "status": "Not started",
+          "dueReview": "2026-05-25",
+          "source": "[[Career Strategy Overview]]",
+          "notes": "Assign concrete dates to resume, networking, applications, and broader career-option building.",
+          "stale": true,
+          "quick": false
+        },
+        {
+          "id": "C-06",
+          "title": "Create first entries in Application Log + cadence blocks",
+          "domain": "Career",
+          "lane": "next",
+          "status": "Not started",
+          "dueReview": "2026-05-25",
+          "source": "[[Job Search Overview]], [[Application Log]]",
+          "notes": "Add the first real entries and define a sustainable recurring cadence.",
+          "stale": true,
+          "quick": false
+        },
+        {
+          "id": "E-02",
+          "title": "Start watching the CS7641 machine learning lectures again",
+          "domain": "Education",
+          "lane": "now",
+          "status": "In progress",
+          "dueReview": "2026-06-16",
+          "source": "[[CS7641 Machine Learning Overview]]",
+          "notes": "Lecture catch-up is still important, but now sits behind customer validation and starting the ML discussion.",
+          "stale": true,
+          "quick": false
+        },
+        {
+          "id": "F-38",
+          "title": "Cancel Vercel free trial before billing starts",
+          "domain": "Financial",
+          "lane": "next",
+          "status": "Not started",
+          "dueReview": "2026-06-12",
+          "source": "Personal subscriptions / Vercel",
+          "notes": "Mitchell started a 14-day Vercel free trial on 2026-05-29. Cancel before the trial converts to paid.",
+          "stale": true,
+          "quick": false
+        }
+      ],
+      "domainCounts": [
+        {
+          "domain": "Career",
+          "now": 1,
+          "next": 6,
+          "backlog": 8
+        },
+        {
+          "domain": "Education",
+          "now": 1,
+          "next": 0,
+          "backlog": 0
+        },
+        {
+          "domain": "Financial",
+          "now": 0,
+          "next": 7,
+          "backlog": 4
+        },
+        {
+          "domain": "Operations",
+          "now": 7,
+          "next": 5,
+          "backlog": 0
+        },
+        {
+          "domain": "High ROI Ventures",
+          "now": 3,
+          "next": 4,
+          "backlog": 0
+        },
+        {
+          "domain": "AI Personal Assistant",
+          "now": 0,
+          "next": 0,
+          "backlog": 1
+        },
+        {
+          "domain": "Agent Dashboard",
+          "now": 0,
+          "next": 0,
+          "backlog": 1
+        },
+        {
+          "domain": "Family",
+          "now": 0,
+          "next": 0,
+          "backlog": 2
+        },
+        {
+          "domain": "Vessel",
+          "now": 1,
+          "next": 1,
+          "backlog": 4
+        }
+      ]
     }
   },
   "ventures": {
@@ -869,27 +1249,29 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     }
   },
   "wealth": {
-    "heroSummary": "Wealth is a money scoreboard: current net worth, growth over time, monthly surplus, and the real value of work hours after expenses.",
+    "heroSummary": "Wealth starts as a read-only finance cockpit: connect accounts safely, replace estimates with real balances, then budget and track net worth.",
     "summaryCards": [
       {
-        "label": "Current net worth",
+        "label": "Connection mode",
+        "value": "Read-only planned",
+        "note": "Bank login must happen through Plaid Link or a similar aggregator. This app should never collect bank credentials.",
+        "stale": true
+      },
+      {
+        "label": "Current estimate",
         "value": "$110,000",
-        "note": "Mitchell supplied this as the working current estimate on July 23, 2026."
+        "note": "Manual working estimate until linked balances replace it."
       },
       {
-        "label": "Monthly net income",
-        "value": "$5,226",
-        "note": "Punk Records W-2 net income estimate."
+        "label": "Budget baseline",
+        "value": "Not connected",
+        "note": "Actual categories and spend should come from synced transactions, not hardcoded month cards.",
+        "stale": true
       },
       {
-        "label": "Monthly expenses",
-        "value": "$2,750",
-        "note": "Using the Punk Records fixed + variable monthly budget estimate."
-      },
-      {
-        "label": "Monthly surplus",
+        "label": "Monthly surplus estimate",
         "value": "$2,476",
-        "note": "Net income minus estimated expenses before hourly split."
+        "note": "Temporary estimate from known income and expenses. Replace after transaction sync."
       },
       {
         "label": "Real hourly value",
@@ -899,53 +1281,53 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       }
     ],
     "highlights": [
-      "Net worth is the scoreboard.",
-      "Monthly surplus explains whether the scoreboard is improving.",
-      "Real hourly value should use job hours and freelance hours only."
+      "Start read-only: accounts, balances, transactions, and liabilities.",
+      "Use a provider such as Plaid so bank credentials never touch this app.",
+      "Budgeting and net-worth history should unlock only after real account data exists."
     ],
     "missingData": [
       {
-        "label": "Job hours",
-        "value": "Need weekly average",
-        "detail": "Needed to calculate real hourly value from saved money.",
+        "label": "Bank connection backend",
+        "value": "Built, needs keys",
+        "detail": "Backend routes now cover Link token creation, public token exchange, encrypted provider token storage, balance sync, and disconnect.",
         "severity": "watch"
       },
       {
-        "label": "Freelance hours",
-        "value": "Need weekly average",
-        "detail": "Track separately from job hours so paid side work does not blur the W-2 picture.",
+        "label": "Financial database",
+        "value": "Migration ready",
+        "detail": "Schema covers connected items, accounts, transactions, categories, budgets, snapshots, manual assets, liabilities, sync jobs, and audit events.",
         "severity": "watch"
       },
       {
-        "label": "Net-worth history",
-        "value": "Need monthly snapshots",
-        "detail": "Ongoing monthly entries are needed for a real trend line.",
+        "label": "Privacy controls",
+        "value": "Foundation ready",
+        "detail": "Disconnect, token removal, account exclusion fields, manual entries, and audit history are part of the first schema.",
         "severity": "watch"
       }
     ],
     "wealth": {
-      "headline": "Wealth Command Center",
-      "asOf": "July 23, 2026",
+      "headline": "Personal Finance Command Center",
+      "asOf": "Safe build plan",
       "accounts": [
         {
-          "label": "Current net worth",
+          "label": "Bank links",
+          "value": "0 connected",
+          "note": "Use Plaid Link or an equivalent provider, never direct credential collection."
+        },
+        {
+          "label": "Read-only scope",
+          "value": "Required",
+          "note": "Balances, accounts, transactions, liabilities, and investments later. No money movement."
+        },
+        {
+          "label": "Manual estimate",
           "value": "$110,000",
-          "note": "Working current estimate."
+          "note": "Displayed as an estimate until synced account balances exist."
         },
         {
-          "label": "Liabilities",
-          "value": "$0",
-          "note": "Punk Records listed no liabilities."
-        },
-        {
-          "label": "Monthly saved",
-          "value": "$2,476",
-          "note": "Estimated surplus available to grow net worth."
-        },
-        {
-          "label": "Next snapshot",
-          "value": "Pending",
-          "note": "Add the next balance update to start the trend line."
+          "label": "Safety gate",
+          "value": "Before real use",
+          "note": "Encryption, webhook validation, no sensitive logs, and deletion controls."
         }
       ],
       "hourly": {
@@ -961,27 +1343,27 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       "panels": [
         {
           "id": "net-worth",
-          "title": "Net Worth Ledger",
-          "kicker": "Scoreboard",
-          "summary": "Track whether total wealth is actually growing with recurring account snapshots.",
+          "title": "Net Worth Tracking",
+          "kicker": "Phase 3",
+          "summary": "Track assets and liabilities from linked accounts plus manual entries, then snapshot monthly so history stays stable.",
           "metrics": [
             {
-              "label": "Current",
-              "value": "$110,000",
-              "note": "Working estimate."
+              "label": "Linked assets",
+              "value": "Cash + investments",
+              "note": "Checking, savings, brokerage, retirement, and other supported balances."
             },
             {
-              "label": "Liabilities",
-              "value": "$0",
-              "note": "No liabilities listed in Punk Records."
+              "label": "Linked liabilities",
+              "value": "Cards + loans",
+              "note": "Credit cards, student loans, auto loans, and mortgages when available."
             },
             {
-              "label": "Next snapshot",
-              "value": "Pending",
-              "note": "Needed before a useful growth chart exists."
+              "label": "Manual entries",
+              "value": "Needed",
+              "note": "Property, vehicles, private assets, crypto, and unsupported debts."
             }
           ],
-          "nextAction": "Add a monthly snapshot row with cash, investments, stock, vehicle, and liabilities."
+          "nextAction": "Add monthly net-worth snapshots only after the linked-account schema and manual account form exist."
         },
         {
           "id": "real-hourly-value",
@@ -1009,49 +1391,100 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         },
         {
           "id": "cashflow",
-          "title": "Cashflow Control",
-          "kicker": "Savings engine",
-          "summary": "Keep the income, expense, and surplus assumptions visible so the page does not drift into fake precision.",
+          "title": "Transaction Sync",
+          "kicker": "Phase 1",
+          "summary": "Replace estimates with provider-synced transactions and balances, then categorize them into a clean monthly cashflow view.",
           "metrics": [
             {
-              "label": "Net income",
-              "value": "$5,226",
-              "note": "Punk Records estimate."
+              "label": "Provider",
+              "value": "Plaid first",
+              "note": "Abstract behind a provider interface so MX or Finicity can be added later."
             },
             {
-              "label": "Expenses",
-              "value": "$2,750",
-              "note": "Using the fixed + variable estimate."
+              "label": "Token flow",
+              "value": "Backend only",
+              "note": "Browser receives Link token, backend stores encrypted access token."
             },
             {
-              "label": "Surplus",
-              "value": "$2,476",
-              "note": "Estimated monthly money kept."
+              "label": "Webhooks",
+              "value": "Required",
+              "note": "Sync updates through verified provider webhooks and background jobs."
             }
           ],
-          "nextAction": "Replace the estimate with a real trailing 30-day spend number when available."
+          "nextAction": "Build backend endpoints for Link token creation, token exchange, account sync, transaction sync, and webhook verification."
+        },
+        {
+          "id": "budgeting",
+          "title": "Budgeting",
+          "kicker": "Phase 2",
+          "summary": "Use synced transactions to build monthly category budgets, recurring bills, cashflow, and category override tools.",
+          "metrics": [
+            {
+              "label": "Categories",
+              "value": "Editable",
+              "note": "Auto-categorize first, then let Mitchell override rules and individual transactions."
+            },
+            {
+              "label": "Bills",
+              "value": "Detect recurring",
+              "note": "Surface recurring subscriptions, utilities, debt payments, and income."
+            },
+            {
+              "label": "Controls",
+              "value": "Private by design",
+              "note": "Exclude accounts from budget or net worth without deleting the connection."
+            }
+          ],
+          "nextAction": "Add budget tables and category override UI after the first transaction sync is working."
         }
       ],
       "prompts": [
         {
-          "label": "Job hours",
-          "value": "Weekly average",
-          "detail": "Needed for real hourly value.",
+          "label": "Provider decision",
+          "value": "Plaid first",
+          "detail": "Good default for US bank linking, OAuth, transactions, balances, liabilities, and investments.",
           "severity": "watch"
         },
         {
-          "label": "Freelance hours",
-          "value": "Weekly average",
-          "detail": "Needed for the separate side-work hourly view.",
+          "label": "Secrets boundary",
+          "value": "Backend only",
+          "detail": "Provider access tokens should never reach the browser and should be encrypted at rest.",
           "severity": "watch"
         },
         {
-          "label": "Monthly snapshot",
-          "value": "Next balance update",
-          "detail": "Needed for the net-worth growth chart.",
+          "label": "Revocation",
+          "value": "Must have",
+          "detail": "Disconnect, delete, and pause sync controls are required before using real accounts.",
           "severity": "watch"
         }
-      ]
+      ],
+      "connectionPlan": {
+        "provider": "Plaid first, provider abstraction later",
+        "safetyPosition": "Read-only financial data only. No money movement, no payments, no transfers.",
+        "status": "Ready to build backend foundation",
+        "steps": [
+          {
+            "label": "1. Link flow",
+            "status": "next",
+            "detail": "Frontend opens Plaid Link from a short-lived backend-created Link token."
+          },
+          {
+            "label": "2. Token exchange",
+            "status": "locked",
+            "detail": "Backend exchanges the public token and stores the provider access token encrypted."
+          },
+          {
+            "label": "3. Sync data",
+            "status": "locked",
+            "detail": "Fetch accounts, balances, transactions, liabilities, and later investments through background jobs."
+          },
+          {
+            "label": "4. Privacy controls",
+            "status": "locked",
+            "detail": "Ship disconnect, pause sync, delete data, account exclusion, and audit history before real use."
+          }
+        ]
+      }
     },
     "freshness": {
       "label": "Wealth scoreboard inputs",

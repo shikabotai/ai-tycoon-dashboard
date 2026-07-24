@@ -12,7 +12,7 @@ const CHAMBER_LABELS: Record<string, string> = {
   reviewer: 'Control E1',
 }
 
-export function useDashboardData(_selectedProjectId?: string | null) {
+export function useDashboardData() {
   const [queueHealth, setQueueHealth] = useState<QueueHealth | null>(null)
   const [pipeline, setPipeline] = useState<PipelineRow[]>([])
   const [agents, setAgents] = useState<AgentRow[]>([])
@@ -77,12 +77,15 @@ export function useDashboardData(_selectedProjectId?: string | null) {
 
   useEffect(() => {
     let cancelled = false
-    void load()
+    const initialId = window.setTimeout(() => {
+      if (!cancelled) void load()
+    }, 0)
     const id = window.setInterval(() => {
       if (!cancelled) void load()
     }, 15000)
     return () => {
       cancelled = true
+      window.clearTimeout(initialId)
       window.clearInterval(id)
     }
   }, [load])

@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import type { CareerProjection, CareerStarStoryProjection, EducationDeadlineProjection, IdentityQualityProjection, ProjectedSection, VesselMuscleGroupProjection } from './projectedTypes'
+import type { CareerProjection, CareerStarStoryProjection, EducationDeadlineProjection, IdentityQualityProjection, ProjectedSection, SystemsTaskProjection, VesselMuscleGroupProjection } from './projectedTypes'
 
 const PUNK_RECORDS_ROOT = '/Users/shika/.openclaw/workspace/PunkRecords'
 
@@ -53,6 +53,71 @@ function daysSince(dateLike?: string | null) {
 function countMatches(input: string, needle: string) {
   if (!input || !needle) return 0
   return input.split(needle).length - 1
+}
+
+function parseOperationsTasks(markdown: string): SystemsTaskProjection[] {
+  const tasks: SystemsTaskProjection[] = []
+  let domain = 'Operations'
+  let lane: SystemsTaskProjection['lane'] = 'backlog'
+  let current: SystemsTaskProjection | null = null
+
+  const isDoneStatus = (status: string) => /done|completed|no longer needed|on hold|backlog/i.test(status)
+  const isStaleDue = (value: string) => {
+    const match = value.match(/\d{4}-\d{2}-\d{2}/)
+    if (!match) return false
+    const due = Date.parse(`${match[0]}T23:59:59-04:00`)
+    return Number.isFinite(due) && due < Date.now()
+  }
+
+  for (const line of markdown.split('\n')) {
+    const domainMatch = line.match(/^##\s+(.+?)\s+Domain\s*$/)
+    if (domainMatch) {
+      domain = domainMatch[1].trim()
+      continue
+    }
+
+    const laneMatch = line.match(/^###\s+(NOW|NEXT|BACKLOG)\s*$/)
+    if (laneMatch) {
+      lane = laneMatch[1].toLowerCase() as SystemsTaskProjection['lane']
+      continue
+    }
+
+    const taskMatch = line.match(/^####\s+\[([^\]]+)\]\s+(.+)$/)
+    if (taskMatch) {
+      current = {
+        id: taskMatch[1].trim(),
+        title: taskMatch[2].trim(),
+        domain,
+        lane,
+        status: 'Unknown',
+        dueReview: 'Not set',
+        source: 'Operations Task Board',
+        notes: '',
+        stale: false,
+        quick: false,
+      }
+      tasks.push(current)
+      continue
+    }
+
+    if (!current) continue
+    const fieldMatch = line.match(/^-\s+\*\*(Status|Due\/Review|Source|Notes|Dependencies):\*\*\s*(.*)$/)
+    if (!fieldMatch) continue
+
+    const [, field, value] = fieldMatch
+    if (field === 'Status') current.status = value.trim() || 'Unknown'
+    if (field === 'Due/Review') current.dueReview = value.trim() || 'Not set'
+    if (field === 'Source') current.source = value.trim() || 'Operations Task Board'
+    if (field === 'Notes' || field === 'Dependencies') current.notes = value.trim()
+  }
+
+  return tasks
+    .map((task) => ({
+      ...task,
+      stale: !isDoneStatus(task.status) && isStaleDue(task.dueReview),
+      quick: /quick|text|call|buy|book|schedule|return|laundry|batteries/i.test(`${task.title} ${task.notes}`),
+    }))
+    .filter((task) => !isDoneStatus(task.status))
 }
 
 function summarizeFreshness(label: string, ageDays: number | null, staleAfterDays: number) {
@@ -375,26 +440,73 @@ export function buildIdentityData(): ProjectedSection {
 export function buildSystemsData(): ProjectedSection {
   const operations = readPunkFile('Operations/Operations Task Board.md')
   const ventures = readPunkFile('High ROI Ventures/Ventures MOC.md')
-  const openItems = countMatches(operations, '- [ ]')
-  const completedItems = countMatches(operations, '- [x]')
+  const tasks = parseOperationsTasks(operations)
+  const nowTasks = tasks.filter((task) => task.lane === 'now')
+  const nextTasks = tasks.filter((task) => task.lane === 'next')
+  const topFocus = [
+    ...nowTasks.filter((task) => task.id === 'O-24' || task.id === 'HV-13'),
+    ...nowTasks.filter((task) => task.stale && task.id !== 'O-24' && task.id !== 'HV-13'),
+    ...nowTasks.filter((task) => !task.stale && task.id !== 'O-24' && task.id !== 'HV-13'),
+  ].slice(0, 3)
+  const quickWins = tasks.filter((task) => task.quick && task.lane !== 'backlog').slice(0, 5)
+  const staleItems = tasks.filter((task) => task.stale).slice(0, 5)
+  const waitingOrBlocked = tasks
+    .filter((task) => /waiting|blocked|pending|on hold|scheduled|planning/i.test(`${task.status} ${task.notes}`))
+    .slice(0, 5)
+  const domainCounts = Array.from(new Set(tasks.map((task) => task.domain))).map((domain) => ({
+    domain,
+    now: tasks.filter((task) => task.domain === domain && task.lane === 'now').length,
+    next: tasks.filter((task) => task.domain === domain && task.lane === 'next').length,
+    backlog: tasks.filter((task) => task.domain === domain && task.lane === 'backlog').length,
+  }))
+  const completedItems = countMatches(operations, 'Status:** Done') + countMatches(operations, 'Status:** Completed')
   const ventureMentions = countMatches(ventures, '\n- ')
+  const pressureLabel = staleItems.length > 4
+    ? 'Old dates present'
+    : nowTasks.length > 8
+      ? 'Active list needs pruning'
+      : 'Task list loaded'
 
   return {
-    heroSummary: `Systems is grounded in the Operations Task Board with ${openItems} open checklist items visible and ${completedItems} completed ones captured in the source note.`,
+    heroSummary: `${topFocus.length} focus / ${staleItems.length} stale / ${nextTasks.length} later`,
     summaryCards: [
-      { label: 'Operations board', value: `${openItems} open`, note: 'Derived from checklist items in Operations Task Board.' },
-      { label: 'Closed loops', value: `${completedItems} completed`, note: 'Completed checklist count from the same operating board.' },
-      { label: 'Venture surface area', value: `${ventureMentions} listed lines`, note: 'Quick proxy for active venture inventory in Ventures MOC.' },
-      { label: 'Automation posture', value: 'Manual + AI-assisted', note: 'The systems layer blends human judgment with AI support.' },
-      { label: 'Operating principle', value: 'Capture > clarify > execute', note: 'The goal is a practical operations layer, not a decorative dashboard.' },
-      { label: 'Current systems need', value: 'Better live rollups', note: 'This page is now ready for richer projection modules beyond simple counts.', stale: true },
+      { label: 'Focus', value: `${topFocus.length}`, note: topFocus[0]?.title ?? 'None' },
+      { label: 'Cleanup', value: `${staleItems.length}`, note: staleItems[0]?.title ?? 'None' },
+      { label: 'Waiting', value: `${waitingOrBlocked.length}`, note: waitingOrBlocked[0]?.title ?? 'None' },
+      { label: 'Quick', value: quickWins[0]?.id ?? 'None', note: quickWins[0]?.title ?? 'None' },
+      { label: 'Done', value: `${completedItems}`, note: 'Closed source items' },
+      { label: 'Ventures', value: `${ventureMentions}`, note: 'Source rows' },
     ],
     highlights: [
-      'Operations Task Board is the main systems anchor.',
-      'Ventures MOC helps expose cross-project surface area.',
-      'This page should evolve into the daily operational command layer.',
+      'Do these first.',
+      'Clean stale dates.',
+      'Leave the rest queued.',
     ],
     freshness: summarizeFreshness('Operations board evidence', 0, 14),
+    blockers: staleItems.slice(0, 3).map((task) => ({
+      label: task.id,
+      value: task.title,
+      detail: `${task.domain} / ${task.lane.toUpperCase()} / ${task.dueReview}`,
+      severity: 'stale',
+    })),
+    systems: {
+      headline: 'Current work',
+      operatingMode: 'Source-backed task view',
+      pressureLabel,
+      closureRate: 0,
+      staleAction: staleItems[0]?.id ?? 'None',
+      automationPosture: {
+        label: 'Read-only',
+        detail: 'Source rows only.',
+        nextUpgrade: 'Direct edits later.',
+      },
+      topFocus,
+      nextQueue: nextTasks.slice(0, 5),
+      waitingOrBlocked,
+      quickWins,
+      staleItems,
+      domainCounts,
+    },
   }
 }
 
@@ -779,32 +891,32 @@ export function buildWealthData(): ProjectedSection {
   const monthlySurplus = '$2,476'
 
   return {
-    heroSummary: 'Wealth is a money scoreboard: current net worth, growth over time, monthly surplus, and the real value of work hours after expenses.',
+    heroSummary: 'Wealth starts as a read-only finance cockpit: connect accounts safely, replace estimates with real balances, then budget and track net worth.',
     summaryCards: [
-      { label: 'Current net worth', value: currentNetWorth, note: 'Mitchell supplied this as the working current estimate on July 23, 2026.' },
-      { label: 'Monthly net income', value: monthlyNetIncome, note: 'Punk Records W-2 net income estimate.' },
-      { label: 'Monthly expenses', value: monthlyExpenses, note: 'Using the Punk Records fixed + variable monthly budget estimate.' },
-      { label: 'Monthly surplus', value: monthlySurplus, note: 'Net income minus estimated expenses before hourly split.' },
+      { label: 'Connection mode', value: 'Read-only planned', note: 'Bank login must happen through Plaid Link or a similar aggregator. This app should never collect bank credentials.', stale: true },
+      { label: 'Current estimate', value: currentNetWorth, note: 'Manual working estimate until linked balances replace it.' },
+      { label: 'Budget baseline', value: 'Not connected', note: 'Actual categories and spend should come from synced transactions, not hardcoded month cards.', stale: true },
+      { label: 'Monthly surplus estimate', value: monthlySurplus, note: 'Temporary estimate from known income and expenses. Replace after transaction sync.' },
       { label: 'Real hourly value', value: 'Needs hours', note: 'Track job hours and freelance hours only, then divide monthly surplus by monthly hours.', stale: true },
     ],
     highlights: [
-      'Net worth is the scoreboard.',
-      'Monthly surplus explains whether the scoreboard is improving.',
-      'Real hourly value should use job hours and freelance hours only.',
+      'Start read-only: accounts, balances, transactions, and liabilities.',
+      'Use a provider such as Plaid so bank credentials never touch this app.',
+      'Budgeting and net-worth history should unlock only after real account data exists.',
     ],
     missingData: [
-      { label: 'Job hours', value: 'Need weekly average', detail: 'Needed to calculate real hourly value from saved money.', severity: 'watch' },
-      { label: 'Freelance hours', value: 'Need weekly average', detail: 'Track separately from job hours so paid side work does not blur the W-2 picture.', severity: 'watch' },
-      { label: 'Net-worth history', value: 'Need monthly snapshots', detail: 'Ongoing monthly entries are needed for a real trend line.', severity: 'watch' },
+      { label: 'Bank connection backend', value: 'Not built', detail: 'Needs backend-only Link token creation, public token exchange, encrypted provider token storage, and webhooks.', severity: 'watch' },
+      { label: 'Financial database', value: 'Not built', detail: 'Needs connected items, accounts, transactions, categories, budgets, snapshots, manual assets, and liabilities.', severity: 'watch' },
+      { label: 'Privacy controls', value: 'Required', detail: 'Needs disconnect, pause sync, delete financial data, account exclusion, and audit history before real use.', severity: 'watch' },
     ],
     wealth: {
-      headline: 'Wealth Command Center',
-      asOf: 'July 23, 2026',
+      headline: 'Personal Finance Command Center',
+      asOf: 'Safe build plan',
       accounts: [
-        { label: 'Current net worth', value: currentNetWorth, note: 'Working current estimate.' },
-        { label: 'Liabilities', value: '$0', note: 'Punk Records listed no liabilities.' },
-        { label: 'Monthly saved', value: monthlySurplus, note: 'Estimated surplus available to grow net worth.' },
-        { label: 'Next snapshot', value: 'Pending', note: 'Add the next balance update to start the trend line.' },
+        { label: 'Bank links', value: '0 connected', note: 'Use Plaid Link or an equivalent provider, never direct credential collection.' },
+        { label: 'Read-only scope', value: 'Required', note: 'Balances, accounts, transactions, liabilities, and investments later. No money movement.' },
+        { label: 'Manual estimate', value: currentNetWorth, note: 'Displayed as an estimate until synced account balances exist.' },
+        { label: 'Safety gate', value: 'Before real use', note: 'Encryption, webhook validation, no sensitive logs, and deletion controls.' },
       ],
       hourly: {
         monthlyNetIncome,
@@ -819,20 +931,20 @@ export function buildWealthData(): ProjectedSection {
       panels: [
         {
           id: 'net-worth',
-          title: 'Net Worth Ledger',
-          kicker: 'Scoreboard',
-          summary: 'Track whether total wealth is actually growing with recurring account snapshots.',
+          title: 'Net Worth Tracking',
+          kicker: 'Phase 3',
+          summary: 'Track assets and liabilities from linked accounts plus manual entries, then snapshot monthly so history stays stable.',
           metrics: [
-            { label: 'Current', value: currentNetWorth, note: 'Working estimate.' },
-            { label: 'Liabilities', value: '$0', note: 'No liabilities listed in Punk Records.' },
-            { label: 'Next snapshot', value: 'Pending', note: 'Needed before a useful growth chart exists.' },
+            { label: 'Linked assets', value: 'Cash + investments', note: 'Checking, savings, brokerage, retirement, and other supported balances.' },
+            { label: 'Linked liabilities', value: 'Cards + loans', note: 'Credit cards, student loans, auto loans, and mortgages when available.' },
+            { label: 'Manual entries', value: 'Needed', note: 'Property, vehicles, private assets, crypto, and unsupported debts.' },
           ],
-          nextAction: 'Add a monthly snapshot row with cash, investments, stock, vehicle, and liabilities.',
+          nextAction: 'Add monthly net-worth snapshots only after the linked-account schema and manual account form exist.',
         },
         {
           id: 'real-hourly-value',
           title: 'Money Per Hour',
-          kicker: 'Time value',
+          kicker: 'Phase 4',
           summary: 'Show how much future money each work hour keeps after expenses, without mixing in school or startup time.',
           metrics: [
             { label: 'Monthly saved', value: monthlySurplus, note: 'Net income minus estimated expenses.' },
@@ -843,22 +955,45 @@ export function buildWealthData(): ProjectedSection {
         },
         {
           id: 'cashflow',
-          title: 'Cashflow Control',
-          kicker: 'Savings engine',
-          summary: 'Keep the income, expense, and surplus assumptions visible so the page does not drift into fake precision.',
+          title: 'Transaction Sync',
+          kicker: 'Phase 1',
+          summary: 'Replace estimates with provider-synced transactions and balances, then categorize them into a clean monthly cashflow view.',
           metrics: [
-            { label: 'Net income', value: monthlyNetIncome, note: 'Punk Records estimate.' },
-            { label: 'Expenses', value: monthlyExpenses, note: 'Using the fixed + variable estimate.' },
-            { label: 'Surplus', value: monthlySurplus, note: 'Estimated monthly money kept.' },
+            { label: 'Provider', value: 'Plaid first', note: 'Abstract behind a provider interface so MX or Finicity can be added later.' },
+            { label: 'Token flow', value: 'Backend only', note: 'Browser receives Link token, backend stores encrypted access token.' },
+            { label: 'Webhooks', value: 'Required', note: 'Sync updates through verified provider webhooks and background jobs.' },
           ],
-          nextAction: 'Replace the estimate with a real trailing 30-day spend number when available.',
+          nextAction: 'Build backend endpoints for Link token creation, token exchange, account sync, transaction sync, and webhook verification.',
+        },
+        {
+          id: 'budgeting',
+          title: 'Budgeting',
+          kicker: 'Phase 2',
+          summary: 'Use synced transactions to build monthly category budgets, recurring bills, cashflow, and category override tools.',
+          metrics: [
+            { label: 'Categories', value: 'Editable', note: 'Auto-categorize first, then let Mitchell override rules and individual transactions.' },
+            { label: 'Bills', value: 'Detect recurring', note: 'Surface recurring subscriptions, utilities, debt payments, and income.' },
+            { label: 'Controls', value: 'Private by design', note: 'Exclude accounts from budget or net worth without deleting the connection.' },
+          ],
+          nextAction: 'Add budget tables and category override UI after the first transaction sync is working.',
         },
       ],
       prompts: [
-        { label: 'Job hours', value: 'Weekly average', detail: 'Needed for real hourly value.', severity: 'watch' },
-        { label: 'Freelance hours', value: 'Weekly average', detail: 'Needed for the separate side-work hourly view.', severity: 'watch' },
-        { label: 'Monthly snapshot', value: 'Next balance update', detail: 'Needed for the net-worth growth chart.', severity: 'watch' },
+        { label: 'Provider decision', value: 'Plaid first', detail: 'Good default for US bank linking, OAuth, transactions, balances, liabilities, and investments.', severity: 'watch' },
+        { label: 'Secrets boundary', value: 'Backend only', detail: 'Provider access tokens should never reach the browser and should be encrypted at rest.', severity: 'watch' },
+        { label: 'Revocation', value: 'Must have', detail: 'Disconnect, delete, and pause sync controls are required before using real accounts.', severity: 'watch' },
       ],
+      connectionPlan: {
+        provider: 'Plaid first, provider abstraction later',
+        safetyPosition: 'Read-only financial data only. No money movement, no payments, no transfers.',
+        status: 'Ready to build backend foundation',
+        steps: [
+          { label: '1. Link flow', status: 'next', detail: 'Frontend opens Plaid Link from a short-lived backend-created Link token.' },
+          { label: '2. Token exchange', status: 'locked', detail: 'Backend exchanges the public token and stores the provider access token encrypted.' },
+          { label: '3. Sync data', status: 'locked', detail: 'Fetch accounts, balances, transactions, liabilities, and later investments through background jobs.' },
+          { label: '4. Privacy controls', status: 'locked', detail: 'Ship disconnect, pause sync, delete data, account exclusion, and audit history before real use.' },
+        ],
+      },
     },
     freshness: summarizeFreshness('Wealth scoreboard inputs', 0, 30),
   }

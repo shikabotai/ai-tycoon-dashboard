@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability */
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import { type MutableRefObject, type PointerEvent, useEffect, useMemo, useRef } from 'react'

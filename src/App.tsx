@@ -1,12 +1,26 @@
 import { Suspense, lazy, useEffect, useMemo, useState, type CSSProperties } from 'react'
 import './App.css'
 import { useDashboardData } from './hooks/useDashboardData'
+import {
+  createFinanceLinkToken,
+  deleteFinanceData,
+  disconnectFinanceConnection,
+  exchangeFinancePublicToken,
+  loadFinanceStatus,
+  removeManualFinanceEntry,
+  saveManualFinanceEntry,
+  saveMonthlyBudget,
+  syncFinanceConnection,
+  updateFinanceAccountSettings,
+} from './data/financeApi'
 import { loadProjectedSection, type PersonalProjectionKey } from './data/personalProjectionClient'
+import { generatedProjectionSnapshot } from './generated/projectedSections'
 import type { IdentityQualityProjection, ProjectedDashboard, ProjectedSection as LiveProjectedSection } from './data/projectedTypes'
 import { sendBusinessCommand, sendCommandHandoff } from './data/businessCommandApi'
 import { routeCommand } from './data/commandRouter'
 import type { CommandHandoffResponse } from './server/commandHandoffApi'
 import type { BusinessCommandResponse } from './server/commandRouteApi'
+import type { FinanceStatus } from './server/financeRouteApi'
 
 const AvatarModelScene = lazy(async () => {
   const mod = await import('./components/AvatarModelScene')
@@ -25,6 +39,14 @@ type CommandHistoryEntry = { id: string; text: string; context: string; action?:
 type CommandSuggestion = { label: string; prompt: string }
 type QuickAction = { label: string; detail: string; prompt?: string; page?: AppPage }
 type EmptyStateProps = { label: string; title: string; body: string }
+type ManualFinanceDraft = { type: 'asset' | 'liability'; name: string; category: string; value: string; notes: string }
+type BudgetDraft = { category: string; plannedAmount: string; month: string; notes: string }
+type PlaidLinkMetadata = { institution?: { institution_id?: string; name?: string } }
+type PlaidCreateOptions = {
+  token: string
+  onSuccess: (publicToken: string, metadata: PlaidLinkMetadata) => void
+  onExit?: (error: { error_message?: string } | null) => void
+}
 type CoreDashboardSection = Extract<PersonalSection, 'vessel' | 'identity' | 'systems'>
 type GrowthDashboardSection = Extract<PersonalSection, 'ventures' | 'career' | 'wealth' | 'education' | 'knowledge' | 'relationships'>
 type CoreDashboardDefinition = ProjectedDashboard
@@ -83,6 +105,14 @@ const APP_BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '')
 const AVATAR_MODEL_VERSION = 'model-7-20260712'
 const AVATAR_MODEL_PATH = `${appAssetPath('avatar/control-center-avatar.glb')}?v=${AVATAR_MODEL_VERSION}`
 
+declare global {
+  interface Window {
+    Plaid?: {
+      create: (options: PlaidCreateOptions) => { open: () => void }
+    }
+  }
+}
+
 const DEFAULT_IDENTITY_QUALITIES: IdentityQuality[] = [
   { id: 'discipline', name: 'Discipline', score: 6.2, tenMeans: 'Keeps promises without needing drama or motivation.', nextAction: 'Choose the top task and finish it before drifting.', source: 'Fallback identity projection' },
   { id: 'presence', name: 'Presence', score: 5.4, tenMeans: 'Fully here with people, work, and rest.', nextAction: 'Put the phone away during the next real moment.', source: 'Fallback identity projection' },
@@ -117,6 +147,27 @@ function appAssetPath(path: string) {
   return `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`
 }
 
+function loadPlaidLinkScript() {
+  if (typeof window === 'undefined') return Promise.reject(new Error('Plaid Link requires a browser'))
+  if (window.Plaid) return Promise.resolve()
+
+  return new Promise<void>((resolve, reject) => {
+    const existing = document.querySelector<HTMLScriptElement>('script[src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"]')
+    if (existing) {
+      existing.addEventListener('load', () => resolve(), { once: true })
+      existing.addEventListener('error', () => reject(new Error('Plaid Link script failed to load')), { once: true })
+      return
+    }
+
+    const script = document.createElement('script')
+    script.src = 'https://cdn.plaid.com/link/v2/stable/link-initialize.js'
+    script.async = true
+    script.onload = () => resolve()
+    script.onerror = () => reject(new Error('Plaid Link script failed to load'))
+    document.head.appendChild(script)
+  })
+}
+
 function browserPathForRoute(route: string) {
   if (APP_BASE_PATH) return route === '/' ? `${APP_BASE_PATH}/` : `${APP_BASE_PATH}/#${route}`
   if (!APP_BASE_PATH) return route
@@ -134,7 +185,7 @@ const PERSONAL_NAV_ITEMS: NavItem[] = [
   { page: 'home', label: 'Home', description: 'Operating overview' },
   { page: 'vessel', label: 'Vessel', description: 'Body and performance' },
   { page: 'identity', label: 'Identity', description: 'Mission and self alignment' },
-  { page: 'systems', label: 'Systems', description: 'Tasks, automations, open loops' },
+  { page: 'systems', label: 'Systems', description: 'Current tasks and stale items' },
   { page: 'ventures', label: 'Ventures', description: 'Personal venture strategy' },
   { page: 'career', label: 'Career', description: 'Trajectory and portfolio' },
   { page: 'wealth', label: 'Wealth', description: 'Capital and priorities' },
@@ -170,10 +221,10 @@ const PAGE_DIRECTIVES: Record<AppPage, PageDirective> = {
     cadence: 'Morning and reset moments',
   },
   systems: {
-    outcome: 'Reduce open loops',
-    system: 'Tasks, automations, blockers, and operations pressure surfaced as a control layer.',
-    usefulFor: 'Turning scattered obligations into a small number of executable moves.',
-    cadence: 'Daily command',
+    outcome: 'Keep the task list honest',
+    system: 'Current focus, old dated items, waiting items, and upcoming tasks from PunkRecords.',
+    usefulFor: 'Seeing what needs a real decision without fake priority math.',
+    cadence: 'Daily scan',
   },
   ventures: {
     outcome: 'Aim effort at the highest-upside line',
@@ -301,7 +352,7 @@ const PERSONAL_SECTION_CONTENT: Record<Exclude<PersonalSection, 'home'>, { eyebr
   career: { eyebrow: 'Trajectory and leverage', title: 'Career', summaryCards: ['Career trajectory', 'Portfolio readiness', 'Job search status', 'Next milestone'], highlights: ['Career strategy overviews', 'Portfolio readiness', 'Real repo opportunities'] },
   wealth: { eyebrow: 'Capital and strategy', title: 'Wealth', summaryCards: ['Net worth', 'Cash / liquidity', 'Income snapshot', 'Financial priorities'], highlights: ['Budget and cashflow strategy', 'Current priorities surfaced fast', 'Balanced present and future view'] },
   ventures: { eyebrow: 'Personal venture strategy', title: 'Ventures', summaryCards: ['Priority venture', 'Portfolio snapshot', 'Biggest blocker', 'Next key decision'], highlights: ['Personal venture worldview', 'Priority logic and blockers', 'Separate from Business Command'] },
-  systems: { eyebrow: 'Life operations layer', title: 'Systems', summaryCards: ['Today priorities', 'Task board status', 'Active automations', 'Open loops'], highlights: ['Operations Task Board anchor', 'Automations and stale-item visibility', 'Daily command layer'] },
+  systems: { eyebrow: 'Life operations layer', title: 'Systems', summaryCards: ['Current focus', 'Old dated items', 'Waiting items', 'Upcoming tasks'], highlights: ['PunkRecords source rows', 'Stale dates without fake urgency', 'Simple task triage'] },
   education: { eyebrow: 'Learning and school', title: 'Education', summaryCards: ['Program', 'Courses', 'Upcoming deadlines', 'Learning focus'], highlights: ['Program context', 'Course clarity', 'Visible without taking over the system'] },
   relationships: { eyebrow: 'Family and connection', title: 'Relationships', summaryCards: ['Priority snapshot', 'Connection health', 'Important people', 'Upcoming actions'], highlights: ['Family and partner vision', 'Actionable relationship focus', 'Sensitive content kept minimal'] },
   knowledge: { eyebrow: 'Mental models and references', title: 'Knowledge', summaryCards: ['Learning domains', 'Mental models', 'Recent knowledge', 'Knowledge gaps'], highlights: ['Business, finance, health, psychology', 'Knowledge browser from PunkRecords', 'Built for action'] },
@@ -668,23 +719,23 @@ const CORE_DASHBOARD_DEFINITIONS: Record<CoreDashboardSection, CoreDashboardDefi
     ],
   },
   systems: {
-    headline: 'Life operations command board',
+    headline: 'Systems task view',
     metrics: [
-      { label: 'Open loops', sourceCardIndex: 0, priority: 'watch' },
-      { label: 'Closed loops', sourceCardIndex: 1, priority: 'good' },
-      { label: 'Surface area', sourceCardIndex: 2, priority: 'watch' },
-      { label: 'Automation posture', sourceCardIndex: 3, priority: 'good' },
+      { label: 'Current focus', sourceCardIndex: 0, priority: 'watch' },
+      { label: 'Old dated item', sourceCardIndex: 1, priority: 'watch' },
+      { label: 'Waiting item', sourceCardIndex: 2, priority: 'watch' },
+      { label: 'Small task', sourceCardIndex: 3, priority: 'good' },
     ],
     operatingRows: [
-      { title: 'Task-board pressure', body: 'The Operations Task Board is the control point for what needs capture, clarification, and execution.', sourceCardIndex: 0 },
-      { title: 'Closed-loop rate', body: 'Completed items are the proof that the system is moving, not merely organizing.', sourceCardIndex: 1 },
-      { title: 'Venture surface area', body: 'The systems page watches cross-project sprawl so the control center can compress priorities.', sourceCardIndex: 2 },
-      { title: 'Automation layer', body: 'AI support should reduce open loops while keeping human judgment at approval boundaries.', sourceCardIndex: 3 },
+      { title: 'Current work', body: 'Show the active task that needs attention first.', sourceCardIndex: 0 },
+      { title: 'Old dated item', body: 'Surface stale dates so they can be rescheduled, closed, or removed.', sourceCardIndex: 1 },
+      { title: 'Waiting item', body: 'Keep dependencies visible without turning them into fake urgency.', sourceCardIndex: 2 },
+      { title: 'Small task', body: 'Show one short task when there is an obvious low-friction cleanup move.', sourceCardIndex: 3 },
     ],
     evidenceRows: [
-      { title: 'Operations Task Board', body: 'Primary source for open and completed checklist pressure.', sourceCardIndex: 0 },
-      { title: 'Ventures MOC', body: 'Proxy for how much project surface area the personal operating system must manage.', sourceCardIndex: 2 },
-      { title: 'Business Command boundary', body: 'Live business execution is kept separate so personal systems do not become a noisy ops feed.', sourceCardIndex: 5 },
+      { title: 'Operations Task Board', body: 'Primary source for task rows.', sourceCardIndex: 0 },
+      { title: 'Ventures MOC', body: 'Source context for project-related tasks.', sourceCardIndex: 2 },
+      { title: 'Business Command boundary', body: 'Business execution stays separate from personal tasks.', sourceCardIndex: 5 },
     ],
     actionRows: [
       { title: 'Clarify one open loop', body: 'Turn the most ambiguous open item into a decision, next action, or deletion.', sourceCardIndex: 0 },
@@ -913,6 +964,11 @@ function loadStoredLoginState() {
   }
 }
 
+function loadStoredSession() {
+  if (typeof window === 'undefined') return false
+  return window.localStorage.getItem(SESSION_KEY) === 'true'
+}
+
 function storeLoginState(state: { attempts: number; lockoutUntil: number }) {
   if (typeof window === 'undefined') return
   window.localStorage.setItem(LOGIN_STATE_KEY, JSON.stringify(state))
@@ -1009,14 +1065,14 @@ function storeIdentityQualities(qualities: IdentityQuality[]) {
 }
 
 function App() {
-  const [authed, setAuthed] = useState(false)
+  const [authed, setAuthed] = useState(() => loadStoredSession())
   const [currentPage, setCurrentPage] = useState<AppPage>(() => pageFromBrowserLocation())
   const [commandOpen, setCommandOpen] = useState(false)
   const [commandValue, setCommandValue] = useState('')
   const [login, setLogin] = useState<LoginState>({ username: '', password: '' })
   const [loginError, setLoginError] = useState<string | null>(null)
-  const [attempts, setAttempts] = useState(0)
-  const [lockoutUntil, setLockoutUntil] = useState(0)
+  const [attempts, setAttempts] = useState(() => loadStoredLoginState().attempts)
+  const [lockoutUntil, setLockoutUntil] = useState(() => loadStoredLoginState().lockoutUntil)
   const [now, setNow] = useState(() => Date.now())
   const [commandHistory, setCommandHistory] = useState<CommandHistoryEntry[]>(() => loadStoredCommandHistory())
   const [commandResponse, setCommandResponse] = useState('Control center live. Projection layers active, Business Command ready, and the next move can route from here.')
@@ -1037,21 +1093,29 @@ function App() {
     'net-worth': true,
     'real-hourly-value': false,
     cashflow: false,
+    budgeting: false,
+  })
+  const [financeStatus, setFinanceStatus] = useState<FinanceStatus | null>(null)
+  const [financeBusy, setFinanceBusy] = useState(false)
+  const [financeMessage, setFinanceMessage] = useState('Finance integration is waiting on provider credentials.')
+  const [manualFinanceDraft, setManualFinanceDraft] = useState<ManualFinanceDraft>({
+    type: 'asset',
+    name: '',
+    category: '',
+    value: '',
+    notes: '',
+  })
+  const [budgetDraft, setBudgetDraft] = useState<BudgetDraft>({
+    category: '',
+    plannedAmount: '',
+    month: new Date().toISOString().slice(0, 7),
+    notes: '',
   })
   const dashboardData = useDashboardData()
   const appMode: AppMode = isBusinessPage(currentPage) ? 'business' : 'personal'
   const personalSection: PersonalSection = isBusinessPage(currentPage) ? 'home' : currentPage
   const businessPanel: BusinessPanel = isBusinessPage(currentPage) ? businessPanelFromPage(currentPage) : 'overview'
   const currentPath = PAGE_ROUTES[currentPage]
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const session = window.localStorage.getItem(SESSION_KEY)
-    if (session === 'true') setAuthed(true)
-    const stored = loadStoredLoginState()
-    setAttempts(stored.attempts)
-    setLockoutUntil(stored.lockoutUntil)
-  }, [])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -1078,6 +1142,10 @@ function App() {
   }, [identityQualityEdits])
 
   useEffect(() => {
+    if (currentPage === 'wealth') void refreshFinanceStatus()
+  }, [currentPage])
+
+  useEffect(() => {
     let cancelled = false
 
     async function primeProjections() {
@@ -1100,6 +1168,235 @@ function App() {
       cancelled = true
     }
   }, [])
+
+  async function refreshFinanceStatus() {
+    try {
+      const status = await loadFinanceStatus()
+      setFinanceStatus(status)
+      setFinanceMessage(status.configured ? 'Finance backend is configured for read-only bank linking.' : `Missing ${status.missing.length} finance credential${status.missing.length === 1 ? '' : 's'}.`)
+    } catch (error) {
+      setFinanceMessage(error instanceof Error ? error.message : 'Finance status check failed.')
+    }
+  }
+
+  async function handleConnectFinancialAccounts() {
+    setFinanceBusy(true)
+    setFinanceMessage('Preparing secure bank-link session...')
+
+    try {
+      const tokenResponse = await createFinanceLinkToken()
+      if (tokenResponse.status === 'needs_credentials') {
+        setFinanceMessage(`Still missing: ${tokenResponse.missing.join(', ')}`)
+        await refreshFinanceStatus()
+        return
+      }
+
+      await loadPlaidLinkScript()
+      if (!window.Plaid) throw new Error('Plaid Link did not initialize.')
+
+      const handler = window.Plaid.create({
+        token: tokenResponse.link_token,
+        onSuccess: (publicToken, metadata) => {
+          setFinanceBusy(true)
+          setFinanceMessage('Link complete. Exchanging token on the backend...')
+          void exchangeFinancePublicToken(publicToken, metadata)
+            .then(async (result) => {
+              if (result.status === 'linked') {
+                setFinanceMessage('Institution linked. Use Sync now to pull balances and transactions.')
+              } else if (result.status === 'needs_credentials') {
+                setFinanceMessage(`Token exchange needs: ${result.missing.join(', ')}`)
+              } else {
+                setFinanceMessage(result.message)
+              }
+              await refreshFinanceStatus()
+            })
+            .catch((error) => {
+              setFinanceMessage(error instanceof Error ? error.message : 'Token exchange failed.')
+            })
+            .finally(() => setFinanceBusy(false))
+        },
+        onExit: (error) => {
+          setFinanceBusy(false)
+          setFinanceMessage(error?.error_message ? `Plaid Link exited: ${error.error_message}` : 'Plaid Link closed.')
+        },
+      })
+
+      handler.open()
+    } catch (error) {
+      setFinanceMessage(error instanceof Error ? error.message : 'Could not start account linking.')
+    } finally {
+      setFinanceBusy(false)
+    }
+  }
+
+  async function handleSyncFinance() {
+    const connectionId = financeStatus?.connections.items.find((item) => item.status === 'active')?.id
+    if (!connectionId) {
+      setFinanceMessage('No active connection is ready to sync.')
+      return
+    }
+
+    setFinanceBusy(true)
+    setFinanceMessage('Syncing linked accounts and transactions...')
+    try {
+      const result = await syncFinanceConnection(connectionId)
+      if (result.status === 'synced') {
+        setFinanceMessage(`Synced ${result.accounts ?? 0} account${result.accounts === 1 ? '' : 's'} and ${result.transactions ?? 0} transaction${result.transactions === 1 ? '' : 's'}.`)
+      } else if (result.status === 'needs_credentials') {
+        setFinanceMessage(`Sync needs: ${result.missing.join(', ')}`)
+      } else if (result.status === 'invalid_request' || result.status === 'not_found') {
+        setFinanceMessage(result.message ?? `Sync returned ${result.status}.`)
+      } else {
+        setFinanceMessage(`Sync returned ${result.status}.`)
+      }
+      await refreshFinanceStatus()
+    } catch (error) {
+      setFinanceMessage(error instanceof Error ? error.message : 'Finance sync failed.')
+    } finally {
+      setFinanceBusy(false)
+    }
+  }
+
+  async function handleDisconnectFinance() {
+    const connectionId = financeStatus?.connections.items.find((item) => item.status === 'active' || item.status === 'paused' || item.status === 'relink_required')?.id
+    if (!connectionId) {
+      setFinanceMessage('No connection is available to disconnect.')
+      return
+    }
+
+    setFinanceBusy(true)
+    setFinanceMessage('Disconnecting institution and removing the stored provider token...')
+    try {
+      const result = await disconnectFinanceConnection(connectionId)
+      if (result.status === 'disconnected') {
+        setFinanceMessage('Institution disconnected and stored token removed.')
+      } else if (result.status === 'needs_credentials') {
+        setFinanceMessage(`Disconnect needs: ${result.missing.join(', ')}`)
+      } else if (result.status === 'invalid_request' || result.status === 'not_found') {
+        setFinanceMessage(result.message ?? `Disconnect returned ${result.status}.`)
+      } else {
+        setFinanceMessage(`Disconnect returned ${result.status}.`)
+      }
+      await refreshFinanceStatus()
+    } catch (error) {
+      setFinanceMessage(error instanceof Error ? error.message : 'Finance disconnect failed.')
+    } finally {
+      setFinanceBusy(false)
+    }
+  }
+
+  async function handleSaveManualFinanceEntry() {
+    const value = Number(manualFinanceDraft.value)
+    if (!manualFinanceDraft.name.trim() || !manualFinanceDraft.category.trim() || !Number.isFinite(value)) {
+      setFinanceMessage('Manual entry needs a name, category, and numeric value.')
+      return
+    }
+
+    setFinanceBusy(true)
+    setFinanceMessage('Saving manual finance entry...')
+    try {
+      const result = await saveManualFinanceEntry({
+        type: manualFinanceDraft.type,
+        name: manualFinanceDraft.name,
+        category: manualFinanceDraft.category,
+        value,
+        notes: manualFinanceDraft.notes,
+      })
+      if (result.status === 'saved') {
+        setFinanceMessage('Manual entry saved.')
+        setManualFinanceDraft({ type: 'asset', name: '', category: '', value: '', notes: '' })
+      } else if (result.status === 'needs_credentials') {
+        setFinanceMessage(`Manual entries need: ${result.missing.join(', ')}`)
+      } else if (result.status === 'invalid_request' || result.status === 'not_found') {
+        setFinanceMessage(result.message ?? `Manual entry returned ${result.status}.`)
+      } else {
+        setFinanceMessage(`Manual entry returned ${result.status}.`)
+      }
+      await refreshFinanceStatus()
+    } catch (error) {
+      setFinanceMessage(error instanceof Error ? error.message : 'Manual entry save failed.')
+    } finally {
+      setFinanceBusy(false)
+    }
+  }
+
+  async function handleRemoveManualFinanceEntry(id: string) {
+    setFinanceBusy(true)
+    setFinanceMessage('Removing manual finance entry...')
+    try {
+      const result = await removeManualFinanceEntry(id)
+      setFinanceMessage(result.status === 'deleted' ? 'Manual entry removed.' : `Manual entry delete returned ${result.status}.`)
+      await refreshFinanceStatus()
+    } catch (error) {
+      setFinanceMessage(error instanceof Error ? error.message : 'Manual entry deletion failed.')
+    } finally {
+      setFinanceBusy(false)
+    }
+  }
+
+  async function handleSaveMonthlyBudget() {
+    const plannedAmount = Number(budgetDraft.plannedAmount)
+    if (!budgetDraft.category.trim() || !Number.isFinite(plannedAmount) || plannedAmount < 0) {
+      setFinanceMessage('Budget needs a category and non-negative planned amount.')
+      return
+    }
+
+    setFinanceBusy(true)
+    setFinanceMessage('Saving monthly budget target...')
+    try {
+      const result = await saveMonthlyBudget({
+        category: budgetDraft.category,
+        plannedAmount,
+        month: budgetDraft.month,
+        notes: budgetDraft.notes,
+      })
+      if (result.status === 'saved') {
+        setFinanceMessage('Budget target saved.')
+        setBudgetDraft((current) => ({ ...current, category: '', plannedAmount: '', notes: '' }))
+      } else if (result.status === 'needs_credentials') {
+        setFinanceMessage(`Budgeting needs: ${result.missing.join(', ')}`)
+      } else if (result.status === 'invalid_request' || result.status === 'not_found') {
+        setFinanceMessage(result.message ?? `Budget save returned ${result.status}.`)
+      } else {
+        setFinanceMessage(`Budget save returned ${result.status}.`)
+      }
+      await refreshFinanceStatus()
+    } catch (error) {
+      setFinanceMessage(error instanceof Error ? error.message : 'Budget save failed.')
+    } finally {
+      setFinanceBusy(false)
+    }
+  }
+
+  async function handleToggleFinanceAccount(accountId: string, field: 'includeInBudget' | 'includeInNetWorth', value: boolean) {
+    setFinanceBusy(true)
+    setFinanceMessage('Updating account settings...')
+    try {
+      const result = await updateFinanceAccountSettings({ accountId, [field]: value })
+      setFinanceMessage(result.status === 'saved' ? 'Account settings updated.' : `Account settings returned ${result.status}.`)
+      await refreshFinanceStatus()
+    } catch (error) {
+      setFinanceMessage(error instanceof Error ? error.message : 'Account settings update failed.')
+    } finally {
+      setFinanceBusy(false)
+    }
+  }
+
+  async function handleDeleteFinanceData() {
+    if (!window.confirm('Delete all stored finance rows for this dashboard? This cannot be undone.')) return
+
+    setFinanceBusy(true)
+    setFinanceMessage('Deleting stored finance data...')
+    try {
+      const result = await deleteFinanceData()
+      setFinanceMessage(result.status === 'deleted' ? 'Stored finance data deleted.' : `Delete data returned ${result.status}.`)
+      await refreshFinanceStatus()
+    } catch (error) {
+      setFinanceMessage(error instanceof Error ? error.message : 'Finance data deletion failed.')
+    } finally {
+      setFinanceBusy(false)
+    }
+  }
 
   const lockedOut = lockoutUntil > now
   const commandSuggestions = COMMAND_SUGGESTIONS[appMode]
@@ -1751,6 +2048,7 @@ function App() {
             <span>Signal quality</span>
             <strong>{sourceConfidence(currentPersonalData)}</strong>
             <small>{currentPersonalData.freshness?.label ?? 'Projected records'}</small>
+            <small>{generatedProjectionSnapshot.updateMode}: {generatedProjectionSnapshot.generatedAtLabel}</small>
           </div>
         </article>
 
@@ -1931,6 +2229,129 @@ function App() {
             <div className="identity-chart-labels">
               <span>{firstHistoryPoint?.label}</span>
               <span>{latestHistoryPoint?.label}</span>
+            </div>
+          </article>
+        </section>
+      </section>
+    )
+  }
+
+  function renderSystemsPage() {
+    if (!currentPersonalData) return null
+
+    const systems = currentPersonalData.systems
+    const topFocus = systems?.topFocus ?? []
+    const quickWins = systems?.quickWins ?? []
+    const staleItems = systems?.staleItems ?? []
+    const nextQueue = systems?.nextQueue ?? []
+    const waitingOrBlocked = systems?.waitingOrBlocked ?? []
+    const leadFocus = topFocus[0]
+    const pressureTone = staleItems.length > 0 ? 'watch' : 'clear'
+    const quickMove = quickWins.find((task) => !task.stale) ?? quickWins[0]
+    const visibleTopFocus = topFocus.slice(0, 3)
+    const laterCount = Math.max(0, nextQueue.length + Math.max(0, (systems?.domainCounts ?? []).reduce((sum, domain) => sum + domain.backlog, 0)))
+
+    return (
+      <section className="systems-page" aria-label="Systems dashboard">
+        <section className="systems-hero">
+          <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
+          <div className="systems-hero-copy">
+            <h2>Systems</h2>
+            <p>{visibleTopFocus.length} focus / {staleItems.length} stale / {laterCount} later</p>
+          </div>
+          <aside className={`systems-priority-card ${pressureTone}`}>
+            <span>Lead</span>
+            <strong>{leadFocus ? leadFocus.title : 'No active focus loaded'}</strong>
+            <p>{leadFocus ? `${leadFocus.id} / ${leadFocus.domain}` : 'No current task found.'}</p>
+          </aside>
+        </section>
+
+        <section className="systems-command-board" aria-label="Systems command board">
+          <article className="systems-focus-prime">
+            <div className="revamp-kicker">Focus</div>
+            <h3>Do these first</h3>
+          </article>
+
+          <div className="systems-lane-stack">
+            <article className="systems-lane-panel primary">
+              <div className="systems-panel-head">
+                <div>
+                  <span>Active</span>
+                  <h3>Current focus</h3>
+                </div>
+              </div>
+              <div className="systems-task-list">
+                {visibleTopFocus.length > 0 ? visibleTopFocus.map((task, index) => (
+                  <article key={task.id} className={`systems-task-row priority-${index + 1}${task.stale ? ' stale' : ''}`}>
+                    <div className="systems-task-rank">{index + 1}</div>
+                    <div>
+                      <span>{task.id} / {task.domain}</span>
+                      <strong>{task.title}</strong>
+                      {task.notes ? <p>{task.notes}</p> : null}
+                      <small>{task.dueReview}</small>
+                    </div>
+                  </article>
+                )) : (
+                  <div className="systems-empty-copy">No current focus.</div>
+                )}
+              </div>
+            </article>
+
+            <article className="systems-lane-panel">
+              <div className="systems-panel-head">
+                <div>
+                  <span>Cleanup</span>
+                  <h3>Stale items</h3>
+                </div>
+                <b>{staleItems.length}</b>
+              </div>
+              <div className="systems-mini-list compact">
+                {staleItems.slice(0, 4).map((task) => (
+                  <div key={task.id} className="stale">
+                    <span>{task.id} / {task.domain}</span>
+                    <strong>{task.title}</strong>
+                    <p>{task.dueReview}</p>
+                  </div>
+                ))}
+                {staleItems.length === 0 ? <p className="systems-empty-copy">None</p> : null}
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section className="systems-work-grid" aria-label="Systems support lanes">
+          <article className="systems-work-panel systems-next-move">
+            <div className="revamp-kicker">Quick</div>
+            <h3>{quickMove ? quickMove.title : 'No quick win loaded'}</h3>
+            <p>{quickMove ? `${quickMove.id} / ${quickMove.domain}` : 'No quick task found.'}</p>
+          </article>
+
+          <article className="systems-work-panel">
+            <div className="revamp-kicker">Later</div>
+            <h3>Queue</h3>
+            <div className="systems-mini-list compact">
+              {nextQueue.slice(0, 4).map((task) => (
+                <div key={task.id}>
+                  <span>{task.id} / {task.domain}</span>
+                  <strong>{task.title}</strong>
+                </div>
+              ))}
+              {nextQueue.length === 0 ? <p className="systems-empty-copy">None</p> : null}
+            </div>
+          </article>
+
+          <article className="systems-work-panel">
+            <div className="revamp-kicker">Waiting / Blocked</div>
+            <h3>Keep these visible</h3>
+            <div className="systems-mini-list compact">
+              {waitingOrBlocked.slice(0, 4).map((task) => (
+                <div key={task.id}>
+                  <span>{task.id} / {task.domain}</span>
+                  <strong>{task.title}</strong>
+                  <p>{task.status}</p>
+                </div>
+              ))}
+              {waitingOrBlocked.length === 0 ? <p className="systems-empty-copy">None</p> : null}
             </div>
           </article>
         </section>
@@ -2375,6 +2796,229 @@ function App() {
           ))}
         </section>
 
+        {wealth?.connectionPlan ? (
+          <section className="wealth-connection-panel" aria-label="Secure account connection plan">
+            <div className="wealth-panel-head">
+              <div>
+                <span>Secure account linking</span>
+                <strong>{financeStatus?.configured ? 'Backend ready for Plaid Link' : wealth.connectionPlan.status}</strong>
+              </div>
+              <small>{financeStatus ? `${financeStatus.provider} ${financeStatus.environment}` : wealth.connectionPlan.provider}</small>
+            </div>
+            <p>{wealth.connectionPlan.safetyPosition}</p>
+            <div className="wealth-finance-status" aria-live="polite">
+              <div>
+                <span>Connection status</span>
+                <strong>{financeStatus ? `${financeStatus.connections.active} active / ${financeStatus.connections.connected} total` : 'Checking backend'}</strong>
+                <p>{financeMessage}</p>
+                {financeStatus ? (
+                  <small>
+                    {financeStatus.accounts.linked} accounts · {financeStatus.transactions.synced} transactions · {financeStatus.lastSuccessfulSyncAt ? `last sync ${new Date(financeStatus.lastSuccessfulSyncAt).toLocaleString()}` : 'not synced yet'}
+                  </small>
+                ) : null}
+              </div>
+              <div className="wealth-finance-actions">
+                <button className="wealth-action-button primary" type="button" disabled={financeBusy} onClick={() => void handleConnectFinancialAccounts()}>
+                  {financeBusy ? 'Working...' : 'Connect accounts'}
+                </button>
+                <button className="wealth-action-button" type="button" disabled={financeBusy || !financeStatus?.connections.active} onClick={() => void handleSyncFinance()}>
+                  Sync now
+                </button>
+                <button className="wealth-action-button danger" type="button" disabled={financeBusy || !financeStatus?.connections.connected} onClick={() => void handleDisconnectFinance()}>
+                  Disconnect
+                </button>
+                <button className="wealth-action-button" type="button" disabled={financeBusy} onClick={() => void refreshFinanceStatus()}>
+                  Refresh
+                </button>
+              </div>
+            </div>
+            {financeStatus?.connections.items.length ? (
+              <div className="wealth-linked-list" aria-label="Linked institutions">
+                {financeStatus.connections.items.map((item) => (
+                  <article key={item.id}>
+                    <span>{item.institutionName || 'Linked institution'}</span>
+                    <strong>{item.status}</strong>
+                  </article>
+                ))}
+              </div>
+            ) : null}
+            {financeStatus && !financeStatus.configured ? (
+              <div className="wealth-missing-env" aria-label="Missing finance credentials">
+                {financeStatus.missing.map((item) => (
+                  <code key={item}>{item}</code>
+                ))}
+              </div>
+            ) : null}
+            <div className="wealth-connection-steps">
+              {wealth.connectionPlan.steps.map((step) => (
+                <article key={step.label} className={`wealth-connection-step ${step.status}`}>
+                  <span>{step.label}</span>
+                  <p>{step.detail}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        <section className="wealth-live-grid" aria-label="Live finance data">
+          <article className="wealth-live-panel">
+            <div className="wealth-panel-head">
+              <div>
+                <span>Live net worth</span>
+                <strong>{financeStatus ? formatUsd(financeStatus.netWorth.total) : 'Waiting'}</strong>
+              </div>
+              <small>read-only</small>
+            </div>
+            <div className="wealth-mini-ledger">
+              <div><span>Assets</span><strong>{formatUsd(financeStatus?.netWorth.assets ?? 0)}</strong></div>
+              <div><span>Liabilities</span><strong>{formatUsd(financeStatus?.netWorth.liabilities ?? 0)}</strong></div>
+              <div><span>Manual assets</span><strong>{formatUsd(financeStatus?.netWorth.manualAssets ?? 0)}</strong></div>
+              <div><span>Manual liabilities</span><strong>{formatUsd(financeStatus?.netWorth.manualLiabilities ?? 0)}</strong></div>
+            </div>
+          </article>
+
+          <article className="wealth-live-panel">
+            <div className="wealth-panel-head">
+              <div>
+                <span>{financeStatus?.budget.month ?? 'This month'} budget</span>
+                <strong>{formatUsd(financeStatus?.budget.remaining ?? 0)} left</strong>
+              </div>
+              <small>{formatUsd(financeStatus?.budget.spent ?? 0)} spent</small>
+            </div>
+            <div className="wealth-budget-list">
+              {(financeStatus?.budget.categories ?? []).slice(0, 5).map((category) => (
+                <div key={category.id}>
+                  <span>{category.name}</span>
+                  <strong>{formatUsd(category.spent)} / {formatUsd(category.planned)}</strong>
+                </div>
+              ))}
+              {!financeStatus?.budget.categories.length ? <p>No budget targets saved yet.</p> : null}
+            </div>
+          </article>
+        </section>
+
+        <section className="wealth-live-panel" aria-label="Linked accounts">
+          <div className="wealth-panel-head">
+            <div>
+              <span>Accounts</span>
+              <strong>{financeStatus?.accounts.items.length ?? 0} tracked</strong>
+            </div>
+            <small>exclude noisy accounts anytime</small>
+          </div>
+          <div className="wealth-account-table">
+            {(financeStatus?.accounts.items ?? []).map((account) => (
+              <article key={account.id}>
+                <div>
+                  <strong>{account.name}</strong>
+                  <span>{account.subtype || account.type}{account.mask ? ` • ${account.mask}` : ''}</span>
+                </div>
+                <b>{formatUsd(account.currentBalance)}</b>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={account.includeInBudget}
+                    disabled={financeBusy}
+                    onChange={(event) => void handleToggleFinanceAccount(account.id, 'includeInBudget', event.currentTarget.checked)}
+                  />
+                  Budget
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={account.includeInNetWorth}
+                    disabled={financeBusy}
+                    onChange={(event) => void handleToggleFinanceAccount(account.id, 'includeInNetWorth', event.currentTarget.checked)}
+                  />
+                  Net worth
+                </label>
+              </article>
+            ))}
+            {!financeStatus?.accounts.items.length ? <p>No linked accounts yet.</p> : null}
+          </div>
+        </section>
+
+        <section className="wealth-live-grid" aria-label="Manual entries and budgets">
+          <article className="wealth-live-panel">
+            <div className="wealth-panel-head">
+              <div>
+                <span>Manual asset / liability</span>
+                <strong>Add what banks cannot see</strong>
+              </div>
+              <small>{financeStatus?.manualEntries.items.length ?? 0} saved</small>
+            </div>
+            <div className="wealth-form-grid">
+              <select value={manualFinanceDraft.type} disabled={financeBusy} onChange={(event) => setManualFinanceDraft((current) => ({ ...current, type: event.target.value as ManualFinanceDraft['type'] }))}>
+                <option value="asset">Asset</option>
+                <option value="liability">Liability</option>
+              </select>
+              <input value={manualFinanceDraft.name} disabled={financeBusy} placeholder="Name" onChange={(event) => setManualFinanceDraft((current) => ({ ...current, name: event.target.value }))} />
+              <input value={manualFinanceDraft.category} disabled={financeBusy} placeholder="Category" onChange={(event) => setManualFinanceDraft((current) => ({ ...current, category: event.target.value }))} />
+              <input value={manualFinanceDraft.value} disabled={financeBusy} inputMode="decimal" placeholder="Value" onChange={(event) => setManualFinanceDraft((current) => ({ ...current, value: event.target.value }))} />
+              <input value={manualFinanceDraft.notes} disabled={financeBusy} placeholder="Notes" onChange={(event) => setManualFinanceDraft((current) => ({ ...current, notes: event.target.value }))} />
+              <button className="wealth-action-button primary" type="button" disabled={financeBusy} onClick={() => void handleSaveManualFinanceEntry()}>Save entry</button>
+            </div>
+            <div className="wealth-saved-list">
+              {(financeStatus?.manualEntries.items ?? []).slice(0, 6).map((entry) => (
+                <article key={entry.id}>
+                  <span>{entry.name}</span>
+                  <strong>{entry.type === 'liability' ? '-' : ''}{formatUsd(entry.value)}</strong>
+                  <button type="button" disabled={financeBusy} onClick={() => void handleRemoveManualFinanceEntry(entry.id)}>Remove</button>
+                </article>
+              ))}
+            </div>
+          </article>
+
+          <article className="wealth-live-panel">
+            <div className="wealth-panel-head">
+              <div>
+                <span>Budget target</span>
+                <strong>Plan by category</strong>
+              </div>
+              <small>monthly</small>
+            </div>
+            <div className="wealth-form-grid budget">
+              <input value={budgetDraft.month} disabled={financeBusy} type="month" onChange={(event) => setBudgetDraft((current) => ({ ...current, month: event.target.value }))} />
+              <input value={budgetDraft.category} disabled={financeBusy} placeholder="Category" onChange={(event) => setBudgetDraft((current) => ({ ...current, category: event.target.value }))} />
+              <input value={budgetDraft.plannedAmount} disabled={financeBusy} inputMode="decimal" placeholder="Planned amount" onChange={(event) => setBudgetDraft((current) => ({ ...current, plannedAmount: event.target.value }))} />
+              <input value={budgetDraft.notes} disabled={financeBusy} placeholder="Notes" onChange={(event) => setBudgetDraft((current) => ({ ...current, notes: event.target.value }))} />
+              <button className="wealth-action-button primary" type="button" disabled={financeBusy} onClick={() => void handleSaveMonthlyBudget()}>Save budget</button>
+            </div>
+          </article>
+        </section>
+
+        <section className="wealth-live-panel" aria-label="Recent transactions">
+          <div className="wealth-panel-head">
+            <div>
+              <span>Recent transactions</span>
+              <strong>{financeStatus?.transactions.synced ?? 0} synced</strong>
+            </div>
+            <small>no account numbers stored</small>
+          </div>
+          <div className="wealth-transaction-list">
+            {(financeStatus?.transactions.recent ?? []).map((transaction) => (
+              <article key={transaction.id}>
+                <time>{transaction.date}</time>
+                <div>
+                  <strong>{transaction.name}</strong>
+                  <span>{transaction.accountName} • {transaction.category}{transaction.pending ? ' • pending' : ''}</span>
+                </div>
+                <b>{formatUsd(transaction.amount)}</b>
+              </article>
+            ))}
+            {!financeStatus?.transactions.recent.length ? <p>No transactions synced yet.</p> : null}
+          </div>
+        </section>
+
+        <section className="wealth-privacy-panel" aria-label="Finance privacy controls">
+          <div>
+            <span>Privacy controls</span>
+            <strong>Disconnect first, delete local data anytime</strong>
+          </div>
+          <button className="wealth-action-button danger" type="button" disabled={financeBusy || !financeStatus?.configured} onClick={() => void handleDeleteFinanceData()}>
+            Delete finance data
+          </button>
+        </section>
+
         <section className="wealth-hourly-panel" aria-label="Real hourly value">
           <div className="wealth-panel-head">
             <div>
@@ -2702,7 +3346,7 @@ function App() {
           </main>
         ) : (
           <main className="revamp-detail-page">
-            {personalSection === 'identity' || personalSection === 'vessel' || personalSection === 'career' || personalSection === 'wealth' || personalSection === 'education' ? null : (
+            {personalSection === 'identity' || personalSection === 'vessel' || personalSection === 'systems' || personalSection === 'career' || personalSection === 'wealth' || personalSection === 'education' ? null : (
               <section className="revamp-detail-hero">
                 <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
                 <div>
@@ -2717,7 +3361,7 @@ function App() {
                 </aside>
               </section>
             )}
-            {personalSection === 'identity' ? renderIdentityScorecardPage() : personalSection === 'vessel' ? renderVesselPage() : personalSection === 'career' ? renderCareerPage() : personalSection === 'wealth' ? renderWealthPage() : personalSection === 'education' ? renderEducationPage() : (
+            {personalSection === 'identity' ? renderIdentityScorecardPage() : personalSection === 'vessel' ? renderVesselPage() : personalSection === 'systems' ? renderSystemsPage() : personalSection === 'career' ? renderCareerPage() : personalSection === 'wealth' ? renderWealthPage() : personalSection === 'education' ? renderEducationPage() : (
               <>
                 {renderCategorySignatureDashboard()}
                 {renderPersonalDashboardLead()}
@@ -2828,6 +3472,7 @@ function App() {
                     <div className="revamp-kicker">Source And Evidence</div>
                     <h3>{currentPersonalData?.freshness?.label ?? 'Projection source status'}</h3>
                     <p>{currentPersonalData?.freshness ? (currentPersonalData.freshness.ageDays == null ? 'Source recency has not been established yet.' : `${currentPersonalData.freshness.ageDays} day${currentPersonalData.freshness.ageDays === 1 ? '' : 's'} since latest source update.`) : 'This page is using the current generated projection layer until the richer source model lands.'}</p>
+                    <p>Dashboard snapshot: {generatedProjectionSnapshot.generatedAtLabel} from {generatedProjectionSnapshot.source}.</p>
                     <div className="core-source-list">
                       {currentSectionDashboard.evidenceRows.map((item) => {
                         const card = typeof item.sourceCardIndex === 'number' ? currentPersonalData?.summaryCards[item.sourceCardIndex] : undefined

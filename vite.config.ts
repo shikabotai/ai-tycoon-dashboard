@@ -4,6 +4,7 @@ import { fileURLToPath, URL } from 'node:url'
 import { readAutopilotStatus } from './src/data/autopilotStatus'
 import { buildCommandHandoffResponse } from './src/server/commandHandoffApi'
 import { buildBusinessCommandResponse } from './src/server/commandRouteApi'
+import { buildFinanceLinkTokenResponse, buildFinanceStatus } from './src/server/financeRouteApi'
 import { getProjectedSection } from './src/server/personalProjectionApi'
 
 const dashboardRoot = fileURLToPath(new URL('.', import.meta.url))
@@ -11,9 +12,13 @@ const dashboardRoot = fileURLToPath(new URL('.', import.meta.url))
 export default defineConfig({
   base: process.env.GITHUB_PAGES === 'true' ? '/ai-tycoon-dashboard/' : '/',
   server: {
+    allowedHosts: true,
     fs: {
       allow: [dashboardRoot, '/Users/shika/.openclaw/workspace/PunkRecords'],
     },
+  },
+  preview: {
+    allowedHosts: true,
   },
   plugins: [
     react(),
@@ -70,6 +75,50 @@ export default defineConfig({
             res.setHeader('Content-Type', 'application/json')
             res.end(JSON.stringify(buildCommandHandoffResponse(payload)))
           })
+        })
+        server.middlewares.use('/api/finance/status', (_req, res) => {
+          res.setHeader('Content-Type', 'application/json')
+          res.end(JSON.stringify(buildFinanceStatus()))
+        })
+        server.middlewares.use('/api/finance/link-token', (req, res) => {
+          if (req.method !== 'POST') {
+            res.statusCode = 405
+            res.end('Method not allowed')
+            return
+          }
+
+          res.setHeader('Content-Type', 'application/json')
+          res.end(JSON.stringify(buildFinanceLinkTokenResponse()))
+        })
+        server.middlewares.use('/api/finance/exchange-public-token', (req, res) => {
+          if (req.method !== 'POST') {
+            res.statusCode = 405
+            res.end('Method not allowed')
+            return
+          }
+
+          res.setHeader('Content-Type', 'application/json')
+          res.end(JSON.stringify({ status: 'needs_credentials', missing: ['Cloudflare finance function credentials'] }))
+        })
+        server.middlewares.use('/api/finance/sync', (req, res) => {
+          if (req.method !== 'POST') {
+            res.statusCode = 405
+            res.end('Method not allowed')
+            return
+          }
+
+          res.setHeader('Content-Type', 'application/json')
+          res.end(JSON.stringify({ status: 'needs_credentials', missing: ['Cloudflare finance function credentials'] }))
+        })
+        server.middlewares.use('/api/finance/disconnect', (req, res) => {
+          if (req.method !== 'POST') {
+            res.statusCode = 405
+            res.end('Method not allowed')
+            return
+          }
+
+          res.setHeader('Content-Type', 'application/json')
+          res.end(JSON.stringify({ status: 'needs_credentials', missing: ['Cloudflare finance function credentials'] }))
         })
       },
     },

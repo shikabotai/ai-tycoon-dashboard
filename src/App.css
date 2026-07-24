@@ -2006,6 +2006,364 @@ button {
   min-width: 0;
 }
 
+.systems-page {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.systems-hero,
+.systems-stat-card,
+.systems-focus-prime,
+.systems-lane-panel,
+.systems-task-row,
+.systems-work-panel,
+.systems-domain-panel {
+  min-width: 0;
+  border: 1px solid rgba(241, 244, 248, 0.1);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(16, 21, 29, 0.92), rgba(7, 10, 15, 0.95));
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.systems-hero {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(260px, 0.36fr);
+  gap: 14px;
+  align-items: stretch;
+  padding: 14px;
+}
+
+.systems-hero .back-button {
+  align-self: start;
+}
+
+.systems-hero-copy {
+  min-width: 0;
+  align-self: center;
+}
+
+.systems-hero-copy h2 {
+  margin: 6px 0 8px;
+  color: var(--text);
+  font-size: clamp(2rem, 3.6vw, 3.2rem);
+  line-height: 0.98;
+}
+
+.systems-hero-copy p,
+.systems-priority-card p,
+.systems-stat-card p,
+.systems-focus-prime p,
+.systems-task-row p,
+.systems-work-panel p,
+.systems-domain-panel p,
+.systems-mini-list p,
+.systems-domain-list p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.42;
+  overflow-wrap: anywhere;
+}
+
+.systems-priority-card {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+  border: 1px solid rgba(103, 224, 178, 0.24);
+  border-radius: 8px;
+  background: rgba(5, 12, 16, 0.68);
+  padding: 13px;
+}
+
+.systems-priority-card.watch {
+  border-color: rgba(255, 174, 96, 0.36);
+  background: rgba(31, 21, 12, 0.38);
+}
+
+.systems-priority-card span,
+.systems-stat-card span,
+.systems-task-row span,
+.systems-mini-list span,
+.systems-domain-list span {
+  color: #86a9df;
+  font-size: 0.72rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.systems-priority-card strong {
+  color: var(--text);
+  font-size: 1.08rem;
+  line-height: 1.18;
+  overflow-wrap: anywhere;
+}
+
+.systems-mode-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.systems-mode-strip span {
+  border: 1px solid rgba(120, 166, 235, 0.18);
+  border-radius: 999px;
+  background: rgba(4, 9, 15, 0.46);
+  color: #d7e6fb;
+  font-size: 0.78rem;
+  line-height: 1;
+  padding: 8px 10px;
+}
+
+.systems-stat-strip,
+.systems-command-board,
+.systems-work-grid,
+.systems-domain-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.systems-stat-strip {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.systems-stat-card {
+  display: grid;
+  gap: 8px;
+  min-height: 132px;
+  padding: 13px;
+}
+
+.systems-stat-card.stale {
+  border-color: rgba(255, 174, 96, 0.34);
+  background: linear-gradient(180deg, rgba(31, 21, 12, 0.58), rgba(7, 10, 15, 0.95));
+}
+
+.systems-stat-card strong {
+  color: var(--text);
+  font-size: 1.28rem;
+  line-height: 1.08;
+}
+
+.systems-command-board {
+  grid-template-columns: minmax(260px, 0.35fr) minmax(0, 1fr);
+}
+
+.systems-focus-prime,
+.systems-lane-panel,
+.systems-work-panel,
+.systems-domain-panel {
+  padding: 14px;
+}
+
+.systems-focus-prime {
+  display: grid;
+  align-content: space-between;
+  gap: 16px;
+  min-height: 300px;
+  border-color: rgba(103, 224, 178, 0.24);
+}
+
+.systems-focus-prime h3,
+.systems-lane-panel h3,
+.systems-work-panel h3,
+.systems-domain-panel h3 {
+  margin: 8px 0 10px;
+  color: var(--text);
+  font-size: 1.08rem;
+  line-height: 1.16;
+}
+
+.systems-pressure-stack {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.systems-pressure-stack div {
+  display: grid;
+  gap: 5px;
+  border: 1px solid rgba(103, 224, 178, 0.16);
+  border-radius: 8px;
+  background: rgba(4, 9, 15, 0.5);
+  padding: 10px;
+}
+
+.systems-pressure-stack span,
+.systems-panel-head span {
+  color: #86a9df;
+  font-size: 0.72rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.systems-pressure-stack strong {
+  color: var(--text);
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.systems-lane-stack {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
+  gap: 12px;
+  min-width: 0;
+}
+
+.systems-lane-panel {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-height: 300px;
+  background: rgba(6, 11, 19, 0.82);
+}
+
+.systems-lane-panel.primary {
+  border-color: rgba(103, 224, 178, 0.38);
+}
+
+.systems-panel-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+}
+
+.systems-panel-head h3 {
+  margin-bottom: 0;
+}
+
+.systems-panel-head b {
+  border: 1px solid rgba(120, 166, 235, 0.18);
+  border-radius: 999px;
+  color: #d7e6fb;
+  font-size: 0.82rem;
+  line-height: 1;
+  padding: 8px 10px;
+  white-space: nowrap;
+}
+
+.systems-task-list {
+  display: grid;
+  gap: 10px;
+}
+
+.systems-task-row {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 10px;
+  background: rgba(4, 9, 15, 0.46);
+  padding: 10px;
+}
+
+.systems-task-row.stale {
+  border-color: rgba(255, 174, 96, 0.38);
+  background: rgba(31, 21, 12, 0.34);
+}
+
+.systems-task-rank {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(103, 224, 178, 0.24);
+  border-radius: 8px;
+  background: rgba(103, 224, 178, 0.1);
+  color: var(--text);
+  font-weight: 800;
+}
+
+.systems-task-row strong,
+.systems-mini-list strong,
+.systems-domain-list strong {
+  color: var(--text);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.systems-task-row small {
+  color: #b8cef0;
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+
+.systems-work-grid {
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.85fr) repeat(2, minmax(0, 1fr));
+}
+
+.systems-mini-list,
+.systems-domain-list {
+  display: grid;
+  gap: 8px;
+}
+
+.systems-mini-list div,
+.systems-domain-list div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  border: 1px solid rgba(120, 166, 235, 0.14);
+  border-radius: 8px;
+  background: rgba(4, 9, 15, 0.46);
+  padding: 10px;
+}
+
+.systems-mini-list div.stale {
+  border-color: rgba(255, 174, 96, 0.34);
+  background: rgba(31, 21, 12, 0.34);
+}
+
+.systems-mini-list.compact {
+  gap: 7px;
+}
+
+.systems-mini-list.compact div {
+  padding: 9px;
+}
+
+.systems-action-note {
+  border-left: 3px solid rgba(255, 174, 96, 0.5);
+  padding-left: 10px;
+}
+
+.systems-automation-panel {
+  border-color: rgba(103, 224, 178, 0.24);
+}
+
+.systems-automation-panel strong {
+  color: #d7e6fb;
+  font-size: 0.88rem;
+  line-height: 1.35;
+}
+
+.systems-next-move {
+  border-color: rgba(120, 166, 235, 0.24);
+}
+
+.systems-empty-copy {
+  border: 1px solid rgba(120, 166, 235, 0.12);
+  border-radius: 8px;
+  background: rgba(4, 9, 15, 0.36);
+  padding: 12px;
+}
+
+.systems-domain-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.36fr);
+}
+
+.systems-domain-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.systems-rule-panel {
+  border-color: rgba(103, 224, 178, 0.22);
+  background:
+    linear-gradient(135deg, rgba(103, 224, 178, 0.1), transparent 52%),
+    linear-gradient(180deg, rgba(16, 21, 29, 0.92), rgba(7, 10, 15, 0.95));
+}
+
 .career-hero,
 .career-category-card,
 .career-category-panel,
@@ -2452,6 +2810,8 @@ button {
 
 .wealth-hero,
 .wealth-score-card,
+.wealth-connection-panel,
+.wealth-connection-step,
 .wealth-hourly-panel,
 .wealth-detail-panel,
 .wealth-prompt-panel,
@@ -2481,6 +2841,7 @@ button {
 .wealth-hero span,
 .wealth-score-card span,
 .wealth-panel-head span,
+.wealth-connection-step span,
 .wealth-hourly-grid span,
 .wealth-panel-toggle small,
 .wealth-panel-metrics span,
@@ -2528,6 +2889,8 @@ button {
 }
 
 .wealth-score-card p,
+.wealth-connection-panel p,
+.wealth-connection-step p,
 .wealth-hourly-panel p,
 .wealth-panel-body p,
 .wealth-panel-metrics p,
@@ -2539,12 +2902,314 @@ button {
   line-height: 1.42;
 }
 
+.wealth-connection-panel,
 .wealth-hourly-panel,
 .wealth-detail-panel,
 .wealth-prompt-panel {
   display: grid;
   gap: 14px;
   padding: 14px;
+}
+
+.wealth-connection-panel {
+  border-color: rgba(103, 224, 178, 0.24);
+  background:
+    linear-gradient(135deg, rgba(103, 224, 178, 0.1), rgba(109, 177, 255, 0.04) 48%, transparent),
+    linear-gradient(180deg, rgba(16, 21, 29, 0.92), rgba(7, 10, 15, 0.95));
+}
+
+.wealth-connection-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.wealth-finance-status {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+  border: 1px solid rgba(103, 224, 178, 0.2);
+  border-radius: 8px;
+  background: rgba(4, 9, 15, 0.5);
+  padding: 12px;
+}
+
+.wealth-finance-status strong {
+  display: block;
+  margin-top: 5px;
+  color: var(--text);
+  font-size: 1.02rem;
+  line-height: 1.16;
+  overflow-wrap: anywhere;
+}
+
+.wealth-finance-status p {
+  margin-top: 6px;
+}
+
+.wealth-finance-status small {
+  display: block;
+  margin-top: 7px;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.wealth-finance-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.wealth-action-button {
+  min-height: 36px;
+  border: 1px solid rgba(120, 166, 235, 0.28);
+  border-radius: 8px;
+  background: rgba(126, 167, 255, 0.1);
+  color: #dce9fb;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.86rem;
+  padding: 0 12px;
+}
+
+.wealth-action-button.primary {
+  border-color: rgba(103, 224, 178, 0.44);
+  background: rgba(103, 224, 178, 0.14);
+  color: #e5fff4;
+}
+
+.wealth-action-button.danger {
+  border-color: rgba(255, 126, 126, 0.34);
+  background: rgba(255, 126, 126, 0.1);
+  color: #ffe1e1;
+}
+
+.wealth-action-button:disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+
+.wealth-live-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.wealth-live-panel,
+.wealth-privacy-panel {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  border: 1px solid rgba(120, 166, 235, 0.18);
+  border-radius: 8px;
+  background: rgba(9, 14, 22, 0.78);
+  padding: 14px;
+}
+
+.wealth-mini-ledger {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.wealth-mini-ledger div,
+.wealth-budget-list div {
+  min-width: 0;
+  border: 1px solid rgba(120, 166, 235, 0.14);
+  border-radius: 8px;
+  background: rgba(4, 9, 15, 0.45);
+  padding: 10px;
+}
+
+.wealth-mini-ledger strong,
+.wealth-budget-list strong,
+.wealth-account-table b,
+.wealth-transaction-list b,
+.wealth-saved-list strong {
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.wealth-budget-list,
+.wealth-account-table,
+.wealth-transaction-list,
+.wealth-saved-list {
+  display: grid;
+  gap: 8px;
+}
+
+.wealth-budget-list p,
+.wealth-account-table p,
+.wealth-transaction-list p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.wealth-budget-list div,
+.wealth-saved-list article {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.wealth-account-table article {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) minmax(90px, auto) auto auto;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+  border: 1px solid rgba(120, 166, 235, 0.14);
+  border-radius: 8px;
+  background: rgba(4, 9, 15, 0.45);
+  padding: 10px;
+}
+
+.wealth-account-table label {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  color: var(--muted);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.wealth-account-table strong,
+.wealth-transaction-list strong {
+  display: block;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.wealth-account-table span,
+.wealth-transaction-list span,
+.wealth-mini-ledger span,
+.wealth-budget-list span,
+.wealth-saved-list span,
+.wealth-privacy-panel span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.wealth-form-grid {
+  display: grid;
+  grid-template-columns: 120px repeat(3, minmax(0, 1fr)) auto;
+  gap: 8px;
+}
+
+.wealth-form-grid.budget {
+  grid-template-columns: 132px repeat(3, minmax(0, 1fr)) auto;
+}
+
+.wealth-form-grid input,
+.wealth-form-grid select {
+  min-width: 0;
+  min-height: 36px;
+  border: 1px solid rgba(120, 166, 235, 0.22);
+  border-radius: 8px;
+  background: rgba(4, 9, 15, 0.62);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.86rem;
+  padding: 0 10px;
+}
+
+.wealth-saved-list button {
+  border: 0;
+  background: transparent;
+  color: #ffbaba;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+}
+
+.wealth-transaction-list article {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+  border-bottom: 1px solid rgba(120, 166, 235, 0.12);
+  padding: 8px 0;
+}
+
+.wealth-transaction-list time {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.wealth-privacy-panel {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.wealth-linked-list {
+  display: grid;
+  gap: 8px;
+}
+
+.wealth-linked-list article {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid rgba(120, 166, 235, 0.16);
+  border-radius: 8px;
+  background: rgba(4, 9, 15, 0.38);
+  padding: 9px 11px;
+}
+
+.wealth-linked-list span,
+.wealth-linked-list strong {
+  overflow-wrap: anywhere;
+}
+
+.wealth-linked-list span {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.wealth-linked-list strong {
+  color: var(--muted);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+}
+
+.wealth-missing-env {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.wealth-missing-env code {
+  border: 1px solid rgba(255, 174, 96, 0.28);
+  border-radius: 999px;
+  background: rgba(31, 21, 12, 0.56);
+  color: #ffd6a5;
+  font-size: 0.76rem;
+  padding: 5px 8px;
+}
+
+.wealth-connection-step {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  min-height: 124px;
+  padding: 12px;
+  background: rgba(4, 9, 15, 0.52);
+  box-shadow: none;
+}
+
+.wealth-connection-step.next {
+  border-color: rgba(103, 224, 178, 0.38);
+}
+
+.wealth-connection-step.locked {
+  border-color: rgba(120, 166, 235, 0.16);
 }
 
 .wealth-panel-head {
@@ -2599,6 +3264,10 @@ button {
 
 .wealth-detail-panel.cashflow {
   border-color: rgba(255, 174, 96, 0.25);
+}
+
+.wealth-detail-panel.budgeting {
+  border-color: rgba(190, 149, 255, 0.25);
 }
 
 .wealth-panel-toggle {
@@ -4766,11 +5435,26 @@ button {
   .vessel-weekly-drift,
   .vessel-support-grid,
   .career-hero,
+  .systems-hero,
+  .systems-stat-strip,
+  .systems-command-board,
+  .systems-lane-stack,
+  .systems-work-grid,
+  .systems-domain-grid,
+  .systems-domain-list,
   .career-category-overview,
   .career-section-grid,
   .career-prompt-grid,
   .wealth-hero,
   .wealth-scoreboard,
+  .wealth-connection-steps,
+  .wealth-finance-status,
+  .wealth-live-grid,
+  .wealth-mini-ledger,
+  .wealth-account-table article,
+  .wealth-form-grid,
+  .wealth-form-grid.budget,
+  .wealth-privacy-panel,
   .wealth-hourly-grid,
   .wealth-panel-metrics,
   .wealth-prompt-grid,
@@ -4780,6 +5464,7 @@ button {
 
   .vessel-hero .back-button,
   .career-hero .back-button,
+  .systems-hero .back-button,
   .wealth-hero .back-button,
   .education-hero .back-button {
     width: fit-content;
@@ -5071,7 +5756,23 @@ button {
   .career-section-grid,
   .career-category-panel.current-job .career-section-grid,
   .career-prompt-grid,
+  .systems-hero,
+  .systems-stat-strip,
+  .systems-command-board,
+  .systems-lane-stack,
+  .systems-work-grid,
+  .systems-domain-grid,
+  .systems-domain-list,
   .wealth-scoreboard,
+  .wealth-connection-steps,
+  .wealth-finance-status,
+  .wealth-live-grid,
+  .wealth-mini-ledger,
+  .wealth-account-table article,
+  .wealth-form-grid,
+  .wealth-form-grid.budget,
+  .wealth-transaction-list article,
+  .wealth-privacy-panel,
   .wealth-hourly-grid,
   .wealth-panel-metrics,
   .wealth-prompt-grid {

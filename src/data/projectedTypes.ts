@@ -5,6 +5,13 @@ export type ProjectedCard = {
   stale?: boolean
 }
 
+export type ProjectionSnapshot = {
+  generatedAt: string
+  generatedAtLabel: string
+  source: string
+  updateMode: string
+}
+
 export type ProjectedSignalPriority = 'good' | 'watch' | 'stale'
 
 export type ProjectedDashboardMetric = {
@@ -99,6 +106,45 @@ export type VesselProjection = {
   }
 }
 
+export type SystemsTaskLane = 'now' | 'next' | 'backlog'
+
+export type SystemsTaskProjection = {
+  id: string
+  title: string
+  domain: string
+  lane: SystemsTaskLane
+  status: string
+  dueReview: string
+  source: string
+  notes: string
+  stale: boolean
+  quick: boolean
+}
+
+export type SystemsProjection = {
+  headline: string
+  operatingMode: string
+  pressureLabel: string
+  closureRate: number
+  staleAction: string
+  automationPosture: {
+    label: string
+    detail: string
+    nextUpgrade: string
+  }
+  topFocus: SystemsTaskProjection[]
+  nextQueue: SystemsTaskProjection[]
+  waitingOrBlocked: SystemsTaskProjection[]
+  quickWins: SystemsTaskProjection[]
+  staleItems: SystemsTaskProjection[]
+  domainCounts: Array<{
+    domain: string
+    now: number
+    next: number
+    backlog: number
+  }>
+}
+
 export type EducationDeadlineProjection = {
   id: string
   courseCode: string
@@ -191,12 +237,18 @@ export type WealthHourlyProjection = {
 }
 
 export type WealthPanelProjection = {
-  id: 'net-worth' | 'real-hourly-value' | 'cashflow'
+  id: 'net-worth' | 'real-hourly-value' | 'cashflow' | 'budgeting'
   title: string
   kicker: string
   summary: string
   metrics: WealthAccountProjection[]
   nextAction: string
+}
+
+export type WealthConnectionStepProjection = {
+  label: string
+  status: 'ready' | 'next' | 'locked'
+  detail: string
 }
 
 export type WealthProjection = {
@@ -206,6 +258,12 @@ export type WealthProjection = {
   hourly: WealthHourlyProjection
   panels: WealthPanelProjection[]
   prompts: ProjectedContextItem[]
+  connectionPlan?: {
+    provider: string
+    safetyPosition: string
+    status: string
+    steps: WealthConnectionStepProjection[]
+  }
 }
 
 export type ProjectedSection = {
@@ -223,6 +281,7 @@ export type ProjectedSection = {
   }
   identity?: IdentityProjection
   vessel?: VesselProjection
+  systems?: SystemsProjection
   education?: EducationProjection
   career?: CareerProjection
   wealth?: WealthProjection
