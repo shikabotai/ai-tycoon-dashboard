@@ -170,7 +170,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "freshness": {
       "label": "Vessel evidence",
-      "ageDays": 0,
+      "ageDays": 1,
       "stale": false
     },
     "vessel": {
@@ -179,9 +179,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "back",
           "label": "Back",
           "priority": "V-taper priority",
-          "recentSets": 31,
+          "recentSets": 30,
           "lastHit": "2026-07-21",
-          "lastHitLabel": "2 days ago",
+          "lastHitLabel": "3 days ago",
           "heat": "hot",
           "recommendation": "Keep one vertical pull and one row pattern active each week."
         },
@@ -191,7 +191,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "Width priority",
           "recentSets": 13,
           "lastHit": "2026-07-21",
-          "lastHitLabel": "2 days ago",
+          "lastHitLabel": "3 days ago",
           "heat": "hot",
           "recommendation": "Keep lateral delts and rear delts visible for the shoulder-width goal."
         },
@@ -201,7 +201,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "Upper-chest priority",
           "recentSets": 7,
           "lastHit": "2026-07-17",
-          "lastHitLabel": "6 days ago",
+          "lastHitLabel": "7 days ago",
           "heat": "hot",
           "recommendation": "Add pressing or fly work if chest has not shown up recently."
         },
@@ -209,9 +209,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "biceps",
           "label": "Biceps",
           "priority": "Arm detail",
-          "recentSets": 14,
+          "recentSets": 13,
           "lastHit": "2026-07-21",
-          "lastHitLabel": "2 days ago",
+          "lastHitLabel": "3 days ago",
           "heat": "hot",
           "recommendation": "Keep curls in the rotation, but do not let arms crowd out chest or legs."
         },
@@ -219,9 +219,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "triceps",
           "label": "Triceps",
           "priority": "Arm mass",
-          "recentSets": 14,
+          "recentSets": 12,
           "lastHit": "2026-07-20",
-          "lastHitLabel": "3 days ago",
+          "lastHitLabel": "4 days ago",
           "heat": "hot",
           "recommendation": "Use pushdowns or overhead work to keep arms full while cutting."
         },
@@ -229,9 +229,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "abs",
           "label": "Abs",
           "priority": "Lean-look priority",
-          "recentSets": 14,
+          "recentSets": 13,
           "lastHit": "2026-07-21",
-          "lastHitLabel": "2 days ago",
+          "lastHitLabel": "3 days ago",
           "heat": "hot",
           "recommendation": "Keep direct core work frequent while the cut reveals definition."
         },
@@ -241,7 +241,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "Balance priority",
           "recentSets": 6,
           "lastHit": "2026-07-21",
-          "lastHitLabel": "2 days ago",
+          "lastHitLabel": "3 days ago",
           "heat": "solid",
           "recommendation": "Do not let the aesthetics push turn into skipping legs."
         },
@@ -865,47 +865,197 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     }
   },
   "wealth": {
-    "heroSummary": "Wealth is framed as leverage-building rather than passive tracking, with compensation growth and venture upside both acting as the main financial drivers.",
+    "heroSummary": "Wealth is a money scoreboard: current net worth, growth over time, monthly surplus, and the real value of work hours after expenses.",
     "summaryCards": [
       {
-        "label": "Current financial priorities",
-        "value": "Increase leverage",
-        "note": "Comp growth and venture traction both matter on the current path."
+        "label": "Current net worth",
+        "value": "$110,000",
+        "note": "Mitchell supplied this as the working current estimate on July 23, 2026."
       },
       {
-        "label": "Cashflow strategy",
-        "value": "Earn more first",
-        "note": "The current system emphasizes higher income and upside before elaborate optimization."
+        "label": "Baseline net worth",
+        "value": "$100,600",
+        "note": "Punk Records baseline from March 2026, kept for growth comparison."
       },
       {
-        "label": "Wealth operating stance",
-        "value": "Selective accumulation",
-        "note": "Avoid distraction and focus on the highest-leverage growth paths."
+        "label": "Monthly net income",
+        "value": "$5,226",
+        "note": "Punk Records W-2 net income estimate."
       },
       {
-        "label": "Main wealth engines",
-        "value": "Career + ventures",
-        "note": "These are the clearest financial multipliers in the current plan."
+        "label": "Monthly expenses",
+        "value": "$2,750",
+        "note": "Using the Punk Records fixed + variable monthly budget estimate."
       },
       {
-        "label": "Current blind spot",
-        "value": "Live net-worth visibility",
-        "note": "This section is waiting on stronger direct financial source integration.",
+        "label": "Monthly surplus",
+        "value": "$2,476",
+        "note": "Net income minus estimated expenses before hourly split."
+      },
+      {
+        "label": "Real hourly value",
+        "value": "Needs hours",
+        "note": "Track job hours and freelance hours only, then divide monthly surplus by monthly hours.",
         "stale": true
-      },
-      {
-        "label": "Next wealth milestone",
-        "value": "Stronger recurring surplus",
-        "note": "Future versions should surface explicit financial scoreboard data."
       }
     ],
     "highlights": [
-      "Wealth is being treated as leverage, not vanity tracking.",
-      "The current plan is income- and venture-centric.",
-      "This section will benefit from deeper structured source integration later."
+      "Net worth is the scoreboard.",
+      "Monthly surplus explains whether the scoreboard is improving.",
+      "Real hourly value should use job hours and freelance hours only."
     ],
+    "missingData": [
+      {
+        "label": "Job hours",
+        "value": "Need weekly average",
+        "detail": "Needed to calculate real hourly value from saved money.",
+        "severity": "watch"
+      },
+      {
+        "label": "Freelance hours",
+        "value": "Need weekly average",
+        "detail": "Track separately from job hours so paid side work does not blur the W-2 picture.",
+        "severity": "watch"
+      },
+      {
+        "label": "Net-worth history",
+        "value": "Need monthly snapshots",
+        "detail": "The page has March 2026 and current estimates, but needs ongoing monthly entries for a real trend.",
+        "severity": "watch"
+      }
+    ],
+    "wealth": {
+      "headline": "Wealth Command Center",
+      "asOf": "July 23, 2026",
+      "accounts": [
+        {
+          "label": "Current net worth",
+          "value": "$110,000",
+          "note": "Working current estimate."
+        },
+        {
+          "label": "March baseline",
+          "value": "$100,600",
+          "note": "Punk Records baseline."
+        },
+        {
+          "label": "Change since March",
+          "value": "+$9,400",
+          "note": "Approximate growth from baseline to current estimate."
+        },
+        {
+          "label": "Liabilities",
+          "value": "$0",
+          "note": "Punk Records listed no liabilities."
+        }
+      ],
+      "hourly": {
+        "monthlyNetIncome": "$5,226",
+        "monthlyExpenses": "$2,750",
+        "monthlySurplus": "$2,476",
+        "jobHours": "Need weekly average",
+        "freelanceHours": "Need weekly average",
+        "formula": "$2,476 / ((job hours + freelance hours) * 4.33)",
+        "threshold": "$35/hr",
+        "status": "Ready after weekly hours are entered"
+      },
+      "panels": [
+        {
+          "id": "net-worth",
+          "title": "Net Worth Ledger",
+          "kicker": "Scoreboard",
+          "summary": "Track whether total wealth is actually growing, using the March baseline and current estimate as the first two anchors.",
+          "metrics": [
+            {
+              "label": "Current",
+              "value": "$110,000",
+              "note": "Working estimate."
+            },
+            {
+              "label": "Baseline",
+              "value": "$100,600",
+              "note": "March 2026 Punk Records."
+            },
+            {
+              "label": "Growth",
+              "value": "+$9,400",
+              "note": "Approximate change since baseline."
+            }
+          ],
+          "nextAction": "Add a monthly snapshot row with cash, investments, stock, vehicle, and liabilities."
+        },
+        {
+          "id": "real-hourly-value",
+          "title": "Money Per Hour",
+          "kicker": "Time value",
+          "summary": "Show how much future money each work hour keeps after expenses, without mixing in school or startup time.",
+          "metrics": [
+            {
+              "label": "Monthly saved",
+              "value": "$2,476",
+              "note": "Net income minus estimated expenses."
+            },
+            {
+              "label": "Hours tracked",
+              "value": "Job + freelance",
+              "note": "Only these two buckets count for this calculation."
+            },
+            {
+              "label": "Formula",
+              "value": "Surplus / hours",
+              "note": "$2,476 divided by monthly job + freelance hours."
+            }
+          ],
+          "nextAction": "Enter average weekly job hours and average weekly freelance hours."
+        },
+        {
+          "id": "cashflow",
+          "title": "Cashflow Control",
+          "kicker": "Savings engine",
+          "summary": "Keep the income, expense, and surplus assumptions visible so the page does not drift into fake precision.",
+          "metrics": [
+            {
+              "label": "Net income",
+              "value": "$5,226",
+              "note": "Punk Records estimate."
+            },
+            {
+              "label": "Expenses",
+              "value": "$2,750",
+              "note": "Using the fixed + variable estimate."
+            },
+            {
+              "label": "Surplus",
+              "value": "$2,476",
+              "note": "Estimated monthly money kept."
+            }
+          ],
+          "nextAction": "Replace the estimate with a real trailing 30-day spend number when available."
+        }
+      ],
+      "prompts": [
+        {
+          "label": "Job hours",
+          "value": "Weekly average",
+          "detail": "Needed for real hourly value.",
+          "severity": "watch"
+        },
+        {
+          "label": "Freelance hours",
+          "value": "Weekly average",
+          "detail": "Needed for the separate side-work hourly view.",
+          "severity": "watch"
+        },
+        {
+          "label": "Monthly snapshot",
+          "value": "Next balance update",
+          "detail": "Needed for the net-worth growth chart.",
+          "severity": "watch"
+        }
+      ]
+    },
     "freshness": {
-      "label": "Wealth planning docs",
+      "label": "Wealth scoreboard inputs",
       "ageDays": 0,
       "stale": false
     }

@@ -773,22 +773,95 @@ export function buildKnowledgeData(): ProjectedSection {
 }
 
 export function buildWealthData(): ProjectedSection {
+  const currentNetWorth = '$110,000'
+  const monthlyNetIncome = '$5,226'
+  const monthlyExpenses = '$2,750'
+  const monthlySurplus = '$2,476'
+
   return {
-    heroSummary: 'Wealth is framed more as trajectory and future leverage than as a live net-worth ledger, with financial freedom acting as the central long-arc target.',
+    heroSummary: 'Wealth is a money scoreboard: current net worth, growth over time, monthly surplus, and the real value of work hours after expenses.',
     summaryCards: [
-      { label: 'Net worth trajectory', value: '$500k+ 5-year target', note: 'The five-year goals note explicitly anchors this wealth milestone.' },
-      { label: 'Cash / liquidity', value: 'Pending source layer', note: 'Real balances need a dedicated finance source before they appear here.', stale: true },
-      { label: 'Income snapshot', value: 'W-2 + venture upside', note: 'Current notes frame the transition away from paycheck dependence as a major goal.' },
-      { label: 'Investment allocation', value: 'Not yet projected', note: 'A later pass should expose accounts, allocations, and trend signals.', stale: true },
-      { label: 'Current financial priorities', value: 'Increase leverage', note: 'Comp growth and venture traction both matter on the current path.' },
-      { label: 'Wealth-building phase', value: 'Foundation-building', note: 'Still in the phase of increasing earning power and owned upside.' },
+      { label: 'Current net worth', value: currentNetWorth, note: 'Mitchell supplied this as the working current estimate on July 23, 2026.' },
+      { label: 'Baseline net worth', value: '$100,600', note: 'Punk Records baseline from March 2026, kept for growth comparison.' },
+      { label: 'Monthly net income', value: monthlyNetIncome, note: 'Punk Records W-2 net income estimate.' },
+      { label: 'Monthly expenses', value: monthlyExpenses, note: 'Using the Punk Records fixed + variable monthly budget estimate.' },
+      { label: 'Monthly surplus', value: monthlySurplus, note: 'Net income minus estimated expenses before hourly split.' },
+      { label: 'Real hourly value', value: 'Needs hours', note: 'Track job hours and freelance hours only, then divide monthly surplus by monthly hours.', stale: true },
     ],
     highlights: [
-      'Wealth is moving toward a real finance cockpit, not a vague aspiration page.',
-      'Current projections are strategic, not account-level.',
-      'This section needs deeper data sources in a later pass.',
+      'Net worth is the scoreboard.',
+      'Monthly surplus explains whether the scoreboard is improving.',
+      'Real hourly value should use job hours and freelance hours only.',
     ],
-    freshness: summarizeFreshness('Wealth strategy docs', 0, 30),
+    missingData: [
+      { label: 'Job hours', value: 'Need weekly average', detail: 'Needed to calculate real hourly value from saved money.', severity: 'watch' },
+      { label: 'Freelance hours', value: 'Need weekly average', detail: 'Track separately from job hours so paid side work does not blur the W-2 picture.', severity: 'watch' },
+      { label: 'Net-worth history', value: 'Need monthly snapshots', detail: 'The page has March 2026 and current estimates, but needs ongoing monthly entries for a real trend.', severity: 'watch' },
+    ],
+    wealth: {
+      headline: 'Wealth Command Center',
+      asOf: 'July 23, 2026',
+      accounts: [
+        { label: 'Current net worth', value: currentNetWorth, note: 'Working current estimate.' },
+        { label: 'March baseline', value: '$100,600', note: 'Punk Records baseline.' },
+        { label: 'Change since March', value: '+$9,400', note: 'Approximate growth from baseline to current estimate.' },
+        { label: 'Liabilities', value: '$0', note: 'Punk Records listed no liabilities.' },
+      ],
+      hourly: {
+        monthlyNetIncome,
+        monthlyExpenses,
+        monthlySurplus,
+        jobHours: 'Need weekly average',
+        freelanceHours: 'Need weekly average',
+        formula: '$2,476 / ((job hours + freelance hours) * 4.33)',
+        threshold: '$35/hr',
+        status: 'Ready after weekly hours are entered',
+      },
+      panels: [
+        {
+          id: 'net-worth',
+          title: 'Net Worth Ledger',
+          kicker: 'Scoreboard',
+          summary: 'Track whether total wealth is actually growing, using the March baseline and current estimate as the first two anchors.',
+          metrics: [
+            { label: 'Current', value: currentNetWorth, note: 'Working estimate.' },
+            { label: 'Baseline', value: '$100,600', note: 'March 2026 Punk Records.' },
+            { label: 'Growth', value: '+$9,400', note: 'Approximate change since baseline.' },
+          ],
+          nextAction: 'Add a monthly snapshot row with cash, investments, stock, vehicle, and liabilities.',
+        },
+        {
+          id: 'real-hourly-value',
+          title: 'Money Per Hour',
+          kicker: 'Time value',
+          summary: 'Show how much future money each work hour keeps after expenses, without mixing in school or startup time.',
+          metrics: [
+            { label: 'Monthly saved', value: monthlySurplus, note: 'Net income minus estimated expenses.' },
+            { label: 'Hours tracked', value: 'Job + freelance', note: 'Only these two buckets count for this calculation.' },
+            { label: 'Formula', value: 'Surplus / hours', note: '$2,476 divided by monthly job + freelance hours.' },
+          ],
+          nextAction: 'Enter average weekly job hours and average weekly freelance hours.',
+        },
+        {
+          id: 'cashflow',
+          title: 'Cashflow Control',
+          kicker: 'Savings engine',
+          summary: 'Keep the income, expense, and surplus assumptions visible so the page does not drift into fake precision.',
+          metrics: [
+            { label: 'Net income', value: monthlyNetIncome, note: 'Punk Records estimate.' },
+            { label: 'Expenses', value: monthlyExpenses, note: 'Using the fixed + variable estimate.' },
+            { label: 'Surplus', value: monthlySurplus, note: 'Estimated monthly money kept.' },
+          ],
+          nextAction: 'Replace the estimate with a real trailing 30-day spend number when available.',
+        },
+      ],
+      prompts: [
+        { label: 'Job hours', value: 'Weekly average', detail: 'Needed for real hourly value.', severity: 'watch' },
+        { label: 'Freelance hours', value: 'Weekly average', detail: 'Needed for the separate side-work hourly view.', severity: 'watch' },
+        { label: 'Monthly snapshot', value: 'Next balance update', detail: 'Needed for the net-worth growth chart.', severity: 'watch' },
+      ],
+    },
+    freshness: summarizeFreshness('Wealth scoreboard inputs', 0, 30),
   }
 }
 

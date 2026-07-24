@@ -2444,6 +2444,251 @@ button {
   background: linear-gradient(180deg, rgba(38, 13, 18, 0.56), rgba(8, 11, 17, 0.88));
 }
 
+.wealth-page {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.wealth-hero,
+.wealth-score-card,
+.wealth-hourly-panel,
+.wealth-detail-panel,
+.wealth-prompt-panel,
+.wealth-prompt-card {
+  min-width: 0;
+  border: 1px solid rgba(241, 244, 248, 0.1);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(16, 21, 29, 0.92), rgba(7, 10, 15, 0.95));
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.wealth-hero {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 16px;
+}
+
+.wealth-hero h2 {
+  margin: 4px 0 0;
+  color: var(--text);
+  font-size: 1.35rem;
+  line-height: 1.1;
+}
+
+.wealth-hero span,
+.wealth-score-card span,
+.wealth-panel-head span,
+.wealth-hourly-grid span,
+.wealth-panel-toggle small,
+.wealth-panel-metrics span,
+.wealth-next-action span,
+.wealth-prompt-card span {
+  color: #86a9df;
+  font-size: 0.72rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.wealth-hero small,
+.wealth-panel-head small {
+  color: #b8cef0;
+  font-size: 0.78rem;
+}
+
+.wealth-scoreboard {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.wealth-score-card {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  min-height: 132px;
+  padding: 13px;
+}
+
+.wealth-score-card strong,
+.wealth-hourly-grid strong,
+.wealth-panel-toggle strong,
+.wealth-panel-metrics strong,
+.wealth-prompt-card strong {
+  display: block;
+  color: var(--text);
+  line-height: 1.14;
+  overflow-wrap: anywhere;
+}
+
+.wealth-score-card strong {
+  font-size: 1.38rem;
+}
+
+.wealth-score-card p,
+.wealth-hourly-panel p,
+.wealth-panel-body p,
+.wealth-panel-metrics p,
+.wealth-next-action p,
+.wealth-prompt-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.42;
+}
+
+.wealth-hourly-panel,
+.wealth-detail-panel,
+.wealth-prompt-panel {
+  display: grid;
+  gap: 14px;
+  padding: 14px;
+}
+
+.wealth-panel-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: end;
+  min-width: 0;
+}
+
+.wealth-panel-head strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--text);
+  font-size: clamp(1.05rem, 1.8vw, 1.42rem);
+  line-height: 1.08;
+  overflow-wrap: anywhere;
+}
+
+.wealth-hourly-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.wealth-hourly-grid > div,
+.wealth-panel-metrics > div {
+  min-width: 0;
+  border: 1px solid rgba(120, 166, 235, 0.15);
+  border-radius: 8px;
+  background: rgba(4, 9, 15, 0.54);
+  padding: 10px;
+}
+
+.wealth-hourly-grid strong {
+  margin-top: 6px;
+  font-size: 1rem;
+}
+
+.wealth-panel-stack {
+  display: grid;
+  gap: 12px;
+}
+
+.wealth-detail-panel.net-worth {
+  border-color: rgba(103, 224, 178, 0.24);
+}
+
+.wealth-detail-panel.real-hourly-value {
+  border-color: rgba(109, 177, 255, 0.24);
+}
+
+.wealth-detail-panel.cashflow {
+  border-color: rgba(255, 174, 96, 0.25);
+}
+
+.wealth-panel-toggle {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  padding: 0;
+}
+
+.wealth-panel-toggle > span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(120, 166, 235, 0.28);
+  border-radius: 999px;
+  color: #d6e5fb;
+  background: rgba(126, 167, 255, 0.1);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.wealth-panel-toggle strong {
+  margin-top: 5px;
+  font-size: clamp(1.08rem, 1.8vw, 1.46rem);
+}
+
+.wealth-panel-toggle:focus-visible {
+  outline: 2px solid rgba(109, 177, 255, 0.7);
+  outline-offset: 4px;
+}
+
+.wealth-panel-body {
+  display: grid;
+  gap: 12px;
+}
+
+.wealth-panel-metrics,
+.wealth-prompt-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.wealth-panel-metrics strong {
+  margin-top: 6px;
+  font-size: 1.06rem;
+}
+
+.wealth-panel-metrics p {
+  margin-top: 6px;
+}
+
+.wealth-next-action {
+  border-top: 1px solid rgba(241, 244, 248, 0.08);
+  padding-top: 10px;
+}
+
+.wealth-next-action p {
+  margin-top: 5px;
+  color: #d8e6f7;
+}
+
+.wealth-prompt-card {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  min-height: 132px;
+  padding: 13px;
+}
+
+.wealth-prompt-card.watch {
+  border-color: rgba(255, 174, 96, 0.34);
+  background: linear-gradient(180deg, rgba(31, 21, 12, 0.58), rgba(8, 11, 17, 0.88));
+}
+
+.wealth-prompt-card.stale {
+  border-color: rgba(255, 117, 117, 0.34);
+  background: linear-gradient(180deg, rgba(38, 13, 18, 0.56), rgba(8, 11, 17, 0.88));
+}
+
 .education-hero,
 .education-deadline-panel,
 .education-course-map {
@@ -4524,12 +4769,18 @@ button {
   .career-category-overview,
   .career-section-grid,
   .career-prompt-grid,
+  .wealth-hero,
+  .wealth-scoreboard,
+  .wealth-hourly-grid,
+  .wealth-panel-metrics,
+  .wealth-prompt-grid,
   .education-hero {
     grid-template-columns: 1fr;
   }
 
   .vessel-hero .back-button,
   .career-hero .back-button,
+  .wealth-hero .back-button,
   .education-hero .back-button {
     width: fit-content;
   }
@@ -4759,12 +5010,17 @@ button {
     gap: 10px;
   }
 
+  .wealth-page {
+    gap: 10px;
+  }
+
   .education-page {
     gap: 10px;
   }
 
   .vessel-hero,
   .career-hero,
+  .wealth-hero,
   .education-hero {
     gap: 12px;
     border-radius: 8px;
@@ -4795,13 +5051,18 @@ button {
   }
 
   .career-category-panel,
-  .career-prompt-panel {
+  .career-prompt-panel,
+  .wealth-detail-panel,
+  .wealth-hourly-panel,
+  .wealth-prompt-panel {
     padding: 14px;
   }
 
   .career-category-card,
   .career-section-card,
-  .career-prompt-card {
+  .career-prompt-card,
+  .wealth-score-card,
+  .wealth-prompt-card {
     min-height: auto;
     padding: 14px;
   }
@@ -4809,16 +5070,23 @@ button {
   .career-category-overview,
   .career-section-grid,
   .career-category-panel.current-job .career-section-grid,
-  .career-prompt-grid {
+  .career-prompt-grid,
+  .wealth-scoreboard,
+  .wealth-hourly-grid,
+  .wealth-panel-metrics,
+  .wealth-prompt-grid {
     grid-template-columns: 1fr;
   }
 
-  .career-panel-head {
+  .career-panel-head,
+  .wealth-panel-head {
     align-items: start;
     flex-direction: column;
   }
 
-  .career-panel-head small {
+  .career-panel-head small,
+  .wealth-panel-head small,
+  .wealth-hero small {
     white-space: normal;
   }
 

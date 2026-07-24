@@ -1033,6 +1033,11 @@ function App() {
     portfolio: false,
   })
   const [expandedCareerSections, setExpandedCareerSections] = useState<Record<string, boolean>>({})
+  const [expandedWealthPanels, setExpandedWealthPanels] = useState<Record<string, boolean>>({
+    'net-worth': true,
+    'real-hourly-value': false,
+    cashflow: false,
+  })
   const dashboardData = useDashboardData()
   const appMode: AppMode = isBusinessPage(currentPage) ? 'business' : 'personal'
   const personalSection: PersonalSection = isBusinessPage(currentPage) ? 'home' : currentPage
@@ -2336,6 +2341,137 @@ function App() {
     )
   }
 
+  function renderWealthPage() {
+    if (!currentPersonalData) return null
+
+    const wealth = currentPersonalData.wealth
+    const panels = wealth?.panels ?? []
+    const prompts = wealth?.prompts ?? currentPersonalData.missingData ?? []
+    const toggleWealthPanel = (panelId: string) => {
+      setExpandedWealthPanels((current) => ({
+        ...current,
+        [panelId]: !(current[panelId] ?? false),
+      }))
+    }
+
+    return (
+      <section className="wealth-page" aria-label="Wealth dashboard">
+        <section className="wealth-hero">
+          <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
+          <div>
+            <span>Wealth</span>
+            <h2>{wealth?.headline ?? 'Wealth Command Center'}</h2>
+          </div>
+          <small>{wealth?.asOf ?? currentPersonalData.freshness?.label ?? 'Current estimate'}</small>
+        </section>
+
+        <section className="wealth-scoreboard" aria-label="Wealth scoreboard">
+          {(wealth?.accounts ?? currentPersonalData.summaryCards.slice(0, 4)).map((item) => (
+            <article key={item.label} className="wealth-score-card">
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <p>{item.note}</p>
+            </article>
+          ))}
+        </section>
+
+        <section className="wealth-hourly-panel" aria-label="Real hourly value">
+          <div className="wealth-panel-head">
+            <div>
+              <span>Money per hour</span>
+              <strong>{wealth?.hourly.status ?? 'Waiting on weekly hours'}</strong>
+            </div>
+            <small>{wealth?.hourly.threshold ?? '$35/hr'} threshold</small>
+          </div>
+          <div className="wealth-hourly-grid">
+            <div>
+              <span>Net income</span>
+              <strong>{wealth?.hourly.monthlyNetIncome ?? '$5,226'}</strong>
+            </div>
+            <div>
+              <span>Expenses</span>
+              <strong>{wealth?.hourly.monthlyExpenses ?? '$2,750'}</strong>
+            </div>
+            <div>
+              <span>Monthly saved</span>
+              <strong>{wealth?.hourly.monthlySurplus ?? '$2,476'}</strong>
+            </div>
+            <div>
+              <span>Job hours</span>
+              <strong>{wealth?.hourly.jobHours ?? 'Need weekly average'}</strong>
+            </div>
+            <div>
+              <span>Freelance hours</span>
+              <strong>{wealth?.hourly.freelanceHours ?? 'Need weekly average'}</strong>
+            </div>
+          </div>
+          <p>{wealth?.hourly.formula ?? 'Monthly saved / ((job hours + freelance hours) * 4.33)'}</p>
+        </section>
+
+        <section className="wealth-panel-stack" aria-label="Wealth panels">
+          {panels.map((panel) => {
+            const panelOpen = expandedWealthPanels[panel.id] ?? false
+
+            return (
+              <article key={panel.id} className={`wealth-detail-panel ${panel.id} ${panelOpen ? 'open' : ''}`}>
+                <button
+                  className="wealth-panel-toggle"
+                  type="button"
+                  aria-expanded={panelOpen}
+                  onClick={() => toggleWealthPanel(panel.id)}
+                >
+                  <span>{panelOpen ? '-' : '+'}</span>
+                  <div>
+                    <small>{panel.kicker}</small>
+                    <strong>{panel.title}</strong>
+                  </div>
+                </button>
+
+                {panelOpen ? (
+                  <div className="wealth-panel-body">
+                    <p>{panel.summary}</p>
+                    <div className="wealth-panel-metrics">
+                      {panel.metrics.map((metric) => (
+                        <div key={`${panel.id}-${metric.label}`}>
+                          <span>{metric.label}</span>
+                          <strong>{metric.value}</strong>
+                          <p>{metric.note}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="wealth-next-action">
+                      <span>Next</span>
+                      <p>{panel.nextAction}</p>
+                    </div>
+                  </div>
+                ) : null}
+              </article>
+            )
+          })}
+        </section>
+
+        <section className="wealth-prompt-panel" aria-label="Wealth data prompts">
+          <div className="wealth-panel-head">
+            <div>
+              <span>Missing inputs</span>
+              <strong>Needed for a real tracker</strong>
+            </div>
+            <small>{currentPersonalData.freshness?.label ?? 'Wealth inputs'}</small>
+          </div>
+          <div className="wealth-prompt-grid">
+            {prompts.slice(0, 4).map((prompt) => (
+              <article key={`${prompt.label}-${prompt.value}`} className={`wealth-prompt-card ${prompt.severity ?? 'watch'}`}>
+                <span>{prompt.label}</span>
+                <strong>{prompt.value}</strong>
+                <p>{prompt.detail}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      </section>
+    )
+  }
+
   function renderCategorySignatureDashboard() {
     if (personalSection === 'home' || !currentSignatureDashboard || !currentPersonalData) return null
 
@@ -2566,7 +2702,7 @@ function App() {
           </main>
         ) : (
           <main className="revamp-detail-page">
-            {personalSection === 'identity' || personalSection === 'vessel' || personalSection === 'career' || personalSection === 'education' ? null : (
+            {personalSection === 'identity' || personalSection === 'vessel' || personalSection === 'career' || personalSection === 'wealth' || personalSection === 'education' ? null : (
               <section className="revamp-detail-hero">
                 <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
                 <div>
@@ -2581,7 +2717,7 @@ function App() {
                 </aside>
               </section>
             )}
-            {personalSection === 'identity' ? renderIdentityScorecardPage() : personalSection === 'vessel' ? renderVesselPage() : personalSection === 'career' ? renderCareerPage() : personalSection === 'education' ? renderEducationPage() : (
+            {personalSection === 'identity' ? renderIdentityScorecardPage() : personalSection === 'vessel' ? renderVesselPage() : personalSection === 'career' ? renderCareerPage() : personalSection === 'wealth' ? renderWealthPage() : personalSection === 'education' ? renderEducationPage() : (
               <>
                 {renderCategorySignatureDashboard()}
                 {renderPersonalDashboardLead()}

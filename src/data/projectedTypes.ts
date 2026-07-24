@@ -173,6 +173,41 @@ export type CareerProjection = {
   prompts: ProjectedContextItem[]
 }
 
+export type WealthAccountProjection = {
+  label: string
+  value: string
+  note: string
+}
+
+export type WealthHourlyProjection = {
+  monthlyNetIncome: string
+  monthlyExpenses: string
+  monthlySurplus: string
+  jobHours: string
+  freelanceHours: string
+  formula: string
+  threshold: string
+  status: string
+}
+
+export type WealthPanelProjection = {
+  id: 'net-worth' | 'real-hourly-value' | 'cashflow'
+  title: string
+  kicker: string
+  summary: string
+  metrics: WealthAccountProjection[]
+  nextAction: string
+}
+
+export type WealthProjection = {
+  headline: string
+  asOf: string
+  accounts: WealthAccountProjection[]
+  hourly: WealthHourlyProjection
+  panels: WealthPanelProjection[]
+  prompts: ProjectedContextItem[]
+}
+
 export type ProjectedSection = {
   heroSummary: string
   summaryCards: ProjectedCard[]
@@ -190,4 +225,5 @@ export type ProjectedSection = {
   vessel?: VesselProjection
   education?: EducationProjection
   career?: CareerProjection
+  wealth?: WealthProjection
 }
