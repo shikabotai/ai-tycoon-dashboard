@@ -3,8 +3,8 @@ import { attachProjectedDashboard } from '../data/projectedDashboardModel'
 import type { ProjectedSection, ProjectionSnapshot } from '../data/projectedTypes'
 
 export const generatedProjectionSnapshot: ProjectionSnapshot = {
-  "generatedAt": "2026-07-25T01:46:29.687Z",
-  "generatedAtLabel": "Jul 24, 2026, 9:46 PM EDT",
+  "generatedAt": "2026-07-25T01:49:31.725Z",
+  "generatedAtLabel": "Jul 24, 2026, 9:49 PM EDT",
   "source": "PunkRecords",
   "updateMode": "Nightly static projection"
 } as ProjectionSnapshot
@@ -1785,12 +1785,12 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     }
   },
   "connections": {
-    "heroSummary": "20 mapped people across 6 life lanes.",
+    "heroSummary": "40 mapped people across 8 life lanes.",
     "summaryCards": [
       {
         "label": "Mapped people",
-        "value": "20",
-        "note": "6 life lanes from Connections MOC."
+        "value": "40",
+        "note": "8 life lanes from Connections MOC."
       },
       {
         "label": "Priority people",
@@ -1871,6 +1871,20 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "profileSummary": "Melanie is the current romantic connection in the Connections record, based in Orlando, with high — talking 4 months context and active priority. Keep this profile focused on the live relationship thread, current warmth, and the next simple plan or check-in. Last recorded contact: Late Mar 2026 (Pokémon Unite)."
         },
         {
+          "id": "mom-mother-immediate-family",
+          "person": "Mom",
+          "category": "Mother / immediate family",
+          "location": "South Florida",
+          "closeness": "Closest family relationship",
+          "lastContact": "FaceTime 2x/week",
+          "priority": "active",
+          "lane": "Immediate family",
+          "nextAction": "Keep Mom in the active family rotation with a direct call or text.",
+          "dormant": false,
+          "profileStatus": "available",
+          "profileSummary": "Mom is immediate family: mother / immediate family, South Florida. PunkRecords frames immediate family as one of the most important relationship areas, with the family close but physically separated by Orlando versus South Florida. Current bond: Closest family relationship. Contact pattern: FaceTime 2x/week."
+        },
+        {
           "id": "lohith-close-friend",
           "person": "Lohith",
           "category": "Close friend",
@@ -1883,20 +1897,6 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "dormant": true,
           "profileStatus": "available",
           "profileSummary": "Lohith is in the Friends lane as close friend, based in Houston, with medium — drifting with distance closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
-        },
-        {
-          "id": "mehul-dance-team-close",
-          "person": "Mehul",
-          "category": "Dance team / close",
-          "location": "South Florida",
-          "closeness": "High — co-captain",
-          "lastContact": "2026-01-01 (winter break)",
-          "priority": "high",
-          "lane": "Friends",
-          "nextAction": "Send Mehul one low-friction catch-up text.",
-          "dormant": true,
-          "profileStatus": "available",
-          "profileSummary": "Mehul is in the Friends lane as dance team / close, based in South Florida, with high — co-captain closeness and high priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (winter break)."
         }
       ],
       "lanes": [
@@ -1918,6 +1918,300 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "dormant": false,
               "profileStatus": "available",
               "profileSummary": "Melanie is the current romantic connection in the Connections record, based in Orlando, with high — talking 4 months context and active priority. Keep this profile focused on the live relationship thread, current warmth, and the next simple plan or check-in. Last recorded contact: Late Mar 2026 (Pokémon Unite)."
+            }
+          ]
+        },
+        {
+          "id": "immediate-family",
+          "title": "Immediate family",
+          "count": 4,
+          "people": [
+            {
+              "id": "mom-mother-immediate-family",
+              "person": "Mom",
+              "category": "Mother / immediate family",
+              "location": "South Florida",
+              "closeness": "Closest family relationship",
+              "lastContact": "FaceTime 2x/week",
+              "priority": "active",
+              "lane": "Immediate family",
+              "nextAction": "Keep Mom in the active family rotation with a direct call or text.",
+              "dormant": false,
+              "profileStatus": "available",
+              "profileSummary": "Mom is immediate family: mother / immediate family, South Florida. PunkRecords frames immediate family as one of the most important relationship areas, with the family close but physically separated by Orlando versus South Florida. Current bond: Closest family relationship. Contact pattern: FaceTime 2x/week."
+            },
+            {
+              "id": "dad-father-immediate-family",
+              "person": "Dad",
+              "category": "Father / immediate family",
+              "location": "South Florida",
+              "closeness": "Good but surface remotely",
+              "lastContact": "Low — texts for important things, FaceTime when Mom calls",
+              "priority": "high",
+              "lane": "Immediate family",
+              "nextAction": "Keep Dad in the active family rotation with a direct call or text.",
+              "dormant": false,
+              "profileStatus": "available",
+              "profileSummary": "Dad is immediate family: father / immediate family, South Florida. PunkRecords frames immediate family as one of the most important relationship areas, with the family close but physically separated by Orlando versus South Florida. Current bond: Good but surface remotely. Contact pattern: Low — texts for important things, FaceTime when Mom calls."
+            },
+            {
+              "id": "melvin-older-brother-immediate-family",
+              "person": "Melvin",
+              "category": "Older brother / immediate family",
+              "location": "South Florida",
+              "closeness": "Warm in person, shallow remotely",
+              "lastContact": "Low — texts only",
+              "priority": "high",
+              "lane": "Immediate family",
+              "nextAction": "Keep Melvin in the active family rotation with a direct call or text.",
+              "dormant": false,
+              "profileStatus": "available",
+              "profileSummary": "Melvin is immediate family: older brother / immediate family, South Florida. PunkRecords frames immediate family as one of the most important relationship areas, with the family close but physically separated by Orlando versus South Florida. Current bond: Warm in person, shallow remotely. Contact pattern: Low — texts only."
+            },
+            {
+              "id": "milan-younger-brother-immediate-family",
+              "person": "Milan",
+              "category": "Younger brother / immediate family",
+              "location": "South Florida",
+              "closeness": "Warm, goofy, surface-level",
+              "lastContact": "Low — texts only",
+              "priority": "high",
+              "lane": "Immediate family",
+              "nextAction": "Keep Milan in the active family rotation with a direct call or text.",
+              "dormant": false,
+              "profileStatus": "available",
+              "profileSummary": "Milan is immediate family: younger brother / immediate family, South Florida. PunkRecords frames immediate family as one of the most important relationship areas, with the family close but physically separated by Orlando versus South Florida. Current bond: Warm, goofy, surface-level. Contact pattern: Low — texts only."
+            }
+          ]
+        },
+        {
+          "id": "extended-family",
+          "title": "Extended family",
+          "count": 16,
+          "people": [
+            {
+              "id": "abel-cousin-extended-family",
+              "person": "Abel",
+              "category": "Cousin / extended family",
+              "location": "Miami / South Florida",
+              "closeness": "Close through monthly home visits",
+              "lastContact": "Every home visit / monthly",
+              "priority": "medium",
+              "lane": "Extended family",
+              "nextAction": "Keep Abel visible for family visits, birthdays, and extended-family touchpoints.",
+              "dormant": false,
+              "profileStatus": "available",
+              "profileSummary": "Abel is tracked in the extended family lane as cousin / extended family. PunkRecords says extended family matters through Miami, Chicago, home visits, family proximity, birthdays, and the broader Thanath/Kerala-rooted family network."
+            },
+            {
+              "id": "abin-cousin-extended-family",
+              "person": "Abin",
+              "category": "Cousin / extended family",
+              "location": "Miami / South Florida",
+              "closeness": "Close through monthly home visits",
+              "lastContact": "Every home visit / monthly",
+              "priority": "medium",
+              "lane": "Extended family",
+              "nextAction": "Keep Abin visible for family visits, birthdays, and extended-family touchpoints.",
+              "dormant": false,
+              "profileStatus": "available",
+              "profileSummary": "Abin is tracked in the extended family lane as cousin / extended family. PunkRecords says extended family matters through Miami, Chicago, home visits, family proximity, birthdays, and the broader Thanath/Kerala-rooted family network."
+            },
+            {
+              "id": "akhil-cousin-extended-family",
+              "person": "Akhil",
+              "category": "Cousin / extended family",
+              "location": "Extended family",
+              "closeness": "Extended family connection",
+              "lastContact": "Family gatherings",
+              "priority": "medium",
+              "lane": "Extended family",
+              "nextAction": "Keep Akhil visible for family visits, birthdays, and extended-family touchpoints.",
+              "dormant": false,
+              "profileStatus": "available",
+              "profileSummary": "Akhil is tracked in the extended family lane as cousin / extended family. PunkRecords says extended family matters through Miami, Chicago, home visits, family proximity, birthdays, and the broader Thanath/Kerala-rooted family network."
+            },
+            {
+              "id": "alan-cousin-extended-family",
+              "person": "Alan",
+              "category": "Cousin / extended family",
+              "location": "Extended family",
+              "closeness": "Extended family connection",
+              "lastContact": "Family gatherings",
+              "priority": "medium",
+              "lane": "Extended family",
+              "nextAction": "Keep Alan visible for family visits, birthdays, and extended-family touchpoints.",
+              "dormant": false,
+              "profileStatus": "available",
+              "profileSummary": "Alan is tracked in the extended family lane as cousin / extended family. PunkRecords says extended family matters through Miami, Chicago, home visits, family proximity, birthdays, and the broader Thanath/Kerala-rooted family network."
+            },
+            {
+              "id": "alex-cousin-extended-family",
+              "person": "Alex",
+              "category": "Cousin / extended family",
+              "location": "Miami / South Florida",
+              "closeness": "Close through monthly home visits",
+              "lastContact": "Every home visit / monthly",
+              "priority": "medium",
+              "lane": "Extended family",
+              "nextAction": "Keep Alex visible for family visits, birthdays, and extended-family touchpoints.",
+              "dormant": false,
+              "profileStatus": "available",
+              "profileSummary": "Alex is tracked in the extended family lane as cousin / extended family. PunkRecords says extended family matters through Miami, Chicago, home visits, family proximity, birthdays, and the broader Thanath/Kerala-rooted family network."
+            },
+            {
+              "id": "ambakan-cousin-extended-family",
+              "person": "Ambakan",
+              "category": "Cousin / extended family",
+              "location": "Extended family",
+              "closeness": "Extended family connection",
+              "lastContact": "Family gatherings",
+              "priority": "medium",
+              "lane": "Extended family",
+              "nextAction": "Keep Ambakan visible for family visits, birthdays, and extended-family touchpoints.",
+              "dormant": false,
+              "profileStatus": "available",
+              "profileSummary": "Ambakan is tracked in the extended family lane as cousin / extended family. PunkRecords says extended family matters through Miami, Chicago, home visits, family proximity, birthdays, and the broader Thanath/Kerala-rooted family network."
+            },
+            {
+              "id": "elba-cousin-extended-family",
+              "person": "Elba",
+              "category": "Cousin / extended family",
+              "location": "Extended family",
+              "closeness": "Extended family connection",
+              "lastContact": "Family gatherings",
+              "priority": "medium",
+              "lane": "Extended family",
+              "nextAction": "Keep Elba visible for family visits, birthdays, and extended-family touchpoints.",
+              "dormant": false,
+              "profileStatus": "available",
+              "profileSummary": "Elba is tracked in the extended family lane as cousin / extended family. PunkRecords says extended family matters through Miami, Chicago, home visits, family proximity, birthdays, and the broader Thanath/Kerala-rooted family network."
+            },
+            {
+              "id": "ida-cousin-extended-family",
+              "person": "Ida",
+              "category": "Cousin / extended family",
+              "location": "Extended family",
+              "closeness": "Extended family connection",
+              "lastContact": "Family gatherings",
+              "priority": "medium",
+              "lane": "Extended family",
+              "nextAction": "Keep Ida visible for family visits, birthdays, and extended-family touchpoints.",
+              "dormant": false,
+              "profileStatus": "available",
+              "profileSummary": "Ida is tracked in the extended family lane as cousin / extended family. PunkRecords says extended family matters through Miami, Chicago, home visits, family proximity, birthdays, and the broader Thanath/Kerala-rooted family network."
+            },
+            {
+              "id": "jackie-cousin-extended-family",
+              "person": "Jackie",
+              "category": "Cousin / extended family",
+              "location": "Extended family",
+              "closeness": "Extended family connection",
+              "lastContact": "Family gatherings",
+              "priority": "medium",
+              "lane": "Extended family",
+              "nextAction": "Keep Jackie visible for family visits, birthdays, and extended-family touchpoints.",
+              "dormant": false,
+              "profileStatus": "available",
+              "profileSummary": "Jackie is tracked in the extended family lane as cousin / extended family. PunkRecords says extended family matters through Miami, Chicago, home visits, family proximity, birthdays, and the broader Thanath/Kerala-rooted family network."
+            },
+            {
+              "id": "jaison-jude-cousin-extended-family",
+              "person": "Jaison Jude",
+              "category": "Cousin / extended family",
+              "location": "Extended family",
+              "closeness": "Extended family connection",
+              "lastContact": "Family gatherings",
+              "priority": "medium",
+              "lane": "Extended family",
+              "nextAction": "Keep Jaison Jude visible for family visits, birthdays, and extended-family touchpoints.",
+              "dormant": false,
+              "profileStatus": "available",
+              "profileSummary": "Jaison Jude is tracked in the extended family lane as cousin / extended family. PunkRecords says extended family matters through Miami, Chicago, home visits, family proximity, birthdays, and the broader Thanath/Kerala-rooted family network."
+            },
+            {
+              "id": "jeffrey-cousin-extended-family",
+              "person": "Jeffrey",
+              "category": "Cousin / extended family",
+              "location": "Extended family",
+              "closeness": "Extended family connection",
+              "lastContact": "Family gatherings",
+              "priority": "medium",
+              "lane": "Extended family",
+              "nextAction": "Keep Jeffrey visible for family visits, birthdays, and extended-family touchpoints.",
+              "dormant": false,
+              "profileStatus": "available",
+              "profileSummary": "Jeffrey is tracked in the extended family lane as cousin / extended family. PunkRecords says extended family matters through Miami, Chicago, home visits, family proximity, birthdays, and the broader Thanath/Kerala-rooted family network."
+            },
+            {
+              "id": "jessica-cousin-extended-family",
+              "person": "Jessica",
+              "category": "Cousin / extended family",
+              "location": "Extended family",
+              "closeness": "Extended family connection",
+              "lastContact": "Family gatherings",
+              "priority": "medium",
+              "lane": "Extended family",
+              "nextAction": "Keep Jessica visible for family visits, birthdays, and extended-family touchpoints.",
+              "dormant": false,
+              "profileStatus": "available",
+              "profileSummary": "Jessica is tracked in the extended family lane as cousin / extended family. PunkRecords says extended family matters through Miami, Chicago, home visits, family proximity, birthdays, and the broader Thanath/Kerala-rooted family network."
+            },
+            {
+              "id": "michael-cousin-extended-family",
+              "person": "Michael",
+              "category": "Cousin / extended family",
+              "location": "Extended family",
+              "closeness": "Extended family connection",
+              "lastContact": "Family gatherings",
+              "priority": "medium",
+              "lane": "Extended family",
+              "nextAction": "Keep Michael visible for family visits, birthdays, and extended-family touchpoints.",
+              "dormant": false,
+              "profileStatus": "available",
+              "profileSummary": "Michael is tracked in the extended family lane as cousin / extended family. PunkRecords says extended family matters through Miami, Chicago, home visits, family proximity, birthdays, and the broader Thanath/Kerala-rooted family network."
+            },
+            {
+              "id": "natalia-cousin-extended-family",
+              "person": "Natalia",
+              "category": "Cousin / extended family",
+              "location": "Extended family",
+              "closeness": "Extended family connection",
+              "lastContact": "Family gatherings",
+              "priority": "medium",
+              "lane": "Extended family",
+              "nextAction": "Keep Natalia visible for family visits, birthdays, and extended-family touchpoints.",
+              "dormant": false,
+              "profileStatus": "available",
+              "profileSummary": "Natalia is tracked in the extended family lane as cousin / extended family. PunkRecords says extended family matters through Miami, Chicago, home visits, family proximity, birthdays, and the broader Thanath/Kerala-rooted family network."
+            },
+            {
+              "id": "natasha-cousin-extended-family",
+              "person": "Natasha",
+              "category": "Cousin / extended family",
+              "location": "Extended family",
+              "closeness": "Extended family connection",
+              "lastContact": "Family gatherings",
+              "priority": "medium",
+              "lane": "Extended family",
+              "nextAction": "Keep Natasha visible for family visits, birthdays, and extended-family touchpoints.",
+              "dormant": false,
+              "profileStatus": "available",
+              "profileSummary": "Natasha is tracked in the extended family lane as cousin / extended family. PunkRecords says extended family matters through Miami, Chicago, home visits, family proximity, birthdays, and the broader Thanath/Kerala-rooted family network."
+            },
+            {
+              "id": "nivea-cousin-extended-family",
+              "person": "Nivea",
+              "category": "Cousin / extended family",
+              "location": "Extended family",
+              "closeness": "Extended family connection",
+              "lastContact": "Family gatherings",
+              "priority": "medium",
+              "lane": "Extended family",
+              "nextAction": "Keep Nivea visible for family visits, birthdays, and extended-family touchpoints.",
+              "dormant": false,
+              "profileStatus": "available",
+              "profileSummary": "Nivea is tracked in the extended family lane as cousin / extended family. PunkRecords says extended family matters through Miami, Chicago, home visits, family proximity, birthdays, and the broader Thanath/Kerala-rooted family network."
             }
           ]
         },

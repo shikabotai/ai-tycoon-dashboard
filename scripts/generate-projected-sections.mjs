@@ -126,6 +126,103 @@ function connectionProfileSummary(person, category, location, closeness, lastCon
   return `${person} is tracked in the ${lane} lane as ${category.toLowerCase()}, ${locationText}, with ${closeness.toLowerCase()} closeness and ${priorityText}.${contactText}`
 }
 
+function familyConnectionProfileSummary(person, relationship, location, closeness, contact, lane) {
+  if (lane === 'Immediate family') {
+    return `${person} is immediate family: ${relationship.toLowerCase()}, ${location}. PunkRecords frames immediate family as one of the most important relationship areas, with the family close but physically separated by Orlando versus South Florida. Current bond: ${closeness}. Contact pattern: ${contact}.`
+  }
+
+  return `${person} is tracked in the extended family lane as ${relationship.toLowerCase()}. PunkRecords says extended family matters through Miami, Chicago, home visits, family proximity, birthdays, and the broader Thanath/Kerala-rooted family network.`
+}
+
+function makeFamilyConnectionPerson(input) {
+  return {
+    id: slugify(`${input.person}-${input.category}`),
+    person: input.person,
+    category: input.category,
+    location: input.location,
+    closeness: input.closeness,
+    lastContact: input.lastContact,
+    priority: input.priority,
+    lane: input.lane,
+    nextAction: input.lane === 'Immediate family'
+      ? `Keep ${input.person} in the active family rotation with a direct call or text.`
+      : `Keep ${input.person} visible for family visits, birthdays, and extended-family touchpoints.`,
+    dormant: false,
+    profileStatus: 'available',
+    profileSummary: familyConnectionProfileSummary(input.person, input.category, input.location, input.closeness, input.lastContact, input.lane),
+  }
+}
+
+function buildFamilyConnectionPeople() {
+  const immediateFamily = [
+    {
+      person: 'Mom',
+      category: 'Mother / immediate family',
+      location: 'South Florida',
+      closeness: 'Closest family relationship',
+      lastContact: 'FaceTime 2x/week',
+      priority: 'active',
+      lane: 'Immediate family',
+    },
+    {
+      person: 'Dad',
+      category: 'Father / immediate family',
+      location: 'South Florida',
+      closeness: 'Good but surface remotely',
+      lastContact: 'Low — texts for important things, FaceTime when Mom calls',
+      priority: 'high',
+      lane: 'Immediate family',
+    },
+    {
+      person: 'Melvin',
+      category: 'Older brother / immediate family',
+      location: 'South Florida',
+      closeness: 'Warm in person, shallow remotely',
+      lastContact: 'Low — texts only',
+      priority: 'high',
+      lane: 'Immediate family',
+    },
+    {
+      person: 'Milan',
+      category: 'Younger brother / immediate family',
+      location: 'South Florida',
+      closeness: 'Warm, goofy, surface-level',
+      lastContact: 'Low — texts only',
+      priority: 'high',
+      lane: 'Immediate family',
+    },
+  ]
+
+  const extendedFamily = [
+    'Jaison Jude',
+    'Jessica',
+    'Jackie',
+    'Ida',
+    'Jeffrey',
+    'Abin',
+    'Ambakan',
+    'Alex',
+    'Abel',
+    'Alan',
+    'Akhil',
+    'Elba',
+    'Michael',
+    'Natalia',
+    'Natasha',
+    'Nivea',
+  ].map((person) => ({
+    person,
+    category: 'Cousin / extended family',
+    location: /Abin|Alex|Abel/i.test(person) ? 'Miami / South Florida' : 'Extended family',
+    closeness: /Abin|Alex|Abel/i.test(person) ? 'Close through monthly home visits' : 'Extended family connection',
+    lastContact: /Abin|Alex|Abel/i.test(person) ? 'Every home visit / monthly' : 'Family gatherings',
+    priority: 'medium',
+    lane: 'Extended family',
+  }))
+
+  return [...immediateFamily, ...extendedFamily].map(makeFamilyConnectionPerson)
+}
+
 function parseConnectionsTable(markdown) {
   return markdown
     .split('\n')
@@ -171,7 +268,7 @@ function sortConnectionPeople(people) {
 }
 
 function buildConnectionLanes(people) {
-  const laneOrder = ['Romantic', 'Friends', 'Co-founders / ventures', 'Career network', 'Orlando local', 'General network']
+  const laneOrder = ['Romantic', 'Immediate family', 'Extended family', 'Friends', 'Co-founders / ventures', 'Career network', 'Orlando local', 'General network']
   return laneOrder
     .map((lane) => {
       const lanePeople = sortConnectionPeople(people.filter((person) => person.lane === lane))
@@ -1266,7 +1363,7 @@ function buildConnectionsData() {
   const connections = readPunkFile('Connections/Connections MOC.md')
   const careerNetworking = readPunkFile('Career/Networking/Contact Tracker.md')
   const family = readPunkFile('Family/Family MOC.md')
-  const people = parseConnectionsTable(connections)
+  const people = [...parseConnectionsTable(connections), ...buildFamilyConnectionPeople()]
   const lanes = buildConnectionLanes(people)
   const highPriority = people.filter((person) => person.priority === 'active' || person.priority === 'high')
   const dormantImportant = people.filter((person) => person.dormant).slice(0, 5)
