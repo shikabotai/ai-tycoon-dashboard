@@ -3185,11 +3185,7 @@ function App() {
     const dormantImportant = connections?.dormantImportant ?? []
     const leadReachOut = topReachOuts[0]
     const allLanePeople = lanes.flatMap((lane) => lane.people ?? [])
-    const selectedConnection =
-      allLanePeople.find((person) => person.id === selectedConnectionId) ??
-      leadReachOut ??
-      allLanePeople[0] ??
-      null
+    const selectedConnection = allLanePeople.find((person) => person.id === selectedConnectionId) ?? null
     const priorityLabel = (person: ConnectionPersonProjection) => person.priority === 'active' ? 'Active' : `${person.priority.charAt(0).toUpperCase()}${person.priority.slice(1)} priority`
 
     return (
@@ -3309,10 +3305,19 @@ function App() {
             </div>
           </article>
 
-          <article className="connections-support-panel connections-profile-panel">
-            <span>Profile</span>
-            <h3>{selectedConnection?.person ?? 'No person selected'}</h3>
-            {selectedConnection ? (
+        </section>
+
+        {selectedConnection ? (
+          <section className="connections-profile-modal" role="dialog" aria-modal="true" aria-labelledby="connections-profile-title">
+            <button className="connections-profile-backdrop" type="button" aria-label="Close profile" onClick={() => setSelectedConnectionId(null)} />
+            <article className="connections-profile-dialog">
+              <div className="connections-profile-head">
+                <div>
+                  <span>Connection profile</span>
+                  <h3 id="connections-profile-title">{selectedConnection.person}</h3>
+                </div>
+                <button className="connections-profile-close" type="button" onClick={() => setSelectedConnectionId(null)}>Close</button>
+              </div>
               <div className="connections-profile-fields">
                 <div>
                   <span>Lane</span>
@@ -3347,11 +3352,9 @@ function App() {
                   <strong>{selectedConnection.profileSummary}</strong>
                 </div>
               </div>
-            ) : (
-              <p>No Connections MOC rows found.</p>
-            )}
-          </article>
-        </section>
+            </article>
+          </section>
+        ) : null}
       </section>
     )
   }

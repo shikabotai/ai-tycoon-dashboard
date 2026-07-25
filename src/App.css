@@ -2464,7 +2464,7 @@ button {
 }
 
 .connections-support-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .connections-radar-panel,
@@ -2636,10 +2636,6 @@ button {
   min-height: 220px;
 }
 
-.connections-profile-panel {
-  border-color: rgba(140, 207, 213, 0.28);
-}
-
 .connections-profile-fields {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2658,6 +2654,70 @@ button {
 
 .connections-profile-fields .wide {
   grid-column: 1 / -1;
+}
+
+.connections-profile-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.connections-profile-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(0, 0, 0, 0.68);
+  cursor: pointer;
+}
+
+.connections-profile-dialog {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 14px;
+  width: min(720px, 100%);
+  max-height: min(760px, calc(100vh - 36px));
+  overflow: auto;
+  border: 1px solid rgba(140, 207, 213, 0.34);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(16, 21, 29, 0.98), rgba(7, 10, 15, 0.99));
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.52), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  padding: 16px;
+}
+
+.connections-profile-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: start;
+}
+
+.connections-profile-head span,
+.connections-profile-fields span {
+  color: #8ccfd5;
+  font-size: 0.72rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.connections-profile-head h3 {
+  margin: 6px 0 0;
+  color: var(--text);
+  font-size: 1.4rem;
+  line-height: 1.1;
+}
+
+.connections-profile-close {
+  border: 1px solid rgba(140, 207, 213, 0.24);
+  border-radius: 8px;
+  background: rgba(140, 207, 213, 0.1);
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 800;
+  padding: 9px 11px;
 }
 
 .career-hero,
@@ -5741,6 +5801,7 @@ button {
 	  .connections-hero,
 	  .connections-board,
 	  .connections-support-grid,
+  .connections-profile-fields,
 	  .career-category-overview,
 	  .career-section-grid,
 	  .career-prompt-grid,
@@ -6065,6 +6126,7 @@ button {
 	  .connections-hero,
 	  .connections-board,
 	  .connections-support-grid,
+	  .connections-profile-fields,
 	  .wealth-scoreboard,
   .wealth-connection-steps,
   .wealth-finance-status,

@@ -76,7 +76,7 @@ function laneFromCategory(category: string) {
   if (/co-?founder|venture/i.test(category)) return 'Co-founders / ventures'
   if (/coworker|boss|mentor|professional/i.test(category)) return 'Career network'
   if (/orlando/i.test(category)) return 'Orlando local'
-  if (/hometown|south florida|sf indian|dance team|college|close friend/i.test(category)) return 'Friends and home base'
+  if (/hometown|south florida|sf indian|dance team|college|close friend/i.test(category)) return 'Friends'
   return 'General network'
 }
 
@@ -135,7 +135,7 @@ function sortConnectionPeople(people: ConnectionPersonProjection[]) {
 }
 
 function buildConnectionLanes(people: ConnectionPersonProjection[]): ConnectionLaneProjection[] {
-  const laneOrder = ['Romantic', 'Friends and home base', 'Co-founders / ventures', 'Career network', 'Orlando local', 'General network']
+  const laneOrder = ['Romantic', 'Friends', 'Co-founders / ventures', 'Career network', 'Orlando local', 'General network']
   return laneOrder
     .map((lane) => {
       const lanePeople = sortConnectionPeople(people.filter((person) => person.lane === lane))
