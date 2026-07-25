@@ -3,8 +3,8 @@ import { attachProjectedDashboard } from '../data/projectedDashboardModel'
 import type { ProjectedSection, ProjectionSnapshot } from '../data/projectedTypes'
 
 export const generatedProjectionSnapshot: ProjectionSnapshot = {
-  "generatedAt": "2026-07-25T01:52:14.183Z",
-  "generatedAtLabel": "Jul 24, 2026, 9:52 PM EDT",
+  "generatedAt": "2026-07-25T01:57:22.361Z",
+  "generatedAtLabel": "Jul 24, 2026, 9:57 PM EDT",
   "source": "PunkRecords",
   "updateMode": "Nightly static projection"
 } as ProjectionSnapshot
@@ -1785,11 +1785,11 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     }
   },
   "connections": {
-    "heroSummary": "40 mapped people across 8 life lanes.",
+    "heroSummary": "41 mapped people across 8 life lanes.",
     "summaryCards": [
       {
         "label": "Mapped people",
-        "value": "40",
+        "value": "41",
         "note": "8 life lanes from Connections MOC."
       },
       {
@@ -1987,7 +1987,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         {
           "id": "extended-family",
           "title": "Extended family",
-          "count": 16,
+          "count": 17,
           "people": [
             {
               "id": "abel-cousin-extended-family",
@@ -2116,18 +2116,18 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "profileSummary": "Jackie is tracked in the extended family lane as cousin / extended family. PunkRecords says extended family matters through Miami, Chicago, home visits, family proximity, birthdays, and the broader Thanath/Kerala-rooted family network."
             },
             {
-              "id": "jaison-jude-cousin-extended-family",
-              "person": "Jaison Jude",
+              "id": "jaison-cousin-extended-family",
+              "person": "Jaison",
               "category": "Cousin / extended family",
               "location": "Extended family",
               "closeness": "Extended family connection",
               "lastContact": "Family gatherings",
               "priority": "medium",
               "lane": "Extended family",
-              "nextAction": "Keep Jaison Jude visible for family visits, birthdays, and extended-family touchpoints.",
+              "nextAction": "Keep Jaison visible for family visits, birthdays, and extended-family touchpoints.",
               "dormant": false,
               "profileStatus": "available",
-              "profileSummary": "Jaison Jude is tracked in the extended family lane as cousin / extended family. PunkRecords says extended family matters through Miami, Chicago, home visits, family proximity, birthdays, and the broader Thanath/Kerala-rooted family network."
+              "profileSummary": "Jaison is tracked in the extended family lane as cousin / extended family. PunkRecords says extended family matters through Miami, Chicago, home visits, family proximity, birthdays, and the broader Thanath/Kerala-rooted family network."
             },
             {
               "id": "jeffrey-cousin-extended-family",
@@ -2156,6 +2156,20 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "dormant": false,
               "profileStatus": "available",
               "profileSummary": "Jessica is tracked in the extended family lane as cousin / extended family. PunkRecords says extended family matters through Miami, Chicago, home visits, family proximity, birthdays, and the broader Thanath/Kerala-rooted family network."
+            },
+            {
+              "id": "jude-cousin-extended-family",
+              "person": "Jude",
+              "category": "Cousin / extended family",
+              "location": "Extended family",
+              "closeness": "Extended family connection",
+              "lastContact": "Family gatherings",
+              "priority": "medium",
+              "lane": "Extended family",
+              "nextAction": "Keep Jude visible for family visits, birthdays, and extended-family touchpoints.",
+              "dormant": false,
+              "profileStatus": "available",
+              "profileSummary": "Jude is tracked in the extended family lane as cousin / extended family. PunkRecords says extended family matters through Miami, Chicago, home visits, family proximity, birthdays, and the broader Thanath/Kerala-rooted family network."
             },
             {
               "id": "michael-cousin-extended-family",
@@ -2349,6 +2363,27 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           ]
         },
         {
+          "id": "orlando-local",
+          "title": "Orlando local",
+          "count": 1,
+          "people": [
+            {
+              "id": "david-orlando-friend",
+              "person": "David",
+              "category": "Orlando friend",
+              "location": "Orlando",
+              "closeness": "Low — haven't hung out",
+              "lastContact": "2026-01-01 (college reunion)",
+              "priority": "low",
+              "lane": "Orlando local",
+              "nextAction": "Turn this from surface-level into one real local hangout.",
+              "dormant": false,
+              "profileStatus": "available",
+              "profileSummary": "David is part of the Orlando local base, based in Orlando, with low — haven't hung out closeness and low priority. This connection matters because the record flags Orlando as the place with the thinnest deeper local ties, so the profile should track whether this can become an actual hangout relationship. Last recorded contact: 2026-01-01 (college reunion)."
+            }
+          ]
+        },
+        {
           "id": "co-founders-ventures",
           "title": "Co-founders / ventures",
           "count": 4,
@@ -2471,27 +2506,6 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "dormant": false,
               "profileStatus": "available",
               "profileSummary": "Jinan belongs in the career network as coworker, based in Orlando, with surface relationship context and low priority. Keep notes around work context, mentorship value, and any useful career or professional follow-up. Last recorded contact: Work."
-            }
-          ]
-        },
-        {
-          "id": "orlando-local",
-          "title": "Orlando local",
-          "count": 1,
-          "people": [
-            {
-              "id": "david-orlando-friend",
-              "person": "David",
-              "category": "Orlando friend",
-              "location": "Orlando",
-              "closeness": "Low — haven't hung out",
-              "lastContact": "2026-01-01 (college reunion)",
-              "priority": "low",
-              "lane": "Orlando local",
-              "nextAction": "Turn this from surface-level into one real local hangout.",
-              "dormant": false,
-              "profileStatus": "available",
-              "profileSummary": "David is part of the Orlando local base, based in Orlando, with low — haven't hung out closeness and low priority. This connection matters because the record flags Orlando as the place with the thinnest deeper local ties, so the profile should track whether this can become an actual hangout relationship. Last recorded contact: 2026-01-01 (college reunion)."
             }
           ]
         },

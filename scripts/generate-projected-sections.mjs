@@ -194,7 +194,8 @@ function buildFamilyConnectionPeople() {
   ]
 
   const extendedFamily = [
-    'Jaison Jude',
+    'Jaison',
+    'Jude',
     'Jessica',
     'Jackie',
     'Ida',
@@ -268,7 +269,7 @@ function sortConnectionPeople(people) {
 }
 
 function buildConnectionLanes(people) {
-  const laneOrder = ['Romantic', 'Immediate family', 'Extended family', 'Friends', 'Co-founders / ventures', 'Career network', 'Orlando local', 'General network']
+  const laneOrder = ['Romantic', 'Immediate family', 'Extended family', 'Friends', 'Orlando local', 'Co-founders / ventures', 'Career network', 'General network']
   return laneOrder
     .map((lane) => {
       const lanePeople = sortConnectionPeople(people.filter((person) => person.lane === lane))
