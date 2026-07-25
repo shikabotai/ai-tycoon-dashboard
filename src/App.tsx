@@ -3183,27 +3183,12 @@ function App() {
     const lanes = connections?.lanes ?? []
     const localBase = connections?.localBase ?? []
     const dormantImportant = connections?.dormantImportant ?? []
-    const leadReachOut = topReachOuts[0]
     const allLanePeople = lanes.flatMap((lane) => lane.people ?? [])
     const selectedConnection = allLanePeople.find((person) => person.id === selectedConnectionId) ?? null
     const priorityLabel = (person: ConnectionPersonProjection) => person.priority === 'active' ? 'Active' : `${person.priority.charAt(0).toUpperCase()}${person.priority.slice(1)} priority`
 
     return (
       <section className="connections-page" aria-label="Connections dashboard">
-        <section className="connections-hero">
-          <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
-          <div className="connections-hero-copy">
-            <span>Connections</span>
-            <h2>Reach-out radar</h2>
-            <p>{topReachOuts.length} moves / {lanes.length} lanes / {dormantImportant.length} dormant</p>
-          </div>
-          <aside className="connections-lead-card">
-            <span>First touch</span>
-            <strong>{leadReachOut ? leadReachOut.person : 'No reach-out loaded'}</strong>
-            <p>{leadReachOut ? leadReachOut.nextAction : 'Add people to the Connections MOC to populate this lane.'}</p>
-          </aside>
-        </section>
-
         <section className="connections-board" aria-label="Weekly relationship board">
           <article className="connections-radar-panel">
             <div className="connections-panel-head">
