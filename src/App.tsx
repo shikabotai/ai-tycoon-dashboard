@@ -3187,7 +3187,6 @@ function App() {
     const localBase = connections?.localBase ?? []
     const dormantImportant = connections?.dormantImportant ?? []
     const leadReachOut = topReachOuts[0]
-    const totalMapped = lanes.reduce((sum, lane) => sum + lane.count, 0)
     const allLanePeople = lanes.flatMap((lane) => lane.people ?? [])
     const selectedConnection =
       allLanePeople.find((person) => person.id === selectedConnectionId) ??
@@ -3219,7 +3218,6 @@ function App() {
                 <span>This week</span>
                 <h3>Three touches</h3>
               </div>
-              <b>{topReachOuts.length}</b>
             </div>
             <div className="connections-reach-list">
               {topReachOuts.slice(0, 3).map((person, index) => (
@@ -3248,14 +3246,12 @@ function App() {
                 <span>Map</span>
                 <h3>Life lanes</h3>
               </div>
-              <b>{totalMapped}</b>
             </div>
             <div className="connections-lane-list">
               {lanes.map((lane, index) => (
                 <details key={lane.id} className="connections-lane-directory" open={index < 2}>
                   <summary className="connections-lane-top">
                     <strong>{lane.title}</strong>
-                    <span>{lane.count} people</span>
                   </summary>
                   <div className="connections-person-list">
                     {(lane.people ?? []).map((person) => (
@@ -3284,7 +3280,6 @@ function App() {
                 <span>Local</span>
                 <h3>Orlando base</h3>
               </div>
-              <b>{localBase.length}</b>
             </div>
             <div className="connections-mini-list">
               {localBase.slice(0, 4).map((person) => (
@@ -3304,7 +3299,6 @@ function App() {
                 <span>Dormant</span>
                 <h3>Worth reviving</h3>
               </div>
-              <b>{dormantImportant.length}</b>
             </div>
             <div className="connections-mini-list">
               {dormantImportant.slice(0, 4).map((person) => (

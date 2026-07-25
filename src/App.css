@@ -2403,7 +2403,6 @@ button {
 .connections-lead-card span,
 .connections-panel-head span,
 .connections-reach-card span,
-.connections-lane-top span,
 .connections-mini-list span,
 .connections-support-panel > span {
   color: #8ccfd5;
@@ -2496,17 +2495,6 @@ button {
   color: var(--text);
   font-size: 1.08rem;
   line-height: 1.16;
-}
-
-.connections-panel-head b,
-.connections-lane-top span {
-  border: 1px solid rgba(140, 207, 213, 0.22);
-  border-radius: 999px;
-  color: #d8f5f3;
-  font-size: 0.82rem;
-  line-height: 1;
-  padding: 8px 10px;
-  white-space: nowrap;
 }
 
 .connections-reach-list,
