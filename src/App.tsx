@@ -191,7 +191,7 @@ const PERSONAL_NAV_ITEMS: NavItem[] = [
   { page: 'wealth', label: 'Wealth', description: 'Capital and priorities' },
   { page: 'education', label: 'Education', description: 'Courses and deadlines' },
   { page: 'knowledge', label: 'Knowledge', description: 'Models and references' },
-  { page: 'relationships', label: 'Relationships Wishes', description: 'Life lanes and care' },
+  { page: 'relationships', label: 'Connections', description: 'Life lanes and care' },
 ]
 
 const BUSINESS_NAV_ITEMS: NavItem[] = [
@@ -259,7 +259,7 @@ const PAGE_DIRECTIVES: Record<AppPage, PageDirective> = {
   relationships: {
     outcome: 'Maintain real connection with respect',
     system: 'Life lanes, people profiles, family, friends, local ties, care actions, and privacy boundaries summarized safely.',
-    usefulFor: 'Keeping relationships actionable without turning them into a separate category.',
+    usefulFor: 'Keeping relationships actionable inside the Connections category.',
     cadence: 'Weekly touchpoint',
   },
   'business-command': {
@@ -295,7 +295,7 @@ const HOME_CONSTELLATION_NODES: HomeConstellationNode[] = [
   { key: 'ventures', label: 'Ventures', tier: 'core', x: 69, y: 82, anchorX: 55, anchorY: 67, tone: 'growth' },
   { key: 'career', label: 'Career', tier: 'core', x: 31, y: 82, anchorX: 45, anchorY: 67, tone: 'growth' },
   { key: 'wealth', label: 'Wealth', tier: 'core', x: 16, y: 56, anchorX: 39, anchorY: 57, tone: 'capital' },
-  { key: 'relationships', label: 'Relationships Wishes', tier: 'secondary', x: 18, y: 31, anchorX: 40, anchorY: 34, tone: 'connection' },
+  { key: 'relationships', label: 'Connections', tier: 'secondary', x: 18, y: 31, anchorX: 40, anchorY: 34, tone: 'connection' },
   { key: 'education', label: 'Education', tier: 'secondary', x: 34, y: 18, anchorX: 45, anchorY: 34, tone: 'mind' },
   { key: 'knowledge', label: 'Knowledge', tier: 'secondary', x: 66, y: 18, anchorX: 55, anchorY: 34, tone: 'mind' },
 ]
@@ -355,7 +355,7 @@ const PERSONAL_SECTION_CONTENT: Record<Exclude<PersonalSection, 'home'>, { eyebr
   ventures: { eyebrow: 'Personal venture strategy', title: 'Ventures', summaryCards: ['Priority venture', 'Portfolio snapshot', 'Biggest blocker', 'Next key decision'], highlights: ['Personal venture worldview', 'Priority logic and blockers', 'Separate from Business Command'] },
   systems: { eyebrow: 'Life operations layer', title: 'Systems', summaryCards: ['Current focus', 'Old dated items', 'Waiting items', 'Upcoming tasks'], highlights: ['PunkRecords source rows', 'Stale dates without fake urgency', 'Simple task triage'] },
   education: { eyebrow: 'Learning and school', title: 'Education', summaryCards: ['Program', 'Courses', 'Upcoming deadlines', 'Learning focus'], highlights: ['Program context', 'Course clarity', 'Visible without taking over the system'] },
-  relationships: { eyebrow: 'Family and connection', title: 'Relationships Wishes', summaryCards: ['Life lanes', 'People profiles', 'Family', 'Local ties'], highlights: ['Friends and family in priority order', 'Profile popups when opened', 'Sensitive content kept minimal'] },
+  relationships: { eyebrow: 'Family and connection', title: 'Connections', summaryCards: ['Life lanes', 'People profiles', 'Family', 'Local ties'], highlights: ['Friends and family in priority order', 'Profile popups when opened', 'Sensitive content kept minimal'] },
   knowledge: { eyebrow: 'Mental models and references', title: 'Knowledge', summaryCards: ['Learning domains', 'Mental models', 'Recent knowledge', 'Knowledge gaps'], highlights: ['Business, finance, health, psychology', 'Knowledge browser from PunkRecords', 'Built for action'] },
 }
 
@@ -524,7 +524,7 @@ const CATEGORY_SIGNATURE_DASHBOARDS: Record<Exclude<PersonalSection, 'home'>, Ca
   relationships: {
     kind: 'relationship-orbit',
     eyebrow: 'Life lanes',
-    title: 'Relationships Wishes keeps people, family, and care in one place.',
+    title: 'Connections keeps people, family, and care in one place.',
     readoutLabel: 'Mapped people',
     readoutSourceIndex: 0,
     readoutUnit: 'people',
@@ -3136,7 +3136,7 @@ function App() {
     const priorityLabel = (person: ConnectionPersonProjection) => person.priority === 'active' ? 'Active' : `${person.priority.charAt(0).toUpperCase()}${person.priority.slice(1)} priority`
 
     return (
-      <section className="connections-page" aria-label="Relationships wishes directory">
+      <section className="connections-page" aria-label="Connections directory">
         <section className="connections-board" aria-label="Life lanes directory">
           <article className="connections-lane-panel">
             <div className="connections-panel-head">

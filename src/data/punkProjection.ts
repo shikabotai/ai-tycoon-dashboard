@@ -96,7 +96,7 @@ function connectionProfileSummary(person: string, category: string, location: st
   const contactText = lastContact ? ` Last recorded contact: ${lastContact}.` : ''
 
   if (/romantic/i.test(category)) {
-    return `${person} is the current romantic person in the Relationships Wishes life-lanes record, ${locationText}, with ${closeness.toLowerCase()} context and ${priorityText}. Keep this profile focused on the live relationship thread, current warmth, and the next simple plan or check-in.${contactText}`
+    return `${person} is the current romantic person in the Connections life-lanes record, ${locationText}, with ${closeness.toLowerCase()} context and ${priorityText}. Keep this profile focused on the live relationship thread, current warmth, and the next simple plan or check-in.${contactText}`
   }
 
   if (/co-?founder|venture/i.test(category)) {
@@ -116,7 +116,7 @@ function connectionProfileSummary(person: string, category: string, location: st
   }
 
   if (/close friend|hometown|dance team|college/i.test(category)) {
-    return `${person} is in the Friends lane as ${category.toLowerCase()}, ${locationText}, with ${closeness.toLowerCase()} closeness and ${priorityText}. Relationships Wishes frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up.${contactText}`
+    return `${person} is in the Friends lane as ${category.toLowerCase()}, ${locationText}, with ${closeness.toLowerCase()} closeness and ${priorityText}. Connections frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up.${contactText}`
   }
 
   return `${person} is tracked in the ${lane} lane as ${category.toLowerCase()}, ${locationText}, with ${closeness.toLowerCase()} closeness and ${priorityText}.${contactText}`
@@ -1371,7 +1371,7 @@ export function buildRelationshipsData(): ProjectedSection {
     heroSummary: 'Relationships are treated as a meaningful life pillar, but current notes show this area as intentionally secondary until environment, relocation, and broader life conditions improve.',
     summaryCards: [
       { label: 'Relationship priority snapshot', value: 'Strategic but delayed', note: annualLine || 'The annual goals note keeps this active but paused.' },
-      { label: 'Life lanes', value: 'People directory active', note: 'Friends, family, local ties, and profile popups now live under Relationships Wishes.' },
+      { label: 'Life lanes', value: 'People directory active', note: 'Friends, family, local ties, and profile popups now live under Connections.' },
       { label: 'Important people / focus', value: 'Family + future partner path', note: relationshipLine || 'Long-term notes keep serious partnership visible.' },
       { label: 'Upcoming relationship actions', value: 'Environment shift first', note: 'Current notes imply relocation and life context are upstream dependencies.' },
       { label: 'Long-term relationship vision', value: 'Marriage-minded', note: 'The long arc is serious partnership, not casual drift.' },
@@ -1409,7 +1409,7 @@ export function buildConnectionsData(): ProjectedSection {
   return {
     heroSummary: `${people.length} mapped people across ${lanes.length} life lanes.`,
     summaryCards: [
-      { label: 'Mapped people', value: `${people.length}`, note: `${lanes.length} life lanes in Relationships Wishes.` },
+      { label: 'Mapped people', value: `${people.length}`, note: `${lanes.length} life lanes in Connections.` },
       { label: 'Priority people', value: `${topReachOuts.length}`, note: topReachOuts[0]?.nextAction ?? 'No priority candidates yet.' },
       { label: 'Dormant important', value: `${dormantImportant.length}`, note: dormantImportant[0] ? `${dormantImportant[0].person}: ${dormantImportant[0].lastContact}` : 'No dormant high-priority ties found.' },
       { label: 'Orlando local base', value: `${localBase.length}`, note: localBase[0]?.nextAction ?? 'Add local people or hangout targets.' },
@@ -1418,9 +1418,9 @@ export function buildConnectionsData(): ProjectedSection {
     highlights: [
       'Keep each lane collapsed until it needs attention.',
       'Use lanes to see where the network is strong, thin, local, or dormant.',
-      'Keep the people directory inside Relationships Wishes instead of splitting it into a separate category.',
+      'Keep the people directory inside Connections.',
     ],
-    freshness: summarizeFreshness('Relationships Wishes life lanes', 0, 60),
+    freshness: summarizeFreshness('Connections life lanes', 0, 60),
     blockers: [
       { label: 'Career CRM', value: `${careerContacts} contacts`, detail: 'Professional contact tracker exists but has no real contact rows yet.', severity: 'stale' },
     ],

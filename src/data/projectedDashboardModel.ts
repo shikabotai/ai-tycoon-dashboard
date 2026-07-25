@@ -241,7 +241,7 @@ export const projectedDashboardModel: Partial<Record<PersonalProjectionKey, Proj
       { title: 'Local roots matter', body: 'Orlando ties stay visible because the source notes call out weak local depth.', sourceCardIndex: 3 },
     ],
     evidenceRows: [
-      { title: 'Relationships Wishes life lanes', body: 'Primary source for people, lanes, locations, closeness, last contact, and priority.', sourceCardIndex: 0 },
+      { title: 'Connections life lanes', body: 'Primary source for people, lanes, locations, closeness, last contact, and priority.', sourceCardIndex: 0 },
       { title: 'Career contact tracker', body: 'Professional CRM exists but is still mostly empty.', sourceCardIndex: 4 },
     ],
     actionRows: [
