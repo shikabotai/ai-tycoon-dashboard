@@ -279,15 +279,15 @@ export type ConnectionPersonProjection = {
   lane: string
   nextAction: string
   dormant: boolean
+  profileStatus: 'available' | 'na'
+  profileSummary: string
 }
 
 export type ConnectionLaneProjection = {
   id: string
   title: string
   count: number
-  strongest: ConnectionPersonProjection[]
-  dormant: ConnectionPersonProjection[]
-  nextAction: string
+  people: ConnectionPersonProjection[]
 }
 
 export type ConnectionsProjection = {

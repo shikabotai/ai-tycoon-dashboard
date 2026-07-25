@@ -112,27 +112,38 @@ function parseConnectionsTable(markdown: string): ConnectionPersonProjection[] {
         lane,
         nextAction: nextConnectionAction(person, category, lastContact, lane),
         dormant,
+        profileStatus: 'na',
+        profileSummary: 'NA',
       }
     })
+}
+
+const connectionPriorityRank: Record<ConnectionPriority, number> = {
+  active: 0,
+  high: 1,
+  medium: 2,
+  low: 3,
+}
+
+function sortConnectionPeople(people: ConnectionPersonProjection[]) {
+  return [...people].sort((left, right) => {
+    const priorityDelta = connectionPriorityRank[left.priority] - connectionPriorityRank[right.priority]
+    if (priorityDelta !== 0) return priorityDelta
+    if (left.dormant !== right.dormant) return left.dormant ? -1 : 1
+    return left.person.localeCompare(right.person)
+  })
 }
 
 function buildConnectionLanes(people: ConnectionPersonProjection[]): ConnectionLaneProjection[] {
   const laneOrder = ['Romantic', 'Friends and home base', 'Co-founders / ventures', 'Career network', 'Orlando local', 'General network']
   return laneOrder
     .map((lane) => {
-      const lanePeople = people.filter((person) => person.lane === lane)
-      const strongest = lanePeople
-        .filter((person) => person.priority === 'active' || person.priority === 'high' || /high/i.test(person.closeness))
-        .slice(0, 3)
-      const dormant = lanePeople.filter((person) => person.dormant).slice(0, 3)
-      const lead = dormant[0] ?? strongest[0] ?? lanePeople[0]
+      const lanePeople = sortConnectionPeople(people.filter((person) => person.lane === lane))
       return {
         id: slugify(lane),
         title: lane,
         count: lanePeople.length,
-        strongest,
-        dormant,
-        nextAction: lead ? lead.nextAction : 'Add people to this lane before it can produce a next action.',
+        people: lanePeople,
       }
     })
     .filter((lane) => lane.count > 0)

@@ -3,8 +3,8 @@ import { attachProjectedDashboard } from '../data/projectedDashboardModel'
 import type { ProjectedSection, ProjectionSnapshot } from '../data/projectedTypes'
 
 export const generatedProjectionSnapshot: ProjectionSnapshot = {
-  "generatedAt": "2026-07-24T23:27:50.899Z",
-  "generatedAtLabel": "Jul 24, 2026, 7:27 PM EDT",
+  "generatedAt": "2026-07-25T00:13:22.904Z",
+  "generatedAtLabel": "Jul 24, 2026, 8:13 PM EDT",
   "source": "PunkRecords",
   "updateMode": "Nightly static projection"
 } as ProjectionSnapshot
@@ -181,7 +181,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "freshness": {
       "label": "Vessel evidence",
-      "ageDays": 0,
+      "ageDays": 1,
       "stale": false
     },
     "vessel": {
@@ -190,9 +190,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "back",
           "label": "Back",
           "priority": "V-taper priority",
-          "recentSets": 33,
+          "recentSets": 29,
           "lastHit": "2026-07-24",
-          "lastHitLabel": "Today",
+          "lastHitLabel": "1 day ago",
           "heat": "hot",
           "recommendation": "Keep one vertical pull and one row pattern active each week."
         },
@@ -200,9 +200,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "shoulders",
           "label": "Shoulders",
           "priority": "Width priority",
-          "recentSets": 16,
+          "recentSets": 15,
           "lastHit": "2026-07-24",
-          "lastHitLabel": "Today",
+          "lastHitLabel": "1 day ago",
           "heat": "hot",
           "recommendation": "Keep lateral delts and rear delts visible for the shoulder-width goal."
         },
@@ -210,9 +210,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "chest",
           "label": "Chest",
           "priority": "Upper-chest priority",
-          "recentSets": 16,
+          "recentSets": 14,
           "lastHit": "2026-07-24",
-          "lastHitLabel": "Today",
+          "lastHitLabel": "1 day ago",
           "heat": "hot",
           "recommendation": "Add pressing or fly work if chest has not shown up recently."
         },
@@ -220,9 +220,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "biceps",
           "label": "Biceps",
           "priority": "Arm detail",
-          "recentSets": 13,
+          "recentSets": 12,
           "lastHit": "2026-07-21",
-          "lastHitLabel": "3 days ago",
+          "lastHitLabel": "4 days ago",
           "heat": "hot",
           "recommendation": "Keep curls in the rotation, but do not let arms crowd out chest or legs."
         },
@@ -230,9 +230,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "triceps",
           "label": "Triceps",
           "priority": "Arm mass",
-          "recentSets": 12,
+          "recentSets": 11,
           "lastHit": "2026-07-20",
-          "lastHitLabel": "4 days ago",
+          "lastHitLabel": "5 days ago",
           "heat": "hot",
           "recommendation": "Use pushdowns or overhead work to keep arms full while cutting."
         },
@@ -240,9 +240,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "abs",
           "label": "Abs",
           "priority": "Lean-look priority",
-          "recentSets": 13,
+          "recentSets": 12,
           "lastHit": "2026-07-21",
-          "lastHitLabel": "3 days ago",
+          "lastHitLabel": "4 days ago",
           "heat": "hot",
           "recommendation": "Keep direct core work frequent while the cut reveals definition."
         },
@@ -250,10 +250,10 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "legs",
           "label": "Legs",
           "priority": "Balance priority",
-          "recentSets": 6,
+          "recentSets": 5,
           "lastHit": "2026-07-21",
-          "lastHitLabel": "3 days ago",
-          "heat": "solid",
+          "lastHitLabel": "4 days ago",
+          "heat": "touched",
           "recommendation": "Do not let the aesthetics push turn into skipping legs."
         },
         {
@@ -262,7 +262,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "Cut support",
           "recentSets": 3,
           "lastHit": "2026-07-24",
-          "lastHitLabel": "Today",
+          "lastHitLabel": "1 day ago",
           "heat": "hot",
           "recommendation": "Add Zone 2 when fat-loss support is missing from the week."
         }
@@ -1878,7 +1878,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "active",
           "lane": "Romantic",
           "nextAction": "Keep the active thread warm with one simple plan or check-in.",
-          "dormant": false
+          "dormant": false,
+          "profileStatus": "na",
+          "profileSummary": "NA"
         },
         {
           "id": "lohith-close-friend",
@@ -1890,7 +1892,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "medium",
           "lane": "Friends and home base",
           "nextAction": "Send Lohith one low-friction catch-up text.",
-          "dormant": true
+          "dormant": true,
+          "profileStatus": "na",
+          "profileSummary": "NA"
         },
         {
           "id": "mehul-dance-team-close",
@@ -1902,7 +1906,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "high",
           "lane": "Friends and home base",
           "nextAction": "Send Mehul one low-friction catch-up text.",
-          "dormant": true
+          "dormant": true,
+          "profileStatus": "na",
+          "profileSummary": "NA"
         }
       ],
       "lanes": [
@@ -1910,7 +1916,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "romantic",
           "title": "Romantic",
           "count": 1,
-          "strongest": [
+          "people": [
             {
               "id": "melanie-romantic",
               "person": "Melanie",
@@ -1921,17 +1927,31 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "priority": "active",
               "lane": "Romantic",
               "nextAction": "Keep the active thread warm with one simple plan or check-in.",
-              "dormant": false
+              "dormant": false,
+              "profileStatus": "na",
+              "profileSummary": "NA"
             }
-          ],
-          "dormant": [],
-          "nextAction": "Keep the active thread warm with one simple plan or check-in."
+          ]
         },
         {
           "id": "friends-and-home-base",
           "title": "Friends and home base",
           "count": 9,
-          "strongest": [
+          "people": [
+            {
+              "id": "mehul-dance-team-close",
+              "person": "Mehul",
+              "category": "Dance team / close",
+              "location": "South Florida",
+              "closeness": "High — co-captain",
+              "lastContact": "2026-01-01 (winter break)",
+              "priority": "high",
+              "lane": "Friends and home base",
+              "nextAction": "Send Mehul one low-friction catch-up text.",
+              "dormant": true,
+              "profileStatus": "na",
+              "profileSummary": "NA"
+            },
             {
               "id": "josh-close-friend",
               "person": "Josh",
@@ -1942,22 +1962,52 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "priority": "high",
               "lane": "Friends and home base",
               "nextAction": "Send Josh one specific, low-pressure check-in.",
-              "dormant": false
+              "dormant": false,
+              "profileStatus": "na",
+              "profileSummary": "NA"
             },
             {
-              "id": "mehul-dance-team-close",
-              "person": "Mehul",
-              "category": "Dance team / close",
-              "location": "South Florida",
-              "closeness": "High — co-captain",
-              "lastContact": "2026-01-01 (winter break)",
-              "priority": "high",
+              "id": "anjali-college-friend-josh-s-gf",
+              "person": "Anjali",
+              "category": "College friend (Josh's GF)",
+              "location": "South Florida (lives with Josh)",
+              "closeness": "Medium",
+              "lastContact": "2026-01-01 (college reunion)",
+              "priority": "medium",
               "lane": "Friends and home base",
-              "nextAction": "Send Mehul one low-friction catch-up text.",
-              "dormant": true
-            }
-          ],
-          "dormant": [
+              "nextAction": "Send Anjali one low-friction catch-up text.",
+              "dormant": true,
+              "profileStatus": "na",
+              "profileSummary": "NA"
+            },
+            {
+              "id": "chaquayla-college-friend",
+              "person": "Chaquayla",
+              "category": "College friend",
+              "location": "Tallahassee",
+              "closeness": "Medium",
+              "lastContact": "2026-01-01 (college reunion)",
+              "priority": "medium",
+              "lane": "Friends and home base",
+              "nextAction": "Send Chaquayla one low-friction catch-up text.",
+              "dormant": true,
+              "profileStatus": "na",
+              "profileSummary": "NA"
+            },
+            {
+              "id": "div-college-friend",
+              "person": "Div",
+              "category": "College friend",
+              "location": "Mexico City (frequent Miami trips)",
+              "closeness": "Medium",
+              "lastContact": "2026-01-01 (college reunion)",
+              "priority": "medium",
+              "lane": "Friends and home base",
+              "nextAction": "Send Div one low-friction catch-up text.",
+              "dormant": true,
+              "profileStatus": "na",
+              "profileSummary": "NA"
+            },
             {
               "id": "lohith-close-friend",
               "person": "Lohith",
@@ -1968,19 +2018,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "priority": "medium",
               "lane": "Friends and home base",
               "nextAction": "Send Lohith one low-friction catch-up text.",
-              "dormant": true
-            },
-            {
-              "id": "mehul-dance-team-close",
-              "person": "Mehul",
-              "category": "Dance team / close",
-              "location": "South Florida",
-              "closeness": "High — co-captain",
-              "lastContact": "2026-01-01 (winter break)",
-              "priority": "high",
-              "lane": "Friends and home base",
-              "nextAction": "Send Mehul one low-friction catch-up text.",
-              "dormant": true
+              "dormant": true,
+              "profileStatus": "na",
+              "profileSummary": "NA"
             },
             {
               "id": "shravya-college-friend",
@@ -1992,28 +2032,45 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "priority": "medium",
               "lane": "Friends and home base",
               "nextAction": "Send Shravya one low-friction catch-up text.",
-              "dormant": true
+              "dormant": true,
+              "profileStatus": "na",
+              "profileSummary": "NA"
+            },
+            {
+              "id": "teja-college-friend",
+              "person": "Teja",
+              "category": "College friend",
+              "location": "Chicago",
+              "closeness": "Medium",
+              "lastContact": "2026-01-01 (college reunion)",
+              "priority": "medium",
+              "lane": "Friends and home base",
+              "nextAction": "Send Teja one low-friction catch-up text.",
+              "dormant": true,
+              "profileStatus": "na",
+              "profileSummary": "NA"
+            },
+            {
+              "id": "alvin-hometown-friend",
+              "person": "Alvin",
+              "category": "Hometown friend",
+              "location": "South Florida",
+              "closeness": "Medium",
+              "lastContact": "Weekly venture calls",
+              "priority": "medium",
+              "lane": "Friends and home base",
+              "nextAction": "Send Alvin one specific, low-pressure check-in.",
+              "dormant": false,
+              "profileStatus": "na",
+              "profileSummary": "NA"
             }
-          ],
-          "nextAction": "Send Lohith one low-friction catch-up text."
+          ]
         },
         {
           "id": "co-founders-ventures",
           "title": "Co-founders / ventures",
           "count": 4,
-          "strongest": [
-            {
-              "id": "vj-co-founder-friend",
-              "person": "VJ",
-              "category": "Co-founder + friend",
-              "location": "Seattle",
-              "closeness": "High — dance team + Matchup",
-              "lastContact": "Active (venture)",
-              "priority": "high",
-              "lane": "Co-founders / ventures",
-              "nextAction": "Add one non-work touchpoint around the next venture conversation.",
-              "dormant": false
-            },
+          "people": [
             {
               "id": "varun-co-founder-friend",
               "person": "Varun",
@@ -2024,33 +2081,143 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "priority": "high",
               "lane": "Co-founders / ventures",
               "nextAction": "Add one non-work touchpoint around the next venture conversation.",
-              "dormant": false
+              "dormant": false,
+              "profileStatus": "na",
+              "profileSummary": "NA"
+            },
+            {
+              "id": "vj-co-founder-friend",
+              "person": "VJ",
+              "category": "Co-founder + friend",
+              "location": "Seattle",
+              "closeness": "High — dance team + Matchup",
+              "lastContact": "Active (venture)",
+              "priority": "high",
+              "lane": "Co-founders / ventures",
+              "nextAction": "Add one non-work touchpoint around the next venture conversation.",
+              "dormant": false,
+              "profileStatus": "na",
+              "profileSummary": "NA"
+            },
+            {
+              "id": "ceaver-co-founder",
+              "person": "Ceaver",
+              "category": "Co-founder",
+              "location": "[TBD — likely East Coast]",
+              "closeness": "Low-medium",
+              "lastContact": "Weekly venture calls",
+              "priority": "medium",
+              "lane": "Co-founders / ventures",
+              "nextAction": "Add one non-work touchpoint around the next venture conversation.",
+              "dormant": false,
+              "profileStatus": "na",
+              "profileSummary": "NA"
+            },
+            {
+              "id": "roshan-co-founder-friend",
+              "person": "Roshan",
+              "category": "Co-founder + friend",
+              "location": "Virginia",
+              "closeness": "Medium",
+              "lastContact": "Active (venture)",
+              "priority": "medium",
+              "lane": "Co-founders / ventures",
+              "nextAction": "Add one non-work touchpoint around the next venture conversation.",
+              "dormant": false,
+              "profileStatus": "na",
+              "profileSummary": "NA"
             }
-          ],
-          "dormant": [],
-          "nextAction": "Add one non-work touchpoint around the next venture conversation."
+          ]
         },
         {
           "id": "career-network",
           "title": "Career network",
           "count": 4,
-          "strongest": [],
-          "dormant": [],
-          "nextAction": "Create one lightweight work or career-context touchpoint."
+          "people": [
+            {
+              "id": "armando-boss-mentor",
+              "person": "Armando",
+              "category": "Boss / mentor",
+              "location": "Orlando",
+              "closeness": "Professional + poker",
+              "lastContact": "Work",
+              "priority": "medium",
+              "lane": "Career network",
+              "nextAction": "Create one lightweight work or career-context touchpoint.",
+              "dormant": false,
+              "profileStatus": "na",
+              "profileSummary": "NA"
+            },
+            {
+              "id": "alejandro-coworker",
+              "person": "Alejandro",
+              "category": "Coworker",
+              "location": "Orlando",
+              "closeness": "Surface",
+              "lastContact": "Work",
+              "priority": "low",
+              "lane": "Career network",
+              "nextAction": "Create one lightweight work or career-context touchpoint.",
+              "dormant": false,
+              "profileStatus": "na",
+              "profileSummary": "NA"
+            },
+            {
+              "id": "jennifer-coworker",
+              "person": "Jennifer",
+              "category": "Coworker",
+              "location": "Orlando",
+              "closeness": "Surface",
+              "lastContact": "Work",
+              "priority": "low",
+              "lane": "Career network",
+              "nextAction": "Create one lightweight work or career-context touchpoint.",
+              "dormant": false,
+              "profileStatus": "na",
+              "profileSummary": "NA"
+            },
+            {
+              "id": "jinan-coworker",
+              "person": "Jinan",
+              "category": "Coworker",
+              "location": "Orlando",
+              "closeness": "Surface",
+              "lastContact": "Work",
+              "priority": "low",
+              "lane": "Career network",
+              "nextAction": "Create one lightweight work or career-context touchpoint.",
+              "dormant": false,
+              "profileStatus": "na",
+              "profileSummary": "NA"
+            }
+          ]
         },
         {
           "id": "orlando-local",
           "title": "Orlando local",
           "count": 1,
-          "strongest": [],
-          "dormant": [],
-          "nextAction": "Turn this from surface-level into one real local hangout."
+          "people": [
+            {
+              "id": "david-orlando-friend",
+              "person": "David",
+              "category": "Orlando friend",
+              "location": "Orlando",
+              "closeness": "Low — haven't hung out",
+              "lastContact": "2026-01-01 (college reunion)",
+              "priority": "low",
+              "lane": "Orlando local",
+              "nextAction": "Turn this from surface-level into one real local hangout.",
+              "dormant": false,
+              "profileStatus": "na",
+              "profileSummary": "NA"
+            }
+          ]
         },
         {
           "id": "general-network",
           "title": "General network",
           "count": 1,
-          "strongest": [
+          "people": [
             {
               "id": "sf-indian-group-social-group",
               "person": "SF Indian group",
@@ -2061,11 +2228,11 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "priority": "high",
               "lane": "General network",
               "nextAction": "Anchor the next touchpoint around the next South Florida visit.",
-              "dormant": false
+              "dormant": false,
+              "profileStatus": "na",
+              "profileSummary": "NA"
             }
-          ],
-          "dormant": [],
-          "nextAction": "Anchor the next touchpoint around the next South Florida visit."
+          ]
         }
       ],
       "localBase": [
@@ -2079,7 +2246,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "active",
           "lane": "Romantic",
           "nextAction": "Keep the active thread warm with one simple plan or check-in.",
-          "dormant": false
+          "dormant": false,
+          "profileStatus": "na",
+          "profileSummary": "NA"
         },
         {
           "id": "david-orlando-friend",
@@ -2091,7 +2260,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "low",
           "lane": "Orlando local",
           "nextAction": "Turn this from surface-level into one real local hangout.",
-          "dormant": false
+          "dormant": false,
+          "profileStatus": "na",
+          "profileSummary": "NA"
         },
         {
           "id": "jinan-coworker",
@@ -2103,7 +2274,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "low",
           "lane": "Career network",
           "nextAction": "Create one lightweight work or career-context touchpoint.",
-          "dormant": false
+          "dormant": false,
+          "profileStatus": "na",
+          "profileSummary": "NA"
         },
         {
           "id": "jennifer-coworker",
@@ -2115,7 +2288,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "low",
           "lane": "Career network",
           "nextAction": "Create one lightweight work or career-context touchpoint.",
-          "dormant": false
+          "dormant": false,
+          "profileStatus": "na",
+          "profileSummary": "NA"
         },
         {
           "id": "alejandro-coworker",
@@ -2127,7 +2302,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "low",
           "lane": "Career network",
           "nextAction": "Create one lightweight work or career-context touchpoint.",
-          "dormant": false
+          "dormant": false,
+          "profileStatus": "na",
+          "profileSummary": "NA"
         }
       ],
       "dormantImportant": [
@@ -2141,7 +2318,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "medium",
           "lane": "Friends and home base",
           "nextAction": "Send Lohith one low-friction catch-up text.",
-          "dormant": true
+          "dormant": true,
+          "profileStatus": "na",
+          "profileSummary": "NA"
         },
         {
           "id": "mehul-dance-team-close",
@@ -2153,7 +2332,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "high",
           "lane": "Friends and home base",
           "nextAction": "Send Mehul one low-friction catch-up text.",
-          "dormant": true
+          "dormant": true,
+          "profileStatus": "na",
+          "profileSummary": "NA"
         },
         {
           "id": "shravya-college-friend",
@@ -2165,7 +2346,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "medium",
           "lane": "Friends and home base",
           "nextAction": "Send Shravya one low-friction catch-up text.",
-          "dormant": true
+          "dormant": true,
+          "profileStatus": "na",
+          "profileSummary": "NA"
         },
         {
           "id": "teja-college-friend",
@@ -2177,7 +2360,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "medium",
           "lane": "Friends and home base",
           "nextAction": "Send Teja one low-friction catch-up text.",
-          "dormant": true
+          "dormant": true,
+          "profileStatus": "na",
+          "profileSummary": "NA"
         },
         {
           "id": "anjali-college-friend-josh-s-gf",
@@ -2189,7 +2374,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "medium",
           "lane": "Friends and home base",
           "nextAction": "Send Anjali one low-friction catch-up text.",
-          "dormant": true
+          "dormant": true,
+          "profileStatus": "na",
+          "profileSummary": "NA"
         }
       ],
       "sourceCoverage": {

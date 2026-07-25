@@ -15,7 +15,7 @@ import {
 } from './data/financeApi'
 import { loadProjectedSection, type PersonalProjectionKey } from './data/personalProjectionClient'
 import { generatedProjectionSnapshot } from './generated/projectedSections'
-import type { IdentityQualityProjection, ProjectedDashboard, ProjectedSection as LiveProjectedSection } from './data/projectedTypes'
+import type { ConnectionPersonProjection, IdentityQualityProjection, ProjectedDashboard, ProjectedSection as LiveProjectedSection } from './data/projectedTypes'
 import { sendBusinessCommand, sendCommandHandoff } from './data/businessCommandApi'
 import { routeCommand } from './data/commandRouter'
 import type { CommandHandoffResponse } from './server/commandHandoffApi'
@@ -1156,6 +1156,7 @@ function App() {
     cashflow: false,
     budgeting: false,
   })
+  const [selectedConnectionId, setSelectedConnectionId] = useState<string | null>(null)
   const [financeStatus, setFinanceStatus] = useState<FinanceStatus | null>(null)
   const [financeBusy, setFinanceBusy] = useState(false)
   const [financeMessage, setFinanceMessage] = useState('Finance integration is waiting on provider credentials.')
@@ -3187,12 +3188,13 @@ function App() {
     const dormantImportant = connections?.dormantImportant ?? []
     const leadReachOut = topReachOuts[0]
     const totalMapped = lanes.reduce((sum, lane) => sum + lane.count, 0)
-    const thinnestLane = lanes.length
-      ? lanes.reduce((thin, lane) => lane.count < thin.count ? lane : thin)
-      : null
-    const strongestLane = lanes.length
-      ? lanes.reduce((strong, lane) => lane.count > strong.count ? lane : strong)
-      : null
+    const allLanePeople = lanes.flatMap((lane) => lane.people ?? [])
+    const selectedConnection =
+      allLanePeople.find((person) => person.id === selectedConnectionId) ??
+      leadReachOut ??
+      allLanePeople[0] ??
+      null
+    const priorityLabel = (person: ConnectionPersonProjection) => person.priority === 'active' ? 'Active' : `${person.priority.charAt(0).toUpperCase()}${person.priority.slice(1)} priority`
 
     return (
       <section className="connections-page" aria-label="Connections dashboard">
@@ -3221,7 +3223,12 @@ function App() {
             </div>
             <div className="connections-reach-list">
               {topReachOuts.slice(0, 3).map((person, index) => (
-                <article key={person.id} className={`connections-reach-card priority-${person.priority}`}>
+                <button
+                  key={person.id}
+                  className={`connections-reach-card priority-${person.priority} ${selectedConnection?.id === person.id ? 'is-selected' : ''}`}
+                  type="button"
+                  onClick={() => setSelectedConnectionId(person.id)}
+                >
                   <div className="connections-rank">{index + 1}</div>
                   <div>
                     <span>{person.category} / {person.location}</span>
@@ -3229,7 +3236,7 @@ function App() {
                     <p>{person.nextAction}</p>
                     <small>Last: {person.lastContact}</small>
                   </div>
-                </article>
+                </button>
               ))}
               {topReachOuts.length === 0 ? <p className="connections-empty-copy">No reach-outs found.</p> : null}
             </div>
@@ -3244,17 +3251,27 @@ function App() {
               <b>{totalMapped}</b>
             </div>
             <div className="connections-lane-list">
-              {lanes.map((lane) => (
-                <article key={lane.id} className={lane.dormant.length > 0 ? 'has-dormant' : ''}>
-                  <div className="connections-lane-top">
+              {lanes.map((lane, index) => (
+                <details key={lane.id} className="connections-lane-directory" open={index < 2}>
+                  <summary className="connections-lane-top">
                     <strong>{lane.title}</strong>
-                    <span>{lane.count}</span>
+                    <span>{lane.count} people</span>
+                  </summary>
+                  <div className="connections-person-list">
+                    {(lane.people ?? []).map((person) => (
+                      <button
+                        key={person.id}
+                        className={`connections-person-row priority-${person.priority} ${selectedConnection?.id === person.id ? 'is-selected' : ''}`}
+                        type="button"
+                        onClick={() => setSelectedConnectionId(person.id)}
+                      >
+                        <strong>{person.person}</strong>
+                        <span>{priorityLabel(person)}</span>
+                        <small>{person.location} / Last: {person.lastContact}</small>
+                      </button>
+                    ))}
                   </div>
-                  <div className="connections-lane-meter" aria-hidden="true">
-                    <div style={{ width: `${Math.max(10, Math.min(100, (lane.count / Math.max(1, strongestLane?.count ?? lane.count)) * 100))}%` }} />
-                  </div>
-                  <p>{lane.nextAction}</p>
-                </article>
+                </details>
               ))}
             </div>
           </article>
@@ -3301,14 +3318,47 @@ function App() {
             </div>
           </article>
 
-          <article className="connections-support-panel">
-            <span>Source</span>
-            <h3>{connections?.sourceCoverage.existingProfiles ?? 0}/{connections?.sourceCoverage.expectedProfiles ?? 0} profiles</h3>
-            <p>{connections?.sourceCoverage.note ?? 'Connections projection is waiting on source coverage.'}</p>
-            <div className="connections-source-readout">
-              <strong>{thinnestLane ? thinnestLane.title : 'No lane'}</strong>
-              <small>Thinnest lane</small>
-            </div>
+          <article className="connections-support-panel connections-profile-panel">
+            <span>Profile</span>
+            <h3>{selectedConnection?.person ?? 'No person selected'}</h3>
+            {selectedConnection ? (
+              <div className="connections-profile-fields">
+                <div>
+                  <span>Lane</span>
+                  <strong>{selectedConnection.lane}</strong>
+                </div>
+                <div>
+                  <span>Priority</span>
+                  <strong>{priorityLabel(selectedConnection)}</strong>
+                </div>
+                <div>
+                  <span>Category</span>
+                  <strong>{selectedConnection.category}</strong>
+                </div>
+                <div>
+                  <span>Location</span>
+                  <strong>{selectedConnection.location}</strong>
+                </div>
+                <div>
+                  <span>Closeness</span>
+                  <strong>{selectedConnection.closeness}</strong>
+                </div>
+                <div>
+                  <span>Last contact</span>
+                  <strong>{selectedConnection.lastContact}</strong>
+                </div>
+                <div className="wide">
+                  <span>Next touch</span>
+                  <strong>{selectedConnection.nextAction}</strong>
+                </div>
+                <div className="wide">
+                  <span>Profile</span>
+                  <strong>{selectedConnection.profileSummary}</strong>
+                </div>
+              </div>
+            ) : (
+              <p>No Connections MOC rows found.</p>
+            )}
           </article>
         </section>
       </section>

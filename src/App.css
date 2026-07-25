@@ -2520,13 +2520,32 @@ button {
   display: grid;
   grid-template-columns: 34px minmax(0, 1fr);
   gap: 10px;
+  width: 100%;
+  border: 1px solid rgba(241, 244, 248, 0.1);
   background: rgba(4, 9, 15, 0.46);
+  color: inherit;
+  text-align: left;
+  appearance: none;
+  cursor: pointer;
   padding: 10px;
 }
 
 .connections-reach-card.priority-active,
 .connections-reach-card.priority-high {
   border-color: rgba(103, 224, 178, 0.32);
+}
+
+.connections-reach-card.is-selected,
+.connections-person-row.is-selected {
+  border-color: rgba(140, 207, 213, 0.62);
+  background: rgba(140, 207, 213, 0.12);
+}
+
+.connections-reach-card:focus-visible,
+.connections-person-row:focus-visible,
+.connections-lane-directory summary:focus-visible {
+  outline: 2px solid rgba(140, 207, 213, 0.76);
+  outline-offset: 2px;
 }
 
 .connections-rank {
@@ -2542,13 +2561,14 @@ button {
 }
 
 .connections-reach-card small,
+.connections-person-row small,
 .connections-source-readout small {
   color: #b8cef0;
   font-size: 0.76rem;
   line-height: 1.35;
 }
 
-.connections-lane-list article,
+.connections-lane-directory,
 .connections-mini-list div {
   display: grid;
   gap: 7px;
@@ -2559,26 +2579,99 @@ button {
   padding: 10px;
 }
 
-.connections-lane-list article.has-dormant {
-  border-color: rgba(255, 174, 96, 0.32);
-  background: rgba(31, 21, 12, 0.3);
+.connections-lane-directory[open] {
+  border-color: rgba(140, 207, 213, 0.28);
 }
 
-.connections-lane-meter {
-  height: 7px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(120, 166, 235, 0.12);
+.connections-lane-directory summary {
+  cursor: pointer;
+  list-style: none;
 }
 
-.connections-lane-meter div {
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #67e0b2, #8ccfd5);
+.connections-lane-directory summary::-webkit-details-marker {
+  display: none;
+}
+
+.connections-lane-directory summary::after {
+  content: '+';
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(140, 207, 213, 0.22);
+  border-radius: 8px;
+  color: #d8f5f3;
+  font-weight: 800;
+}
+
+.connections-lane-directory[open] summary::after {
+  content: '-';
+}
+
+.connections-person-list {
+  display: grid;
+  gap: 7px;
+  margin-top: 8px;
+}
+
+.connections-person-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 10px;
+  align-items: center;
+  min-width: 0;
+  border: 1px solid rgba(241, 244, 248, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  color: inherit;
+  text-align: left;
+  appearance: none;
+  cursor: pointer;
+  padding: 9px;
+}
+
+.connections-person-row strong,
+.connections-profile-fields strong {
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.connections-person-row span {
+  color: #8ccfd5;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.connections-person-row small {
+  grid-column: 1 / -1;
 }
 
 .connections-support-panel {
   min-height: 220px;
+}
+
+.connections-profile-panel {
+  border-color: rgba(140, 207, 213, 0.28);
+}
+
+.connections-profile-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.connections-profile-fields div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  border: 1px solid rgba(120, 166, 235, 0.14);
+  border-radius: 8px;
+  background: rgba(4, 9, 15, 0.46);
+  padding: 9px;
+}
+
+.connections-profile-fields .wide {
+  grid-column: 1 / -1;
 }
 
 .connections-source-readout {
