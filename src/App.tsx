@@ -3180,8 +3180,6 @@ function App() {
 
     const connections = currentPersonalData.connections
     const lanes = connections?.lanes ?? []
-    const localBase = connections?.localBase ?? []
-    const dormantImportant = connections?.dormantImportant ?? []
     const allLanePeople = lanes.flatMap((lane) => lane.people ?? [])
     const selectedConnection = allLanePeople.find((person) => person.id === selectedConnectionId) ?? null
     const priorityLabel = (person: ConnectionPersonProjection) => person.priority === 'active' ? 'Active' : `${person.priority.charAt(0).toUpperCase()}${person.priority.slice(1)} priority`
@@ -3220,47 +3218,6 @@ function App() {
               ))}
             </div>
           </article>
-        </section>
-
-        <section className="connections-support-grid" aria-label="Connections support lanes">
-          <article className="connections-support-panel">
-            <div className="connections-panel-head">
-              <div>
-                <span>Local</span>
-                <h3>Orlando base</h3>
-              </div>
-            </div>
-            <div className="connections-mini-list">
-              {localBase.slice(0, 4).map((person) => (
-                <div key={person.id}>
-                  <span>{person.category}</span>
-                  <strong>{person.person}</strong>
-                  <p>{person.closeness}</p>
-                </div>
-              ))}
-              {localBase.length === 0 ? <p className="connections-empty-copy">No Orlando rows found.</p> : null}
-            </div>
-          </article>
-
-          <article className="connections-support-panel">
-            <div className="connections-panel-head">
-              <div>
-                <span>Dormant</span>
-                <h3>Worth reviving</h3>
-              </div>
-            </div>
-            <div className="connections-mini-list">
-              {dormantImportant.slice(0, 4).map((person) => (
-                <div key={person.id}>
-                  <span>{person.lastContact}</span>
-                  <strong>{person.person}</strong>
-                  <p>{person.nextAction}</p>
-                </div>
-              ))}
-              {dormantImportant.length === 0 ? <p className="connections-empty-copy">No dormant important ties flagged.</p> : null}
-            </div>
-          </article>
-
         </section>
 
         {selectedConnection ? (
