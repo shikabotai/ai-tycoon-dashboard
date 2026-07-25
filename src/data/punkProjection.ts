@@ -90,6 +90,38 @@ function nextConnectionAction(person: string, category: string, lastContact: str
   return `Send ${person} one specific, low-pressure check-in.`
 }
 
+function connectionProfileSummary(person: string, category: string, location: string, closeness: string, lastContact: string, priority: ConnectionPriority, lane: string) {
+  const priorityText = priority === 'active' ? 'active priority' : `${priority} priority`
+  const locationText = location && !/tbd/i.test(location) ? `based in ${location}` : 'with location still to confirm'
+  const contactText = lastContact ? ` Last recorded contact: ${lastContact}.` : ''
+
+  if (/romantic/i.test(category)) {
+    return `${person} is the current romantic connection in the Connections record, ${locationText}, with ${closeness.toLowerCase()} context and ${priorityText}. Keep this profile focused on the live relationship thread, current warmth, and the next simple plan or check-in.${contactText}`
+  }
+
+  if (/co-?founder|venture/i.test(category)) {
+    return `${person} sits in the co-founder / venture lane as ${category.toLowerCase()}, ${locationText}, with ${closeness.toLowerCase()} closeness and ${priorityText}. Track both the working relationship and the non-work friendship context so venture conversations do not become the only touchpoint.${contactText}`
+  }
+
+  if (/coworker|boss|mentor|professional/i.test(category)) {
+    return `${person} belongs in the career network as ${category.toLowerCase()}, ${locationText}, with ${closeness.toLowerCase()} relationship context and ${priorityText}. Keep notes around work context, mentorship value, and any useful career or professional follow-up.${contactText}`
+  }
+
+  if (/orlando/i.test(`${category} ${location} ${lane}`)) {
+    return `${person} is part of the Orlando local base, ${locationText}, with ${closeness.toLowerCase()} closeness and ${priorityText}. This connection matters because the record flags Orlando as the place with the thinnest deeper local ties, so the profile should track whether this can become an actual hangout relationship.${contactText}`
+  }
+
+  if (/social group/i.test(category)) {
+    return `${person} is tracked as a ${category.toLowerCase()} in the Friends lane, ${locationText}, with ${closeness.toLowerCase()} context and ${priorityText}. Treat this as a group relationship profile: home visits and South Florida plans are the main way to keep the tie warm.${contactText}`
+  }
+
+  if (/close friend|hometown|dance team|college/i.test(category)) {
+    return `${person} is in the Friends lane as ${category.toLowerCase()}, ${locationText}, with ${closeness.toLowerCase()} closeness and ${priorityText}. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up.${contactText}`
+  }
+
+  return `${person} is tracked in the ${lane} lane as ${category.toLowerCase()}, ${locationText}, with ${closeness.toLowerCase()} closeness and ${priorityText}.${contactText}`
+}
+
 function parseConnectionsTable(markdown: string): ConnectionPersonProjection[] {
   return markdown
     .split('\n')
@@ -112,8 +144,8 @@ function parseConnectionsTable(markdown: string): ConnectionPersonProjection[] {
         lane,
         nextAction: nextConnectionAction(person, category, lastContact, lane),
         dormant,
-        profileStatus: 'na',
-        profileSummary: 'NA',
+        profileStatus: 'available',
+        profileSummary: connectionProfileSummary(person, category, location, closeness, lastContact, priority, lane),
       }
     })
 }

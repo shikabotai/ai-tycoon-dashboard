@@ -3241,8 +3241,8 @@ function App() {
               </div>
             </div>
             <div className="connections-lane-list">
-              {lanes.map((lane, index) => (
-                <details key={lane.id} className="connections-lane-directory" open={index < 2}>
+              {lanes.map((lane) => (
+                <details key={lane.id} className="connections-lane-directory">
                   <summary className="connections-lane-top">
                     <strong>{lane.title}</strong>
                   </summary>
@@ -3322,10 +3322,6 @@ function App() {
                 <div>
                   <span>Lane</span>
                   <strong>{selectedConnection.lane}</strong>
-                </div>
-                <div>
-                  <span>Priority</span>
-                  <strong>{priorityLabel(selectedConnection)}</strong>
                 </div>
                 <div>
                   <span>Category</span>

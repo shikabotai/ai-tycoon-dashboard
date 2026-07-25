@@ -3,8 +3,8 @@ import { attachProjectedDashboard } from '../data/projectedDashboardModel'
 import type { ProjectedSection, ProjectionSnapshot } from '../data/projectedTypes'
 
 export const generatedProjectionSnapshot: ProjectionSnapshot = {
-  "generatedAt": "2026-07-25T00:37:46.235Z",
-  "generatedAtLabel": "Jul 24, 2026, 8:37 PM EDT",
+  "generatedAt": "2026-07-25T01:34:38.941Z",
+  "generatedAtLabel": "Jul 24, 2026, 9:34 PM EDT",
   "source": "PunkRecords",
   "updateMode": "Nightly static projection"
 } as ProjectionSnapshot
@@ -158,7 +158,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Nutrition log source",
         "value": "138g protein",
-        "note": "1,335 kcal logged. Latest nutrition file: 2026-07-24.",
+        "note": "1,425 kcal logged. Latest nutrition file: 2026-07-24.",
         "stale": false
       },
       {
@@ -1867,8 +1867,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "lane": "Romantic",
           "nextAction": "Keep the active thread warm with one simple plan or check-in.",
           "dormant": false,
-          "profileStatus": "na",
-          "profileSummary": "NA"
+          "profileStatus": "available",
+          "profileSummary": "Melanie is the current romantic connection in the Connections record, based in Orlando, with high — talking 4 months context and active priority. Keep this profile focused on the live relationship thread, current warmth, and the next simple plan or check-in. Last recorded contact: Late Mar 2026 (Pokémon Unite)."
         },
         {
           "id": "lohith-close-friend",
@@ -1881,8 +1881,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "lane": "Friends",
           "nextAction": "Send Lohith one low-friction catch-up text.",
           "dormant": true,
-          "profileStatus": "na",
-          "profileSummary": "NA"
+          "profileStatus": "available",
+          "profileSummary": "Lohith is in the Friends lane as close friend, based in Houston, with medium — drifting with distance closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
         },
         {
           "id": "mehul-dance-team-close",
@@ -1895,8 +1895,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "lane": "Friends",
           "nextAction": "Send Mehul one low-friction catch-up text.",
           "dormant": true,
-          "profileStatus": "na",
-          "profileSummary": "NA"
+          "profileStatus": "available",
+          "profileSummary": "Mehul is in the Friends lane as dance team / close, based in South Florida, with high — co-captain closeness and high priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (winter break)."
         }
       ],
       "lanes": [
@@ -1916,8 +1916,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "lane": "Romantic",
               "nextAction": "Keep the active thread warm with one simple plan or check-in.",
               "dormant": false,
-              "profileStatus": "na",
-              "profileSummary": "NA"
+              "profileStatus": "available",
+              "profileSummary": "Melanie is the current romantic connection in the Connections record, based in Orlando, with high — talking 4 months context and active priority. Keep this profile focused on the live relationship thread, current warmth, and the next simple plan or check-in. Last recorded contact: Late Mar 2026 (Pokémon Unite)."
             }
           ]
         },
@@ -1937,8 +1937,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "lane": "Friends",
               "nextAction": "Send Mehul one low-friction catch-up text.",
               "dormant": true,
-              "profileStatus": "na",
-              "profileSummary": "NA"
+              "profileStatus": "available",
+              "profileSummary": "Mehul is in the Friends lane as dance team / close, based in South Florida, with high — co-captain closeness and high priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (winter break)."
             },
             {
               "id": "josh-close-friend",
@@ -1951,8 +1951,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "lane": "Friends",
               "nextAction": "Send Josh one specific, low-pressure check-in.",
               "dormant": false,
-              "profileStatus": "na",
-              "profileSummary": "NA"
+              "profileStatus": "available",
+              "profileSummary": "Josh is in the Friends lane as close friend, based in South Florida, with high — old roommate closeness and high priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: Late Mar 2026 (Pokémon Unite)."
             },
             {
               "id": "anjali-college-friend-josh-s-gf",
@@ -1965,8 +1965,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "lane": "Friends",
               "nextAction": "Send Anjali one low-friction catch-up text.",
               "dormant": true,
-              "profileStatus": "na",
-              "profileSummary": "NA"
+              "profileStatus": "available",
+              "profileSummary": "Anjali is in the Friends lane as college friend (josh's gf), based in South Florida (lives with Josh), with medium closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
             },
             {
               "id": "chaquayla-college-friend",
@@ -1979,8 +1979,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "lane": "Friends",
               "nextAction": "Send Chaquayla one low-friction catch-up text.",
               "dormant": true,
-              "profileStatus": "na",
-              "profileSummary": "NA"
+              "profileStatus": "available",
+              "profileSummary": "Chaquayla is in the Friends lane as college friend, based in Tallahassee, with medium closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
             },
             {
               "id": "div-college-friend",
@@ -1993,8 +1993,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "lane": "Friends",
               "nextAction": "Send Div one low-friction catch-up text.",
               "dormant": true,
-              "profileStatus": "na",
-              "profileSummary": "NA"
+              "profileStatus": "available",
+              "profileSummary": "Div is in the Friends lane as college friend, based in Mexico City (frequent Miami trips), with medium closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
             },
             {
               "id": "lohith-close-friend",
@@ -2007,8 +2007,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "lane": "Friends",
               "nextAction": "Send Lohith one low-friction catch-up text.",
               "dormant": true,
-              "profileStatus": "na",
-              "profileSummary": "NA"
+              "profileStatus": "available",
+              "profileSummary": "Lohith is in the Friends lane as close friend, based in Houston, with medium — drifting with distance closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
             },
             {
               "id": "shravya-college-friend",
@@ -2021,8 +2021,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "lane": "Friends",
               "nextAction": "Send Shravya one low-friction catch-up text.",
               "dormant": true,
-              "profileStatus": "na",
-              "profileSummary": "NA"
+              "profileStatus": "available",
+              "profileSummary": "Shravya is in the Friends lane as college friend, based in Texas, with medium closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
             },
             {
               "id": "teja-college-friend",
@@ -2035,8 +2035,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "lane": "Friends",
               "nextAction": "Send Teja one low-friction catch-up text.",
               "dormant": true,
-              "profileStatus": "na",
-              "profileSummary": "NA"
+              "profileStatus": "available",
+              "profileSummary": "Teja is in the Friends lane as college friend, based in Chicago, with medium closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
             },
             {
               "id": "alvin-hometown-friend",
@@ -2049,8 +2049,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "lane": "Friends",
               "nextAction": "Send Alvin one specific, low-pressure check-in.",
               "dormant": false,
-              "profileStatus": "na",
-              "profileSummary": "NA"
+              "profileStatus": "available",
+              "profileSummary": "Alvin is in the Friends lane as hometown friend, based in South Florida, with medium closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: Weekly venture calls."
             }
           ]
         },
@@ -2070,8 +2070,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "lane": "Co-founders / ventures",
               "nextAction": "Add one non-work touchpoint around the next venture conversation.",
               "dormant": false,
-              "profileStatus": "na",
-              "profileSummary": "NA"
+              "profileStatus": "available",
+              "profileSummary": "Varun sits in the co-founder / venture lane as co-founder + friend, based in South Florida area, with high — dance team + matchup closeness and high priority. Track both the working relationship and the non-work friendship context so venture conversations do not become the only touchpoint. Last recorded contact: Active (venture)."
             },
             {
               "id": "vj-co-founder-friend",
@@ -2084,8 +2084,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "lane": "Co-founders / ventures",
               "nextAction": "Add one non-work touchpoint around the next venture conversation.",
               "dormant": false,
-              "profileStatus": "na",
-              "profileSummary": "NA"
+              "profileStatus": "available",
+              "profileSummary": "VJ sits in the co-founder / venture lane as co-founder + friend, based in Seattle, with high — dance team + matchup closeness and high priority. Track both the working relationship and the non-work friendship context so venture conversations do not become the only touchpoint. Last recorded contact: Active (venture)."
             },
             {
               "id": "ceaver-co-founder",
@@ -2098,8 +2098,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "lane": "Co-founders / ventures",
               "nextAction": "Add one non-work touchpoint around the next venture conversation.",
               "dormant": false,
-              "profileStatus": "na",
-              "profileSummary": "NA"
+              "profileStatus": "available",
+              "profileSummary": "Ceaver sits in the co-founder / venture lane as co-founder, with location still to confirm, with low-medium closeness and medium priority. Track both the working relationship and the non-work friendship context so venture conversations do not become the only touchpoint. Last recorded contact: Weekly venture calls."
             },
             {
               "id": "roshan-co-founder-friend",
@@ -2112,8 +2112,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "lane": "Co-founders / ventures",
               "nextAction": "Add one non-work touchpoint around the next venture conversation.",
               "dormant": false,
-              "profileStatus": "na",
-              "profileSummary": "NA"
+              "profileStatus": "available",
+              "profileSummary": "Roshan sits in the co-founder / venture lane as co-founder + friend, based in Virginia, with medium closeness and medium priority. Track both the working relationship and the non-work friendship context so venture conversations do not become the only touchpoint. Last recorded contact: Active (venture)."
             }
           ]
         },
@@ -2133,8 +2133,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "lane": "Career network",
               "nextAction": "Create one lightweight work or career-context touchpoint.",
               "dormant": false,
-              "profileStatus": "na",
-              "profileSummary": "NA"
+              "profileStatus": "available",
+              "profileSummary": "Armando belongs in the career network as boss / mentor, based in Orlando, with professional + poker relationship context and medium priority. Keep notes around work context, mentorship value, and any useful career or professional follow-up. Last recorded contact: Work."
             },
             {
               "id": "alejandro-coworker",
@@ -2147,8 +2147,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "lane": "Career network",
               "nextAction": "Create one lightweight work or career-context touchpoint.",
               "dormant": false,
-              "profileStatus": "na",
-              "profileSummary": "NA"
+              "profileStatus": "available",
+              "profileSummary": "Alejandro belongs in the career network as coworker, based in Orlando, with surface relationship context and low priority. Keep notes around work context, mentorship value, and any useful career or professional follow-up. Last recorded contact: Work."
             },
             {
               "id": "jennifer-coworker",
@@ -2161,8 +2161,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "lane": "Career network",
               "nextAction": "Create one lightweight work or career-context touchpoint.",
               "dormant": false,
-              "profileStatus": "na",
-              "profileSummary": "NA"
+              "profileStatus": "available",
+              "profileSummary": "Jennifer belongs in the career network as coworker, based in Orlando, with surface relationship context and low priority. Keep notes around work context, mentorship value, and any useful career or professional follow-up. Last recorded contact: Work."
             },
             {
               "id": "jinan-coworker",
@@ -2175,8 +2175,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "lane": "Career network",
               "nextAction": "Create one lightweight work or career-context touchpoint.",
               "dormant": false,
-              "profileStatus": "na",
-              "profileSummary": "NA"
+              "profileStatus": "available",
+              "profileSummary": "Jinan belongs in the career network as coworker, based in Orlando, with surface relationship context and low priority. Keep notes around work context, mentorship value, and any useful career or professional follow-up. Last recorded contact: Work."
             }
           ]
         },
@@ -2196,8 +2196,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "lane": "Orlando local",
               "nextAction": "Turn this from surface-level into one real local hangout.",
               "dormant": false,
-              "profileStatus": "na",
-              "profileSummary": "NA"
+              "profileStatus": "available",
+              "profileSummary": "David is part of the Orlando local base, based in Orlando, with low — haven't hung out closeness and low priority. This connection matters because the record flags Orlando as the place with the thinnest deeper local ties, so the profile should track whether this can become an actual hangout relationship. Last recorded contact: 2026-01-01 (college reunion)."
             }
           ]
         },
@@ -2217,8 +2217,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "lane": "General network",
               "nextAction": "Anchor the next touchpoint around the next South Florida visit.",
               "dormant": false,
-              "profileStatus": "na",
-              "profileSummary": "NA"
+              "profileStatus": "available",
+              "profileSummary": "SF Indian group is tracked as a social group in the Friends lane, based in South Florida, with collective close context and high priority. Treat this as a group relationship profile: home visits and South Florida plans are the main way to keep the tie warm. Last recorded contact: Home visits."
             }
           ]
         }
@@ -2235,8 +2235,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "lane": "Romantic",
           "nextAction": "Keep the active thread warm with one simple plan or check-in.",
           "dormant": false,
-          "profileStatus": "na",
-          "profileSummary": "NA"
+          "profileStatus": "available",
+          "profileSummary": "Melanie is the current romantic connection in the Connections record, based in Orlando, with high — talking 4 months context and active priority. Keep this profile focused on the live relationship thread, current warmth, and the next simple plan or check-in. Last recorded contact: Late Mar 2026 (Pokémon Unite)."
         },
         {
           "id": "david-orlando-friend",
@@ -2249,8 +2249,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "lane": "Orlando local",
           "nextAction": "Turn this from surface-level into one real local hangout.",
           "dormant": false,
-          "profileStatus": "na",
-          "profileSummary": "NA"
+          "profileStatus": "available",
+          "profileSummary": "David is part of the Orlando local base, based in Orlando, with low — haven't hung out closeness and low priority. This connection matters because the record flags Orlando as the place with the thinnest deeper local ties, so the profile should track whether this can become an actual hangout relationship. Last recorded contact: 2026-01-01 (college reunion)."
         },
         {
           "id": "jinan-coworker",
@@ -2263,8 +2263,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "lane": "Career network",
           "nextAction": "Create one lightweight work or career-context touchpoint.",
           "dormant": false,
-          "profileStatus": "na",
-          "profileSummary": "NA"
+          "profileStatus": "available",
+          "profileSummary": "Jinan belongs in the career network as coworker, based in Orlando, with surface relationship context and low priority. Keep notes around work context, mentorship value, and any useful career or professional follow-up. Last recorded contact: Work."
         },
         {
           "id": "jennifer-coworker",
@@ -2277,8 +2277,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "lane": "Career network",
           "nextAction": "Create one lightweight work or career-context touchpoint.",
           "dormant": false,
-          "profileStatus": "na",
-          "profileSummary": "NA"
+          "profileStatus": "available",
+          "profileSummary": "Jennifer belongs in the career network as coworker, based in Orlando, with surface relationship context and low priority. Keep notes around work context, mentorship value, and any useful career or professional follow-up. Last recorded contact: Work."
         },
         {
           "id": "alejandro-coworker",
@@ -2291,8 +2291,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "lane": "Career network",
           "nextAction": "Create one lightweight work or career-context touchpoint.",
           "dormant": false,
-          "profileStatus": "na",
-          "profileSummary": "NA"
+          "profileStatus": "available",
+          "profileSummary": "Alejandro belongs in the career network as coworker, based in Orlando, with surface relationship context and low priority. Keep notes around work context, mentorship value, and any useful career or professional follow-up. Last recorded contact: Work."
         }
       ],
       "dormantImportant": [
@@ -2307,8 +2307,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "lane": "Friends",
           "nextAction": "Send Lohith one low-friction catch-up text.",
           "dormant": true,
-          "profileStatus": "na",
-          "profileSummary": "NA"
+          "profileStatus": "available",
+          "profileSummary": "Lohith is in the Friends lane as close friend, based in Houston, with medium — drifting with distance closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
         },
         {
           "id": "mehul-dance-team-close",
@@ -2321,8 +2321,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "lane": "Friends",
           "nextAction": "Send Mehul one low-friction catch-up text.",
           "dormant": true,
-          "profileStatus": "na",
-          "profileSummary": "NA"
+          "profileStatus": "available",
+          "profileSummary": "Mehul is in the Friends lane as dance team / close, based in South Florida, with high — co-captain closeness and high priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (winter break)."
         },
         {
           "id": "shravya-college-friend",
@@ -2335,8 +2335,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "lane": "Friends",
           "nextAction": "Send Shravya one low-friction catch-up text.",
           "dormant": true,
-          "profileStatus": "na",
-          "profileSummary": "NA"
+          "profileStatus": "available",
+          "profileSummary": "Shravya is in the Friends lane as college friend, based in Texas, with medium closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
         },
         {
           "id": "teja-college-friend",
@@ -2349,8 +2349,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "lane": "Friends",
           "nextAction": "Send Teja one low-friction catch-up text.",
           "dormant": true,
-          "profileStatus": "na",
-          "profileSummary": "NA"
+          "profileStatus": "available",
+          "profileSummary": "Teja is in the Friends lane as college friend, based in Chicago, with medium closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
         },
         {
           "id": "anjali-college-friend-josh-s-gf",
@@ -2363,8 +2363,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "lane": "Friends",
           "nextAction": "Send Anjali one low-friction catch-up text.",
           "dormant": true,
-          "profileStatus": "na",
-          "profileSummary": "NA"
+          "profileStatus": "available",
+          "profileSummary": "Anjali is in the Friends lane as college friend (josh's gf), based in South Florida (lives with Josh), with medium closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
         }
       ]
     }
