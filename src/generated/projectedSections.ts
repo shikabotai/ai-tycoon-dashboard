@@ -3,8 +3,8 @@ import { attachProjectedDashboard } from '../data/projectedDashboardModel'
 import type { ProjectedSection, ProjectionSnapshot } from '../data/projectedTypes'
 
 export const generatedProjectionSnapshot: ProjectionSnapshot = {
-  "generatedAt": "2026-07-25T03:08:40.952Z",
-  "generatedAtLabel": "Jul 24, 2026, 11:08 PM EDT",
+  "generatedAt": "2026-07-25T07:15:26.684Z",
+  "generatedAtLabel": "Jul 25, 2026, 3:15 AM EDT",
   "source": "PunkRecords",
   "updateMode": "Nightly static projection"
 } as ProjectionSnapshot
@@ -119,6 +119,10 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         {
           "label": "Jul 24",
           "score": 5.3
+        },
+        {
+          "label": "Jul 25",
+          "score": 5.3
         }
       ],
       "nightlyChanges": [
@@ -138,7 +142,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "reason": "Personal Decision Engine / Ideal Self refreshed; current gap: Habits Overview — phone elimination protocol"
         }
       ],
-      "lastUpdatedLabel": "Nightly source refresh: Jul 24"
+      "lastUpdatedLabel": "Nightly source refresh: Jul 25"
     }
   },
   "vessel": {
