@@ -3,8 +3,8 @@ import { attachProjectedDashboard } from '../data/projectedDashboardModel'
 import type { ProjectedSection, ProjectionSnapshot } from '../data/projectedTypes'
 
 export const generatedProjectionSnapshot: ProjectionSnapshot = {
-  "generatedAt": "2026-07-25T01:42:40.823Z",
-  "generatedAtLabel": "Jul 24, 2026, 9:42 PM EDT",
+  "generatedAt": "2026-07-25T01:45:42.256Z",
+  "generatedAtLabel": "Jul 24, 2026, 9:45 PM EDT",
   "source": "PunkRecords",
   "updateMode": "Nightly static projection"
 } as ProjectionSnapshot
@@ -1785,7 +1785,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     }
   },
   "connections": {
-    "heroSummary": "20 mapped people, 3 reach-outs, 6 lanes.",
+    "heroSummary": "20 mapped people across 6 life lanes.",
     "summaryCards": [
       {
         "label": "Mapped people",
@@ -1793,7 +1793,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         "note": "6 life lanes from Connections MOC."
       },
       {
-        "label": "Top reach-outs",
+        "label": "Priority people",
         "value": "3",
         "note": "Keep the active thread warm with one simple plan or check-in."
       },
@@ -1815,7 +1815,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       }
     ],
     "highlights": [
-      "Pick three people to touch this week.",
+      "Keep each lane collapsed until it needs attention.",
       "Use lanes to see where the network is strong, thin, local, or dormant.",
       "Keep Relationships for deeper family/partner meaning; use Connections as the operational social graph."
     ],
@@ -1853,8 +1853,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       }
     ],
     "connections": {
-      "headline": "Reach-out radar + life lanes",
-      "posture": "Weekly touchpoints",
+      "headline": "Life lanes",
+      "posture": "People directory",
       "topReachOuts": [
         {
           "id": "melanie-romantic",

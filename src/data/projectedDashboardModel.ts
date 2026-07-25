@@ -228,7 +228,7 @@ export const projectedDashboardModel: Partial<Record<PersonalProjectionKey, Proj
     ],
   },
   connections: {
-    headline: 'Reach-out radar and life-lane graph',
+    headline: 'Life-lane graph',
     metrics: [
       { label: 'Mapped people', sourceCardIndex: 0, priority: 'good' },
       { label: 'Reach-outs', sourceCardIndex: 1, priority: 'good' },
@@ -236,7 +236,7 @@ export const projectedDashboardModel: Partial<Record<PersonalProjectionKey, Proj
       { label: 'Local base', sourceCardIndex: 3, priority: 'watch' },
     ],
     operatingRows: [
-      { title: 'Reach-out radar first', body: 'Answer who deserves a touchpoint this week before showing the whole graph.', sourceCardIndex: 1 },
+      { title: 'Life lanes first', body: 'Keep the full people directory organized by relationship lane and priority order.', sourceCardIndex: 1 },
       { title: 'Life lanes second', body: 'Sort people by the role they play: friends, co-founders, career, Orlando, home base, and romantic.', sourceCardIndex: 0 },
       { title: 'Local roots matter', body: 'Orlando ties stay visible because the source notes call out weak local depth.', sourceCardIndex: 3 },
     ],

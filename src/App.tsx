@@ -364,7 +364,7 @@ const PERSONAL_SECTION_CONTENT: Record<Exclude<PersonalSection, 'home'>, { eyebr
   education: { eyebrow: 'Learning and school', title: 'Education', summaryCards: ['Program', 'Courses', 'Upcoming deadlines', 'Learning focus'], highlights: ['Program context', 'Course clarity', 'Visible without taking over the system'] },
   relationships: { eyebrow: 'Family and connection', title: 'Relationships', summaryCards: ['Priority snapshot', 'Connection health', 'Important people', 'Upcoming actions'], highlights: ['Family and partner vision', 'Actionable relationship focus', 'Sensitive content kept minimal'] },
   knowledge: { eyebrow: 'Mental models and references', title: 'Knowledge', summaryCards: ['Learning domains', 'Mental models', 'Recent knowledge', 'Knowledge gaps'], highlights: ['Business, finance, health, psychology', 'Knowledge browser from PunkRecords', 'Built for action'] },
-  connections: { eyebrow: 'Social graph', title: 'Connections', summaryCards: ['Mapped people', 'Top reach-outs', 'Dormant important', 'Orlando local base'], highlights: ['Weekly reach-outs', 'Life lanes', 'Source gaps kept honest'] },
+  connections: { eyebrow: 'Social graph', title: 'Connections', summaryCards: ['Mapped people', 'Priority people', 'Dormant important', 'Orlando local base'], highlights: ['People directory', 'Life lanes', 'Source gaps kept honest'] },
 }
 
 const CATEGORY_SIGNATURE_DASHBOARDS: Record<Exclude<PersonalSection, 'home'>, CategorySignatureDashboard> = {
@@ -933,7 +933,7 @@ const GROWTH_DASHBOARD_DEFINITIONS: Record<GrowthDashboardSection, CoreDashboard
     ],
   },
   connections: {
-    headline: 'Reach-out radar and life lanes',
+    headline: 'Life lanes',
     metrics: [
       { label: 'Mapped people', sourceCardIndex: 0, priority: 'good' },
       { label: 'Reach-outs', sourceCardIndex: 1, priority: 'good' },
@@ -3179,7 +3179,6 @@ function App() {
     if (!currentPersonalData) return null
 
     const connections = currentPersonalData.connections
-    const topReachOuts = connections?.topReachOuts ?? []
     const lanes = connections?.lanes ?? []
     const localBase = connections?.localBase ?? []
     const dormantImportant = connections?.dormantImportant ?? []
@@ -3190,34 +3189,6 @@ function App() {
     return (
       <section className="connections-page" aria-label="Connections dashboard">
         <section className="connections-board" aria-label="Weekly relationship board">
-          <article className="connections-radar-panel">
-            <div className="connections-panel-head">
-              <div>
-                <span>This week</span>
-                <h3>Three touches</h3>
-              </div>
-            </div>
-            <div className="connections-reach-list">
-              {topReachOuts.slice(0, 3).map((person, index) => (
-                <button
-                  key={person.id}
-                  className={`connections-reach-card priority-${person.priority} ${selectedConnection?.id === person.id ? 'is-selected' : ''}`}
-                  type="button"
-                  onClick={() => setSelectedConnectionId(person.id)}
-                >
-                  <div className="connections-rank">{index + 1}</div>
-                  <div>
-                    <span>{person.category} / {person.location}</span>
-                    <strong>{person.person}</strong>
-                    <p>{person.nextAction}</p>
-                    <small>Last: {person.lastContact}</small>
-                  </div>
-                </button>
-              ))}
-              {topReachOuts.length === 0 ? <p className="connections-empty-copy">No reach-outs found.</p> : null}
-            </div>
-          </article>
-
           <article className="connections-lane-panel">
             <div className="connections-panel-head">
               <div>

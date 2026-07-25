@@ -1283,16 +1283,16 @@ function buildConnectionsData() {
   const familyPeople = countMatches(family, '|') > 0 ? countMatches(family, '\n|') - 2 : 0
 
   return {
-    heroSummary: `${people.length} mapped people, ${topReachOuts.length} reach-outs, ${lanes.length} lanes.`,
+    heroSummary: `${people.length} mapped people across ${lanes.length} life lanes.`,
     summaryCards: [
       { label: 'Mapped people', value: `${people.length}`, note: `${lanes.length} life lanes from Connections MOC.` },
-      { label: 'Top reach-outs', value: `${topReachOuts.length}`, note: topReachOuts[0]?.nextAction ?? 'No reach-out candidates yet.' },
+      { label: 'Priority people', value: `${topReachOuts.length}`, note: topReachOuts[0]?.nextAction ?? 'No priority candidates yet.' },
       { label: 'Dormant important', value: `${dormantImportant.length}`, note: dormantImportant[0] ? `${dormantImportant[0].person}: ${dormantImportant[0].lastContact}` : 'No dormant high-priority ties found.' },
       { label: 'Orlando local base', value: `${localBase.length}`, note: localBase[0]?.nextAction ?? 'Add local connections or hangout targets.' },
       { label: 'Career contacts', value: careerContacts, note: 'Career Networking contact tracker is still mostly a template.', stale: careerContacts === '0' },
     ],
     highlights: [
-      'Pick three people to touch this week.',
+      'Keep each lane collapsed until it needs attention.',
       'Use lanes to see where the network is strong, thin, local, or dormant.',
       'Keep Relationships for deeper family/partner meaning; use Connections as the operational social graph.',
     ],
@@ -1306,8 +1306,8 @@ function buildConnectionsData() {
       { label: 'Family bridge', value: `${familyPeople} rows nearby`, detail: 'Family data exists in a separate category and can be joined more deeply later.', severity: 'watch' },
     ],
     connections: {
-      headline: 'Reach-out radar + life lanes',
-      posture: 'Weekly touchpoints',
+      headline: 'Life lanes',
+      posture: 'People directory',
       topReachOuts,
       lanes,
       localBase,

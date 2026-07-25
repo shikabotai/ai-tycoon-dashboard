@@ -2370,10 +2370,7 @@ button {
   min-width: 0;
 }
 
-.connections-hero,
-.connections-radar-panel,
 .connections-lane-panel,
-.connections-reach-card,
 .connections-support-panel {
   min-width: 0;
   border: 1px solid rgba(241, 244, 248, 0.1);
@@ -2382,27 +2379,7 @@ button {
   box-shadow: 0 18px 42px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-.connections-hero {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) minmax(260px, 0.38fr);
-  gap: 14px;
-  align-items: stretch;
-  padding: 14px;
-}
-
-.connections-hero .back-button {
-  align-self: start;
-}
-
-.connections-hero-copy {
-  min-width: 0;
-  align-self: center;
-}
-
-.connections-hero-copy span,
-.connections-lead-card span,
 .connections-panel-head span,
-.connections-reach-card span,
 .connections-mini-list span,
 .connections-support-panel > span {
   color: #8ccfd5;
@@ -2411,16 +2388,6 @@ button {
   text-transform: uppercase;
 }
 
-.connections-hero-copy h2 {
-  margin: 6px 0 8px;
-  color: var(--text);
-  font-size: clamp(2rem, 3.6vw, 3.1rem);
-  line-height: 0.98;
-}
-
-.connections-hero-copy p,
-.connections-lead-card p,
-.connections-reach-card p,
 .connections-lane-list p,
 .connections-mini-list p,
 .connections-support-panel p,
@@ -2432,18 +2399,6 @@ button {
   overflow-wrap: anywhere;
 }
 
-.connections-lead-card {
-  display: grid;
-  align-content: start;
-  gap: 8px;
-  border: 1px solid rgba(140, 207, 213, 0.28);
-  border-radius: 8px;
-  background: rgba(6, 16, 19, 0.72);
-  padding: 13px;
-}
-
-.connections-lead-card strong,
-.connections-reach-card strong,
 .connections-lane-top strong,
 .connections-mini-list strong,
 .connections-support-panel h3 {
@@ -2460,24 +2415,19 @@ button {
 }
 
 .connections-board {
-  grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .connections-support-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.connections-radar-panel,
 .connections-lane-panel,
 .connections-support-panel {
   display: grid;
   align-content: start;
   gap: 12px;
   padding: 14px;
-}
-
-.connections-radar-panel {
-  border-color: rgba(140, 207, 213, 0.3);
 }
 
 .connections-panel-head,
