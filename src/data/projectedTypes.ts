@@ -297,11 +297,6 @@ export type ConnectionsProjection = {
   lanes: ConnectionLaneProjection[]
   localBase: ConnectionPersonProjection[]
   dormantImportant: ConnectionPersonProjection[]
-  sourceCoverage: {
-    existingProfiles: number
-    expectedProfiles: number
-    note: string
-  }
 }
 
 export type ProjectedSection = {

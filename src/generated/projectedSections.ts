@@ -3,8 +3,8 @@ import { attachProjectedDashboard } from '../data/projectedDashboardModel'
 import type { ProjectedSection, ProjectionSnapshot } from '../data/projectedTypes'
 
 export const generatedProjectionSnapshot: ProjectionSnapshot = {
-  "generatedAt": "2026-07-25T00:15:20.240Z",
-  "generatedAtLabel": "Jul 24, 2026, 8:15 PM EDT",
+  "generatedAt": "2026-07-25T00:22:19.415Z",
+  "generatedAtLabel": "Jul 24, 2026, 8:22 PM EDT",
   "source": "PunkRecords",
   "updateMode": "Nightly static projection"
 } as ProjectionSnapshot
@@ -1812,12 +1812,6 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         "value": "0",
         "note": "Career Networking contact tracker is still mostly a template.",
         "stale": true
-      },
-      {
-        "label": "Source depth",
-        "value": "20/21",
-        "note": "The MOC references future profile folders; most individual notes are not present yet.",
-        "stale": true
       }
     ],
     "highlights": [
@@ -1831,12 +1825,6 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       "stale": false
     },
     "blockers": [
-      {
-        "label": "Profile depth",
-        "value": "MOC-only",
-        "detail": "The source references individual connection profiles, but the current folder has only the Connections MOC.",
-        "severity": "watch"
-      },
       {
         "label": "Career CRM",
         "value": "0 contacts",
@@ -2378,12 +2366,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "profileStatus": "na",
           "profileSummary": "NA"
         }
-      ],
-      "sourceCoverage": {
-        "existingProfiles": 20,
-        "expectedProfiles": 21,
-        "note": "Build individual profiles later only for people who matter enough to track context."
-      }
+      ]
     }
   }
 } as Partial<Record<PersonalProjectionKey, ProjectedSection>>

@@ -1247,8 +1247,6 @@ function buildConnectionsData() {
   ]
     .filter((person, index, list) => list.findIndex((item) => item.id === person.id) === index)
     .slice(0, 3)
-  const expectedProfiles = Math.max(0, (connections.match(/├──|└──/g) ?? []).length - 1)
-  const existingProfiles = people.length
   const careerContacts = careerNetworking.match(/\| Total contacts \|\s*(\d+)/)?.[1] ?? '0'
   const familyPeople = countMatches(family, '|') > 0 ? countMatches(family, '\n|') - 2 : 0
 
@@ -1260,7 +1258,6 @@ function buildConnectionsData() {
       { label: 'Dormant important', value: `${dormantImportant.length}`, note: dormantImportant[0] ? `${dormantImportant[0].person}: ${dormantImportant[0].lastContact}` : 'No dormant high-priority ties found.' },
       { label: 'Orlando local base', value: `${localBase.length}`, note: localBase[0]?.nextAction ?? 'Add local connections or hangout targets.' },
       { label: 'Career contacts', value: careerContacts, note: 'Career Networking contact tracker is still mostly a template.', stale: careerContacts === '0' },
-      { label: 'Source depth', value: `${existingProfiles}/${expectedProfiles || existingProfiles}`, note: 'The MOC references future profile folders; most individual notes are not present yet.', stale: expectedProfiles > existingProfiles },
     ],
     highlights: [
       'Pick three people to touch this week.',
@@ -1269,7 +1266,6 @@ function buildConnectionsData() {
     ],
     freshness: summarizeFreshness('Connections MOC', 0, 60),
     blockers: [
-      { label: 'Profile depth', value: 'MOC-only', detail: 'The source references individual connection profiles, but the current folder has only the Connections MOC.', severity: 'watch' },
       { label: 'Career CRM', value: `${careerContacts} contacts`, detail: 'Professional contact tracker exists but has no real contact rows yet.', severity: 'stale' },
     ],
     missingData: [
@@ -1284,11 +1280,6 @@ function buildConnectionsData() {
       lanes,
       localBase,
       dormantImportant,
-      sourceCoverage: {
-        existingProfiles,
-        expectedProfiles: expectedProfiles || existingProfiles,
-        note: 'Build individual profiles later only for people who matter enough to track context.',
-      },
     },
   }
 }

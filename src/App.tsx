@@ -944,17 +944,14 @@ const GROWTH_DASHBOARD_DEFINITIONS: Record<GrowthDashboardSection, CoreDashboard
       { title: 'Pick three touches', body: 'Show the next people to contact before expanding into the full graph.', sourceCardIndex: 1 },
       { title: 'Read by lane', body: 'Group people by role: romantic, friends, co-founders, career, Orlando, and general network.', sourceCardIndex: 0 },
       { title: 'Watch local depth', body: 'Keep Orlando visible because the source notes call out thin local ties.', sourceCardIndex: 3 },
-      { title: 'Stay honest on depth', body: 'The source is mostly one MOC, so profile gaps should remain visible.', sourceCardIndex: 5 },
     ],
     evidenceRows: [
       { title: 'Connections MOC', body: 'Primary source for people, categories, locations, closeness, last contact, and priority.', sourceCardIndex: 0 },
       { title: 'Career contact tracker', body: 'Professional CRM exists but is still mostly empty.', sourceCardIndex: 4 },
-      { title: 'Profile depth gap', body: 'Individual notes can be added later for people who need recurring context.', sourceCardIndex: 5 },
     ],
     actionRows: [
       { title: 'Send the first touch', body: 'Use the lead radar item to send one simple message or plan.', sourceCardIndex: 1 },
       { title: 'Strengthen one local tie', body: 'Choose one Orlando row and turn it into a real hangout or work-adjacent touchpoint.', sourceCardIndex: 3 },
-      { title: 'Add only useful profiles', body: 'Create individual notes for the few relationships where context actually matters.', sourceCardIndex: 5 },
     ],
   },
 }
