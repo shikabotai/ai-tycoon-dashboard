@@ -237,11 +237,11 @@ export const projectedDashboardModel: Partial<Record<PersonalProjectionKey, Proj
     ],
     operatingRows: [
       { title: 'Life lanes first', body: 'Keep the full people directory organized by relationship lane and priority order.', sourceCardIndex: 1 },
-      { title: 'Life lanes second', body: 'Sort people by the role they play: friends, co-founders, career, Orlando, home base, and romantic.', sourceCardIndex: 0 },
+      { title: 'Life lanes second', body: 'Sort people by the role they play: friends, family, Orlando local, co-founders, career, and romantic.', sourceCardIndex: 0 },
       { title: 'Local roots matter', body: 'Orlando ties stay visible because the source notes call out weak local depth.', sourceCardIndex: 3 },
     ],
     evidenceRows: [
-      { title: 'Connections MOC', body: 'Primary source for people, categories, locations, closeness, last contact, and priority.', sourceCardIndex: 0 },
+      { title: 'Relationships Wishes life lanes', body: 'Primary source for people, lanes, locations, closeness, last contact, and priority.', sourceCardIndex: 0 },
       { title: 'Career contact tracker', body: 'Professional CRM exists but is still mostly empty.', sourceCardIndex: 4 },
     ],
     actionRows: [

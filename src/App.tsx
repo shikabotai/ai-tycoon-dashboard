@@ -28,7 +28,7 @@ const AvatarModelScene = lazy(async () => {
 })
 
 type AppMode = 'personal' | 'business'
-type PersonalSection = 'home' | 'vessel' | 'identity' | 'career' | 'wealth' | 'ventures' | 'systems' | 'education' | 'relationships' | 'knowledge' | 'connections'
+type PersonalSection = 'home' | 'vessel' | 'identity' | 'career' | 'wealth' | 'ventures' | 'systems' | 'education' | 'relationships' | 'knowledge'
 type BusinessPanel = 'overview' | 'agents' | 'review'
 type BusinessPage = 'business-command' | 'agents' | 'review-dock' | 'runtime-trail'
 type AppPage = PersonalSection | BusinessPage
@@ -48,7 +48,7 @@ type PlaidCreateOptions = {
   onExit?: (error: { error_message?: string } | null) => void
 }
 type CoreDashboardSection = Extract<PersonalSection, 'vessel' | 'identity' | 'systems'>
-type GrowthDashboardSection = Extract<PersonalSection, 'ventures' | 'career' | 'wealth' | 'education' | 'knowledge' | 'relationships' | 'connections'>
+type GrowthDashboardSection = Extract<PersonalSection, 'ventures' | 'career' | 'wealth' | 'education' | 'knowledge' | 'relationships'>
 type CoreDashboardDefinition = ProjectedDashboard
 
 type HomeConstellationNode = {
@@ -70,7 +70,7 @@ type GrowthLoopDefinition = {
   compound: string
   cadence: string
 }
-type CategoryDashboardKind = 'vessel-cockpit' | 'identity-compass' | 'systems-triage' | 'venture-radar' | 'career-ladder' | 'wealth-flow' | 'education-runway' | 'knowledge-forge' | 'relationship-orbit' | 'connection-graph'
+type CategoryDashboardKind = 'vessel-cockpit' | 'identity-compass' | 'systems-triage' | 'venture-radar' | 'career-ladder' | 'wealth-flow' | 'education-runway' | 'knowledge-forge' | 'relationship-orbit'
 type CategorySignatureDashboard = {
   kind: CategoryDashboardKind
   eyebrow: string
@@ -132,7 +132,6 @@ const PERSONAL_ROUTES: Record<PersonalSection, string> = {
   education: '/education',
   relationships: '/relationships',
   knowledge: '/knowledge',
-  connections: '/connections',
 }
 
 const BUSINESS_ROUTES: Record<BusinessPage, string> = {
@@ -192,8 +191,7 @@ const PERSONAL_NAV_ITEMS: NavItem[] = [
   { page: 'wealth', label: 'Wealth', description: 'Capital and priorities' },
   { page: 'education', label: 'Education', description: 'Courses and deadlines' },
   { page: 'knowledge', label: 'Knowledge', description: 'Models and references' },
-  { page: 'relationships', label: 'Relationships', description: 'Connection and care' },
-  { page: 'connections', label: 'Connections', description: 'Reach-outs and social graph' },
+  { page: 'relationships', label: 'Relationships Wishes', description: 'Life lanes and care' },
 ]
 
 const BUSINESS_NAV_ITEMS: NavItem[] = [
@@ -260,15 +258,9 @@ const PAGE_DIRECTIVES: Record<AppPage, PageDirective> = {
   },
   relationships: {
     outcome: 'Maintain real connection with respect',
-    system: 'Care actions, environment fit, social confidence, and privacy boundaries summarized safely.',
-    usefulFor: 'Making relationships actionable without exposing private detail.',
+    system: 'Life lanes, people profiles, family, friends, local ties, care actions, and privacy boundaries summarized safely.',
+    usefulFor: 'Keeping relationships actionable without turning them into a separate category.',
     cadence: 'Weekly touchpoint',
-  },
-  connections: {
-    outcome: 'Know who to reach out to next',
-    system: 'Social graph lanes, stale touchpoints, local-base gaps, and top reach-outs in one operating view.',
-    usefulFor: 'Turning scattered relationships into intentional follow-up without becoming a heavy CRM.',
-    cadence: 'Weekly reach-out review',
   },
   'business-command': {
     outcome: 'Move the business with fewer clicks',
@@ -303,13 +295,14 @@ const HOME_CONSTELLATION_NODES: HomeConstellationNode[] = [
   { key: 'ventures', label: 'Ventures', tier: 'core', x: 69, y: 82, anchorX: 55, anchorY: 67, tone: 'growth' },
   { key: 'career', label: 'Career', tier: 'core', x: 31, y: 82, anchorX: 45, anchorY: 67, tone: 'growth' },
   { key: 'wealth', label: 'Wealth', tier: 'core', x: 16, y: 56, anchorX: 39, anchorY: 57, tone: 'capital' },
-  { key: 'relationships', label: 'Relationships', tier: 'secondary', x: 18, y: 31, anchorX: 40, anchorY: 34, tone: 'connection' },
+  { key: 'relationships', label: 'Relationships Wishes', tier: 'secondary', x: 18, y: 31, anchorX: 40, anchorY: 34, tone: 'connection' },
   { key: 'education', label: 'Education', tier: 'secondary', x: 34, y: 18, anchorX: 45, anchorY: 34, tone: 'mind' },
   { key: 'knowledge', label: 'Knowledge', tier: 'secondary', x: 66, y: 18, anchorX: 55, anchorY: 34, tone: 'mind' },
 ]
 
 function pageFromPath(pathname: string): AppPage {
   const normalized = appPathFromBrowserPath(pathname).replace(/\/+$/, '') || '/'
+  if (normalized === '/connections') return 'relationships'
   const match = (Object.entries(PAGE_ROUTES) as Array<[AppPage, string]>).find(([, path]) => path === normalized)
   return match?.[0] ?? 'home'
 }
@@ -362,9 +355,8 @@ const PERSONAL_SECTION_CONTENT: Record<Exclude<PersonalSection, 'home'>, { eyebr
   ventures: { eyebrow: 'Personal venture strategy', title: 'Ventures', summaryCards: ['Priority venture', 'Portfolio snapshot', 'Biggest blocker', 'Next key decision'], highlights: ['Personal venture worldview', 'Priority logic and blockers', 'Separate from Business Command'] },
   systems: { eyebrow: 'Life operations layer', title: 'Systems', summaryCards: ['Current focus', 'Old dated items', 'Waiting items', 'Upcoming tasks'], highlights: ['PunkRecords source rows', 'Stale dates without fake urgency', 'Simple task triage'] },
   education: { eyebrow: 'Learning and school', title: 'Education', summaryCards: ['Program', 'Courses', 'Upcoming deadlines', 'Learning focus'], highlights: ['Program context', 'Course clarity', 'Visible without taking over the system'] },
-  relationships: { eyebrow: 'Family and connection', title: 'Relationships', summaryCards: ['Priority snapshot', 'Connection health', 'Important people', 'Upcoming actions'], highlights: ['Family and partner vision', 'Actionable relationship focus', 'Sensitive content kept minimal'] },
+  relationships: { eyebrow: 'Family and connection', title: 'Relationships Wishes', summaryCards: ['Life lanes', 'People profiles', 'Family', 'Local ties'], highlights: ['Friends and family in priority order', 'Profile popups when opened', 'Sensitive content kept minimal'] },
   knowledge: { eyebrow: 'Mental models and references', title: 'Knowledge', summaryCards: ['Learning domains', 'Mental models', 'Recent knowledge', 'Knowledge gaps'], highlights: ['Business, finance, health, psychology', 'Knowledge browser from PunkRecords', 'Built for action'] },
-  connections: { eyebrow: 'Social graph', title: 'Connections', summaryCards: ['Mapped people', 'Priority people', 'Dormant important', 'Orlando local base'], highlights: ['People directory', 'Life lanes', 'Source gaps kept honest'] },
 }
 
 const CATEGORY_SIGNATURE_DASHBOARDS: Record<Exclude<PersonalSection, 'home'>, CategorySignatureDashboard> = {
@@ -531,41 +523,21 @@ const CATEGORY_SIGNATURE_DASHBOARDS: Record<Exclude<PersonalSection, 'home'>, Ca
   },
   relationships: {
     kind: 'relationship-orbit',
-    eyebrow: 'Care orbit',
-    title: 'Connection signals stay useful, respectful, and privacy-first.',
-    readoutLabel: 'Care posture',
-    readoutSourceIndex: 0,
-    readoutUnit: 'posture',
-    mapLabel: 'Care orbit',
-    mapItems: [
-      { label: 'Family', sourceIndex: 1 },
-      { label: 'Growth', sourceIndex: 2 },
-      { label: 'Context', sourceIndex: 3 },
-      { label: 'Privacy', sourceIndex: 5 },
-    ],
-    lenses: [
-      { label: 'Care', title: 'Choose one care action', body: 'Make connection concrete without exposing unnecessary private detail.', sourceIndex: 1 },
-      { label: 'Fit', title: 'Improve environment fit', body: 'Favor contexts that make good connection more likely.', sourceIndex: 3 },
-      { label: 'Protect', title: 'Keep raw detail private', body: 'Render patterns and reminders, not sensitive relationship logs.', sourceIndex: 5 },
-    ],
-  },
-  connections: {
-    kind: 'connection-graph',
-    eyebrow: 'Social graph',
-    title: 'Reach-outs and life lanes from the Connections MOC.',
+    eyebrow: 'Life lanes',
+    title: 'Relationships Wishes keeps people, family, and care in one place.',
     readoutLabel: 'Mapped people',
     readoutSourceIndex: 0,
     readoutUnit: 'people',
-    mapLabel: 'Connection lanes',
+    mapLabel: 'Relationship lanes',
     mapItems: [
-      { label: 'Reach', sourceIndex: 1 },
-      { label: 'Dormant', sourceIndex: 2 },
+      { label: 'Friends', sourceIndex: 0 },
+      { label: 'Family', sourceIndex: 1 },
       { label: 'Local', sourceIndex: 3 },
-      { label: 'Source', sourceIndex: 5 },
+      { label: 'Profiles', sourceIndex: 5 },
     ],
     lenses: [
-      { label: 'Reach', title: 'Pick three touches', body: 'Use the highest-priority and dormant rows to decide who gets a low-friction message this week.', sourceIndex: 1 },
-      { label: 'Lane', title: 'Check network shape', body: 'Look for strong, thin, local, and dormant lanes before treating the network like one blob.', sourceIndex: 0 },
+      { label: 'Lane', title: 'Check relationship lanes', body: 'Look at friends, family, local ties, and work-adjacent people without making a separate page.', sourceIndex: 0 },
+      { label: 'Care', title: 'Choose one care action', body: 'Make connection concrete without exposing unnecessary private detail.', sourceIndex: 1 },
       { label: 'Depth', title: 'Only add useful profiles', body: 'Create individual notes for people who actually need recurring context.', sourceIndex: 5 },
     ],
   },
@@ -629,18 +601,11 @@ const GROWTH_LOOP_DEFINITIONS: Record<Exclude<PersonalSection, 'home'>, GrowthLo
     cadence: 'Weekly model extraction',
   },
   relationships: {
-    target: 'Connection handled with care, privacy, and concrete follow-through.',
-    ritual: 'Choose one respectful action that improves connection without overexposing context.',
+    target: 'Friends, family, and meaningful ties handled with care, privacy, and concrete follow-through.',
+    ritual: 'Open the relevant lane and choose one respectful action or profile update.',
     blocker: 'Good intentions decay when they never become a timed action.',
     compound: 'Stronger relationships make ambition feel supported instead of isolated.',
     cadence: 'Weekly connection check',
-  },
-  connections: {
-    target: 'A social graph that turns important people into simple, timely follow-through.',
-    ritual: 'Pick three reach-outs, then keep the rest parked by lane.',
-    blocker: 'Reactive contact lets distance and relocation quietly weaken good ties.',
-    compound: 'Intentional connection strengthens career, ventures, identity, and local life.',
-    cadence: 'Weekly reach-out pass',
   },
 }
 
@@ -932,28 +897,6 @@ const GROWTH_DASHBOARD_DEFINITIONS: Record<GrowthDashboardSection, CoreDashboard
       { title: 'Keep the page minimal', body: 'Future source integrations should summarize patterns and reminders, not display raw sensitive notes.', sourceCardIndex: 5 },
     ],
   },
-  connections: {
-    headline: 'Life lanes',
-    metrics: [
-      { label: 'Mapped people', sourceCardIndex: 0, priority: 'good' },
-      { label: 'Reach-outs', sourceCardIndex: 1, priority: 'good' },
-      { label: 'Dormant ties', sourceCardIndex: 2, priority: 'watch' },
-      { label: 'Local base', sourceCardIndex: 3, priority: 'watch' },
-    ],
-    operatingRows: [
-      { title: 'Pick three touches', body: 'Show the next people to contact before expanding into the full graph.', sourceCardIndex: 1 },
-      { title: 'Read by lane', body: 'Group people by role: romantic, friends, co-founders, career, Orlando, and general network.', sourceCardIndex: 0 },
-      { title: 'Watch local depth', body: 'Keep Orlando visible because the source notes call out thin local ties.', sourceCardIndex: 3 },
-    ],
-    evidenceRows: [
-      { title: 'Connections MOC', body: 'Primary source for people, categories, locations, closeness, last contact, and priority.', sourceCardIndex: 0 },
-      { title: 'Career contact tracker', body: 'Professional CRM exists but is still mostly empty.', sourceCardIndex: 4 },
-    ],
-    actionRows: [
-      { title: 'Send the first touch', body: 'Use the lead radar item to send one simple message or plan.', sourceCardIndex: 1 },
-      { title: 'Strengthen one local tie', body: 'Choose one Orlando row and turn it into a real hangout or work-adjacent touchpoint.', sourceCardIndex: 3 },
-    ],
-  },
 }
 
 function formatUsd(value: number) {
@@ -1186,6 +1129,14 @@ function App() {
       window.removeEventListener('hashchange', handleRouteChange)
     }
   }, [])
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || currentPage !== 'relationships') return
+    const appPath = appPathFromBrowserPath(window.location.pathname).replace(/\/+$/, '') || '/'
+    if (window.location.hash === '#/connections' || appPath === '/connections') {
+      window.history.replaceState({}, '', browserPathForRoute(PERSONAL_ROUTES.relationships))
+    }
+  }, [currentPage])
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000)
@@ -3178,15 +3129,15 @@ function App() {
   function renderConnectionsPage() {
     if (!currentPersonalData) return null
 
-    const connections = currentPersonalData.connections
+    const connections = projectedSections.connections?.connections ?? currentPersonalData.connections
     const lanes = connections?.lanes ?? []
     const allLanePeople = lanes.flatMap((lane) => lane.people ?? [])
     const selectedConnection = allLanePeople.find((person) => person.id === selectedConnectionId) ?? null
     const priorityLabel = (person: ConnectionPersonProjection) => person.priority === 'active' ? 'Active' : `${person.priority.charAt(0).toUpperCase()}${person.priority.slice(1)} priority`
 
     return (
-      <section className="connections-page" aria-label="Connections dashboard">
-        <section className="connections-board" aria-label="Weekly relationship board">
+      <section className="connections-page" aria-label="Relationships wishes directory">
+        <section className="connections-board" aria-label="Life lanes directory">
           <article className="connections-lane-panel">
             <div className="connections-panel-head">
               <div>
@@ -3226,7 +3177,7 @@ function App() {
             <article className="connections-profile-dialog">
               <div className="connections-profile-head">
                 <div>
-                  <span>Connection profile</span>
+                  <span>Person profile</span>
                   <h3 id="connections-profile-title">{selectedConnection.person}</h3>
                 </div>
                 <button className="connections-profile-close" type="button" onClick={() => setSelectedConnectionId(null)}>Close</button>
@@ -3498,7 +3449,7 @@ function App() {
           </main>
         ) : (
           <main className="revamp-detail-page">
-            {personalSection === 'identity' || personalSection === 'vessel' || personalSection === 'systems' || personalSection === 'career' || personalSection === 'wealth' || personalSection === 'education' || personalSection === 'connections' ? null : (
+            {personalSection === 'identity' || personalSection === 'vessel' || personalSection === 'systems' || personalSection === 'career' || personalSection === 'wealth' || personalSection === 'education' ? null : (
               <section className="revamp-detail-hero">
                 <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
                 <div>
@@ -3513,7 +3464,7 @@ function App() {
                 </aside>
               </section>
             )}
-            {personalSection === 'identity' ? renderIdentityScorecardPage() : personalSection === 'vessel' ? renderVesselPage() : personalSection === 'systems' ? renderSystemsPage() : personalSection === 'career' ? renderCareerPage() : personalSection === 'wealth' ? renderWealthPage() : personalSection === 'education' ? renderEducationPage() : personalSection === 'connections' ? renderConnectionsPage() : (
+            {personalSection === 'identity' ? renderIdentityScorecardPage() : personalSection === 'vessel' ? renderVesselPage() : personalSection === 'systems' ? renderSystemsPage() : personalSection === 'career' ? renderCareerPage() : personalSection === 'wealth' ? renderWealthPage() : personalSection === 'education' ? renderEducationPage() : personalSection === 'relationships' ? renderConnectionsPage() : (
               <>
                 {renderCategorySignatureDashboard()}
                 {renderPersonalDashboardLead()}

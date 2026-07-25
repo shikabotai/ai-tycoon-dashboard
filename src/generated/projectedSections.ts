@@ -3,8 +3,8 @@ import { attachProjectedDashboard } from '../data/projectedDashboardModel'
 import type { ProjectedSection, ProjectionSnapshot } from '../data/projectedTypes'
 
 export const generatedProjectionSnapshot: ProjectionSnapshot = {
-  "generatedAt": "2026-07-25T02:15:19.219Z",
-  "generatedAtLabel": "Jul 24, 2026, 10:15 PM EDT",
+  "generatedAt": "2026-07-25T02:55:19.616Z",
+  "generatedAtLabel": "Jul 24, 2026, 10:55 PM EDT",
   "source": "PunkRecords",
   "updateMode": "Nightly static projection"
 } as ProjectionSnapshot
@@ -1790,7 +1790,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Mapped people",
         "value": "41",
-        "note": "8 life lanes from Connections MOC."
+        "note": "8 life lanes in Relationships Wishes."
       },
       {
         "label": "Priority people",
@@ -1817,10 +1817,10 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     "highlights": [
       "Keep each lane collapsed until it needs attention.",
       "Use lanes to see where the network is strong, thin, local, or dormant.",
-      "Keep Relationships for deeper family/partner meaning; use Connections as the operational social graph."
+      "Keep the people directory inside Relationships Wishes instead of splitting it into a separate category."
     ],
     "freshness": {
-      "label": "Connections MOC",
+      "label": "Relationships Wishes life lanes",
       "ageDays": 0,
       "stale": false
     },
@@ -1868,7 +1868,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "nextAction": "Keep the active thread warm with one simple plan or check-in.",
           "dormant": false,
           "profileStatus": "available",
-          "profileSummary": "Melanie is the current romantic connection in the Connections record, based in Orlando, with high — talking 4 months context and active priority. Keep this profile focused on the live relationship thread, current warmth, and the next simple plan or check-in. Last recorded contact: Late Mar 2026 (Pokémon Unite)."
+          "profileSummary": "Melanie is the current romantic person in the Relationships Wishes life-lanes record, based in Orlando, with high — talking 4 months context and active priority. Keep this profile focused on the live relationship thread, current warmth, and the next simple plan or check-in. Last recorded contact: Late Mar 2026 (Pokémon Unite)."
         },
         {
           "id": "mom-mother-immediate-family",
@@ -1896,7 +1896,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "nextAction": "Send Lohith one low-friction catch-up text.",
           "dormant": true,
           "profileStatus": "available",
-          "profileSummary": "Lohith is in the Friends lane as close friend, based in Houston, with medium — drifting with distance closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
+          "profileSummary": "Lohith is in the Friends lane as close friend, based in Houston, with medium — drifting with distance closeness and medium priority. Relationships Wishes frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
         }
       ],
       "lanes": [
@@ -1917,7 +1917,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "nextAction": "Keep the active thread warm with one simple plan or check-in.",
               "dormant": false,
               "profileStatus": "available",
-              "profileSummary": "Melanie is the current romantic connection in the Connections record, based in Orlando, with high — talking 4 months context and active priority. Keep this profile focused on the live relationship thread, current warmth, and the next simple plan or check-in. Last recorded contact: Late Mar 2026 (Pokémon Unite)."
+              "profileSummary": "Melanie is the current romantic person in the Relationships Wishes life-lanes record, based in Orlando, with high — talking 4 months context and active priority. Keep this profile focused on the live relationship thread, current warmth, and the next simple plan or check-in. Last recorded contact: Late Mar 2026 (Pokémon Unite)."
             }
           ]
         },
@@ -2246,7 +2246,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "nextAction": "Send Mehul one low-friction catch-up text.",
               "dormant": true,
               "profileStatus": "available",
-              "profileSummary": "Mehul is in the Friends lane as dance team / close, based in South Florida, with high — co-captain closeness and high priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (winter break)."
+              "profileSummary": "Mehul is in the Friends lane as dance team / close, based in South Florida, with high — co-captain closeness and high priority. Relationships Wishes frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (winter break)."
             },
             {
               "id": "josh-close-friend",
@@ -2260,7 +2260,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "nextAction": "Send Josh one specific, low-pressure check-in.",
               "dormant": false,
               "profileStatus": "available",
-              "profileSummary": "Josh is in the Friends lane as close friend, based in South Florida, with high — old roommate closeness and high priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: Late Mar 2026 (Pokémon Unite)."
+              "profileSummary": "Josh is in the Friends lane as close friend, based in South Florida, with high — old roommate closeness and high priority. Relationships Wishes frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: Late Mar 2026 (Pokémon Unite)."
             },
             {
               "id": "anjali-college-friend-josh-s-gf",
@@ -2274,7 +2274,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "nextAction": "Send Anjali one low-friction catch-up text.",
               "dormant": true,
               "profileStatus": "available",
-              "profileSummary": "Anjali is in the Friends lane as college friend (josh's gf), based in South Florida (lives with Josh), with medium closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
+              "profileSummary": "Anjali is in the Friends lane as college friend (josh's gf), based in South Florida (lives with Josh), with medium closeness and medium priority. Relationships Wishes frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
             },
             {
               "id": "chaquayla-college-friend",
@@ -2288,7 +2288,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "nextAction": "Send Chaquayla one low-friction catch-up text.",
               "dormant": true,
               "profileStatus": "available",
-              "profileSummary": "Chaquayla is in the Friends lane as college friend, based in Tallahassee, with medium closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
+              "profileSummary": "Chaquayla is in the Friends lane as college friend, based in Tallahassee, with medium closeness and medium priority. Relationships Wishes frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
             },
             {
               "id": "div-college-friend",
@@ -2302,7 +2302,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "nextAction": "Send Div one low-friction catch-up text.",
               "dormant": true,
               "profileStatus": "available",
-              "profileSummary": "Div is in the Friends lane as college friend, based in Mexico City (frequent Miami trips), with medium closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
+              "profileSummary": "Div is in the Friends lane as college friend, based in Mexico City (frequent Miami trips), with medium closeness and medium priority. Relationships Wishes frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
             },
             {
               "id": "lohith-close-friend",
@@ -2316,7 +2316,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "nextAction": "Send Lohith one low-friction catch-up text.",
               "dormant": true,
               "profileStatus": "available",
-              "profileSummary": "Lohith is in the Friends lane as close friend, based in Houston, with medium — drifting with distance closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
+              "profileSummary": "Lohith is in the Friends lane as close friend, based in Houston, with medium — drifting with distance closeness and medium priority. Relationships Wishes frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
             },
             {
               "id": "shravya-college-friend",
@@ -2330,7 +2330,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "nextAction": "Send Shravya one low-friction catch-up text.",
               "dormant": true,
               "profileStatus": "available",
-              "profileSummary": "Shravya is in the Friends lane as college friend, based in Texas, with medium closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
+              "profileSummary": "Shravya is in the Friends lane as college friend, based in Texas, with medium closeness and medium priority. Relationships Wishes frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
             },
             {
               "id": "teja-college-friend",
@@ -2344,7 +2344,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "nextAction": "Send Teja one low-friction catch-up text.",
               "dormant": true,
               "profileStatus": "available",
-              "profileSummary": "Teja is in the Friends lane as college friend, based in Chicago, with medium closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
+              "profileSummary": "Teja is in the Friends lane as college friend, based in Chicago, with medium closeness and medium priority. Relationships Wishes frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
             },
             {
               "id": "alvin-hometown-friend",
@@ -2358,7 +2358,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
               "nextAction": "Send Alvin one specific, low-pressure check-in.",
               "dormant": false,
               "profileStatus": "available",
-              "profileSummary": "Alvin is in the Friends lane as hometown friend, based in South Florida, with medium closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: Weekly venture calls."
+              "profileSummary": "Alvin is in the Friends lane as hometown friend, based in South Florida, with medium closeness and medium priority. Relationships Wishes frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: Weekly venture calls."
             }
           ]
         },
@@ -2544,7 +2544,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "nextAction": "Keep the active thread warm with one simple plan or check-in.",
           "dormant": false,
           "profileStatus": "available",
-          "profileSummary": "Melanie is the current romantic connection in the Connections record, based in Orlando, with high — talking 4 months context and active priority. Keep this profile focused on the live relationship thread, current warmth, and the next simple plan or check-in. Last recorded contact: Late Mar 2026 (Pokémon Unite)."
+          "profileSummary": "Melanie is the current romantic person in the Relationships Wishes life-lanes record, based in Orlando, with high — talking 4 months context and active priority. Keep this profile focused on the live relationship thread, current warmth, and the next simple plan or check-in. Last recorded contact: Late Mar 2026 (Pokémon Unite)."
         },
         {
           "id": "david-orlando-friend",
@@ -2616,7 +2616,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "nextAction": "Send Lohith one low-friction catch-up text.",
           "dormant": true,
           "profileStatus": "available",
-          "profileSummary": "Lohith is in the Friends lane as close friend, based in Houston, with medium — drifting with distance closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
+          "profileSummary": "Lohith is in the Friends lane as close friend, based in Houston, with medium — drifting with distance closeness and medium priority. Relationships Wishes frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
         },
         {
           "id": "mehul-dance-team-close",
@@ -2630,7 +2630,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "nextAction": "Send Mehul one low-friction catch-up text.",
           "dormant": true,
           "profileStatus": "available",
-          "profileSummary": "Mehul is in the Friends lane as dance team / close, based in South Florida, with high — co-captain closeness and high priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (winter break)."
+          "profileSummary": "Mehul is in the Friends lane as dance team / close, based in South Florida, with high — co-captain closeness and high priority. Relationships Wishes frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (winter break)."
         },
         {
           "id": "shravya-college-friend",
@@ -2644,7 +2644,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "nextAction": "Send Shravya one low-friction catch-up text.",
           "dormant": true,
           "profileStatus": "available",
-          "profileSummary": "Shravya is in the Friends lane as college friend, based in Texas, with medium closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
+          "profileSummary": "Shravya is in the Friends lane as college friend, based in Texas, with medium closeness and medium priority. Relationships Wishes frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
         },
         {
           "id": "teja-college-friend",
@@ -2658,7 +2658,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "nextAction": "Send Teja one low-friction catch-up text.",
           "dormant": true,
           "profileStatus": "available",
-          "profileSummary": "Teja is in the Friends lane as college friend, based in Chicago, with medium closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
+          "profileSummary": "Teja is in the Friends lane as college friend, based in Chicago, with medium closeness and medium priority. Relationships Wishes frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
         },
         {
           "id": "anjali-college-friend-josh-s-gf",
@@ -2672,7 +2672,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "nextAction": "Send Anjali one low-friction catch-up text.",
           "dormant": true,
           "profileStatus": "available",
-          "profileSummary": "Anjali is in the Friends lane as college friend (josh's gf), based in South Florida (lives with Josh), with medium closeness and medium priority. The Connections record frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
+          "profileSummary": "Anjali is in the Friends lane as college friend (josh's gf), based in South Florida (lives with Josh), with medium closeness and medium priority. Relationships Wishes frames this as part of the meaningful distributed friend network, so track shared history, distance drift, and the next low-pressure catch-up. Last recorded contact: 2026-01-01 (college reunion)."
         }
       ]
     }
