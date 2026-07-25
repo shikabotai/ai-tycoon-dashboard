@@ -184,7 +184,7 @@ export function AvatarModelScene({ modelPath }: AvatarModelSceneProps) {
       onPointerCancel={handlePointerUp}
     >
       <Canvas
-        camera={{ position: [0, 0.2, 6.4], fov: 32, near: 0.1, far: 100 }}
+        camera={{ position: [0, 0.95, 7.2], fov: 38, near: 0.1, far: 100 }}
         dpr={[1, 1.6]}
         gl={{ alpha: true, antialias: true }}
         shadows
