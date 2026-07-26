@@ -2210,6 +2210,229 @@ button {
   padding: 12px;
 }
 
+.ventures-page {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.ventures-hero,
+.ventures-source-card,
+.ventures-list-panel,
+.venture-detail-panel,
+.ventures-rules-strip article {
+  min-width: 0;
+  border: 1px solid rgba(205, 214, 228, 0.12);
+  border-radius: 8px;
+  background: rgba(10, 14, 20, 0.82);
+}
+
+.ventures-hero {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(240px, 0.32fr);
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+}
+
+.ventures-hero-copy {
+  min-width: 0;
+}
+
+.ventures-hero-copy h2 {
+  margin: 0 0 6px;
+  color: var(--text);
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.ventures-hero-copy p,
+.ventures-source-card p,
+.venture-row p,
+.venture-detail-summary,
+.ventures-empty-copy {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.42;
+  overflow-wrap: anywhere;
+}
+
+.ventures-source-card {
+  display: grid;
+  gap: 8px;
+  padding: 13px;
+}
+
+.ventures-source-card span,
+.ventures-panel-head span,
+.venture-row span,
+.venture-detail-grid span,
+.ventures-rules-strip span {
+  color: #a8bddb;
+  font-size: 0.72rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.ventures-source-card strong,
+.venture-row strong,
+.venture-detail-panel strong,
+.ventures-rules-strip strong {
+  color: var(--text);
+  line-height: 1.22;
+  overflow-wrap: anywhere;
+}
+
+.ventures-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.55fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.ventures-list-panel,
+.venture-detail-panel {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.ventures-panel-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+}
+
+.ventures-panel-head h3 {
+  margin: 6px 0 0;
+  color: var(--text);
+  font-size: 1.05rem;
+  line-height: 1.18;
+}
+
+.ventures-panel-head b {
+  border: 1px solid rgba(168, 189, 219, 0.18);
+  border-radius: 999px;
+  color: #dbe7f8;
+  font-size: 0.82rem;
+  line-height: 1;
+  padding: 8px 10px;
+  white-space: nowrap;
+}
+
+.venture-list {
+  display: grid;
+  gap: 8px;
+}
+
+.venture-row {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) minmax(56px, auto);
+  gap: 10px;
+  width: 100%;
+  border: 1px solid rgba(168, 189, 219, 0.12);
+  border-radius: 8px;
+  background: rgba(242, 246, 251, 0.035);
+  color: inherit;
+  text-align: left;
+  appearance: none;
+  cursor: pointer;
+  padding: 10px;
+}
+
+.venture-row.primary {
+  border-color: rgba(137, 202, 173, 0.34);
+  background: rgba(8, 22, 17, 0.5);
+}
+
+.venture-row.later,
+.venture-row.shelved {
+  opacity: 0.78;
+}
+
+.venture-row.is-selected {
+  border-color: rgba(140, 207, 213, 0.64);
+  background: rgba(140, 207, 213, 0.11);
+}
+
+.venture-row:focus-visible {
+  outline: 2px solid rgba(140, 207, 213, 0.76);
+  outline-offset: 2px;
+}
+
+.venture-rank {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(168, 189, 219, 0.18);
+  border-radius: 8px;
+  background: rgba(242, 246, 251, 0.05);
+  color: var(--text);
+  font-weight: 800;
+  font-size: 0.86rem;
+}
+
+.venture-row-main,
+.venture-row-score {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.venture-row-score {
+  justify-items: end;
+  text-align: right;
+}
+
+.venture-detail-summary {
+  border: 1px solid rgba(168, 189, 219, 0.12);
+  border-radius: 8px;
+  background: rgba(242, 246, 251, 0.035);
+  padding: 12px;
+}
+
+.venture-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.venture-detail-grid div {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  border: 1px solid rgba(168, 189, 219, 0.12);
+  border-radius: 8px;
+  background: rgba(242, 246, 251, 0.035);
+  padding: 11px;
+}
+
+.venture-detail-grid .wide {
+  grid-column: 1 / -1;
+}
+
+.ventures-rules-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ventures-rules-strip article {
+  display: grid;
+  gap: 8px;
+  padding: 13px;
+}
+
+.ventures-empty-copy {
+  border: 1px solid rgba(168, 189, 219, 0.12);
+  border-radius: 8px;
+  background: rgba(242, 246, 251, 0.035);
+  padding: 12px;
+}
+
 .connections-page {
   display: grid;
   gap: 12px;
@@ -5591,6 +5814,9 @@ button {
   .systems-main-grid,
   .systems-side-stack,
   .systems-queue-list,
+  .ventures-hero,
+  .ventures-layout,
+  .ventures-rules-strip,
 	  .connections-hero,
 	  .connections-board,
 	  .connections-support-grid,
@@ -5618,6 +5844,7 @@ button {
   .vessel-hero .back-button,
   .career-hero .back-button,
   .systems-hero .back-button,
+  .ventures-hero .back-button,
   .wealth-hero .back-button,
   .education-hero .back-button {
     width: fit-content;
@@ -5848,6 +6075,10 @@ button {
     gap: 10px;
   }
 
+  .ventures-page {
+    gap: 10px;
+  }
+
   .wealth-page {
     gap: 10px;
   }
@@ -5858,11 +6089,31 @@ button {
 
   .vessel-hero,
   .career-hero,
+  .ventures-hero,
   .wealth-hero,
   .education-hero {
     gap: 12px;
     border-radius: 8px;
     padding: 14px;
+  }
+
+  .ventures-hero-copy h2 {
+    font-size: 1.8rem;
+    line-height: 1.02;
+  }
+
+  .venture-row {
+    grid-template-columns: 32px minmax(0, 1fr);
+  }
+
+  .venture-row-score {
+    grid-column: 2;
+    justify-items: start;
+    text-align: left;
+  }
+
+  .venture-detail-grid {
+    grid-template-columns: 1fr;
   }
 
   .vessel-hero-copy h2 {
@@ -5913,6 +6164,9 @@ button {
   .systems-main-grid,
   .systems-side-stack,
   .systems-queue-list,
+  .ventures-hero,
+  .ventures-layout,
+  .ventures-rules-strip,
 	  .connections-hero,
 	  .connections-board,
 	  .connections-support-grid,

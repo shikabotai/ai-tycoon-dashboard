@@ -3,8 +3,8 @@ import { attachProjectedDashboard } from '../data/projectedDashboardModel'
 import type { ProjectedSection, ProjectionSnapshot } from '../data/projectedTypes'
 
 export const generatedProjectionSnapshot: ProjectionSnapshot = {
-  "generatedAt": "2026-07-26T01:22:48.664Z",
-  "generatedAtLabel": "Jul 25, 2026, 9:22 PM EDT",
+  "generatedAt": "2026-07-26T02:03:15.878Z",
+  "generatedAtLabel": "Jul 25, 2026, 10:03 PM EDT",
   "source": "PunkRecords",
   "updateMode": "Nightly static projection"
 } as ProjectionSnapshot
@@ -732,48 +732,170 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     }
   },
   "ventures": {
-    "heroSummary": "Ventures presents a portfolio view with 13 venture bullets visible in the Ventures MOC and 4 explicit in-progress markers across annual goals.",
+    "heroSummary": "Matchup is the current lead: App Store legal rejection. 7 ventures are tracked, ordered by priority and ROI.",
     "summaryCards": [
       {
-        "label": "Portfolio inventory",
-        "value": "13 listed bullets",
-        "note": "Fast proxy for how much venture surface area exists in the current note set."
+        "label": "Lead venture",
+        "value": "Matchup",
+        "note": "App Store legal rejection"
       },
       {
-        "label": "Current priority posture",
-        "value": "Execution over ideation",
-        "note": "Annual goals emphasize shipping and traction, not endless exploration."
+        "label": "Active ventures",
+        "value": "5",
+        "note": "7 total lines tracked."
       },
       {
-        "label": "In-progress venture goals",
+        "label": "2026 venture goals",
         "value": "4 in progress",
-        "note": "Pulled from the annual goals source note."
+        "note": "Live and getting users / Pending"
       },
       {
-        "label": "Capital deployment stance",
-        "value": "Selective",
-        "note": "The control center is moving toward ROI-ranked moves rather than simple inventory."
+        "label": "Capital posture",
+        "value": "Protect base",
+        "note": "$70k is life savings — treat it like precious fuel, not a startup fund."
       },
       {
-        "label": "Biggest operating need",
-        "value": "Priority compression",
-        "note": "Reduce surface area and make the next best move obvious."
+        "label": "Bandwidth",
+        "value": "~12–16 hrs",
+        "note": "week / Fits within 3–4 hr/day budget"
       },
       {
-        "label": "Current blocker visibility",
-        "value": "Improving",
-        "note": "Business Command keeps live operational blockers separate from the personal strategy layer."
+        "label": "Next rule",
+        "value": "Sequential focus",
+        "note": "Fix the blocker on the highest-priority venture before spreading to the next."
       }
     ],
     "highlights": [
-      "Ventures MOC remains the personal strategy-side anchor.",
-      "Annual goals provide the immediate venture pressure.",
-      "Personal strategy stays distinct from Business Command live operations."
+      "Fix the blocker on the highest-priority venture before spreading to the next.",
+      "Sort by named venture priority instead of generic dashboard signals.",
+      "Open each venture for stage, co-founder, blocker, score, and next action."
     ],
     "freshness": {
       "label": "Ventures planning docs",
-      "ageDays": 0,
-      "stale": false
+      "ageDays": 100,
+      "stale": true
+    },
+    "ventures": {
+      "headline": "Ranked venture portfolio",
+      "operatingRule": "Fix the blocker on the highest-priority venture before spreading to the next.",
+      "bandwidth": "~12–16 hrs/week / Fits within 3–4 hr/day budget",
+      "capitalRule": "$70k is life savings — treat it like precious fuel, not a startup fund.",
+      "activeCount": 5,
+      "primaryVentureId": "matchup",
+      "ventures": [
+        {
+          "id": "matchup",
+          "name": "Matchup",
+          "type": "Sports prediction app (sweepstakes)",
+          "stage": "Built — App Store blocked",
+          "cofounders": "VJ, Varun",
+          "blocker": "App Store legal rejection",
+          "priorityLabel": "#1 — closest to launch",
+          "priorityRank": 1,
+          "priorityBand": "primary",
+          "score": "🥇 4.21",
+          "rawScore": "3.88",
+          "nextAction": "Finish the App Store legal/compliance packet and resubmit.",
+          "detail": "Closest to launch; built product with a compliance blocker, so this deserves the first real execution slot.",
+          "source": "High ROI Ventures / Ventures MOC"
+        },
+        {
+          "id": "smartbytes",
+          "name": "Smartbytes",
+          "type": "AI POS system for restaurants",
+          "stage": "MVP built — no customers",
+          "cofounders": "Roshan, Ceaver",
+          "blocker": "Sales / customer acquisition",
+          "priorityLabel": "#2 — needs go-to-market",
+          "priorityRank": 2,
+          "priorityBand": "secondary",
+          "score": "🥉 3.56",
+          "rawScore": "3.38",
+          "nextAction": "Get one pilot conversation scheduled before building more.",
+          "detail": "Product exists, but the business is waiting on restaurant pilots and a sales owner.",
+          "source": "High ROI Ventures / Ventures MOC"
+        },
+        {
+          "id": "ai-personal-assistant",
+          "name": "AI Personal Assistant",
+          "type": "Personal operating system: PunkRecords + Shika + assistant workflows",
+          "stage": "Personal infrastructure — active",
+          "cofounders": "Solo",
+          "blocker": "Time to build",
+          "priorityLabel": "#3 — high leverage personal tool",
+          "priorityRank": 3,
+          "priorityBand": "secondary",
+          "score": "🥈 4.13",
+          "rawScore": "4.13",
+          "nextAction": "Keep it as infrastructure: ship the next workflow that saves time this week.",
+          "detail": "Personal leverage project that can later become a product if it proves daily value.",
+          "source": "High ROI Ventures / Ventures MOC"
+        },
+        {
+          "id": "ai-tycoon",
+          "name": "AI Tycoon",
+          "type": "Multi-agent business automation venture",
+          "stage": "Concept / architecture stage",
+          "cofounders": "Solo",
+          "blocker": "Time to define and operationalize the business system",
+          "priorityLabel": "Parallel business bet",
+          "priorityRank": 4,
+          "priorityBand": "parallel",
+          "score": "",
+          "rawScore": "",
+          "nextAction": "Define the business automation offer and keep dashboard work under this venture.",
+          "detail": "Separate business automation bet; the agent dashboard belongs here, not under the personal assistant.",
+          "source": "High ROI Ventures / Ventures MOC"
+        },
+        {
+          "id": "freelance-contracting",
+          "name": "Freelance Contracting",
+          "type": "Tech build for food distributor (Alvin's connection)",
+          "stage": "Deal pending — scope unclear",
+          "cofounders": "Solo (Alvin intro)",
+          "blocker": "Scope + pay not defined",
+          "priorityLabel": "🟠 #4 — define the deal",
+          "priorityRank": 4,
+          "priorityBand": "secondary",
+          "score": "3.88",
+          "rawScore": "3.75",
+          "nextAction": "Clarify scope, price, owner, and timeline before implementation.",
+          "detail": "Near-term cash possibility, but only after scope and compensation are written down.",
+          "source": "High ROI Ventures / Ventures MOC"
+        },
+        {
+          "id": "real-estate",
+          "name": "Real Estate",
+          "type": "South FL rental / Airbnb (family-managed)",
+          "stage": "Opportunity identified",
+          "cofounders": "Family",
+          "blocker": "Capital deployment decision",
+          "priorityLabel": "🔵 Future — evaluate when ready",
+          "priorityRank": 6,
+          "priorityBand": "later",
+          "score": "2.38",
+          "rawScore": "2.63",
+          "nextAction": "Hold until startup revenue or a specific cash-flow-positive property appears.",
+          "detail": "Capital-heavy future option; evaluate only with a real cash-flow model and protected emergency buffer.",
+          "source": "High ROI Ventures / Ventures MOC"
+        },
+        {
+          "id": "tech-contracting-company",
+          "name": "Tech Contracting Company",
+          "type": "Agency / freelance biz",
+          "stage": "Idea only",
+          "cofounders": "Solo",
+          "blocker": "Need more projects first",
+          "priorityLabel": "⚪ Long-term idea",
+          "priorityRank": 7,
+          "priorityBand": "later",
+          "score": "2.94",
+          "rawScore": "3.13",
+          "nextAction": "Hold until three paid freelance projects prove this deserves to become a company.",
+          "detail": "Near-term cash possibility, but only after scope and compensation are written down.",
+          "source": "High ROI Ventures / Ventures MOC"
+        }
+      ]
     }
   },
   "career": {

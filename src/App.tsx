@@ -1097,6 +1097,7 @@ function App() {
     budgeting: false,
   })
   const [selectedConnectionId, setSelectedConnectionId] = useState<string | null>(null)
+  const [selectedVentureId, setSelectedVentureId] = useState<string | null>(null)
   const [financeStatus, setFinanceStatus] = useState<FinanceStatus | null>(null)
   const [financeBusy, setFinanceBusy] = useState(false)
   const [financeMessage, setFinanceMessage] = useState('Finance integration is waiting on provider credentials.')
@@ -2240,6 +2241,124 @@ function App() {
               <span>{firstHistoryPoint?.label}</span>
               <span>{latestHistoryPoint?.label}</span>
             </div>
+          </article>
+        </section>
+      </section>
+    )
+  }
+
+  function renderVenturesPage() {
+    if (!currentPersonalData) return null
+
+    const ventureData = currentPersonalData.ventures
+    const ventures = ventureData?.ventures ?? []
+    const selectedVenture = ventures.find((venture) => venture.id === selectedVentureId)
+      ?? ventures.find((venture) => venture.id === ventureData?.primaryVentureId)
+      ?? ventures[0]
+    const leadVenture = ventures[0]
+    const activeVentures = ventures.filter((venture) => venture.priorityBand !== 'later' && venture.priorityBand !== 'shelved')
+    const sourceAge = currentPersonalData.freshness?.ageDays
+    const sourceAgeLabel = sourceAge == null ? 'source age unknown' : sourceAge === 0 ? 'updated today' : `updated ${sourceAge}d ago`
+
+    return (
+      <section className="ventures-page" aria-label="Ventures dashboard">
+        <section className="ventures-hero">
+          <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
+          <div className="ventures-hero-copy">
+            <h2>Ventures</h2>
+            <p>{leadVenture ? `${leadVenture.name} first. ${leadVenture.blocker}` : currentPersonalData.heroSummary}</p>
+          </div>
+          <aside className="ventures-source-card">
+            <span>Source</span>
+            <strong>{sourceAgeLabel}</strong>
+            <p>{currentPersonalData.freshness?.label ?? 'Ventures MOC'} / snapshot {generatedProjectionSnapshot.generatedAtLabel}</p>
+          </aside>
+        </section>
+
+        <section className="ventures-layout" aria-label="Ranked venture portfolio">
+          <article className="ventures-list-panel">
+            <div className="ventures-panel-head">
+              <div>
+                <span>Priority order</span>
+                <h3>{activeVentures.length} active lines</h3>
+              </div>
+              <b>{ventures.length} total</b>
+            </div>
+            <div className="venture-list">
+              {ventures.map((venture) => (
+                <button
+                  key={venture.id}
+                  className={`venture-row ${venture.priorityBand}${selectedVenture?.id === venture.id ? ' is-selected' : ''}`}
+                  onClick={() => setSelectedVentureId(venture.id)}
+                >
+                  <div className="venture-rank">{venture.priorityRank}</div>
+                  <div className="venture-row-main">
+                    <span>{venture.priorityLabel || venture.priorityBand}</span>
+                    <strong>{venture.name}</strong>
+                    <p>{venture.stage}</p>
+                  </div>
+                  <div className="venture-row-score">
+                    <span>Score</span>
+                    <strong>{venture.score || '--'}</strong>
+                  </div>
+                </button>
+              ))}
+              {ventures.length === 0 ? <p className="ventures-empty-copy">No venture portfolio table loaded.</p> : null}
+            </div>
+          </article>
+
+          <article className="venture-detail-panel">
+            {selectedVenture ? (
+              <>
+                <div className="ventures-panel-head">
+                  <div>
+                    <span>{selectedVenture.priorityLabel || 'Selected venture'}</span>
+                    <h3>{selectedVenture.name}</h3>
+                  </div>
+                  <b>{selectedVenture.score || 'No score'}</b>
+                </div>
+                <p className="venture-detail-summary">{selectedVenture.detail}</p>
+                <div className="venture-detail-grid">
+                  <div>
+                    <span>Type</span>
+                    <strong>{selectedVenture.type}</strong>
+                  </div>
+                  <div>
+                    <span>Stage</span>
+                    <strong>{selectedVenture.stage}</strong>
+                  </div>
+                  <div>
+                    <span>People</span>
+                    <strong>{selectedVenture.cofounders}</strong>
+                  </div>
+                  <div>
+                    <span>Blocker</span>
+                    <strong>{selectedVenture.blocker}</strong>
+                  </div>
+                  <div className="wide">
+                    <span>Next useful move</span>
+                    <strong>{selectedVenture.nextAction}</strong>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <p className="ventures-empty-copy">Select a venture to inspect details.</p>
+            )}
+          </article>
+        </section>
+
+        <section className="ventures-rules-strip" aria-label="Venture strategy guardrails">
+          <article>
+            <span>Rule</span>
+            <strong>{ventureData?.operatingRule ?? currentPersonalData.highlights[0]}</strong>
+          </article>
+          <article>
+            <span>Bandwidth</span>
+            <strong>{ventureData?.bandwidth ?? '3-4 hrs/day available for ventures'}</strong>
+          </article>
+          <article>
+            <span>Capital</span>
+            <strong>{ventureData?.capitalRule ?? 'Protect the capital base until ROI is clear.'}</strong>
           </article>
         </section>
       </section>
@@ -3438,7 +3557,7 @@ function App() {
           </main>
         ) : (
           <main className="revamp-detail-page">
-            {personalSection === 'identity' || personalSection === 'vessel' || personalSection === 'systems' || personalSection === 'career' || personalSection === 'wealth' || personalSection === 'education' ? null : (
+            {personalSection === 'identity' || personalSection === 'vessel' || personalSection === 'ventures' || personalSection === 'systems' || personalSection === 'career' || personalSection === 'wealth' || personalSection === 'education' ? null : (
               <section className="revamp-detail-hero">
                 <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
                 <div>
@@ -3453,7 +3572,7 @@ function App() {
                 </aside>
               </section>
             )}
-            {personalSection === 'identity' ? renderIdentityScorecardPage() : personalSection === 'vessel' ? renderVesselPage() : personalSection === 'systems' ? renderSystemsPage() : personalSection === 'career' ? renderCareerPage() : personalSection === 'wealth' ? renderWealthPage() : personalSection === 'education' ? renderEducationPage() : personalSection === 'relationships' ? renderConnectionsPage() : (
+            {personalSection === 'identity' ? renderIdentityScorecardPage() : personalSection === 'vessel' ? renderVesselPage() : personalSection === 'ventures' ? renderVenturesPage() : personalSection === 'systems' ? renderSystemsPage() : personalSection === 'career' ? renderCareerPage() : personalSection === 'wealth' ? renderWealthPage() : personalSection === 'education' ? renderEducationPage() : personalSection === 'relationships' ? renderConnectionsPage() : (
               <>
                 {renderCategorySignatureDashboard()}
                 {renderPersonalDashboardLead()}

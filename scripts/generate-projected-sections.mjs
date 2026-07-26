@@ -829,6 +829,142 @@ function buildSystemsData() {
   }
 }
 
+function buildVenturesData() {
+  const ventures = readPunkFile('High ROI Ventures/Ventures MOC.md')
+  const annualGoals = readPunkFile('Personal Decision Engine/Goals/Annual Goals.md')
+  const scorecard = readPunkFile('High ROI Ventures/Venture Strategy/ROI & Effort Scorecard.md')
+  const strategy = readPunkFile('High ROI Ventures/Venture Strategy/Venture Strategy Overview.md')
+  const bulletCount = countMatches(ventures, '\n- ')
+  const inProgressCount = countMatches(annualGoals.toLowerCase(), 'in progress')
+  const ventureRows = parseVenturePortfolio(ventures, scorecard)
+  const primaryVenture = ventureRows[0]
+  const sourceAge = punkFileAgeDays('High ROI Ventures/Ventures MOC.md')
+  const primaryGoal = annualGoals.match(/\| Matchup launched \| Ventures \| ([^|]+) \| [^|]+ \| ([^|]+) \|/)?.slice(1).map(stripMarkdown).join(' / ')
+  const bandwidth = strategy.match(/\| \*\*Total\*\* \| \*\*([^*]+)\*\* \| ([^|]+)\|/)?.slice(1).map(stripMarkdown).join(' / ') ?? '12-16 hrs/week across venture work'
+  const capitalRule = ventures.match(/Capital Allocation Framework[\s\S]*?>\s*(.+)/)?.[1]?.trim() ?? 'Protect the $70k base; deploy only small amounts until ROI is clear.'
+  const operatingRule = ventures.match(/\*\*Rule:\s*(.+?)\*\*/)?.[1]?.trim() ?? 'Fix the blocker on the highest-priority venture before spreading to the next.'
+
+  return {
+    heroSummary: primaryVenture
+      ? `${primaryVenture.name} is the current lead: ${primaryVenture.blocker}. ${ventureRows.length} ventures are tracked, ordered by priority and ROI.`
+      : `Ventures presents ${bulletCount} venture bullets and ${inProgressCount} in-progress venture goals.`,
+    summaryCards: [
+      { label: 'Lead venture', value: primaryVenture?.name ?? 'None', note: primaryVenture?.blocker ?? 'No portfolio table found.' },
+      { label: 'Active ventures', value: `${ventureRows.filter((venture) => venture.priorityBand !== 'later' && venture.priorityBand !== 'shelved').length}`, note: `${ventureRows.length} total lines tracked.` },
+      { label: '2026 venture goals', value: `${inProgressCount} in progress`, note: primaryGoal ?? 'Annual goals source loaded.' },
+      { label: 'Capital posture', value: 'Protect base', note: capitalRule },
+      { label: 'Bandwidth', value: bandwidth.split('/')[0].trim(), note: bandwidth.split('/').slice(1).join('/').trim() || 'Fits within evening/weekend venture work.' },
+      { label: 'Next rule', value: 'Sequential focus', note: operatingRule },
+    ],
+    highlights: [
+      operatingRule,
+      'Sort by named venture priority instead of generic dashboard signals.',
+      'Open each venture for stage, co-founder, blocker, score, and next action.',
+    ],
+    freshness: summarizeFreshness('Ventures planning docs', sourceAge, 21),
+    ventures: {
+      headline: 'Ranked venture portfolio',
+      operatingRule,
+      bandwidth,
+      capitalRule,
+      activeCount: ventureRows.filter((venture) => venture.priorityBand !== 'later' && venture.priorityBand !== 'shelved').length,
+      primaryVentureId: primaryVenture?.id ?? null,
+      ventures: ventureRows,
+    },
+  }
+}
+
+function parseVenturePortfolio(ventures, scorecard) {
+  const scoreRows = parseScoreRows(scorecard)
+  const table = ventures.match(/### Venture Portfolio Snapshot[\s\S]*?(?=\n### |\n## |$)/)?.[0] ?? ''
+  const rows = table
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith('|') && !/^\|\s*-/.test(line) && !/Venture\s*\|/.test(line))
+
+  return rows.map((row, index) => {
+    const [nameCell, type, stage, cofounders, blocker, priorityLabel] = row
+      .split('|')
+      .slice(1, -1)
+      .map((cell) => stripMarkdown(cell.trim()))
+    const name = nameCell || `Venture ${index + 1}`
+    const id = slugify(name)
+    const score = scoreRows.get(id)
+    const rankMatch = priorityLabel.match(/#(\d+)/)
+    const priorityRank = rankMatch ? Number(rankMatch[1]) : priorityLabel.match(/parallel/i) ? 4 : priorityLabel.match(/future/i) ? 6 : index + 1
+    const priorityBand = priorityRank === 1
+      ? 'primary'
+      : priorityRank <= 3
+        ? 'secondary'
+        : /parallel/i.test(priorityLabel)
+          ? 'parallel'
+          : /long-term|future/i.test(priorityLabel)
+            ? 'later'
+            : 'secondary'
+    const nextAction = nextActionForVenture(name, blocker, priorityBand)
+
+    return {
+      id,
+      name,
+      type,
+      stage,
+      cofounders,
+      blocker,
+      priorityLabel,
+      priorityRank,
+      priorityBand,
+      score: score?.adjustedScore ?? '',
+      rawScore: score?.rawScore ?? '',
+      nextAction,
+      detail: detailForVenture(name, stage, type),
+      source: 'High ROI Ventures / Ventures MOC',
+    }
+  }).sort((a, b) => a.priorityRank - b.priorityRank)
+}
+
+function parseScoreRows(scorecard) {
+  const aliases = new Map([
+    ['food-distributor-project', 'freelance-contracting'],
+    ['real-estate-s-fl', 'real-estate'],
+    ['tech-contracting-co', 'tech-contracting-company'],
+  ])
+  const scores = new Map()
+  scorecard
+    .split('\n')
+    .filter((line) => line.startsWith('| **') && !line.includes('Raw Score'))
+    .forEach((line) => {
+      const cells = line.split('|').slice(1, -1).map((cell) => stripMarkdown(cell.trim()))
+      const id = aliases.get(slugify(cells[0] ?? '')) ?? slugify(cells[0] ?? '')
+      scores.set(id, {
+        rawScore: cells[9] ?? '',
+        adjustedScore: cells[10] ?? '',
+      })
+    })
+  return scores
+}
+
+function nextActionForVenture(name, blocker, priorityBand) {
+  if (/matchup/i.test(name)) return 'Finish the App Store legal/compliance packet and resubmit.'
+  if (/smartbytes/i.test(name)) return 'Get one pilot conversation scheduled before building more.'
+  if (/personal assistant/i.test(name)) return 'Keep it as infrastructure: ship the next workflow that saves time this week.'
+  if (/tycoon/i.test(name)) return 'Define the business automation offer and keep dashboard work under this venture.'
+  if (/tech contracting company/i.test(name)) return 'Hold until three paid freelance projects prove this deserves to become a company.'
+  if (/freelance|contracting/i.test(name)) return 'Clarify scope, price, owner, and timeline before implementation.'
+  if (/real estate/i.test(name)) return 'Hold until startup revenue or a specific cash-flow-positive property appears.'
+  if (priorityBand === 'later') return 'Keep in review; do not spend active execution time yet.'
+  return blocker ? `Move the blocker: ${blocker}.` : 'Define the next concrete validation step.'
+}
+
+function detailForVenture(name, stage, type) {
+  if (/matchup/i.test(name)) return 'Closest to launch; built product with a compliance blocker, so this deserves the first real execution slot.'
+  if (/smartbytes/i.test(name)) return 'Product exists, but the business is waiting on restaurant pilots and a sales owner.'
+  if (/personal assistant/i.test(name)) return 'Personal leverage project that can later become a product if it proves daily value.'
+  if (/tycoon/i.test(name)) return 'Separate business automation bet; the agent dashboard belongs here, not under the personal assistant.'
+  if (/freelance|contracting/i.test(name)) return 'Near-term cash possibility, but only after scope and compensation are written down.'
+  if (/real estate/i.test(name)) return 'Capital-heavy future option; evaluate only with a real cash-flow model and protected emergency buffer.'
+  return `${stage}. ${type}.`
+}
+
 function educationDeadlineStatus(dueAt) {
   const due = Date.parse(dueAt)
   if (Number.isNaN(due)) return 'later'
@@ -1458,7 +1594,7 @@ const generatedProjectedSections = {
   identity: buildIdentityData(previous),
   vessel: buildVesselData(),
   systems: buildSystemsData(),
-  ventures: previous.ventures,
+  ventures: buildVenturesData(),
   career: buildCareerData(),
   knowledge: previous.knowledge,
   wealth: buildWealthData(),

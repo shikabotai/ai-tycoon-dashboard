@@ -145,6 +145,35 @@ export type SystemsProjection = {
   }>
 }
 
+export type VenturePriorityBand = 'primary' | 'secondary' | 'parallel' | 'later' | 'shelved'
+
+export type VentureProjection = {
+  id: string
+  name: string
+  type: string
+  stage: string
+  cofounders: string
+  blocker: string
+  priorityLabel: string
+  priorityRank: number
+  priorityBand: VenturePriorityBand
+  score: string
+  rawScore: string
+  nextAction: string
+  detail: string
+  source: string
+}
+
+export type VenturesProjection = {
+  headline: string
+  operatingRule: string
+  bandwidth: string
+  capitalRule: string
+  activeCount: number
+  primaryVentureId: string | null
+  ventures: VentureProjection[]
+}
+
 export type EducationDeadlineProjection = {
   id: string
   courseCode: string
@@ -318,5 +347,6 @@ export type ProjectedSection = {
   education?: EducationProjection
   career?: CareerProjection
   wealth?: WealthProjection
+  ventures?: VenturesProjection
   connections?: ConnectionsProjection
 }
