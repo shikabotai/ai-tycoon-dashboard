@@ -3,8 +3,8 @@ import { attachProjectedDashboard } from '../data/projectedDashboardModel'
 import type { ProjectedSection, ProjectionSnapshot } from '../data/projectedTypes'
 
 export const generatedProjectionSnapshot: ProjectionSnapshot = {
-  "generatedAt": "2026-07-26T02:04:37.922Z",
-  "generatedAtLabel": "Jul 25, 2026, 10:04 PM EDT",
+  "generatedAt": "2026-07-26T07:15:26.516Z",
+  "generatedAtLabel": "Jul 26, 2026, 3:15 AM EDT",
   "source": "PunkRecords",
   "updateMode": "Nightly static projection"
 } as ProjectionSnapshot
@@ -123,6 +123,10 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         {
           "label": "Jul 25",
           "score": 5.3
+        },
+        {
+          "label": "Jul 26",
+          "score": 5.3
         }
       ],
       "nightlyChanges": [
@@ -142,7 +146,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "reason": "Personal Decision Engine / Ideal Self refreshed; current gap: Habits Overview — phone elimination protocol"
         }
       ],
-      "lastUpdatedLabel": "Nightly source refresh: Jul 25"
+      "lastUpdatedLabel": "Nightly source refresh: Jul 26"
     }
   },
   "vessel": {
@@ -306,12 +310,12 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Current",
         "value": "4",
-        "note": "Schedule oil change"
+        "note": "Write and submit CS7641 UL Report"
       },
       {
         "label": "Cleanup",
         "value": "5",
-        "note": "HV-13 needs reschedule or close"
+        "note": "O-27 needs reschedule or close"
       },
       {
         "label": "Waiting",
@@ -320,8 +324,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       },
       {
         "label": "Quick",
-        "value": "O-27",
-        "note": "Schedule oil change"
+        "value": "O-28",
+        "note": "Put batteries in car keys"
       },
       {
         "label": "Done",
@@ -346,21 +350,21 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     },
     "blockers": [
       {
+        "label": "O-27",
+        "value": "Schedule oil change",
+        "detail": "Operations / NOW / Weekend of 2026-07-25",
+        "severity": "stale"
+      },
+      {
+        "label": "O-29",
+        "value": "Return trimmer to Costco",
+        "detail": "Operations / NOW / Weekend of 2026-07-25",
+        "severity": "stale"
+      },
+      {
         "label": "HV-13",
         "value": "Build the photobooth competition web app before convention",
         "detail": "High ROI Ventures / NEXT / Before convention; scope revised 2026-07-24",
-        "severity": "stale"
-      },
-      {
-        "label": "O-23",
-        "value": "Book Apple appointment to fix AirPod",
-        "detail": "Operations / NOW / 2026-07-22 6:00 PM",
-        "severity": "stale"
-      },
-      {
-        "label": "HV-09",
-        "value": "Update the Batter Up app",
-        "detail": "High ROI Ventures / NEXT / 2026-07-21",
         "severity": "stale"
       }
     ],
@@ -369,37 +373,13 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       "operatingMode": "Simple task triage",
       "pressureLabel": "Cleanup needed",
       "closureRate": 0,
-      "staleAction": "HV-13",
+      "staleAction": "O-27",
       "automationPosture": {
         "label": "Read-only",
         "detail": "Source rows only.",
         "nextUpgrade": "Direct edits later."
       },
       "topFocus": [
-        {
-          "id": "O-27",
-          "title": "Schedule oil change",
-          "domain": "Operations",
-          "lane": "now",
-          "status": "Not started",
-          "dueReview": "Weekend of 2026-07-25",
-          "source": "Personal logistics",
-          "notes": "Set up the oil change appointment. Quick admin task; bundle with the Costco trimmer return if there is a nearby errand route.",
-          "stale": false,
-          "quick": true
-        },
-        {
-          "id": "O-29",
-          "title": "Return trimmer to Costco",
-          "domain": "Operations",
-          "lane": "now",
-          "status": "Not started",
-          "dueReview": "Weekend of 2026-07-25",
-          "source": "Personal logistics / Costco return",
-          "notes": "Return the trimmer to Costco during the next errand run. Bring the item, membership/card if needed, and any receipt/order info.",
-          "stale": false,
-          "quick": true
-        },
         {
           "id": "E-07",
           "title": "Write and submit CS7641 UL Report",
@@ -423,6 +403,30 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "notes": "Planned sequence from 2026-07-24 memory: take the quiz once as practice, then take a second attempt for real after the report-writing block.",
           "stale": false,
           "quick": false
+        },
+        {
+          "id": "V-02",
+          "title": "Maintain 3x/week gym consistency during the cut / recomp phase",
+          "domain": "Vessel",
+          "lane": "now",
+          "status": "In progress",
+          "dueReview": "2026-09-01",
+          "source": "[[Fitness Overview]], [[Training Program]], [[Goals Overview]]",
+          "notes": "Current durable target is the 145 to 148 lb by September cut / recomp goal. Keep logging workouts and make 3x/week training the baseline habit rather than anchoring this task to the already-passed brother's-proposal milestone.",
+          "stale": false,
+          "quick": false
+        },
+        {
+          "id": "O-28",
+          "title": "Put batteries in car keys",
+          "domain": "Operations",
+          "lane": "now",
+          "status": "Not started",
+          "dueReview": "Quick admin",
+          "source": "Personal logistics",
+          "notes": "Replace car-key batteries before it becomes a friction point.",
+          "stale": false,
+          "quick": true
         }
       ],
       "nextQueue": [
@@ -551,30 +555,6 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       ],
       "quickWins": [
         {
-          "id": "O-27",
-          "title": "Schedule oil change",
-          "domain": "Operations",
-          "lane": "now",
-          "status": "Not started",
-          "dueReview": "Weekend of 2026-07-25",
-          "source": "Personal logistics",
-          "notes": "Set up the oil change appointment. Quick admin task; bundle with the Costco trimmer return if there is a nearby errand route.",
-          "stale": false,
-          "quick": true
-        },
-        {
-          "id": "O-29",
-          "title": "Return trimmer to Costco",
-          "domain": "Operations",
-          "lane": "now",
-          "status": "Not started",
-          "dueReview": "Weekend of 2026-07-25",
-          "source": "Personal logistics / Costco return",
-          "notes": "Return the trimmer to Costco during the next errand run. Bring the item, membership/card if needed, and any receipt/order info.",
-          "stale": false,
-          "quick": true
-        },
-        {
           "id": "O-28",
           "title": "Put batteries in car keys",
           "domain": "Operations",
@@ -599,6 +579,30 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "quick": true
         },
         {
+          "id": "O-27",
+          "title": "Schedule oil change",
+          "domain": "Operations",
+          "lane": "now",
+          "status": "Not started",
+          "dueReview": "Weekend of 2026-07-25",
+          "source": "Personal logistics",
+          "notes": "Set up the oil change appointment. Quick admin task; bundle with the Costco trimmer return if there is a nearby errand route.",
+          "stale": true,
+          "quick": true
+        },
+        {
+          "id": "O-29",
+          "title": "Return trimmer to Costco",
+          "domain": "Operations",
+          "lane": "now",
+          "status": "Not started",
+          "dueReview": "Weekend of 2026-07-25",
+          "source": "Personal logistics / Costco return",
+          "notes": "Return the trimmer to Costco during the next errand run. Bring the item, membership/card if needed, and any receipt/order info.",
+          "stale": true,
+          "quick": true
+        },
+        {
           "id": "O-23",
           "title": "Book Apple appointment to fix AirPod",
           "domain": "Operations",
@@ -612,6 +616,30 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         }
       ],
       "staleItems": [
+        {
+          "id": "O-27",
+          "title": "Schedule oil change",
+          "domain": "Operations",
+          "lane": "now",
+          "status": "Not started",
+          "dueReview": "Weekend of 2026-07-25",
+          "source": "Personal logistics",
+          "notes": "Set up the oil change appointment. Quick admin task; bundle with the Costco trimmer return if there is a nearby errand route.",
+          "stale": true,
+          "quick": true
+        },
+        {
+          "id": "O-29",
+          "title": "Return trimmer to Costco",
+          "domain": "Operations",
+          "lane": "now",
+          "status": "Not started",
+          "dueReview": "Weekend of 2026-07-25",
+          "source": "Personal logistics / Costco return",
+          "notes": "Return the trimmer to Costco during the next errand run. Bring the item, membership/card if needed, and any receipt/order info.",
+          "stale": true,
+          "quick": true
+        },
         {
           "id": "HV-13",
           "title": "Build the photobooth competition web app before convention",
@@ -647,30 +675,6 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "notes": "Priority #2 after Photo Booth. Add user emails, finalize the database schema, and show real frontend behavior connected to the backend. Hard target is before Tuesday 2026-07-21; ideal target is today after the Photo Booth demo ships.",
           "stale": true,
           "quick": false
-        },
-        {
-          "id": "O-12",
-          "title": "[P] Set up fully automated agent business",
-          "domain": "Operations",
-          "lane": "next",
-          "status": "Planning",
-          "dueReview": "2026-07-18",
-          "source": "[[AI Tycoon]], [[Agent Dashboard]]",
-          "notes": "Current concrete step: continue the business model canvas for the AI-agent business. Do only if today's hard deadlines are handled, otherwise make this the focused flight work block on 2026-07-18.",
-          "stale": true,
-          "quick": false
-        },
-        {
-          "id": "O-25",
-          "title": "Buy suit pants this weekend",
-          "domain": "Operations",
-          "lane": "now",
-          "status": "Not started",
-          "dueReview": "2026-07-14",
-          "source": "Personal logistics / wardrobe",
-          "notes": "First try on current suit/travel clothes. Buy replacement clothes Monday or Tuesday only if the current suit/clothes do not fit or look right.",
-          "stale": true,
-          "quick": true
         }
       ],
       "domainCounts": [
