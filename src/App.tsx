@@ -2255,11 +2255,15 @@ function App() {
     const staleItems = systems?.staleItems ?? []
     const nextQueue = systems?.nextQueue ?? []
     const waitingOrBlocked = systems?.waitingOrBlocked ?? []
-    const leadFocus = topFocus[0]
-    const pressureTone = staleItems.length > 0 ? 'watch' : 'clear'
     const quickMove = quickWins.find((task) => !task.stale) ?? quickWins[0]
-    const visibleTopFocus = topFocus.slice(0, 3)
-    const laterCount = Math.max(0, nextQueue.length + Math.max(0, (systems?.domainCounts ?? []).reduce((sum, domain) => sum + domain.backlog, 0)))
+    const visibleTopFocus = topFocus.slice(0, 4)
+    const cleanupItems = staleItems.slice(0, 3)
+    const secondaryQueue = [...waitingOrBlocked, ...nextQueue]
+      .filter((task, index, all) => all.findIndex((candidate) => candidate.id === task.id) === index)
+      .slice(0, 5)
+    const laterCount = nextQueue.length + (systems?.domainCounts ?? []).reduce((sum, domain) => sum + domain.backlog, 0)
+    const sourceAge = currentPersonalData.freshness?.ageDays
+    const sourceAgeLabel = sourceAge == null ? 'source age unknown' : sourceAge === 0 ? 'updated today' : `updated ${sourceAge}d ago`
 
     return (
       <section className="systems-page" aria-label="Systems dashboard">
@@ -2267,103 +2271,88 @@ function App() {
           <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
           <div className="systems-hero-copy">
             <h2>Systems</h2>
-            <p>{visibleTopFocus.length} focus / {staleItems.length} stale / {laterCount} later</p>
+            <p>{visibleTopFocus.length} current / {staleItems.length} cleanup / {waitingOrBlocked.length} waiting / {laterCount} later</p>
           </div>
-          <aside className={`systems-priority-card ${pressureTone}`}>
-            <span>Lead</span>
-            <strong>{leadFocus ? leadFocus.title : 'No active focus loaded'}</strong>
-            <p>{leadFocus ? `${leadFocus.id} / ${leadFocus.domain}` : 'No current task found.'}</p>
+          <aside className="systems-source-card">
+            <span>Source</span>
+            <strong>{sourceAgeLabel}</strong>
+            <p>{currentPersonalData.freshness?.label ?? 'Operations board'} / snapshot {generatedProjectionSnapshot.generatedAtLabel}</p>
           </aside>
         </section>
 
-        <section className="systems-command-board" aria-label="Systems command board">
-          <article className="systems-focus-prime">
-            <div className="revamp-kicker">Focus</div>
-            <h3>Do these first</h3>
+        <section className="systems-main-grid" aria-label="Systems task triage">
+          <article className="systems-current-panel">
+            <div className="systems-panel-head">
+              <div>
+                <span>Now</span>
+                <h3>Current work</h3>
+              </div>
+              <b>{visibleTopFocus.length}</b>
+            </div>
+            <div className="systems-task-list">
+              {visibleTopFocus.length > 0 ? visibleTopFocus.map((task, index) => (
+                <article key={task.id} className={`systems-task-row priority-${index + 1}${task.stale ? ' stale' : ''}`}>
+                  <div className="systems-task-rank">{index + 1}</div>
+                  <div>
+                    <span>{task.id} / {task.domain} / {task.dueReview}</span>
+                    <strong>{task.title}</strong>
+                    {task.notes ? <p>{task.notes}</p> : null}
+                  </div>
+                </article>
+              )) : (
+                <div className="systems-empty-copy">No current focus loaded.</div>
+              )}
+            </div>
           </article>
 
-          <div className="systems-lane-stack">
-            <article className="systems-lane-panel primary">
-              <div className="systems-panel-head">
-                <div>
-                  <span>Active</span>
-                  <h3>Current focus</h3>
-                </div>
-              </div>
-              <div className="systems-task-list">
-                {visibleTopFocus.length > 0 ? visibleTopFocus.map((task, index) => (
-                  <article key={task.id} className={`systems-task-row priority-${index + 1}${task.stale ? ' stale' : ''}`}>
-                    <div className="systems-task-rank">{index + 1}</div>
-                    <div>
-                      <span>{task.id} / {task.domain}</span>
-                      <strong>{task.title}</strong>
-                      {task.notes ? <p>{task.notes}</p> : null}
-                      <small>{task.dueReview}</small>
-                    </div>
-                  </article>
-                )) : (
-                  <div className="systems-empty-copy">No current focus.</div>
-                )}
-              </div>
+          <aside className="systems-side-stack">
+            <article className="systems-side-panel systems-next-move">
+              <span>Quick move</span>
+              <strong>{quickMove ? quickMove.title : 'No quick move loaded'}</strong>
+              <p>{quickMove ? `${quickMove.id} / ${quickMove.domain} / ${quickMove.dueReview}` : 'Quick admin tasks will surface here when the board has one.'}</p>
             </article>
 
-            <article className="systems-lane-panel">
+            <article className="systems-side-panel">
               <div className="systems-panel-head">
                 <div>
                   <span>Cleanup</span>
-                  <h3>Stale items</h3>
+                  <h3>Old dates</h3>
                 </div>
                 <b>{staleItems.length}</b>
               </div>
               <div className="systems-mini-list compact">
-                {staleItems.slice(0, 4).map((task) => (
+                {cleanupItems.map((task) => (
                   <div key={task.id} className="stale">
                     <span>{task.id} / {task.domain}</span>
                     <strong>{task.title}</strong>
                     <p>{task.dueReview}</p>
                   </div>
                 ))}
-                {staleItems.length === 0 ? <p className="systems-empty-copy">None</p> : null}
+                {cleanupItems.length === 0 ? <p className="systems-empty-copy">None</p> : null}
               </div>
             </article>
-          </div>
+          </aside>
         </section>
 
-        <section className="systems-work-grid" aria-label="Systems support lanes">
-          <article className="systems-work-panel systems-next-move">
-            <div className="revamp-kicker">Quick</div>
-            <h3>{quickMove ? quickMove.title : 'No quick win loaded'}</h3>
-            <p>{quickMove ? `${quickMove.id} / ${quickMove.domain}` : 'No quick task found.'}</p>
-          </article>
-
-          <article className="systems-work-panel">
-            <div className="revamp-kicker">Later</div>
-            <h3>Queue</h3>
-            <div className="systems-mini-list compact">
-              {nextQueue.slice(0, 4).map((task) => (
-                <div key={task.id}>
-                  <span>{task.id} / {task.domain}</span>
-                  <strong>{task.title}</strong>
-                </div>
-              ))}
-              {nextQueue.length === 0 ? <p className="systems-empty-copy">None</p> : null}
+        <section className="systems-queue-panel" aria-label="Systems queued work">
+          <div className="systems-panel-head">
+            <div>
+              <span>Keep visible</span>
+              <h3>Waiting and next queue</h3>
             </div>
-          </article>
-
-          <article className="systems-work-panel">
-            <div className="revamp-kicker">Waiting / Blocked</div>
-            <h3>Keep these visible</h3>
-            <div className="systems-mini-list compact">
-              {waitingOrBlocked.slice(0, 4).map((task) => (
-                <div key={task.id}>
-                  <span>{task.id} / {task.domain}</span>
-                  <strong>{task.title}</strong>
-                  <p>{task.status}</p>
-                </div>
-              ))}
-              {waitingOrBlocked.length === 0 ? <p className="systems-empty-copy">None</p> : null}
-            </div>
-          </article>
+            <b>{secondaryQueue.length}</b>
+          </div>
+          <div className="systems-queue-list">
+            {secondaryQueue.length > 0 ? secondaryQueue.map((task) => (
+              <div key={task.id}>
+                <span>{task.id} / {task.domain} / {task.lane.toUpperCase()}</span>
+                <strong>{task.title}</strong>
+                <p>{task.status}{task.dueReview !== 'Not set' ? ` / ${task.dueReview}` : ''}</p>
+              </div>
+            )) : (
+              <p className="systems-empty-copy">No waiting or queued work loaded.</p>
+            )}
+          </div>
         </section>
       </section>
     )

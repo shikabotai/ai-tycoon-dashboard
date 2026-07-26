@@ -16,6 +16,15 @@ function readPunkFile(relativePath) {
   }
 }
 
+function punkFileAgeDays(relativePath) {
+  try {
+    const stat = fs.statSync(path.join(punkRoot, relativePath))
+    return Math.max(0, Math.floor((Date.now() - stat.mtimeMs) / (1000 * 60 * 60 * 24)))
+  } catch {
+    return null
+  }
+}
+
 function latestMarkdownDate(relativeDir) {
   try {
     const full = path.join(punkRoot, relativeDir)
@@ -356,6 +365,39 @@ function parseOperationsTasks(markdown) {
       quick: /quick|text|call|buy|book|schedule|return|laundry|batteries/i.test(`${task.title} ${task.notes}`),
     }))
     .filter((task) => !isDoneStatus(task.status))
+}
+
+function taskDueTimestamp(task) {
+  const match = task.dueReview.match(/\d{4}-\d{2}-\d{2}/)
+  if (!match) return null
+  const timestamp = Date.parse(`${match[0]}T23:59:59-04:00`)
+  return Number.isFinite(timestamp) ? timestamp : null
+}
+
+function sortCurrentSystemsTasks(tasks) {
+  const now = Date.now()
+  return [...tasks].sort((left, right) => {
+    if (left.stale !== right.stale) return left.stale ? 1 : -1
+
+    const leftDue = taskDueTimestamp(left)
+    const rightDue = taskDueTimestamp(right)
+    const leftHasDue = leftDue !== null
+    const rightHasDue = rightDue !== null
+
+    if (!left.stale && leftHasDue !== rightHasDue) return leftHasDue ? -1 : 1
+    if (!left.stale && leftDue !== null && rightDue !== null) return leftDue - rightDue
+    if (left.stale && leftDue !== null && rightDue !== null) return rightDue - leftDue
+
+    const laneRank = { now: 0, next: 1, backlog: 2 }
+    const laneDelta = laneRank[left.lane] - laneRank[right.lane]
+    if (laneDelta !== 0) return laneDelta
+
+    const leftDistance = leftDue === null ? Number.POSITIVE_INFINITY : Math.abs(leftDue - now)
+    const rightDistance = rightDue === null ? Number.POSITIVE_INFINITY : Math.abs(rightDue - now)
+    if (leftDistance !== rightDistance) return leftDistance - rightDistance
+
+    return left.id.localeCompare(right.id)
+  })
 }
 
 function summarizeFreshness(label, ageDays, staleAfterDays) {
@@ -720,16 +762,13 @@ function buildVesselData() {
 function buildSystemsData() {
   const operations = readPunkFile('Operations/Operations Task Board.md')
   const ventures = readPunkFile('High ROI Ventures/Ventures MOC.md')
+  const operationsAge = punkFileAgeDays('Operations/Operations Task Board.md')
   const tasks = parseOperationsTasks(operations)
   const nowTasks = tasks.filter((task) => task.lane === 'now')
   const nextTasks = tasks.filter((task) => task.lane === 'next')
-  const topFocus = [
-    ...nowTasks.filter((task) => task.id === 'O-24' || task.id === 'HV-13'),
-    ...nowTasks.filter((task) => task.stale && task.id !== 'O-24' && task.id !== 'HV-13'),
-    ...nowTasks.filter((task) => !task.stale && task.id !== 'O-24' && task.id !== 'HV-13'),
-  ].slice(0, 3)
-  const quickWins = tasks.filter((task) => task.quick && task.lane !== 'backlog').slice(0, 5)
-  const staleItems = tasks.filter((task) => task.stale).slice(0, 5)
+  const topFocus = sortCurrentSystemsTasks(nowTasks.filter((task) => !task.stale)).slice(0, 4)
+  const quickWins = sortCurrentSystemsTasks(tasks.filter((task) => task.quick && task.lane !== 'backlog')).slice(0, 5)
+  const staleItems = sortCurrentSystemsTasks(tasks.filter((task) => task.stale)).slice(0, 5)
   const waitingOrBlocked = tasks
     .filter((task) => /waiting|blocked|pending|on hold|scheduled|planning/i.test(`${task.status} ${task.notes}`))
     .slice(0, 5)
@@ -742,27 +781,27 @@ function buildSystemsData() {
   const completedItems = countMatches(operations, 'Status:** Done') + countMatches(operations, 'Status:** Completed')
   const ventureMentions = countMatches(ventures, '\n- ')
   const pressureLabel = staleItems.length > 4
-    ? 'Old dates present'
+    ? 'Cleanup needed'
     : nowTasks.length > 8
       ? 'Active list needs pruning'
-      : 'Task list loaded'
+      : 'Current list loaded'
 
   return {
-    heroSummary: `${topFocus.length} focus / ${staleItems.length} stale / ${nextTasks.length} later`,
+    heroSummary: `${topFocus.length} current / ${staleItems.length} cleanup / ${nextTasks.length} later`,
     summaryCards: [
-      { label: 'Focus', value: `${topFocus.length}`, note: topFocus[0]?.title ?? 'None' },
-      { label: 'Cleanup', value: `${staleItems.length}`, note: staleItems[0]?.title ?? 'None' },
+      { label: 'Current', value: `${topFocus.length}`, note: topFocus[0]?.title ?? 'None' },
+      { label: 'Cleanup', value: `${staleItems.length}`, note: staleItems[0] ? `${staleItems[0].id} needs reschedule or close` : 'None' },
       { label: 'Waiting', value: `${waitingOrBlocked.length}`, note: waitingOrBlocked[0]?.title ?? 'None' },
       { label: 'Quick', value: quickWins[0]?.id ?? 'None', note: quickWins[0]?.title ?? 'None' },
       { label: 'Done', value: `${completedItems}`, note: 'Closed source items' },
       { label: 'Ventures', value: `${ventureMentions}`, note: 'Source rows' },
     ],
     highlights: [
-      'Do these first.',
-      'Clean stale dates.',
-      'Leave the rest queued.',
+      'Show current work first.',
+      'Keep stale rows as cleanup, not priority.',
+      'Leave lower-lane tasks queued.',
     ],
-    freshness: summarizeFreshness('Operations board evidence', 0, 14),
+    freshness: summarizeFreshness('Operations board evidence', operationsAge, 2),
     blockers: staleItems.slice(0, 3).map((task) => ({
       label: task.id,
       value: task.title,
@@ -770,8 +809,8 @@ function buildSystemsData() {
       severity: 'stale',
     })),
     systems: {
-      headline: 'Current work',
-      operatingMode: 'Source-backed task view',
+      headline: 'Current work, then cleanup',
+      operatingMode: 'Simple task triage',
       pressureLabel,
       closureRate: 0,
       staleAction: staleItems[0]?.id ?? 'None',
