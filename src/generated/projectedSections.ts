@@ -3,8 +3,8 @@ import { attachProjectedDashboard } from '../data/projectedDashboardModel'
 import type { ProjectedSection, ProjectionSnapshot } from '../data/projectedTypes'
 
 export const generatedProjectionSnapshot: ProjectionSnapshot = {
-  "generatedAt": "2026-07-27T07:15:25.813Z",
-  "generatedAtLabel": "Jul 27, 2026, 3:15 AM EDT",
+  "generatedAt": "2026-07-27T20:53:44.541Z",
+  "generatedAtLabel": "Jul 27, 2026, 4:53 PM EDT",
   "source": "PunkRecords",
   "updateMode": "Nightly static projection"
 } as ProjectionSnapshot
@@ -169,8 +169,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       },
       {
         "label": "Nutrition log source",
-        "value": "138g protein",
-        "note": "1,425 kcal logged. Latest nutrition file: 2026-07-24.",
+        "value": "75g protein",
+        "note": "630 kcal logged. Latest nutrition file: 2026-07-27.",
         "stale": false
       },
       {
@@ -186,14 +186,14 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "highlights": [
       "Latest workout evidence: 2026-07-24",
-      "Latest nutrition evidence: 2026-07-24",
+      "Latest nutrition evidence: 2026-07-27",
       "Cut / recomp, not lean bulk",
       "Mental priority: focus, attention span, meditation, and phone friction",
       "Looks priority: grooming, skin, hair, style, and event readiness"
     ],
     "freshness": {
       "label": "Vessel evidence",
-      "ageDays": 3,
+      "ageDays": 0,
       "stale": false
     },
     "vessel": {
@@ -309,17 +309,17 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     }
   },
   "systems": {
-    "heroSummary": "2 current / 5 cleanup / 23 later",
+    "heroSummary": "4 current / 5 cleanup / 23 later",
     "summaryCards": [
       {
         "label": "Current",
-        "value": "2",
-        "note": "Maintain 3x/week gym consistency during the cut / recomp phase"
+        "value": "4",
+        "note": "Meal prep for the week"
       },
       {
         "label": "Cleanup",
         "value": "5",
-        "note": "E-07 needs reschedule or close"
+        "note": "O-27 needs reschedule or close"
       },
       {
         "label": "Waiting",
@@ -328,12 +328,12 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       },
       {
         "label": "Quick",
-        "value": "O-28",
-        "note": "Put batteries in car keys"
+        "value": "E-11",
+        "note": "Complete CS7641 Final Exam"
       },
       {
         "label": "Done",
-        "value": "18",
+        "value": "20",
         "note": "Closed source items"
       },
       {
@@ -349,26 +349,26 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "freshness": {
       "label": "Operations board evidence",
-      "ageDays": 1,
+      "ageDays": 0,
       "stale": false
     },
     "blockers": [
       {
-        "label": "E-07",
-        "value": "Write and submit CS7641 UL Report",
-        "detail": "Education / NOW / Internal target 2026-07-26 11:59 PM ET; Canvas close 2026-07-27 07:59 AM ET",
-        "severity": "stale"
-      },
-      {
-        "label": "E-08",
-        "value": "Complete CS7641 UL Unit Quiz",
-        "detail": "Education / NOW / Internal target 2026-07-26 11:59 PM ET; Canvas close 2026-07-27 07:59 AM ET",
-        "severity": "stale"
-      },
-      {
         "label": "O-27",
         "value": "Schedule oil change",
         "detail": "Operations / NOW / Weekend of 2026-07-25",
+        "severity": "stale"
+      },
+      {
+        "label": "O-29",
+        "value": "Return trimmer to Costco",
+        "detail": "Operations / NOW / Weekend of 2026-07-25",
+        "severity": "stale"
+      },
+      {
+        "label": "O-23",
+        "value": "Book Apple appointment to fix AirPod",
+        "detail": "Operations / NOW / 2026-07-22 6:00 PM",
         "severity": "stale"
       }
     ],
@@ -377,7 +377,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       "operatingMode": "Simple task triage",
       "pressureLabel": "Cleanup needed",
       "closureRate": 0,
-      "staleAction": "E-07",
+      "staleAction": "O-27",
       "automationPosture": {
         "label": "Read-only",
         "detail": "Source rows only.",
@@ -385,26 +385,50 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       },
       "topFocus": [
         {
-          "id": "V-02",
-          "title": "Maintain 3x/week gym consistency during the cut / recomp phase",
+          "id": "V-08",
+          "title": "Meal prep for the week",
           "domain": "Vessel",
           "lane": "now",
-          "status": "In progress",
-          "dueReview": "2026-09-01",
-          "source": "[[Fitness Overview]], [[Training Program]], [[Goals Overview]]",
-          "notes": "Current durable target is the 145 to 148 lb by September cut / recomp goal. Keep logging workouts and make 3x/week training the baseline habit rather than anchoring this task to the already-passed brother's-proposal milestone.",
+          "status": "Not started",
+          "dueReview": "2026-07-27",
+          "source": "[[Meal Planning]], [[Nutrition Overview]]",
+          "notes": "Minimum viable meal prep: cook enough protein + carb base for several meals so the cut does not drift after the school deadline push.",
           "stale": false,
           "quick": false
         },
         {
-          "id": "O-28",
-          "title": "Put batteries in car keys",
-          "domain": "Operations",
+          "id": "E-10",
+          "title": "Complete CS7641 Problem Set extra credit",
+          "domain": "Education",
           "lane": "now",
           "status": "Not started",
-          "dueReview": "Quick admin",
-          "source": "Personal logistics",
-          "notes": "Replace car-key batteries before it becomes a friction point.",
+          "dueReview": "2026-07-31 11:59 PM ET",
+          "source": "[[CS7641 Machine Learning Overview]]",
+          "notes": "Worth 1% extra credit. Every problem must be attempted with explanations.",
+          "stale": false,
+          "quick": false
+        },
+        {
+          "id": "E-09",
+          "title": "Complete CS7641 UL Report Discussion",
+          "domain": "Education",
+          "lane": "now",
+          "status": "Not started",
+          "dueReview": "2026-08-03 07:59 AM ET",
+          "source": "[[CS7641 Machine Learning Overview]]",
+          "notes": "Brief Canvas discussion after the UL report. Use the standard reflection pattern: proud figure/table, surprising finding, prior-goal status, and one concrete improvement.",
+          "stale": false,
+          "quick": false
+        },
+        {
+          "id": "E-11",
+          "title": "Complete CS7641 Final Exam",
+          "domain": "Education",
+          "lane": "now",
+          "status": "Not started",
+          "dueReview": "2026-08-06 11:59 PM ET",
+          "source": "[[CS7641 Machine Learning Overview]]",
+          "notes": "Cumulative closed-book digital exam via Canvas and Honorlock.",
           "stale": false,
           "quick": true
         }
@@ -535,6 +559,18 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       ],
       "quickWins": [
         {
+          "id": "E-11",
+          "title": "Complete CS7641 Final Exam",
+          "domain": "Education",
+          "lane": "now",
+          "status": "Not started",
+          "dueReview": "2026-08-06 11:59 PM ET",
+          "source": "[[CS7641 Machine Learning Overview]]",
+          "notes": "Cumulative closed-book digital exam via Canvas and Honorlock.",
+          "stale": false,
+          "quick": true
+        },
+        {
           "id": "O-28",
           "title": "Put batteries in car keys",
           "domain": "Operations",
@@ -581,45 +617,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "notes": "Return the trimmer to Costco during the next errand run. Bring the item, membership/card if needed, and any receipt/order info.",
           "stale": true,
           "quick": true
-        },
-        {
-          "id": "O-23",
-          "title": "Book Apple appointment to fix AirPod",
-          "domain": "Operations",
-          "lane": "now",
-          "status": "Scheduled",
-          "dueReview": "2026-07-22 6:00 PM",
-          "source": "Personal logistics",
-          "notes": "Apple / Genius Bar appointment for AirPods is scheduled for Wednesday, 2026-07-22 at 6:00 PM.",
-          "stale": true,
-          "quick": true
         }
       ],
       "staleItems": [
-        {
-          "id": "E-07",
-          "title": "Write and submit CS7641 UL Report",
-          "domain": "Education",
-          "lane": "now",
-          "status": "In progress",
-          "dueReview": "Internal target 2026-07-26 11:59 PM ET; Canvas close 2026-07-27 07:59 AM ET",
-          "source": "[[CS7641 Machine Learning Overview]]",
-          "notes": "Mitchell reported on 2026-07-24 that the UL coding portion is complete. Remaining work is the report itself, which he expects to take the most time.",
-          "stale": true,
-          "quick": false
-        },
-        {
-          "id": "E-08",
-          "title": "Complete CS7641 UL Unit Quiz",
-          "domain": "Education",
-          "lane": "now",
-          "status": "Not started",
-          "dueReview": "Internal target 2026-07-26 11:59 PM ET; Canvas close 2026-07-27 07:59 AM ET",
-          "source": "[[CS7641 Machine Learning Overview]]",
-          "notes": "Planned sequence from 2026-07-24 memory: take the quiz once as practice, then take a second attempt for real after the report-writing block.",
-          "stale": true,
-          "quick": false
-        },
         {
           "id": "O-27",
           "title": "Schedule oil change",
@@ -645,16 +645,40 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "quick": true
         },
         {
-          "id": "HV-13",
-          "title": "Build the photobooth competition web app before convention",
-          "domain": "High ROI Ventures",
+          "id": "O-23",
+          "title": "Book Apple appointment to fix AirPod",
+          "domain": "Operations",
+          "lane": "now",
+          "status": "Scheduled",
+          "dueReview": "2026-07-22 6:00 PM",
+          "source": "Personal logistics",
+          "notes": "Apple / Genius Bar appointment for AirPods is scheduled for Wednesday, 2026-07-22 at 6:00 PM.",
+          "stale": true,
+          "quick": true
+        },
+        {
+          "id": "O-12",
+          "title": "[P] Set up fully automated agent business",
+          "domain": "Operations",
           "lane": "next",
-          "status": "In progress",
-          "dueReview": "Before convention; scope revised 2026-07-24",
-          "source": "Photobooth competition / collaboration with Nicole",
-          "notes": "Nicole coordination started 2026-07-24. This is a high-visibility convention-facing product, not a tiny demo. It must support around 1,000 picture uploads and be good enough for the entire convention to see. Prioritize production-readiness: upload UX, storage/backups, performance under load, moderation or approval, failure recovery, clean display/gallery flow, mobile friendliness, and a polished visual identity. Allocate more focused build time before sharing broadly.",
+          "status": "Planning",
+          "dueReview": "2026-07-18",
+          "source": "[[AI Tycoon]], [[Agent Dashboard]]",
+          "notes": "Current concrete step: continue the business model canvas for the AI-agent business. Do only if today's hard deadlines are handled, otherwise make this the focused flight work block on 2026-07-18.",
           "stale": true,
           "quick": false
+        },
+        {
+          "id": "O-25",
+          "title": "Buy suit pants this weekend",
+          "domain": "Operations",
+          "lane": "now",
+          "status": "Not started",
+          "dueReview": "2026-07-14",
+          "source": "Personal logistics / wardrobe",
+          "notes": "First try on current suit/travel clothes. Buy replacement clothes Monday or Tuesday only if the current suit/clothes do not fit or look right.",
+          "stale": true,
+          "quick": true
         }
       ],
       "domainCounts": [
@@ -666,7 +690,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         },
         {
           "domain": "Education",
-          "now": 3,
+          "now": 4,
           "next": 0,
           "backlog": 0
         },
@@ -708,7 +732,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         },
         {
           "domain": "Vessel",
-          "now": 1,
+          "now": 2,
           "next": 1,
           "backlog": 4
         }
@@ -756,7 +780,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "freshness": {
       "label": "Ventures planning docs",
-      "ageDays": 101,
+      "ageDays": 102,
       "stale": true
     },
     "ventures": {
