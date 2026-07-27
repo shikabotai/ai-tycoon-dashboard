@@ -244,6 +244,24 @@ button {
   gap: 10px;
 }
 
+.revamp-top-actions {
+  justify-content: flex-end;
+}
+
+.detail-actions {
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.home-action {
+  border-color: rgba(107, 216, 200, 0.46);
+  background: rgba(13, 32, 34, 0.9);
+}
+
+.revamp-detail-page .back-button {
+  display: none;
+}
+
 .command-horizon {
   position: relative;
   z-index: 1;
@@ -6222,6 +6240,19 @@ button {
 
   .revamp-top-actions {
     gap: 8px;
+  }
+
+  .detail-actions {
+    justify-content: flex-start;
+  }
+
+  .detail-actions .desktop-nav-action {
+    display: none;
+  }
+
+  .detail-actions .home-action {
+    width: fit-content;
+    min-height: 38px;
   }
 
   .revamp-top-actions .revamp-toggle,

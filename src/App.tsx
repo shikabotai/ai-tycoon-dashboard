@@ -1689,6 +1689,7 @@ function App() {
   const currentEvidenceLabel = currentPersonalData?.freshness?.label ??
     (isBusinessPage(currentPage) ? 'Live business runtime' : 'Projected personal records')
   const currentSignalQuality = currentPersonalData?.freshness?.stale ? 'Needs refresh' : appMode === 'business' ? 'Live feed' : 'Usable signal'
+  const topActionClassName = `revamp-top-actions ${isPersonalHome ? 'home-actions' : 'detail-actions'}`
   const currentCrossDomainInsights = useMemo(() => {
     if (personalSection === 'home') return CROSS_DOMAIN_INSIGHTS.slice(0, 4)
     return CROSS_DOMAIN_INSIGHTS.filter((item) => item.pages.includes(personalSection)).slice(0, 3)
@@ -3640,11 +3641,15 @@ function App() {
           <h1>{isPersonalHome ? 'Home' : pageLabel(currentPage)}</h1>
           {isPersonalHome ? null : <p>{currentDirective.outcome}. {currentDirective.system}</p>}
         </div>
-        <div className="revamp-top-actions">
-          <button className={appMode === 'personal' ? 'revamp-toggle active' : 'revamp-toggle'} onClick={() => navigateToPage('home')}>Personal</button>
-          <button className={appMode === 'business' ? 'revamp-toggle active' : 'revamp-toggle'} onClick={() => navigateToPage('business-command')}>Business</button>
-          <button className="revamp-command-btn" onClick={() => setCommandOpen(true)}>Command</button>
-          <button className="revamp-lock-btn" onClick={logout}>Lock</button>
+        <div className={topActionClassName}>
+          {isPersonalHome ? null : (
+            <button className="revamp-toggle home-action" onClick={() => navigateToPage('home')}>Home</button>
+          )}
+          {appMode === 'business' ? null : (
+            <button className="revamp-toggle desktop-nav-action" onClick={() => navigateToPage('business-command')}>Ops</button>
+          )}
+          <button className="revamp-command-btn desktop-nav-action" onClick={() => setCommandOpen(true)}>Command</button>
+          <button className="revamp-lock-btn desktop-nav-action" onClick={logout}>Lock</button>
         </div>
       </header>
 
@@ -3672,31 +3677,6 @@ function App() {
                   <strong>Ctrl K</strong>
                 </button>
               </section>
-
-              <nav className="app-nav-shell" aria-label="Control center sections">
-                <section>
-                  <div className="app-nav-heading">Personal Dashboards</div>
-                  <div className="app-nav-grid">
-                    {PERSONAL_NAV_ITEMS.map((item) => (
-                      <button key={item.page} className={currentPage === item.page ? 'app-nav-item active' : 'app-nav-item'} onClick={() => navigateToPage(item.page)}>
-                        <span>{item.label}</span>
-                        <small>{item.description}</small>
-                      </button>
-                    ))}
-                  </div>
-                </section>
-                <section>
-                  <div className="app-nav-heading">Business Operations</div>
-                  <div className="app-nav-grid business">
-                    {BUSINESS_NAV_ITEMS.map((item) => (
-                      <button key={item.page} className={currentPage === item.page ? 'app-nav-item active' : 'app-nav-item'} onClick={() => navigateToPage(item.page)}>
-                        <span>{item.label}</span>
-                        <small>{item.description}</small>
-                      </button>
-                    ))}
-                  </div>
-                </section>
-              </nav>
 
               <section className="daily-command-strip" aria-label="Current command summary">
                 <article className="daily-command-primary">
