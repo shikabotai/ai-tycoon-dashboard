@@ -29,9 +29,10 @@ const AvatarModelScene = lazy(async () => {
 
 type AppMode = 'personal' | 'business'
 type PersonalSection = 'home' | 'vessel' | 'identity' | 'career' | 'wealth' | 'ventures' | 'systems' | 'education' | 'relationships' | 'knowledge'
+type PersonalAppPage = 'workout-log-app' | 'nutrition-log-app'
 type BusinessPanel = 'overview' | 'agents' | 'review'
 type BusinessPage = 'business-command' | 'agents' | 'review-dock' | 'runtime-trail'
-type AppPage = PersonalSection | BusinessPage
+type AppPage = PersonalSection | PersonalAppPage | BusinessPage
 type LoginState = { username: string; password: string }
 type PersonalSectionData = LiveProjectedSection
 type ProjectionHighlightCard = { title: string; text: string }
@@ -63,6 +64,25 @@ type HomeConstellationNode = {
 }
 type NavItem = { page: AppPage; label: string; description: string }
 type PageDirective = { outcome: string; system: string; usefulFor: string; cadence: string }
+type PersonalAppBundle = {
+  page: PersonalAppPage
+  title: string
+  icon: string
+  accent: 'green' | 'amber'
+  tagline: string
+  overview: string
+  connectedSignals: string[]
+  template: {
+    purpose: string
+    setupInputs: string[]
+    repoFiles: string[]
+    telegramFlows: string[]
+    dashboardModules: string[]
+    automations: string[]
+    permissions: string[]
+    installChecklist: string[]
+  }
+}
 type GrowthLoopDefinition = {
   target: string
   ritual: string
@@ -134,6 +154,11 @@ const PERSONAL_ROUTES: Record<PersonalSection, string> = {
   knowledge: '/knowledge',
 }
 
+const PERSONAL_APP_ROUTES: Record<PersonalAppPage, string> = {
+  'workout-log-app': '/apps/workout-log',
+  'nutrition-log-app': '/apps/nutrition-log',
+}
+
 const BUSINESS_ROUTES: Record<BusinessPage, string> = {
   'business-command': '/business-command',
   agents: '/agents',
@@ -141,7 +166,7 @@ const BUSINESS_ROUTES: Record<BusinessPage, string> = {
   'runtime-trail': '/runtime-trail',
 }
 
-const PAGE_ROUTES: Record<AppPage, string> = { ...PERSONAL_ROUTES, ...BUSINESS_ROUTES }
+const PAGE_ROUTES: Record<AppPage, string> = { ...PERSONAL_ROUTES, ...PERSONAL_APP_ROUTES, ...BUSINESS_ROUTES }
 
 function appAssetPath(path: string) {
   return `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`
@@ -200,6 +225,121 @@ const BUSINESS_NAV_ITEMS: NavItem[] = [
   { page: 'review-dock', label: 'Review Dock', description: 'Approval decisions' },
   { page: 'runtime-trail', label: 'Runtime Trail', description: 'Command provenance' },
 ]
+
+const PERSONAL_APP_BUNDLES: PersonalAppBundle[] = [
+  {
+    page: 'workout-log-app',
+    title: 'Workout Log',
+    icon: 'WL',
+    accent: 'green',
+    tagline: 'Training history, program adherence, recovery notes, and next-lift decisions as one reusable OpenClaw app.',
+    overview: 'Workout Log turns scattered training notes into a repeatable body-performance workflow. It helps the assistant ask for the right workout details, store each session cleanly, summarize progress, and surface the next practical training move inside the dashboard and morning review.',
+    connectedSignals: ['Vessel readiness', 'Identity discipline score', 'Task planning', 'Morning summary', 'Weekly progress review'],
+    template: {
+      purpose: 'Capture strength training, cardio, mobility, soreness, recovery, and consistency so the main OS can reason about physical momentum.',
+      setupInputs: [
+        'Primary training goal and current program',
+        'Weekly training schedule and preferred workout times',
+        'Exercise list, target muscles, and current working weights',
+        'Recovery constraints such as sleep, soreness, injuries, and equipment',
+      ],
+      repoFiles: [
+        'apps/workout-log/SKILL.md',
+        'apps/workout-log/context.md',
+        'apps/workout-log/data/workouts.md',
+        'apps/workout-log/templates/session-log.md',
+        'apps/workout-log/dashboard.json',
+      ],
+      telegramFlows: [
+        'Log workout with exercises, sets, reps, weight, RPE, and notes',
+        'Ask what to train next based on schedule, soreness, and missed sessions',
+        'Request weekly training recap with consistency and progression signals',
+      ],
+      dashboardModules: [
+        'Latest workout card',
+        'Weekly consistency meter',
+        'Muscle group balance map',
+        'Next recommended session panel',
+      ],
+      automations: [
+        'Evening prompt when a planned workout has no log',
+        'Weekly progression summary',
+        'Morning Summary integration for training priority',
+      ],
+      permissions: [
+        'Read and write workout files in the user hub repo',
+        'Read body goals and schedule context',
+        'Ask before messaging anyone else or changing calendar events',
+      ],
+      installChecklist: [
+        'Create app folder in the hub repo',
+        'Run onboarding questions',
+        'Seed first program and exercise list',
+        'Enable Telegram commands',
+        'Add dashboard module to the user home screen',
+      ],
+    },
+  },
+  {
+    page: 'nutrition-log-app',
+    title: 'Nutrition Log',
+    icon: 'NL',
+    accent: 'amber',
+    tagline: 'Meals, macros, body goals, habits, and food decisions packaged as a connected OpenClaw app.',
+    overview: 'Nutrition Log gives the assistant a clean way to capture food, estimate calories and protein, understand the user’s current nutrition goal, and connect food decisions to workouts, energy, physique, and daily planning.',
+    connectedSignals: ['Vessel goals', 'Workout recovery', 'Daily reminders', 'Grocery planning', 'Identity consistency'],
+    template: {
+      purpose: 'Track meals and nutrition decisions with enough structure for useful coaching without making logging feel heavy.',
+      setupInputs: [
+        'Current nutrition goal: cut, bulk, maintain, recomp, or health baseline',
+        'Target calories, protein, meal schedule, and dietary preferences',
+        'Foods to encourage, foods to limit, allergies, and budget constraints',
+        'Preferred logging style: quick text, detailed macros, photos, or end-of-day recap',
+      ],
+      repoFiles: [
+        'apps/nutrition-log/SKILL.md',
+        'apps/nutrition-log/context.md',
+        'apps/nutrition-log/data/meals.md',
+        'apps/nutrition-log/templates/daily-log.md',
+        'apps/nutrition-log/dashboard.json',
+      ],
+      telegramFlows: [
+        'Log meal by plain text and normalize into calories, protein, and notes',
+        'Ask what to eat next based on remaining targets and schedule',
+        'Request daily nutrition recap with wins, gaps, and tomorrow adjustment',
+      ],
+      dashboardModules: [
+        'Today calories and protein estimate',
+        'Meal streak and missed-log signal',
+        'Goal alignment panel',
+        'Food decision prompt',
+      ],
+      automations: [
+        'Meal logging reminders at user-selected times',
+        'End-of-day nutrition recap',
+        'Morning Summary integration for food priority and grocery needs',
+      ],
+      permissions: [
+        'Read and write nutrition files in the user hub repo',
+        'Read workout and body-goal context',
+        'Ask before ordering food, groceries, or sharing health information',
+      ],
+      installChecklist: [
+        'Create app folder in the hub repo',
+        'Run nutrition onboarding',
+        'Set targets and logging preference',
+        'Enable Telegram meal capture',
+        'Add dashboard nutrition widgets',
+      ],
+    },
+  },
+]
+
+const PERSONAL_APP_NAV_ITEMS: NavItem[] = PERSONAL_APP_BUNDLES.map((bundle) => ({
+  page: bundle.page,
+  label: bundle.title,
+  description: bundle.tagline,
+}))
 
 const PAGE_DIRECTIVES: Record<AppPage, PageDirective> = {
   home: {
@@ -262,6 +402,18 @@ const PAGE_DIRECTIVES: Record<AppPage, PageDirective> = {
     usefulFor: 'Keeping relationships actionable inside the Connections category.',
     cadence: 'Weekly touchpoint',
   },
+  'workout-log-app': {
+    outcome: 'Make training visible and repeatable',
+    system: 'A modular app template for logging workouts, tracking progression, and feeding body signals back into the main OS.',
+    usefulFor: 'Turning workouts into connected context for planning, identity, energy, and weekly reviews.',
+    cadence: 'Per workout and weekly recap',
+  },
+  'nutrition-log-app': {
+    outcome: 'Make food decisions part of the OS',
+    system: 'A modular app template for capturing meals, goals, macros, and nutrition decisions without making the user manage a complex system.',
+    usefulFor: 'Connecting nutrition to workouts, energy, reminders, and body goals.',
+    cadence: 'Daily log and nightly recap',
+  },
   'business-command': {
     outcome: 'Move the business with fewer clicks',
     system: 'Queue pressure, revenue signals, reviews, and runtime actions in one command surface.',
@@ -317,6 +469,10 @@ function isBusinessPage(page: AppPage): page is BusinessPage {
   return page === 'business-command' || page === 'agents' || page === 'review-dock' || page === 'runtime-trail'
 }
 
+function isPersonalAppPage(page: AppPage): page is PersonalAppPage {
+  return page === 'workout-log-app' || page === 'nutrition-log-app'
+}
+
 function businessPanelFromPage(page: BusinessPage): BusinessPanel {
   if (page === 'agents') return 'agents'
   if (page === 'review-dock') return 'review'
@@ -324,7 +480,7 @@ function businessPanelFromPage(page: BusinessPage): BusinessPanel {
 }
 
 function pageLabel(page: AppPage) {
-  return [...PERSONAL_NAV_ITEMS, ...BUSINESS_NAV_ITEMS].find((item) => item.page === page)?.label ?? 'Home'
+  return [...PERSONAL_NAV_ITEMS, ...PERSONAL_APP_NAV_ITEMS, ...BUSINESS_NAV_ITEMS].find((item) => item.page === page)?.label ?? 'Home'
 }
 
 function sourceConfidence(section?: LiveProjectedSection) {
@@ -1116,7 +1272,9 @@ function App() {
   })
   const dashboardData = useDashboardData()
   const appMode: AppMode = isBusinessPage(currentPage) ? 'business' : 'personal'
-  const personalSection: PersonalSection = isBusinessPage(currentPage) ? 'home' : currentPage
+  const personalSection: PersonalSection = isBusinessPage(currentPage) || isPersonalAppPage(currentPage) ? 'home' : currentPage
+  const activePersonalApp = isPersonalAppPage(currentPage) ? PERSONAL_APP_BUNDLES.find((bundle) => bundle.page === currentPage) ?? null : null
+  const isPersonalHome = currentPage === 'home'
   const businessPanel: BusinessPanel = isBusinessPage(currentPage) ? businessPanelFromPage(currentPage) : 'overview'
   const currentPath = PAGE_ROUTES[currentPage]
 
@@ -1537,7 +1695,7 @@ function App() {
   }, [personalSection])
   const quickNavItems = useMemo(() => {
     const query = commandValue.trim().toLowerCase()
-    const items = [...PERSONAL_NAV_ITEMS, ...BUSINESS_NAV_ITEMS]
+    const items = [...PERSONAL_NAV_ITEMS, ...PERSONAL_APP_NAV_ITEMS, ...BUSINESS_NAV_ITEMS]
     if (!query) return items
     return items.filter((item) => `${item.label} ${item.description} ${PAGE_ROUTES[item.page]}`.toLowerCase().includes(query)).slice(0, 6)
   }, [commandValue])
@@ -1728,6 +1886,70 @@ function App() {
       setCommandResponse(message)
     }
     setCommandValue('')
+  }
+
+  function renderPersonalAppPage(bundle: PersonalAppBundle) {
+    const templateSections: Array<{ title: string; items: string[] }> = [
+      { title: 'Setup Inputs', items: bundle.template.setupInputs },
+      { title: 'Repo Files', items: bundle.template.repoFiles },
+      { title: 'Telegram Flows', items: bundle.template.telegramFlows },
+      { title: 'Dashboard Modules', items: bundle.template.dashboardModules },
+      { title: 'Automations', items: bundle.template.automations },
+      { title: 'Permissions', items: bundle.template.permissions },
+      { title: 'Install Checklist', items: bundle.template.installChecklist },
+    ]
+
+    return (
+      <main className="revamp-detail-page personal-app-page">
+        <section className={`personal-app-hero ${bundle.accent}`}>
+          <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
+          <div className="personal-app-hero-icon" aria-hidden="true">{bundle.icon}</div>
+          <div className="personal-app-hero-copy">
+            <div className="revamp-kicker">MyAIgent App Package</div>
+            <h2>{bundle.title}</h2>
+            <p>{bundle.tagline}</p>
+          </div>
+        </section>
+
+        <section className="personal-app-overview" aria-label={`${bundle.title} overview`}>
+          <article className="glass-panel personal-app-overview-prime">
+            <div className="revamp-kicker">Overview</div>
+            <h3>Connected workflow, packaged like an app.</h3>
+            <p>{bundle.overview}</p>
+          </article>
+          <article className="glass-panel personal-app-purpose">
+            <div className="revamp-kicker">Template Purpose</div>
+            <p>{bundle.template.purpose}</p>
+          </article>
+          <article className="glass-panel personal-app-signals">
+            <div className="revamp-kicker">Connected To</div>
+            <div>
+              {bundle.connectedSignals.map((signal) => <span key={signal}>{signal}</span>)}
+            </div>
+          </article>
+        </section>
+
+        <section className="personal-app-template" aria-label={`${bundle.title} template details`}>
+          <div className="personal-app-template-head">
+            <div>
+              <div className="revamp-kicker">Reusable Template</div>
+              <h3>Everything another OpenClaw needs to install this app cleanly.</h3>
+            </div>
+            <span>{PAGE_ROUTES[bundle.page]}</span>
+          </div>
+          <div className="personal-app-template-grid">
+            {templateSections.map((section) => (
+              <article key={section.title} className="personal-app-template-card">
+                <span>{section.title}</span>
+                <ul>
+                  {section.items.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </section>
+      </main>
+    )
   }
 
   function renderBusinessHero() {
@@ -3410,13 +3632,13 @@ function App() {
   }
 
   return (
-    <div className={personalSection === 'home' && appMode === 'personal' ? 'revamp-shell home-shell' : 'revamp-shell'}>
+    <div className={isPersonalHome ? 'revamp-shell home-shell' : 'revamp-shell'}>
       <div className="revamp-shell-bg" />
-      <header className={personalSection === 'home' && appMode === 'personal' ? 'revamp-topbar home-topbar' : 'revamp-topbar'}>
+      <header className={isPersonalHome ? 'revamp-topbar home-topbar' : 'revamp-topbar'}>
         <div>
           <div className="revamp-kicker">Mitchell Control Center</div>
-          <h1>{personalSection === 'home' && appMode === 'personal' ? 'Home' : pageLabel(currentPage)}</h1>
-          {personalSection === 'home' && appMode === 'personal' ? null : <p>{currentDirective.outcome}. {currentDirective.system}</p>}
+          <h1>{isPersonalHome ? 'Home' : pageLabel(currentPage)}</h1>
+          {isPersonalHome ? null : <p>{currentDirective.outcome}. {currentDirective.system}</p>}
         </div>
         <div className="revamp-top-actions">
           <button className={appMode === 'personal' ? 'revamp-toggle active' : 'revamp-toggle'} onClick={() => navigateToPage('home')}>Personal</button>
@@ -3426,7 +3648,7 @@ function App() {
         </div>
       </header>
 
-      {personalSection === 'home' && appMode === 'personal' ? null : (
+      {isPersonalHome ? null : (
         <>
           {appMode === 'business' ? (
             <>
@@ -3511,7 +3733,9 @@ function App() {
       )}
 
       {appMode === 'personal' ? (
-        personalSection === 'home' ? (
+        activePersonalApp ? (
+          renderPersonalAppPage(activePersonalApp)
+        ) : personalSection === 'home' ? (
           <main className="home-constellation-screen" aria-label="Home control map">
             <section className="home-avatar-constellation" aria-label="Avatar section map">
               <svg className="home-constellation-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
@@ -3554,6 +3778,19 @@ function App() {
                 )
               })}
             </section>
+            <div className="home-app-dock" aria-label="MyAIgent apps">
+              {PERSONAL_APP_BUNDLES.map((bundle) => (
+                <button
+                  key={bundle.page}
+                  className={`home-app-icon ${bundle.accent}`}
+                  aria-label={`Open ${bundle.title}`}
+                  onClick={() => navigateToPage(bundle.page)}
+                >
+                  <span>{bundle.icon}</span>
+                  <strong>{bundle.title}</strong>
+                </button>
+              ))}
+            </div>
           </main>
         ) : (
           <main className="revamp-detail-page">
