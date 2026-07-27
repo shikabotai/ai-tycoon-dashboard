@@ -3,8 +3,8 @@ import { attachProjectedDashboard } from '../data/projectedDashboardModel'
 import type { ProjectedSection, ProjectionSnapshot } from '../data/projectedTypes'
 
 export const generatedProjectionSnapshot: ProjectionSnapshot = {
-  "generatedAt": "2026-07-26T07:15:26.516Z",
-  "generatedAtLabel": "Jul 26, 2026, 3:15 AM EDT",
+  "generatedAt": "2026-07-27T07:15:25.813Z",
+  "generatedAtLabel": "Jul 27, 2026, 3:15 AM EDT",
   "source": "PunkRecords",
   "updateMode": "Nightly static projection"
 } as ProjectionSnapshot
@@ -127,6 +127,10 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         {
           "label": "Jul 26",
           "score": 5.3
+        },
+        {
+          "label": "Jul 27",
+          "score": 5.3
         }
       ],
       "nightlyChanges": [
@@ -146,7 +150,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "reason": "Personal Decision Engine / Ideal Self refreshed; current gap: Habits Overview — phone elimination protocol"
         }
       ],
-      "lastUpdatedLabel": "Nightly source refresh: Jul 26"
+      "lastUpdatedLabel": "Nightly source refresh: Jul 27"
     }
   },
   "vessel": {
@@ -189,7 +193,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "freshness": {
       "label": "Vessel evidence",
-      "ageDays": 2,
+      "ageDays": 3,
       "stale": false
     },
     "vessel": {
@@ -198,9 +202,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "back",
           "label": "Back",
           "priority": "V-taper priority",
-          "recentSets": 29,
+          "recentSets": 28,
           "lastHit": "2026-07-24",
-          "lastHitLabel": "2 days ago",
+          "lastHitLabel": "3 days ago",
           "heat": "hot",
           "recommendation": "Keep one vertical pull and one row pattern active each week."
         },
@@ -208,9 +212,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "shoulders",
           "label": "Shoulders",
           "priority": "Width priority",
-          "recentSets": 15,
+          "recentSets": 14,
           "lastHit": "2026-07-24",
-          "lastHitLabel": "2 days ago",
+          "lastHitLabel": "3 days ago",
           "heat": "hot",
           "recommendation": "Keep lateral delts and rear delts visible for the shoulder-width goal."
         },
@@ -220,7 +224,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "Upper-chest priority",
           "recentSets": 14,
           "lastHit": "2026-07-24",
-          "lastHitLabel": "2 days ago",
+          "lastHitLabel": "3 days ago",
           "heat": "hot",
           "recommendation": "Add pressing or fly work if chest has not shown up recently."
         },
@@ -230,7 +234,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "Arm detail",
           "recentSets": 12,
           "lastHit": "2026-07-21",
-          "lastHitLabel": "5 days ago",
+          "lastHitLabel": "6 days ago",
           "heat": "hot",
           "recommendation": "Keep curls in the rotation, but do not let arms crowd out chest or legs."
         },
@@ -240,7 +244,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "Arm mass",
           "recentSets": 11,
           "lastHit": "2026-07-20",
-          "lastHitLabel": "6 days ago",
+          "lastHitLabel": "7 days ago",
           "heat": "hot",
           "recommendation": "Use pushdowns or overhead work to keep arms full while cutting."
         },
@@ -248,9 +252,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "abs",
           "label": "Abs",
           "priority": "Lean-look priority",
-          "recentSets": 12,
+          "recentSets": 11,
           "lastHit": "2026-07-21",
-          "lastHitLabel": "5 days ago",
+          "lastHitLabel": "6 days ago",
           "heat": "hot",
           "recommendation": "Keep direct core work frequent while the cut reveals definition."
         },
@@ -260,7 +264,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "Balance priority",
           "recentSets": 5,
           "lastHit": "2026-07-21",
-          "lastHitLabel": "5 days ago",
+          "lastHitLabel": "6 days ago",
           "heat": "touched",
           "recommendation": "Do not let the aesthetics push turn into skipping legs."
         },
@@ -270,7 +274,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "Cut support",
           "recentSets": 3,
           "lastHit": "2026-07-24",
-          "lastHitLabel": "2 days ago",
+          "lastHitLabel": "3 days ago",
           "heat": "hot",
           "recommendation": "Add Zone 2 when fat-loss support is missing from the week."
         }
@@ -305,17 +309,17 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     }
   },
   "systems": {
-    "heroSummary": "4 current / 5 cleanup / 23 later",
+    "heroSummary": "2 current / 5 cleanup / 23 later",
     "summaryCards": [
       {
         "label": "Current",
-        "value": "4",
-        "note": "Write and submit CS7641 UL Report"
+        "value": "2",
+        "note": "Maintain 3x/week gym consistency during the cut / recomp phase"
       },
       {
         "label": "Cleanup",
         "value": "5",
-        "note": "O-27 needs reschedule or close"
+        "note": "E-07 needs reschedule or close"
       },
       {
         "label": "Waiting",
@@ -345,26 +349,26 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "freshness": {
       "label": "Operations board evidence",
-      "ageDays": 0,
+      "ageDays": 1,
       "stale": false
     },
     "blockers": [
       {
+        "label": "E-07",
+        "value": "Write and submit CS7641 UL Report",
+        "detail": "Education / NOW / Internal target 2026-07-26 11:59 PM ET; Canvas close 2026-07-27 07:59 AM ET",
+        "severity": "stale"
+      },
+      {
+        "label": "E-08",
+        "value": "Complete CS7641 UL Unit Quiz",
+        "detail": "Education / NOW / Internal target 2026-07-26 11:59 PM ET; Canvas close 2026-07-27 07:59 AM ET",
+        "severity": "stale"
+      },
+      {
         "label": "O-27",
         "value": "Schedule oil change",
         "detail": "Operations / NOW / Weekend of 2026-07-25",
-        "severity": "stale"
-      },
-      {
-        "label": "O-29",
-        "value": "Return trimmer to Costco",
-        "detail": "Operations / NOW / Weekend of 2026-07-25",
-        "severity": "stale"
-      },
-      {
-        "label": "HV-13",
-        "value": "Build the photobooth competition web app before convention",
-        "detail": "High ROI Ventures / NEXT / Before convention; scope revised 2026-07-24",
         "severity": "stale"
       }
     ],
@@ -373,37 +377,13 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       "operatingMode": "Simple task triage",
       "pressureLabel": "Cleanup needed",
       "closureRate": 0,
-      "staleAction": "O-27",
+      "staleAction": "E-07",
       "automationPosture": {
         "label": "Read-only",
         "detail": "Source rows only.",
         "nextUpgrade": "Direct edits later."
       },
       "topFocus": [
-        {
-          "id": "E-07",
-          "title": "Write and submit CS7641 UL Report",
-          "domain": "Education",
-          "lane": "now",
-          "status": "In progress",
-          "dueReview": "Internal target 2026-07-26 11:59 PM ET; Canvas close 2026-07-27 07:59 AM ET",
-          "source": "[[CS7641 Machine Learning Overview]]",
-          "notes": "Mitchell reported on 2026-07-24 that the UL coding portion is complete. Remaining work is the report itself, which he expects to take the most time.",
-          "stale": false,
-          "quick": false
-        },
-        {
-          "id": "E-08",
-          "title": "Complete CS7641 UL Unit Quiz",
-          "domain": "Education",
-          "lane": "now",
-          "status": "Not started",
-          "dueReview": "Internal target 2026-07-26 11:59 PM ET; Canvas close 2026-07-27 07:59 AM ET",
-          "source": "[[CS7641 Machine Learning Overview]]",
-          "notes": "Planned sequence from 2026-07-24 memory: take the quiz once as practice, then take a second attempt for real after the report-writing block.",
-          "stale": false,
-          "quick": false
-        },
         {
           "id": "V-02",
           "title": "Maintain 3x/week gym consistency during the cut / recomp phase",
@@ -617,6 +597,30 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       ],
       "staleItems": [
         {
+          "id": "E-07",
+          "title": "Write and submit CS7641 UL Report",
+          "domain": "Education",
+          "lane": "now",
+          "status": "In progress",
+          "dueReview": "Internal target 2026-07-26 11:59 PM ET; Canvas close 2026-07-27 07:59 AM ET",
+          "source": "[[CS7641 Machine Learning Overview]]",
+          "notes": "Mitchell reported on 2026-07-24 that the UL coding portion is complete. Remaining work is the report itself, which he expects to take the most time.",
+          "stale": true,
+          "quick": false
+        },
+        {
+          "id": "E-08",
+          "title": "Complete CS7641 UL Unit Quiz",
+          "domain": "Education",
+          "lane": "now",
+          "status": "Not started",
+          "dueReview": "Internal target 2026-07-26 11:59 PM ET; Canvas close 2026-07-27 07:59 AM ET",
+          "source": "[[CS7641 Machine Learning Overview]]",
+          "notes": "Planned sequence from 2026-07-24 memory: take the quiz once as practice, then take a second attempt for real after the report-writing block.",
+          "stale": true,
+          "quick": false
+        },
+        {
           "id": "O-27",
           "title": "Schedule oil change",
           "domain": "Operations",
@@ -649,30 +653,6 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "dueReview": "Before convention; scope revised 2026-07-24",
           "source": "Photobooth competition / collaboration with Nicole",
           "notes": "Nicole coordination started 2026-07-24. This is a high-visibility convention-facing product, not a tiny demo. It must support around 1,000 picture uploads and be good enough for the entire convention to see. Prioritize production-readiness: upload UX, storage/backups, performance under load, moderation or approval, failure recovery, clean display/gallery flow, mobile friendliness, and a polished visual identity. Allocate more focused build time before sharing broadly.",
-          "stale": true,
-          "quick": false
-        },
-        {
-          "id": "O-23",
-          "title": "Book Apple appointment to fix AirPod",
-          "domain": "Operations",
-          "lane": "now",
-          "status": "Scheduled",
-          "dueReview": "2026-07-22 6:00 PM",
-          "source": "Personal logistics",
-          "notes": "Apple / Genius Bar appointment for AirPods is scheduled for Wednesday, 2026-07-22 at 6:00 PM.",
-          "stale": true,
-          "quick": true
-        },
-        {
-          "id": "HV-09",
-          "title": "Update the Batter Up app",
-          "domain": "High ROI Ventures",
-          "lane": "next",
-          "status": "In progress",
-          "dueReview": "2026-07-21",
-          "source": "[[Project Tracker]]",
-          "notes": "Priority #2 after Photo Booth. Add user emails, finalize the database schema, and show real frontend behavior connected to the backend. Hard target is before Tuesday 2026-07-21; ideal target is today after the Photo Booth demo ships.",
           "stale": true,
           "quick": false
         }
@@ -776,7 +756,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "freshness": {
       "label": "Ventures planning docs",
-      "ageDays": 100,
+      "ageDays": 101,
       "stale": true
     },
     "ventures": {
@@ -1855,7 +1835,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "dueAt": "2026-07-31T23:59:00-04:00",
           "internalTarget": "2026-07-31T23:59:00-04:00",
           "kind": "extra-credit",
-          "status": "soon"
+          "status": "urgent"
         },
         {
           "id": "cs7641-ul-report-discussion-2026-08-03t07-59-00-04-00",
