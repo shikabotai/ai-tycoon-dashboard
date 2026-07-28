@@ -29,7 +29,7 @@ const AvatarModelScene = lazy(async () => {
 
 type AppMode = 'personal' | 'business'
 type PersonalSection = 'home' | 'vessel' | 'identity' | 'career' | 'wealth' | 'ventures' | 'systems' | 'education' | 'relationships' | 'knowledge'
-type PersonalAppPage = 'workout-log-app' | 'nutrition-log-app'
+type PersonalAppPage = 'workout-log-app' | 'nutrition-log-app' | 'mindset-coach-app' | 'personal-finance-coach-app'
 type BusinessPanel = 'overview' | 'agents' | 'review'
 type BusinessPage = 'business-command' | 'agents' | 'review-dock' | 'runtime-trail'
 type AppPage = PersonalSection | PersonalAppPage | BusinessPage
@@ -69,7 +69,7 @@ type PersonalAppBundle = {
   page: PersonalAppPage
   title: string
   icon: string
-  accent: 'green' | 'amber'
+  accent: 'green' | 'amber' | 'indigo' | 'teal'
   tagline: string
   overview: string
   connectedSignals: string[]
@@ -167,6 +167,8 @@ const PERSONAL_ROUTES: Record<PersonalSection, string> = {
 const PERSONAL_APP_ROUTES: Record<PersonalAppPage, string> = {
   'workout-log-app': '/skills/workout-coach',
   'nutrition-log-app': '/skills/nutrition-coach',
+  'mindset-coach-app': '/skills/mindset-coach',
+  'personal-finance-coach-app': '/skills/personal-finance-coach',
 }
 
 const BUSINESS_ROUTES: Record<BusinessPage, string> = {
@@ -405,6 +407,176 @@ const PERSONAL_APP_BUNDLES: PersonalAppBundle[] = [
       ],
     },
   },
+  {
+    page: 'mindset-coach-app',
+    title: 'Mindset Coach',
+    icon: 'MC',
+    accent: 'indigo',
+    tagline: 'A reusable Skill that helps OpenClaw guide motivation, affirmations, meditation, identity alignment, and daily emotional check-ins.',
+    overview: 'Mindset Coach packages identity goals, motivation patterns, affirmation style, meditation preferences, emotional state, and support boundaries into a Skill flow: collect onboarding answers, preview the generated SKILL.md/workflow, define the tools it can use, then enable it for daily mindset coaching.',
+    connectedSignals: ['Identity alignment', 'Daily check-ins', 'Emotional state', 'Morning summary', 'Weekly reflection'],
+    skillFlow: {
+      description: [
+        'Turns mood notes, motivation dips, identity statements, affirmations, meditation habits, and daily reflections into a repeatable coaching routine.',
+        'The Skill gives OpenClaw enough structure to check in, reinforce chosen identity, suggest grounding practices, track emotional patterns, and keep support inside clear permission boundaries.',
+      ],
+      onboardingQuestions: [
+        'What identity, values, or self-concept should the coach help reinforce?',
+        'What motivates you best: direct challenge, calm encouragement, reflective prompts, affirmations, or practical next steps?',
+        'What emotional states, stress patterns, confidence dips, or avoidance loops should the coach watch for?',
+        'What meditation, breathing, journaling, visualization, or grounding practices do you prefer?',
+        'What boundaries should the coach follow around mental health, crisis language, reminders, privacy, and escalation?',
+      ],
+      workflowPreview: [
+        'Complete SKILL.md uses onboarding answers to fill in identity anchors, motivation style, affirmation tone, check-in cadence, emotional-state tags, grounding practices, and permission rules.',
+        'The workflow starts with a lightweight mood or intention intake, stores a normalized check-in, compares it with recent patterns, then returns a grounded next action.',
+        'Generated templates cover morning intention, affirmation set, meditation prompt, emotional reset, nightly reflection, and weekly identity review.',
+      ],
+      permissionsAndTools: [
+        'Read and write mindset Skill files, check-ins, affirmations, and reflection logs in the user hub repo',
+        'Read Identity goals, schedule context, daily summaries, user-provided mood notes, and recent habit signals',
+        'Use Telegram capture for quick check-ins and dashboard modules for mindset summaries',
+        'Ask before contacting anyone, sharing emotional or health information, creating persistent reminders, or treating support as medical or crisis care',
+      ],
+      enableSteps: [
+        'Create the Mindset Coach Skill folder and generated SKILL.md preview',
+        'Answer onboarding questions and seed identity anchors, affirmations, and preferred reset practices',
+        'Review file permissions, Telegram capture, dashboard modules, and emotional-support boundaries',
+        'Enable the Skill for daily check-ins, motivation prompts, meditation guidance, and weekly reflection',
+        'Pin Mindset Coach to the Identity dashboard and morning summary',
+      ],
+    },
+    template: {
+      purpose: 'Support motivation, identity alignment, affirmations, meditation, and emotional awareness with lightweight daily structure and clear permission boundaries.',
+      setupInputs: [
+        'Core identity statement, values, and current growth focus',
+        'Preferred coaching tone: direct, gentle, reflective, practical, or affirmation-led',
+        'Meditation, breathing, journaling, visualization, and grounding preferences',
+        'Emotional-state labels, check-in cadence, privacy rules, and escalation boundaries',
+      ],
+      repoFiles: [
+        'skills/mindset-coach/SKILL.md',
+        'skills/mindset-coach/context.md',
+        'skills/mindset-coach/data/check-ins.md',
+        'skills/mindset-coach/templates/daily-reflection.md',
+        'skills/mindset-coach/dashboard.json',
+      ],
+      telegramFlows: [
+        'Log mood, energy, stress, confidence, and intention by quick text',
+        'Request an affirmation, meditation prompt, or emotional reset',
+        'Ask for a daily or weekly mindset recap with patterns and next identity-aligned action',
+      ],
+      dashboardModules: [
+        'Today mindset check-in',
+        'Emotional state trend',
+        'Identity alignment panel',
+        'Affirmation and reset prompt',
+      ],
+      automations: [
+        'Morning intention prompt at user-selected times',
+        'Evening reflection recap',
+        'Morning Summary integration for mindset priority and emotional-state signal',
+      ],
+      permissions: [
+        'Read and write mindset files in the user hub repo',
+        'Read identity goals, daily check-ins, and user-provided emotional-state notes',
+        'Ask before contacting anyone, sharing private reflections, setting reminders, or making health-related claims',
+      ],
+      installChecklist: [
+        'Create Skill folder in the hub repo',
+        'Run mindset onboarding',
+        'Seed identity anchors, affirmations, and reset practices',
+        'Enable Telegram check-in capture',
+        'Add dashboard mindset widgets',
+      ],
+    },
+  },
+  {
+    page: 'personal-finance-coach-app',
+    title: 'Personal Finance Coach',
+    icon: 'PF',
+    accent: 'teal',
+    tagline: 'A reusable Skill that turns read-only finance signals into cashflow coaching, budget reviews, net worth awareness, and goal-aligned money decisions.',
+    overview: 'Personal Finance Coach packages Plaid-linked account data, manual finance entries, income, spending, budgets, liabilities, assets, and goals into a Skill flow: collect onboarding answers, preview the generated SKILL.md/workflow, define the tools it can use, then enable it for monthly planning and daily money awareness.',
+    connectedSignals: ['Wealth dashboard', 'Read-only Plaid Link', 'Net worth', 'Monthly budget', 'Income and spending', 'Manual assets and liabilities', 'Goal tracking'],
+    skillFlow: {
+      description: [
+        'Turns read-only account balances, transactions, income patterns, spending categories, manual entries, monthly budgets, and financial goals into a repeatable coaching routine.',
+        'The Skill gives OpenClaw enough structure to explain cashflow, flag budget drift, update net worth context, review progress toward goals, and recommend practical next steps without collecting bank credentials or moving money.',
+      ],
+      onboardingQuestions: [
+        'What are the current financial priorities: emergency fund, debt payoff, investing, runway, savings goals, business cashflow, or spending control?',
+        'Which accounts, assets, liabilities, manual entries, and Plaid-linked balances should count toward net worth, budgeting, or both?',
+        'What monthly income, fixed expenses, category budgets, savings targets, and bill timing should the coach understand?',
+        'What goals, deadlines, minimum balances, debt payoff rules, and risk boundaries should shape recommendations?',
+        'How should finance check-ins work: daily spending pulse, weekly budget review, monthly net worth review, goal progress recap, or Telegram-first alerts?',
+      ],
+      workflowPreview: [
+        'Complete SKILL.md uses onboarding answers to fill in finance goals, account scope, budget rules, manual entry conventions, review cadence, provider abstraction, and approval rules.',
+        'The workflow starts with read-only finance intake, checks Plaid/provider status and manual entries, summarizes income, spending, assets, liabilities, budget remaining, and goal progress, then returns the next practical money decision.',
+        'Generated templates cover monthly budget reviews, net worth snapshots, transaction recaps, goal check-ins, manual asset/liability updates, and spending anomaly notes.',
+      ],
+      permissionsAndTools: [
+        'Read and write Personal Finance Coach Skill files, budget notes, goal notes, and manual finance context in the user hub repo',
+        'Read Wealth dashboard finance status, read-only Plaid/provider data, accounts, transactions, balances, manual entries, monthly budgets, assets, liabilities, income, spending, and goals',
+        'Use Telegram capture for manual entries, budget notes, and finance questions, plus dashboard modules for summaries and review panels',
+        'Never collect bank credentials; use Plaid Link or provider abstractions only for read-only account linking',
+        'Ask before purchases, moving money, changing subscriptions, messaging anyone else, or sharing financial information',
+      ],
+      enableSteps: [
+        'Create the Personal Finance Coach Skill folder and generated SKILL.md preview',
+        'Answer onboarding questions and seed goals, account scope, budget categories, and review cadence',
+        'Review read-only Plaid/provider permissions, manual entry rules, Telegram capture, and dashboard modules',
+        'Enable the Skill for budget review, net worth snapshots, spending recaps, and goal tracking',
+        'Pin Personal Finance Coach to the Wealth dashboard and morning summary',
+      ],
+    },
+    template: {
+      purpose: 'Track money decisions, cashflow, net worth, budgets, goals, accounts, and transactions with enough structure for useful coaching while keeping bank access read-only.',
+      setupInputs: [
+        'Primary financial goals, deadlines, target amounts, and priority order',
+        'Monthly income, fixed expenses, budget categories, savings targets, and bill timing',
+        'Plaid-linked account scope plus manual assets, liabilities, and account inclusion rules',
+        'Preferred review cadence: daily pulse, weekly budget review, monthly net worth snapshot, or goal recap',
+      ],
+      repoFiles: [
+        'skills/personal-finance-coach/SKILL.md',
+        'skills/personal-finance-coach/context.md',
+        'skills/personal-finance-coach/data/goals.md',
+        'skills/personal-finance-coach/templates/monthly-review.md',
+        'skills/personal-finance-coach/dashboard.json',
+      ],
+      telegramFlows: [
+        'Log manual asset, liability, budget note, goal update, or unusual transaction context',
+        'Ask for budget status based on month-to-date spending, income, and remaining category targets',
+        'Request net worth, cashflow, spending, debt, or goal progress recap',
+      ],
+      dashboardModules: [
+        'Net worth snapshot',
+        'Monthly budget remaining panel',
+        'Recent transaction review',
+        'Goal progress tracker',
+      ],
+      automations: [
+        'Weekly budget drift summary',
+        'Monthly net worth and goal progress review',
+        'Morning Summary integration for bill timing, budget risk, and money priorities',
+      ],
+      permissions: [
+        'Read and write finance Skill files in the user hub repo',
+        'Read Wealth dashboard finance status, Plaid/provider metadata, accounts, transactions, budgets, manual entries, assets, liabilities, income, spending, and goals',
+        'Never collect bank credentials; ask before purchases, moving money, changing subscriptions, or sharing financial information',
+      ],
+      installChecklist: [
+        'Create Skill folder in the hub repo',
+        'Run finance onboarding',
+        'Set goals, budget categories, account scope, and manual entry rules',
+        'Confirm read-only Plaid/provider connection policy',
+        'Enable Telegram finance capture',
+        'Add dashboard finance widgets',
+      ],
+    },
+  },
 ]
 
 const PERSONAL_APP_NAV_ITEMS: NavItem[] = PERSONAL_APP_BUNDLES.map((bundle) => ({
@@ -486,6 +658,18 @@ const PAGE_DIRECTIVES: Record<AppPage, PageDirective> = {
     usefulFor: 'Connecting nutrition to workouts, energy, reminders, and body goals.',
     cadence: 'Daily log and nightly recap',
   },
+  'mindset-coach-app': {
+    outcome: 'Keep motivation grounded and repeatable',
+    system: 'A modular Skill for motivation, affirmations, meditation prompts, emotional check-ins, and identity-aligned resets.',
+    usefulFor: 'Turning mindset work into daily structure instead of waiting for mood or motivation to cooperate.',
+    cadence: 'Morning, reset moments, and weekly reflection',
+  },
+  'personal-finance-coach-app': {
+    outcome: 'Make money decisions visible',
+    system: 'A modular Skill for read-only Plaid finance context, net worth, cashflow, spending, budgets, goals, and review rhythms.',
+    usefulFor: 'Connecting the Wealth dashboard to practical budget reviews, goal progress, and safer money decisions.',
+    cadence: 'Daily pulse, weekly review, and monthly net worth snapshot',
+  },
   'business-command': {
     outcome: 'Move the business with fewer clicks',
     system: 'Queue pressure, revenue signals, reviews, and runtime actions in one command surface.',
@@ -542,7 +726,7 @@ function isBusinessPage(page: AppPage): page is BusinessPage {
 }
 
 function isPersonalAppPage(page: AppPage): page is PersonalAppPage {
-  return page === 'workout-log-app' || page === 'nutrition-log-app'
+  return page === 'workout-log-app' || page === 'nutrition-log-app' || page === 'mindset-coach-app' || page === 'personal-finance-coach-app'
 }
 
 function businessPanelFromPage(page: BusinessPage): BusinessPanel {

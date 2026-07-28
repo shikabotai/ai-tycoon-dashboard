@@ -1214,6 +1214,16 @@ button {
   background: linear-gradient(145deg, #c58432, #7f4d9a);
 }
 
+.home-app-icon.indigo span,
+.personal-app-hero.indigo .personal-app-hero-icon {
+  background: linear-gradient(145deg, #6477d6, #8d5fb7);
+}
+
+.home-app-icon.teal span,
+.personal-app-hero.teal .personal-app-hero-icon {
+  background: linear-gradient(145deg, #2eb6a0, #2f6fa3);
+}
+
 .home-app-icon strong {
   max-width: 86px;
   color: var(--silver);
@@ -1257,6 +1267,18 @@ button {
 .personal-app-hero.amber {
   background:
     linear-gradient(120deg, rgba(215, 166, 91, 0.14), transparent 34%),
+    linear-gradient(180deg, rgba(11, 17, 27, 0.94), rgba(5, 9, 15, 0.98));
+}
+
+.personal-app-hero.indigo {
+  background:
+    linear-gradient(120deg, rgba(137, 124, 220, 0.16), transparent 34%),
+    linear-gradient(180deg, rgba(11, 17, 27, 0.94), rgba(5, 9, 15, 0.98));
+}
+
+.personal-app-hero.teal {
+  background:
+    linear-gradient(120deg, rgba(46, 182, 160, 0.14), transparent 34%),
     linear-gradient(180deg, rgba(11, 17, 27, 0.94), rgba(5, 9, 15, 0.98));
 }
 
