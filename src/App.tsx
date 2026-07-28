@@ -819,8 +819,8 @@ const HOME_CONSTELLATION_NODES: HomeConstellationNode[] = [
   { key: 'identity', label: 'Identity', tier: 'core', x: 50, y: 5, anchorX: 50, anchorY: 30, tone: 'mind' },
   { key: 'vessel', label: 'Vessel', tier: 'core', x: 82, y: 28, anchorX: 57, anchorY: 43, tone: 'body' },
   { key: 'systems', label: 'Systems', tier: 'core', x: 84, y: 56, anchorX: 61, anchorY: 54, tone: 'ops' },
-  { key: 'ventures', label: 'Ventures', tier: 'core', x: 69, y: 72, anchorX: 56, anchorY: 62, tone: 'growth' },
-  { key: 'career', label: 'Career', tier: 'core', x: 31, y: 72, anchorX: 44, anchorY: 62, tone: 'growth' },
+  { key: 'ventures', label: 'Ventures', tier: 'core', x: 69, y: 62, anchorX: 57, anchorY: 57, tone: 'growth' },
+  { key: 'career', label: 'Career', tier: 'core', x: 31, y: 62, anchorX: 43, anchorY: 57, tone: 'growth' },
   { key: 'wealth', label: 'Wealth', tier: 'core', x: 16, y: 56, anchorX: 39, anchorY: 57, tone: 'capital' },
   { key: 'relationships', label: 'Connections', tier: 'secondary', x: 18, y: 31, anchorX: 40, anchorY: 34, tone: 'connection' },
   { key: 'education', label: 'Education', tier: 'secondary', x: 34, y: 18, anchorX: 45, anchorY: 34, tone: 'mind' },
@@ -4320,7 +4320,7 @@ function App() {
                   </Suspense>
                 </div>
                 <div className="home-core-label">
-                  <span>Avatar Hub</span>
+                  <span>Mitchell Thanath</span>
                   <strong>{projectedSections.identity?.summaryCards[0]?.value ?? 'Identity profile loading'}</strong>
                 </div>
               </div>
