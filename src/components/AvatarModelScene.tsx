@@ -20,6 +20,34 @@ const INITIAL_AVATAR_ROTATION = -0.22
 const DRAG_ROTATION_SPEED = 0.012
 const AUTO_ROTATION_SPEED = 0.16
 const INERTIA_DECAY = 0.9
+const FOOT_PIVOT_BAND = 0.14
+
+function getAvatarFootPivot(scene: THREE.Object3D, bounds: THREE.Box3) {
+  const size = bounds.getSize(new THREE.Vector3())
+  const footCutoffY = bounds.min.y + size.y * FOOT_PIVOT_BAND
+  const footBounds = new THREE.Box3()
+  const vertex = new THREE.Vector3()
+  let foundFootGeometry = false
+
+  scene.traverse((object) => {
+    if (!(object instanceof THREE.Mesh)) return
+    const position = object.geometry.getAttribute('position')
+    if (!position) return
+
+    for (let index = 0; index < position.count; index += 1) {
+      vertex.fromBufferAttribute(position, index)
+      object.localToWorld(vertex)
+      if (vertex.y <= footCutoffY) {
+        footBounds.expandByPoint(vertex)
+        foundFootGeometry = true
+      }
+    }
+  })
+
+  return foundFootGeometry
+    ? footBounds.getCenter(new THREE.Vector3())
+    : bounds.getCenter(new THREE.Vector3())
+}
 
 function RotatingAvatar({ modelPath, rotationControl }: AvatarModelSceneProps & { rotationControl: AvatarRotationControl }) {
   const groupRef = useRef<THREE.Group>(null)
@@ -38,11 +66,11 @@ function RotatingAvatar({ modelPath, rotationControl }: AvatarModelSceneProps & 
 
     clonedScene.updateMatrixWorld(true)
     const bounds = new THREE.Box3().setFromObject(clonedScene)
-    const center = bounds.getCenter(new THREE.Vector3())
+    const pivot = getAvatarFootPivot(clonedScene, bounds)
 
     return {
       scene: clonedScene,
-      offset: new THREE.Vector3(-center.x, 0, -center.z),
+      offset: new THREE.Vector3(-pivot.x, 0, -pivot.z),
     }
   }, [gltf.scene])
 

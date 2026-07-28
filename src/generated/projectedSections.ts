@@ -3,8 +3,8 @@ import { attachProjectedDashboard } from '../data/projectedDashboardModel'
 import type { ProjectedSection, ProjectionSnapshot } from '../data/projectedTypes'
 
 export const generatedProjectionSnapshot: ProjectionSnapshot = {
-  "generatedAt": "2026-07-28T21:07:37.302Z",
-  "generatedAtLabel": "Jul 28, 2026, 5:07 PM EDT",
+  "generatedAt": "2026-07-28T21:16:48.290Z",
+  "generatedAtLabel": "Jul 28, 2026, 5:16 PM EDT",
   "source": "PunkRecords",
   "updateMode": "Nightly static projection"
 } as ProjectionSnapshot
