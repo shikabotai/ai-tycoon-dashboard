@@ -26,7 +26,7 @@ function RotatingAvatar({ modelPath, rotationControl }: AvatarModelSceneProps & 
   const mixerRef = useRef<THREE.AnimationMixer | null>(null)
   const gltf = useGLTF(modelPath)
 
-  const scene = useMemo(() => {
+  const { scene, offset } = useMemo(() => {
     const clonedScene = cloneSkeleton(gltf.scene)
     clonedScene.traverse((object) => {
       if (object instanceof THREE.Mesh) {
@@ -36,7 +36,14 @@ function RotatingAvatar({ modelPath, rotationControl }: AvatarModelSceneProps & 
       }
     })
 
-    return clonedScene
+    clonedScene.updateMatrixWorld(true)
+    const bounds = new THREE.Box3().setFromObject(clonedScene)
+    const center = bounds.getCenter(new THREE.Vector3())
+
+    return {
+      scene: clonedScene,
+      offset: new THREE.Vector3(-center.x, 0, -center.z),
+    }
   }, [gltf.scene])
 
   useEffect(() => {
@@ -86,7 +93,7 @@ function RotatingAvatar({ modelPath, rotationControl }: AvatarModelSceneProps & 
 
   return (
     <group ref={groupRef}>
-      <primitive object={scene} />
+      <primitive object={scene} position={offset} />
     </group>
   )
 }
