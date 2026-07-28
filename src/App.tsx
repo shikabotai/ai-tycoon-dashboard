@@ -4321,7 +4321,6 @@ function App() {
                 </div>
                 <div className="home-core-label">
                   <span>Mitchell Thanath</span>
-                  <strong>{projectedSections.identity?.summaryCards[0]?.value ?? 'Identity profile loading'}</strong>
                 </div>
               </div>
               {HOME_CONSTELLATION_NODES.map((node) => {
