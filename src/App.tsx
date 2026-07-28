@@ -29,10 +29,11 @@ const AvatarModelScene = lazy(async () => {
 
 type AppMode = 'personal' | 'business'
 type PersonalSection = 'home' | 'vessel' | 'identity' | 'career' | 'wealth' | 'ventures' | 'systems' | 'education' | 'relationships' | 'knowledge'
-type PersonalAppPage = 'workout-log-app' | 'nutrition-log-app' | 'mindset-coach-app' | 'personal-finance-coach-app'
+type PersonalAssistantPage = 'personal-assistant'
+type PersonalAppPage = 'task-manager-app' | 'workout-log-app' | 'nutrition-log-app' | 'mindset-coach-app' | 'personal-finance-coach-app'
 type BusinessPanel = 'overview' | 'agents' | 'review'
 type BusinessPage = 'business-command' | 'agents' | 'review-dock' | 'runtime-trail'
-type AppPage = PersonalSection | PersonalAppPage | BusinessPage
+type AppPage = PersonalSection | PersonalAssistantPage | PersonalAppPage | BusinessPage
 type LoginState = { username: string; password: string }
 type PersonalSectionData = LiveProjectedSection
 type ProjectionHighlightCard = { title: string; text: string }
@@ -69,7 +70,7 @@ type PersonalAppBundle = {
   page: PersonalAppPage
   title: string
   icon: string
-  accent: 'green' | 'amber' | 'indigo' | 'teal'
+  accent: 'blue' | 'green' | 'amber' | 'indigo' | 'teal'
   tagline: string
   overview: string
   connectedSignals: string[]
@@ -165,6 +166,7 @@ const PERSONAL_ROUTES: Record<PersonalSection, string> = {
 }
 
 const PERSONAL_APP_ROUTES: Record<PersonalAppPage, string> = {
+  'task-manager-app': '/skills/task-manager',
   'workout-log-app': '/skills/workout-coach',
   'nutrition-log-app': '/skills/nutrition-coach',
   'mindset-coach-app': '/skills/mindset-coach',
@@ -178,7 +180,11 @@ const BUSINESS_ROUTES: Record<BusinessPage, string> = {
   'runtime-trail': '/runtime-trail',
 }
 
-const PAGE_ROUTES: Record<AppPage, string> = { ...PERSONAL_ROUTES, ...PERSONAL_APP_ROUTES, ...BUSINESS_ROUTES }
+const PERSONAL_ASSISTANT_ROUTES: Record<PersonalAssistantPage, string> = {
+  'personal-assistant': '/personal-assistant',
+}
+
+const PAGE_ROUTES: Record<AppPage, string> = { ...PERSONAL_ROUTES, ...PERSONAL_ASSISTANT_ROUTES, ...PERSONAL_APP_ROUTES, ...BUSINESS_ROUTES }
 
 function appAssetPath(path: string) {
   return `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`
@@ -240,6 +246,107 @@ const BUSINESS_NAV_ITEMS: NavItem[] = [
 
 const PERSONAL_APP_BUNDLES: PersonalAppBundle[] = [
   {
+    page: 'task-manager-app',
+    title: 'Task Manager',
+    icon: 'TM',
+    accent: 'blue',
+    tagline: 'A reusable Skill that turns PunkRecords-style tasks, goals, lanes, stale items, priorities, and next actions into a daily operating workflow.',
+    overview: 'Task Manager packages Mitchell\'s active commitments into a Skill flow: collect onboarding answers, preview the generated SKILL.md/workflow, define the tools it can use, then enable it for task capture, lane review, stale-task cleanup, and daily summary focus.',
+    connectedSignals: ['Systems dashboard', 'PunkRecords tasks', 'Goals', 'Projects', 'Stale tasks', 'Daily summary', 'Weekly review cadence'],
+    skillFlow: {
+      description: [
+        'Turns loose task notes, project commitments, goals, lanes, stale items, priorities, blockers, and next actions into a repeatable task-management routine.',
+        'The Skill gives OpenClaw enough structure to capture tasks, sort them into lanes, detect stale work, choose the next action, and keep review cadence aligned with Mitchell\'s real operating system instead of acting like a calendar scheduler.',
+      ],
+      onboardingQuestions: [
+        'What task lanes should the manager use: personal, business, PunkRecords, school, health, admin, relationships, creative, or custom lanes?',
+        'What active goals and projects should tasks roll up into, and which ones matter most right now?',
+        'How should priorities be assigned: urgency, leverage, deadline, energy required, dependency, promise made, or Mitchell-selected rank?',
+        'When is a task considered stale, blocked, waiting, or no longer worth doing?',
+        'What does a good next action look like: smallest physical step, message to send, file to open, decision to make, or focused work block?',
+        'What review cadence should run: morning triage, midday reset, evening closeout, weekly cleanup, or project-by-project review?',
+        'How should completed tasks, abandoned tasks, deferred tasks, and recurring responsibilities be recorded?',
+      ],
+      workflowPreview: [
+        'Complete SKILL.md uses onboarding answers to fill in task lanes, project mappings, goal links, stale-task thresholds, priority rules, next-action format, review cadence, and approval boundaries.',
+        'The workflow starts with task intake, normalizes each item into lane, project, goal, priority, status, next action, created date, last touched date, and review date, then returns the smallest useful move.',
+        'Daily triage checks active tasks, stale tasks, blocked items, waiting items, and high-priority project commitments before proposing today\'s focus.',
+        'Stale-task review asks whether each old item should be revived, reduced to a next action, delegated, deferred, archived, or converted into a project note.',
+        'Generated templates cover task capture, lane review, project review, stale-task cleanup, daily focus selection, weekly review, and daily summary handoff.',
+      ],
+      permissionsAndTools: [
+        'Read and write Task Manager Skill files, task logs, lane definitions, goal maps, project notes, and review templates in the user hub repo',
+        'Read Systems dashboard context, PunkRecords task exports or notes, active goals, project files, daily memory, and prior daily summaries',
+        'Use Telegram capture for quick task intake, task completion, priority updates, blockers, and next-action requests',
+        'Use dashboard modules for lane counts, stale-task pressure, today\'s focus, project load, and review cadence status',
+        'Ask before messaging anyone else, deleting task history, changing external project systems, or committing Mitchell to a deadline',
+      ],
+      enableSteps: [
+        'Create the Task Manager Skill folder and generated SKILL.md preview',
+        'Answer onboarding questions and seed lanes, active goals, project mappings, priority rules, and stale-task thresholds',
+        'Review file permissions, Telegram capture, dashboard modules, and daily summary handoff',
+        'Enable the Skill for task capture, stale-task review, next-action selection, lane triage, and weekly cleanup',
+        'Pin Task Manager to the Systems dashboard and daily summary',
+      ],
+    },
+    template: {
+      purpose: 'Manage Mitchell\'s real task system with PunkRecords-style lanes, goals, projects, priorities, stale-task review, and concrete next actions so daily focus stays honest.',
+      setupInputs: [
+        'Task lanes and the rules for what belongs in each lane',
+        'Active goals, projects, commitments, and current priority order',
+        'Task fields: title, lane, project, goal, priority, status, next action, created date, last touched date, review date, and notes',
+        'Stale-task thresholds, blocked/waiting definitions, completion rules, and archive rules',
+        'Review cadence for daily triage, stale-task cleanup, project review, and weekly reset',
+      ],
+      repoFiles: [
+        'skills/task-manager/SKILL.md',
+        'skills/task-manager/context.md',
+        'skills/task-manager/data/tasks.md',
+        'skills/task-manager/data/projects.md',
+        'skills/task-manager/data/goals.md',
+        'skills/task-manager/templates/task-capture.md',
+        'skills/task-manager/templates/daily-triage.md',
+        'skills/task-manager/templates/stale-task-review.md',
+        'skills/task-manager/templates/weekly-review.md',
+        'skills/task-manager/dashboard.json',
+      ],
+      telegramFlows: [
+        'Capture a task by plain text and normalize it into lane, project, goal, priority, status, and next action',
+        'Mark a task done, blocked, waiting, deferred, revived, archived, or converted into a project note',
+        'Ask what to do next based on priorities, stale tasks, project pressure, energy, and open loops',
+        'Request lane review, project review, stale-task cleanup, or daily focus selection',
+      ],
+      dashboardModules: [
+        'Today focus panel',
+        'Lane load overview',
+        'Stale tasks queue',
+        'Priority next actions',
+        'Project pressure map',
+        'Review cadence status',
+      ],
+      automations: [
+        'Daily summary integration with top focus, stale-task warning, blocked items, and recommended next action',
+        'Midday reset when high-priority tasks remain untouched',
+        'Evening closeout for completed, carried, blocked, and abandoned tasks',
+        'Weekly stale-task cleanup and project-lane review',
+      ],
+      permissions: [
+        'Read and write Task Manager files in the user hub repo',
+        'Read Systems dashboard context, PunkRecords task context, goals, projects, daily memory, and prior summaries',
+        'Ask before messaging anyone else, deleting task history, changing external systems, or assigning deadlines on Mitchell\'s behalf',
+      ],
+      installChecklist: [
+        'Create Skill folder in the hub repo',
+        'Run task manager onboarding',
+        'Seed lanes, goals, projects, priority rules, and stale-task thresholds',
+        'Import or reference PunkRecords task context',
+        'Enable Telegram task capture',
+        'Add Systems dashboard task widgets',
+        'Add Task Manager section to daily summary generation',
+      ],
+    },
+  },
+  {
     page: 'workout-log-app',
     title: 'Workout Coach',
     icon: 'WC',
@@ -275,7 +382,7 @@ const PERSONAL_APP_BUNDLES: PersonalAppBundle[] = [
         'Answer onboarding questions and seed the first program context',
         'Review file permissions, Telegram capture, and dashboard modules',
         'Enable the Skill for workout logging, next-session planning, and weekly review',
-        'Pin Workout Coach to the Vessel dashboard and morning summary',
+        'Pin Workout Coach to the Vessel dashboard and daily summary',
       ],
     },
     template: {
@@ -307,7 +414,7 @@ const PERSONAL_APP_BUNDLES: PersonalAppBundle[] = [
       automations: [
         'Evening prompt when a planned workout has no log',
         'Weekly progression summary',
-        'Morning Summary integration for training priority',
+        'Daily Summary integration for training priority',
       ],
       permissions: [
         'Read and write workout files in the user hub repo',
@@ -359,7 +466,7 @@ const PERSONAL_APP_BUNDLES: PersonalAppBundle[] = [
         'Answer onboarding questions and seed targets, preferences, and default meals',
         'Review file permissions, Telegram capture, and dashboard modules',
         'Enable the Skill for meal logging, next-meal suggestions, and nightly review',
-        'Pin Nutrition Coach to the Vessel dashboard and morning summary',
+        'Pin Nutrition Coach to the Vessel dashboard and daily summary',
       ],
     },
     template: {
@@ -391,7 +498,7 @@ const PERSONAL_APP_BUNDLES: PersonalAppBundle[] = [
       automations: [
         'Meal logging reminders at user-selected times',
         'End-of-day nutrition recap',
-        'Morning Summary integration for food priority and grocery needs',
+        'Daily Summary integration for food priority and grocery needs',
       ],
       permissions: [
         'Read and write nutrition files in the user hub repo',
@@ -443,7 +550,7 @@ const PERSONAL_APP_BUNDLES: PersonalAppBundle[] = [
         'Answer onboarding questions and seed identity anchors, affirmations, and preferred reset practices',
         'Review file permissions, Telegram capture, dashboard modules, and emotional-support boundaries',
         'Enable the Skill for daily check-ins, motivation prompts, meditation guidance, and weekly reflection',
-        'Pin Mindset Coach to the Identity dashboard and morning summary',
+        'Pin Mindset Coach to the Identity dashboard and daily summary',
       ],
     },
     template: {
@@ -475,7 +582,7 @@ const PERSONAL_APP_BUNDLES: PersonalAppBundle[] = [
       automations: [
         'Morning intention prompt at user-selected times',
         'Evening reflection recap',
-        'Morning Summary integration for mindset priority and emotional-state signal',
+        'Daily Summary integration for mindset priority and emotional-state signal',
       ],
       permissions: [
         'Read and write mindset files in the user hub repo',
@@ -528,7 +635,7 @@ const PERSONAL_APP_BUNDLES: PersonalAppBundle[] = [
         'Answer onboarding questions and seed goals, account scope, budget categories, and review cadence',
         'Review read-only Plaid/provider permissions, manual entry rules, Telegram capture, and dashboard modules',
         'Enable the Skill for budget review, net worth snapshots, spending recaps, and goal tracking',
-        'Pin Personal Finance Coach to the Wealth dashboard and morning summary',
+        'Pin Personal Finance Coach to the Wealth dashboard and daily summary',
       ],
     },
     template: {
@@ -560,7 +667,7 @@ const PERSONAL_APP_BUNDLES: PersonalAppBundle[] = [
       automations: [
         'Weekly budget drift summary',
         'Monthly net worth and goal progress review',
-        'Morning Summary integration for bill timing, budget risk, and money priorities',
+        'Daily Summary integration for bill timing, budget risk, and money priorities',
       ],
       permissions: [
         'Read and write finance Skill files in the user hub repo',
@@ -658,6 +765,12 @@ const PAGE_DIRECTIVES: Record<AppPage, PageDirective> = {
     usefulFor: 'Connecting nutrition to workouts, energy, reminders, and body goals.',
     cadence: 'Daily log and nightly recap',
   },
+  'task-manager-app': {
+    outcome: 'Keep tasks honest',
+    system: 'A modular Skill for PunkRecords-style tasks, goals, lanes, stale items, priorities, projects, and next actions.',
+    usefulFor: 'Letting the assistant do Shika-style task triage without turning it into a calendar scheduler.',
+    cadence: 'Daily triage and weekly cleanup',
+  },
   'mindset-coach-app': {
     outcome: 'Keep motivation grounded and repeatable',
     system: 'A modular Skill for motivation, affirmations, meditation prompts, emotional check-ins, and identity-aligned resets.',
@@ -669,6 +782,12 @@ const PAGE_DIRECTIVES: Record<AppPage, PageDirective> = {
     system: 'A modular Skill for read-only Plaid finance context, net worth, cashflow, spending, budgets, goals, and review rhythms.',
     usefulFor: 'Connecting the Wealth dashboard to practical budget reviews, goal progress, and safer money decisions.',
     cadence: 'Daily pulse, weekly review, and monthly net worth snapshot',
+  },
+  'personal-assistant': {
+    outcome: 'Run the day from one assistant',
+    system: 'A Shika-like personal assistant layer that turns enabled Skills into daily capabilities, summary sections, prompts, and follow-through.',
+    usefulFor: 'Keeping the homepage focused while giving Skills a home inside the assistant that uses them.',
+    cadence: 'Daily operating loop',
   },
   'business-command': {
     outcome: 'Move the business with fewer clicks',
@@ -725,8 +844,12 @@ function isBusinessPage(page: AppPage): page is BusinessPage {
   return page === 'business-command' || page === 'agents' || page === 'review-dock' || page === 'runtime-trail'
 }
 
+function isPersonalAssistantPage(page: AppPage): page is PersonalAssistantPage {
+  return page === 'personal-assistant'
+}
+
 function isPersonalAppPage(page: AppPage): page is PersonalAppPage {
-  return page === 'workout-log-app' || page === 'nutrition-log-app' || page === 'mindset-coach-app' || page === 'personal-finance-coach-app'
+  return page === 'task-manager-app' || page === 'workout-log-app' || page === 'nutrition-log-app' || page === 'mindset-coach-app' || page === 'personal-finance-coach-app'
 }
 
 function businessPanelFromPage(page: BusinessPage): BusinessPanel {
@@ -1524,7 +1647,7 @@ function skillMarkdownPreview(bundle: PersonalAppBundle, answers: string[]) {
   const workflowLines = bundle.skillFlow?.workflowPreview.map((item) => `- ${item}`) ?? []
   const permissionLines = bundle.skillFlow?.permissionsAndTools.map((item) => `- ${item}`) ?? []
 
-  return `# ${bundle.title}\n\n## Purpose\n${bundle.template.purpose}\n\n## User Onboarding Answers\n${answerLines.join('\n')}\n\n## Setup Workflow\n- Create skills/${folder}/SKILL.md from this completed setup.\n${workflowLines.join('\n')}\n\n## Permissions And Tools\n${permissionLines.join('\n')}\n\n## Enablement\nWhen enabled, register ${bundle.title} with the user agent, pin it to the Vessel dashboard, and make it available from Telegram capture and daily summaries.`
+  return `# ${bundle.title}\n\n## Purpose\n${bundle.template.purpose}\n\n## User Onboarding Answers\n${answerLines.join('\n')}\n\n## Setup Workflow\n- Create skills/${folder}/SKILL.md from this completed setup.\n${workflowLines.join('\n')}\n\n## Daily Summary Section\nWhen this Skill is enabled, add a ${bundle.title} section to the user's daily summary with the latest signal, useful prompt, and next action.\n\n## Permissions And Tools\n${permissionLines.join('\n')}\n\n## Enablement\nWhen enabled, register ${bundle.title} with the Personal Assistant, make it available from Telegram capture, and include it in daily summaries.`
 }
 
 function App() {
@@ -1580,7 +1703,7 @@ function App() {
   })
   const dashboardData = useDashboardData()
   const appMode: AppMode = isBusinessPage(currentPage) ? 'business' : 'personal'
-  const personalSection: PersonalSection = isBusinessPage(currentPage) || isPersonalAppPage(currentPage) ? 'home' : currentPage
+  const personalSection: PersonalSection = isBusinessPage(currentPage) || isPersonalAssistantPage(currentPage) || isPersonalAppPage(currentPage) ? 'home' : currentPage
   const activePersonalApp = isPersonalAppPage(currentPage) ? PERSONAL_APP_BUNDLES.find((bundle) => bundle.page === currentPage) ?? null : null
   const isPersonalHome = currentPage === 'home'
   const businessPanel: BusinessPanel = isBusinessPage(currentPage) ? businessPanelFromPage(currentPage) : 'overview'
@@ -2213,6 +2336,88 @@ function App() {
       storeEnabledSkills(next)
       return next
     })
+  }
+
+  function renderPersonalAssistantPage() {
+    const enabledCount = enabledSkills.length
+    const dailySummarySections = PERSONAL_APP_BUNDLES.filter((bundle) => enabledSkills.includes(bundle.page))
+
+    return (
+      <main className="revamp-detail-page personal-assistant-page">
+        <section className="personal-assistant-hero">
+          <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
+          <div className="personal-assistant-mark" aria-hidden="true">PA</div>
+          <div>
+            <div className="revamp-kicker">MyAIgent Core</div>
+            <h2>Personal Assistant</h2>
+            <p>One Shika-like assistant layer that turns enabled Skills into daily capabilities, summaries, prompts, and follow-through.</p>
+          </div>
+          <aside className="section-utility-card">
+            <span>{enabledCount} enabled</span>
+            <strong>Daily operating loop</strong>
+            <p>Enabled Skills become sections in the daily summary and actions the assistant can actually perform.</p>
+          </aside>
+        </section>
+
+        <section className="personal-assistant-overview" aria-label="Personal Assistant overview">
+          <article className="glass-panel">
+            <div className="revamp-kicker">Assistant Role</div>
+            <h3>Context-aware support without ceremony.</h3>
+            <p>A direct personal assistant for Mitchell that keeps the day honest by turning scattered signals into next actions, check-ins, reminders, and summary sections.</p>
+          </article>
+          <article className="glass-panel">
+            <div className="revamp-kicker">Daily Summary</div>
+            <h3>Skills become summary blocks.</h3>
+            <p>When a Skill is enabled, it earns a section in the daily summary. Disabled Skills stay available for setup, but they do not add prompts or review blocks.</p>
+          </article>
+          <article className="glass-panel">
+            <div className="revamp-kicker">Boundaries</div>
+            <h3>Helpful by default, careful by design.</h3>
+            <p>The assistant can read personal operating context and write local Skill notes, but asks before sharing private information, messaging others, spending money, changing calendars, or treating health or finance guidance as professional advice.</p>
+          </article>
+        </section>
+
+        <section className="personal-assistant-summary" aria-label="Daily summary sections">
+          <div>
+            <div className="revamp-kicker">Active Daily Summary Sections</div>
+            <h3>{dailySummarySections.length ? 'Enabled Skills feeding the assistant.' : 'No Skills enabled yet.'}</h3>
+          </div>
+          <div className="assistant-summary-pills">
+            {dailySummarySections.length ? dailySummarySections.map((bundle) => (
+              <span key={bundle.page}>{bundle.title}</span>
+            )) : <span>Open a Skill, answer onboarding, then enable it.</span>}
+          </div>
+        </section>
+
+        <section className="personal-assistant-skills" aria-label="Assistant capabilities">
+          <div className="personal-app-template-head">
+            <div>
+              <div className="revamp-kicker">Assistant Capabilities</div>
+              <h3>Enabled Skills become what the Personal Assistant can actually do.</h3>
+            </div>
+            <span>{PAGE_ROUTES['personal-assistant']}</span>
+          </div>
+          <div className="personal-assistant-skill-grid">
+            {PERSONAL_APP_BUNDLES.map((bundle) => {
+              const skillEnabled = enabledSkills.includes(bundle.page)
+              return (
+                <article key={bundle.page} className={`assistant-skill-card ${bundle.accent}`}>
+                  <button type="button" onClick={() => navigateToPage(bundle.page)} aria-label={`Open ${bundle.title}`}>
+                    <span>{bundle.icon}</span>
+                    <strong>{bundle.title}</strong>
+                  </button>
+                  <p>{bundle.tagline}</p>
+                  <div>
+                    <small>{skillEnabled ? 'Enabled' : 'Available'}</small>
+                    <small>Daily summary section</small>
+                  </div>
+                </article>
+              )
+            })}
+          </div>
+        </section>
+      </main>
+    )
   }
 
   function renderPersonalAppPage(bundle: PersonalAppBundle) {
@@ -4086,7 +4291,9 @@ function App() {
       )}
 
       {appMode === 'personal' ? (
-        activePersonalApp ? (
+        isPersonalAssistantPage(currentPage) ? (
+          renderPersonalAssistantPage()
+        ) : activePersonalApp ? (
           renderPersonalAppPage(activePersonalApp)
         ) : personalSection === 'home' ? (
           <main className="home-constellation-screen" aria-label="Home control map">
@@ -4131,18 +4338,16 @@ function App() {
                 )
               })}
             </section>
-            <div className="home-app-dock" aria-label="MyAIgent skills">
-              {PERSONAL_APP_BUNDLES.map((bundle) => (
-                <button
-                  key={bundle.page}
-                  className={`home-app-icon ${bundle.accent}`}
-                  aria-label={`Open ${bundle.title}`}
-                  onClick={() => navigateToPage(bundle.page)}
-                >
-                  <span>{bundle.icon}</span>
-                  <strong>{bundle.title}</strong>
-                </button>
-              ))}
+            <div className="home-app-dock assistant-only" aria-label="MyAIgent assistant">
+              <button
+                className="home-assistant-button"
+                aria-label="Open Personal Assistant"
+                onClick={() => navigateToPage('personal-assistant')}
+              >
+                <span aria-hidden="true">PA</span>
+                <strong>Personal Assistant</strong>
+                <small>Daily support, enabled Skills, summaries, and follow-through.</small>
+              </button>
             </div>
           </main>
         ) : (
