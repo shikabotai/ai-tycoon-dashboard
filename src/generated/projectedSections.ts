@@ -3,8 +3,8 @@ import { attachProjectedDashboard } from '../data/projectedDashboardModel'
 import type { ProjectedSection, ProjectionSnapshot } from '../data/projectedTypes'
 
 export const generatedProjectionSnapshot: ProjectionSnapshot = {
-  "generatedAt": "2026-07-28T07:10:02.866Z",
-  "generatedAtLabel": "Jul 28, 2026, 3:10 AM EDT",
+  "generatedAt": "2026-07-28T19:34:16.752Z",
+  "generatedAtLabel": "Jul 28, 2026, 3:34 PM EDT",
   "source": "PunkRecords",
   "updateMode": "Nightly static projection"
 } as ProjectionSnapshot
@@ -173,8 +173,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       },
       {
         "label": "Nutrition log source",
-        "value": "172g protein",
-        "note": "1,320 kcal logged. Latest nutrition file: 2026-07-27.",
+        "value": "30g protein",
+        "note": "170 kcal logged. Latest nutrition file: 2026-07-28.",
         "stale": false
       },
       {
@@ -190,14 +190,14 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "highlights": [
       "Latest workout evidence: 2026-07-27",
-      "Latest nutrition evidence: 2026-07-27",
+      "Latest nutrition evidence: 2026-07-28",
       "Cut / recomp, not lean bulk",
       "Mental priority: focus, attention span, meditation, and phone friction",
       "Looks priority: grooming, skin, hair, style, and event readiness"
     ],
     "freshness": {
       "label": "Vessel evidence",
-      "ageDays": 1,
+      "ageDays": 0,
       "stale": false
     },
     "vessel": {
@@ -353,7 +353,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "freshness": {
       "label": "Operations board evidence",
-      "ageDays": 0,
+      "ageDays": 1,
       "stale": false
     },
     "blockers": [
@@ -784,7 +784,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "freshness": {
       "label": "Ventures planning docs",
-      "ageDays": 102,
+      "ageDays": 103,
       "stale": true
     },
     "ventures": {
@@ -1657,8 +1657,8 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       },
       {
         "label": "Most urgent deadline",
-        "value": "UL Report",
-        "note": "Due 2026-07-27T07:59:00-04:00."
+        "value": "Problem Set extra credit",
+        "note": "Due 2026-07-31T23:59:00-04:00."
       },
       {
         "label": "OMSCS course map",
@@ -1835,26 +1835,6 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         }
       ],
       "urgentDeadlines": [
-        {
-          "id": "cs7641-ul-report-2026-07-27t07-59-00-04-00",
-          "courseCode": "CS7641",
-          "courseName": "Machine Learning",
-          "title": "UL Report",
-          "dueAt": "2026-07-27T07:59:00-04:00",
-          "internalTarget": "2026-07-26T23:59:00-04:00",
-          "kind": "report",
-          "status": "urgent"
-        },
-        {
-          "id": "cs7641-ul-unit-quiz-2026-07-27t07-59-00-04-00",
-          "courseCode": "CS7641",
-          "courseName": "Machine Learning",
-          "title": "UL Unit Quiz",
-          "dueAt": "2026-07-27T07:59:00-04:00",
-          "internalTarget": "2026-07-26T23:59:00-04:00",
-          "kind": "quiz",
-          "status": "urgent"
-        },
         {
           "id": "cs7641-problem-set-extra-credit-2026-07-31t23-59-00-04-00",
           "courseCode": "CS7641",
