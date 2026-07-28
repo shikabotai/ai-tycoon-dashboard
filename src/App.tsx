@@ -4343,10 +4343,10 @@ function App() {
                 aria-label="Open Personal Assistant"
                 onClick={() => navigateToPage('personal-assistant')}
               >
-                <span className="home-assistant-glyph" aria-hidden="true">PA</span>
+                <span className="home-assistant-glyph" aria-hidden="true">S</span>
                 <span className="home-assistant-copy">
-                  <strong>Personal Assistant</strong>
-                  <small>Daily support, Skills, summaries, follow-through</small>
+                  <strong>Shika</strong>
+                  <small>Personal Assistant, Skills, summaries, follow-through</small>
                 </span>
               </button>
             </div>
