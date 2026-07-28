@@ -21,7 +21,7 @@ const DRAG_ROTATION_SPEED = 0.012
 const AUTO_ROTATION_SPEED = 0.16
 const INERTIA_DECAY = 0.9
 const FOOT_PIVOT_BAND = 0.14
-const AVATAR_MODEL_SCALE = 1.16
+const AVATAR_MODEL_SCALE = 1.32
 
 function getAvatarFootPivot(scene: THREE.Object3D, bounds: THREE.Box3) {
   const size = bounds.getSize(new THREE.Vector3())
