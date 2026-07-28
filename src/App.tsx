@@ -859,6 +859,7 @@ function businessPanelFromPage(page: BusinessPage): BusinessPanel {
 }
 
 function pageLabel(page: AppPage) {
+  if (page === 'personal-assistant') return 'Personal Assistant'
   return [...PERSONAL_NAV_ITEMS, ...PERSONAL_APP_NAV_ITEMS, ...BUSINESS_NAV_ITEMS].find((item) => item.page === page)?.label ?? 'Home'
 }
 
@@ -2344,6 +2345,32 @@ function App() {
 
     return (
       <main className="revamp-detail-page personal-assistant-page">
+        <section className="personal-assistant-skills docked" aria-label="Assistant capabilities">
+          <div className="personal-assistant-section-head">
+            <div>
+              <div className="revamp-kicker">Assistant Capabilities</div>
+              <h3>Skills are what the assistant can do.</h3>
+            </div>
+            <span>{enabledCount}/{PERSONAL_APP_BUNDLES.length} enabled</span>
+          </div>
+          <div className="assistant-skill-dock">
+            {PERSONAL_APP_BUNDLES.map((bundle) => (
+              <button
+                key={bundle.page}
+                type="button"
+                role="listitem"
+                className={`home-app-icon assistant-skill-icon ${bundle.accent} ${enabledSkills.includes(bundle.page) ? 'enabled' : ''}`}
+                aria-label={`Open ${bundle.title}. ${enabledSkills.includes(bundle.page) ? 'Enabled' : 'Available'}.`}
+                onClick={() => navigateToPage(bundle.page)}
+              >
+                <span aria-hidden="true">{bundle.icon}</span>
+                <strong>{bundle.title}</strong>
+                <small>{enabledSkills.includes(bundle.page) ? 'Enabled' : 'Available'}</small>
+              </button>
+            ))}
+          </div>
+        </section>
+
         <section className="personal-assistant-hero">
           <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
           <div className="personal-assistant-mark" aria-hidden="true">PA</div>
@@ -2359,24 +2386,6 @@ function App() {
           </aside>
         </section>
 
-        <section className="personal-assistant-overview" aria-label="Personal Assistant overview">
-          <article className="glass-panel">
-            <div className="revamp-kicker">Assistant Role</div>
-            <h3>Context-aware support without ceremony.</h3>
-            <p>A direct personal assistant for Mitchell that keeps the day honest by turning scattered signals into next actions, check-ins, reminders, and summary sections.</p>
-          </article>
-          <article className="glass-panel">
-            <div className="revamp-kicker">Daily Summary</div>
-            <h3>Skills become summary blocks.</h3>
-            <p>When a Skill is enabled, it earns a section in the daily summary. Disabled Skills stay available for setup, but they do not add prompts or review blocks.</p>
-          </article>
-          <article className="glass-panel">
-            <div className="revamp-kicker">Boundaries</div>
-            <h3>Helpful by default, careful by design.</h3>
-            <p>The assistant can read personal operating context and write local Skill notes, but asks before sharing private information, messaging others, spending money, changing calendars, or treating health or finance guidance as professional advice.</p>
-          </article>
-        </section>
-
         <section className="personal-assistant-summary" aria-label="Daily summary sections">
           <div>
             <div className="revamp-kicker">Active Daily Summary Sections</div>
@@ -2389,31 +2398,21 @@ function App() {
           </div>
         </section>
 
-        <section className="personal-assistant-skills" aria-label="Assistant capabilities">
-          <div className="personal-app-template-head">
-            <div>
-              <div className="revamp-kicker">Assistant Capabilities</div>
-              <h3>Enabled Skills become what the Personal Assistant can actually do.</h3>
-            </div>
-            <span>{PAGE_ROUTES['personal-assistant']}</span>
+        <section className="personal-assistant-operating-lines" aria-label="Personal Assistant operating model">
+          <div>
+            <span>Assistant Role</span>
+            <strong>Context-aware support without ceremony.</strong>
+            <p>A direct personal assistant for Mitchell that keeps the day honest by turning scattered signals into next actions, check-ins, reminders, and summary sections.</p>
           </div>
-          <div className="personal-assistant-skill-grid">
-            {PERSONAL_APP_BUNDLES.map((bundle) => {
-              const skillEnabled = enabledSkills.includes(bundle.page)
-              return (
-                <article key={bundle.page} className={`assistant-skill-card ${bundle.accent}`}>
-                  <button type="button" onClick={() => navigateToPage(bundle.page)} aria-label={`Open ${bundle.title}`}>
-                    <span>{bundle.icon}</span>
-                    <strong>{bundle.title}</strong>
-                  </button>
-                  <p>{bundle.tagline}</p>
-                  <div>
-                    <small>{skillEnabled ? 'Enabled' : 'Available'}</small>
-                    <small>Daily summary section</small>
-                  </div>
-                </article>
-              )
-            })}
+          <div>
+            <span>Daily Summary</span>
+            <strong>Skills become summary blocks.</strong>
+            <p>When a Skill is enabled, it earns a section in the daily summary. Disabled Skills stay available for setup, but they do not add prompts or review blocks.</p>
+          </div>
+          <div>
+            <span>Boundaries</span>
+            <strong>Helpful by default, careful by design.</strong>
+            <p>The assistant asks before sharing private information, messaging others, spending money, changing calendars, or treating health or finance guidance as professional advice.</p>
           </div>
         </section>
       </main>
@@ -2444,7 +2443,7 @@ function App() {
     return (
       <main className="revamp-detail-page personal-app-page">
         <section className={`personal-app-hero ${bundle.accent}`}>
-          <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
+          <button className="back-button" onClick={() => navigateToPage('personal-assistant')}>Assistant</button>
           <div className="personal-app-hero-icon" aria-hidden="true">{bundle.icon}</div>
           <div className="personal-app-hero-copy">
             <div className="revamp-kicker">MyAIgent Skill Package</div>
@@ -4340,13 +4339,16 @@ function App() {
             </section>
             <div className="home-app-dock assistant-only" aria-label="MyAIgent assistant">
               <button
+                type="button"
                 className="home-assistant-button"
                 aria-label="Open Personal Assistant"
                 onClick={() => navigateToPage('personal-assistant')}
               >
-                <span aria-hidden="true">PA</span>
-                <strong>Personal Assistant</strong>
-                <small>Daily support, enabled Skills, summaries, and follow-through.</small>
+                <span className="home-assistant-glyph" aria-hidden="true">PA</span>
+                <span className="home-assistant-copy">
+                  <strong>Personal Assistant</strong>
+                  <small>Daily support, Skills, summaries, follow-through</small>
+                </span>
               </button>
             </div>
           </main>
