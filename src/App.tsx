@@ -43,6 +43,7 @@ type EmptyStateProps = { label: string; title: string; body: string }
 type ManualFinanceDraft = { type: 'asset' | 'liability'; name: string; category: string; value: string; notes: string }
 type BudgetDraft = { category: string; plannedAmount: string; month: string; notes: string }
 type PlaidLinkMetadata = { institution?: { institution_id?: string; name?: string } }
+type SkillAnswerState = Partial<Record<PersonalAppPage, string[]>>
 type PlaidCreateOptions = {
   token: string
   onSuccess: (publicToken: string, metadata: PlaidLinkMetadata) => void
@@ -72,6 +73,13 @@ type PersonalAppBundle = {
   tagline: string
   overview: string
   connectedSignals: string[]
+  skillFlow?: {
+    description: string[]
+    onboardingQuestions: string[]
+    workflowPreview: string[]
+    permissionsAndTools: string[]
+    enableSteps: string[]
+  }
   template: {
     purpose: string
     setupInputs: string[]
@@ -121,6 +129,8 @@ const SESSION_KEY = 'control-center-auth'
 const LOGIN_STATE_KEY = 'control-center-login-state'
 const COMMAND_HISTORY_KEY = 'control-center-command-history'
 const IDENTITY_QUALITIES_KEY = 'control-center-identity-qualities'
+const SKILL_ANSWERS_KEY = 'control-center-skill-answers'
+const ENABLED_SKILLS_KEY = 'control-center-enabled-skills'
 const APP_BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '')
 const AVATAR_MODEL_VERSION = 'model-7-20260712'
 const AVATAR_MODEL_PATH = `${appAssetPath('avatar/control-center-avatar.glb')}?v=${AVATAR_MODEL_VERSION}`
@@ -155,8 +165,8 @@ const PERSONAL_ROUTES: Record<PersonalSection, string> = {
 }
 
 const PERSONAL_APP_ROUTES: Record<PersonalAppPage, string> = {
-  'workout-log-app': '/apps/workout-log',
-  'nutrition-log-app': '/apps/nutrition-log',
+  'workout-log-app': '/skills/workout-coach',
+  'nutrition-log-app': '/skills/nutrition-coach',
 }
 
 const BUSINESS_ROUTES: Record<BusinessPage, string> = {
@@ -229,12 +239,43 @@ const BUSINESS_NAV_ITEMS: NavItem[] = [
 const PERSONAL_APP_BUNDLES: PersonalAppBundle[] = [
   {
     page: 'workout-log-app',
-    title: 'Workout Log',
-    icon: 'WL',
+    title: 'Workout Coach',
+    icon: 'WC',
     accent: 'green',
-    tagline: 'Training history, program adherence, recovery notes, and next-lift decisions as one reusable OpenClaw app.',
-    overview: 'Workout Log turns scattered training notes into a repeatable body-performance workflow. It helps the assistant ask for the right workout details, store each session cleanly, summarize progress, and surface the next practical training move inside the dashboard and morning review.',
+    tagline: 'A reusable Skill that asks the right training questions, generates a coaching workflow, and helps OpenClaw guide the next session.',
+    overview: 'Workout Coach packages training context into a Skill flow: collect onboarding answers, preview the generated SKILL.md/workflow, define the tools it can use, then enable it for daily coaching and workout capture.',
     connectedSignals: ['Vessel readiness', 'Identity discipline score', 'Task planning', 'Morning summary', 'Weekly progress review'],
+    skillFlow: {
+      description: [
+        'Turns workout notes, program context, soreness, equipment, and schedule constraints into a repeatable coaching routine.',
+        'The Skill gives OpenClaw enough structure to log sessions, recommend the next lift, review progression, and keep training decisions aligned with Vessel goals.',
+      ],
+      onboardingQuestions: [
+        'What is the current training goal: strength, hypertrophy, recomposition, conditioning, sport, or general health?',
+        'What days and times are realistic for training each week?',
+        'What program, split, exercises, working weights, and progression rules should the coach understand?',
+        'What equipment, injuries, soreness patterns, sleep constraints, and recovery signals should shape recommendations?',
+        'How should workouts be logged: quick text, detailed sets, post-session recap, or dashboard-first entry?',
+      ],
+      workflowPreview: [
+        'Complete SKILL.md uses onboarding answers to fill in the training goal, schedule, program, constraints, logging style, triggers, and approval rules.',
+        'The workflow starts with intake, stores a normalized session entry, checks recent training and recovery, then returns the next practical training move.',
+        'Generated templates cover session logs, weekly recaps, missed-workout recovery, and next-session recommendations.',
+      ],
+      permissionsAndTools: [
+        'Read and write workout Skill files and training logs in the user hub repo',
+        'Read Vessel goals, schedule context, prior workout entries, and user-provided recovery notes',
+        'Use Telegram capture for quick logs and dashboard modules for coach summaries',
+        'Ask before messaging anyone else, changing calendar events, or sharing health information',
+      ],
+      enableSteps: [
+        'Create the Workout Coach Skill folder and generated SKILL.md preview',
+        'Answer onboarding questions and seed the first program context',
+        'Review file permissions, Telegram capture, and dashboard modules',
+        'Enable the Skill for workout logging, next-session planning, and weekly review',
+        'Pin Workout Coach to the Vessel dashboard and morning summary',
+      ],
+    },
     template: {
       purpose: 'Capture strength training, cardio, mobility, soreness, recovery, and consistency so the main OS can reason about physical momentum.',
       setupInputs: [
@@ -244,11 +285,11 @@ const PERSONAL_APP_BUNDLES: PersonalAppBundle[] = [
         'Recovery constraints such as sleep, soreness, injuries, and equipment',
       ],
       repoFiles: [
-        'apps/workout-log/SKILL.md',
-        'apps/workout-log/context.md',
-        'apps/workout-log/data/workouts.md',
-        'apps/workout-log/templates/session-log.md',
-        'apps/workout-log/dashboard.json',
+        'skills/workout-coach/SKILL.md',
+        'skills/workout-coach/context.md',
+        'skills/workout-coach/data/workouts.md',
+        'skills/workout-coach/templates/session-log.md',
+        'skills/workout-coach/dashboard.json',
       ],
       telegramFlows: [
         'Log workout with exercises, sets, reps, weight, RPE, and notes',
@@ -272,7 +313,7 @@ const PERSONAL_APP_BUNDLES: PersonalAppBundle[] = [
         'Ask before messaging anyone else or changing calendar events',
       ],
       installChecklist: [
-        'Create app folder in the hub repo',
+        'Create Skill folder in the hub repo',
         'Run onboarding questions',
         'Seed first program and exercise list',
         'Enable Telegram commands',
@@ -282,12 +323,43 @@ const PERSONAL_APP_BUNDLES: PersonalAppBundle[] = [
   },
   {
     page: 'nutrition-log-app',
-    title: 'Nutrition Log',
-    icon: 'NL',
+    title: 'Nutrition Coach',
+    icon: 'NC',
     accent: 'amber',
-    tagline: 'Meals, macros, body goals, habits, and food decisions packaged as a connected OpenClaw app.',
-    overview: 'Nutrition Log gives the assistant a clean way to capture food, estimate calories and protein, understand the user’s current nutrition goal, and connect food decisions to workouts, energy, physique, and daily planning.',
+    tagline: 'A reusable Skill that asks the right nutrition questions, generates a coaching workflow, and helps OpenClaw guide daily food decisions.',
+    overview: 'Nutrition Coach packages food goals, meal preferences, macro targets, budget, constraints, and logging style into a Skill flow: collect onboarding answers, preview the generated SKILL.md/workflow, define the tools it can use, then enable it for daily nutrition coaching.',
     connectedSignals: ['Vessel goals', 'Workout recovery', 'Daily reminders', 'Grocery planning', 'Identity consistency'],
+    skillFlow: {
+      description: [
+        'Turns meal logs, nutrition goals, dietary preferences, budget, schedule, and training context into a repeatable coaching routine.',
+        'The Skill gives OpenClaw enough structure to capture food, estimate calories and protein, suggest the next useful meal choice, and connect nutrition decisions to Vessel goals.',
+      ],
+      onboardingQuestions: [
+        'What is the current nutrition goal: cut, bulk, maintain, recomp, performance, or health baseline?',
+        'What calorie target, protein target, meal schedule, and weigh-in rhythm should the coach use?',
+        'What foods should be encouraged, limited, avoided, or treated as easy default meals?',
+        'What allergies, dietary rules, budget constraints, cooking ability, grocery access, and restaurant habits should shape suggestions?',
+        'How should nutrition be logged: quick text, detailed macros, meal photos, grocery receipts, or end-of-day recap?',
+      ],
+      workflowPreview: [
+        'Complete SKILL.md uses onboarding answers to fill in the nutrition goal, targets, preferences, constraints, logging style, triggers, and approval rules.',
+        'The workflow starts with intake, stores normalized meal entries, checks remaining daily targets and workout context, then returns the next practical food decision.',
+        'Generated templates cover daily logs, grocery defaults, meal recaps, missed-log recovery, and next-meal recommendations.',
+      ],
+      permissionsAndTools: [
+        'Read and write nutrition Skill files and meal logs in the user hub repo',
+        'Read Vessel goals, workout context, schedule constraints, body metrics, and user-provided food preferences',
+        'Use Telegram capture for quick meal logs and dashboard modules for nutrition summaries',
+        'Ask before ordering food, purchasing groceries, messaging anyone else, or sharing health information',
+      ],
+      enableSteps: [
+        'Create the Nutrition Coach Skill folder and generated SKILL.md preview',
+        'Answer onboarding questions and seed targets, preferences, and default meals',
+        'Review file permissions, Telegram capture, and dashboard modules',
+        'Enable the Skill for meal logging, next-meal suggestions, and nightly review',
+        'Pin Nutrition Coach to the Vessel dashboard and morning summary',
+      ],
+    },
     template: {
       purpose: 'Track meals and nutrition decisions with enough structure for useful coaching without making logging feel heavy.',
       setupInputs: [
@@ -297,11 +369,11 @@ const PERSONAL_APP_BUNDLES: PersonalAppBundle[] = [
         'Preferred logging style: quick text, detailed macros, photos, or end-of-day recap',
       ],
       repoFiles: [
-        'apps/nutrition-log/SKILL.md',
-        'apps/nutrition-log/context.md',
-        'apps/nutrition-log/data/meals.md',
-        'apps/nutrition-log/templates/daily-log.md',
-        'apps/nutrition-log/dashboard.json',
+        'skills/nutrition-coach/SKILL.md',
+        'skills/nutrition-coach/context.md',
+        'skills/nutrition-coach/data/meals.md',
+        'skills/nutrition-coach/templates/daily-log.md',
+        'skills/nutrition-coach/dashboard.json',
       ],
       telegramFlows: [
         'Log meal by plain text and normalize into calories, protein, and notes',
@@ -325,7 +397,7 @@ const PERSONAL_APP_BUNDLES: PersonalAppBundle[] = [
         'Ask before ordering food, groceries, or sharing health information',
       ],
       installChecklist: [
-        'Create app folder in the hub repo',
+        'Create Skill folder in the hub repo',
         'Run nutrition onboarding',
         'Set targets and logging preference',
         'Enable Telegram meal capture',
@@ -404,13 +476,13 @@ const PAGE_DIRECTIVES: Record<AppPage, PageDirective> = {
   },
   'workout-log-app': {
     outcome: 'Make training visible and repeatable',
-    system: 'A modular app template for logging workouts, tracking progression, and feeding body signals back into the main OS.',
+    system: 'A modular Skill for logging workouts, tracking progression, and feeding body signals back into the main OS.',
     usefulFor: 'Turning workouts into connected context for planning, identity, energy, and weekly reviews.',
     cadence: 'Per workout and weekly recap',
   },
   'nutrition-log-app': {
     outcome: 'Make food decisions part of the OS',
-    system: 'A modular app template for capturing meals, goals, macros, and nutrition decisions without making the user manage a complex system.',
+    system: 'A modular Skill for capturing meals, goals, macros, and nutrition decisions without making the user manage a complex system.',
     usefulFor: 'Connecting nutrition to workouts, energy, reminders, and body goals.',
     cadence: 'Daily log and nightly recap',
   },
@@ -1221,6 +1293,56 @@ function storeIdentityQualities(qualities: IdentityQuality[]) {
   window.localStorage.setItem(IDENTITY_QUALITIES_KEY, JSON.stringify(qualities))
 }
 
+function loadStoredSkillAnswers(): SkillAnswerState {
+  if (typeof window === 'undefined') return {}
+  try {
+    const raw = window.localStorage.getItem(SKILL_ANSWERS_KEY)
+    if (!raw) return {}
+    const parsed = JSON.parse(raw) as SkillAnswerState
+    return parsed && typeof parsed === 'object' ? parsed : {}
+  } catch {
+    return {}
+  }
+}
+
+function storeSkillAnswers(answers: SkillAnswerState) {
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(SKILL_ANSWERS_KEY, JSON.stringify(answers))
+}
+
+function loadStoredEnabledSkills(): PersonalAppPage[] {
+  if (typeof window === 'undefined') return []
+  try {
+    const raw = window.localStorage.getItem(ENABLED_SKILLS_KEY)
+    if (!raw) return []
+    const parsed = JSON.parse(raw) as PersonalAppPage[]
+    return Array.isArray(parsed) ? parsed.filter(isPersonalAppPage) : []
+  } catch {
+    return []
+  }
+}
+
+function storeEnabledSkills(skills: PersonalAppPage[]) {
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(ENABLED_SKILLS_KEY, JSON.stringify(skills))
+}
+
+function skillFolderName(bundle: PersonalAppBundle) {
+  return bundle.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+}
+
+function skillMarkdownPreview(bundle: PersonalAppBundle, answers: string[]) {
+  const folder = skillFolderName(bundle)
+  const answerLines = bundle.skillFlow?.onboardingQuestions.map((question, index) => {
+    const answer = answers[index]?.trim() || '[user answer]'
+    return `- ${question}\n  Answer: ${answer}`
+  }) ?? []
+  const workflowLines = bundle.skillFlow?.workflowPreview.map((item) => `- ${item}`) ?? []
+  const permissionLines = bundle.skillFlow?.permissionsAndTools.map((item) => `- ${item}`) ?? []
+
+  return `# ${bundle.title}\n\n## Purpose\n${bundle.template.purpose}\n\n## User Onboarding Answers\n${answerLines.join('\n')}\n\n## Setup Workflow\n- Create skills/${folder}/SKILL.md from this completed setup.\n${workflowLines.join('\n')}\n\n## Permissions And Tools\n${permissionLines.join('\n')}\n\n## Enablement\nWhen enabled, register ${bundle.title} with the user agent, pin it to the Vessel dashboard, and make it available from Telegram capture and daily summaries.`
+}
+
 function App() {
   const [authed, setAuthed] = useState(() => loadStoredSession())
   const [currentPage, setCurrentPage] = useState<AppPage>(() => pageFromBrowserLocation())
@@ -1237,6 +1359,8 @@ function App() {
   const [selectedReviewTaskId, setSelectedReviewTaskId] = useState<string | null>(null)
   const [projectedSections, setProjectedSections] = useState<Partial<Record<PersonalProjectionKey, LiveProjectedSection>>>({})
   const [categoryLensIndex, setCategoryLensIndex] = useState<Partial<Record<Exclude<PersonalSection, 'home'>, number>>>({})
+  const [skillAnswers, setSkillAnswers] = useState<SkillAnswerState>(() => loadStoredSkillAnswers())
+  const [enabledSkills, setEnabledSkills] = useState<PersonalAppPage[]>(() => loadStoredEnabledSkills())
   const [identityQualityEdits, setIdentityQualityEdits] = useState<IdentityQuality[]>(() => loadStoredIdentityQualities([]))
   const [identityScoresEditable, setIdentityScoresEditable] = useState(false)
   const [educationAlternativesOpen, setEducationAlternativesOpen] = useState(false)
@@ -1889,16 +2013,44 @@ function App() {
     setCommandValue('')
   }
 
+  function updateSkillAnswer(page: PersonalAppPage, index: number, value: string) {
+    setSkillAnswers((prev) => {
+      const nextAnswers = [...(prev[page] ?? [])]
+      nextAnswers[index] = value
+      const next = { ...prev, [page]: nextAnswers }
+      storeSkillAnswers(next)
+      return next
+    })
+  }
+
+  function enableSkill(page: PersonalAppPage) {
+    setEnabledSkills((prev) => {
+      const next = prev.includes(page) ? prev : [...prev, page]
+      storeEnabledSkills(next)
+      return next
+    })
+  }
+
   function renderPersonalAppPage(bundle: PersonalAppBundle) {
-    const templateSections: Array<{ title: string; items: string[] }> = [
-      { title: 'Setup Inputs', items: bundle.template.setupInputs },
-      { title: 'Repo Files', items: bundle.template.repoFiles },
-      { title: 'Telegram Flows', items: bundle.template.telegramFlows },
-      { title: 'Dashboard Modules', items: bundle.template.dashboardModules },
-      { title: 'Automations', items: bundle.template.automations },
-      { title: 'Permissions', items: bundle.template.permissions },
-      { title: 'Install Checklist', items: bundle.template.installChecklist },
-    ]
+    const answers = skillAnswers[bundle.page] ?? []
+    const skillEnabled = enabledSkills.includes(bundle.page)
+    const generatedSkillMarkdown = skillMarkdownPreview(bundle, answers)
+    const templateSections: Array<{ title: string; items: string[] }> = bundle.skillFlow
+      ? [
+          { title: 'Brief Description', items: bundle.skillFlow.description },
+          { title: 'Complete SKILL.md Setup Workflow', items: bundle.skillFlow.workflowPreview },
+          { title: 'Permissions / Tools', items: bundle.skillFlow.permissionsAndTools },
+          { title: 'Enable Steps', items: bundle.skillFlow.enableSteps },
+        ]
+      : [
+          { title: 'Setup Inputs', items: bundle.template.setupInputs },
+          { title: 'Repo Files', items: bundle.template.repoFiles },
+          { title: 'Telegram Flows', items: bundle.template.telegramFlows },
+          { title: 'Dashboard Modules', items: bundle.template.dashboardModules },
+          { title: 'Automations', items: bundle.template.automations },
+          { title: 'Permissions', items: bundle.template.permissions },
+          { title: 'Install Checklist', items: bundle.template.installChecklist },
+        ]
 
     return (
       <main className="revamp-detail-page personal-app-page">
@@ -1906,7 +2058,7 @@ function App() {
           <button className="back-button" onClick={() => navigateToPage('home')}>Home</button>
           <div className="personal-app-hero-icon" aria-hidden="true">{bundle.icon}</div>
           <div className="personal-app-hero-copy">
-            <div className="revamp-kicker">MyAIgent App Package</div>
+            <div className="revamp-kicker">MyAIgent Skill Package</div>
             <h2>{bundle.title}</h2>
             <p>{bundle.tagline}</p>
           </div>
@@ -1915,11 +2067,11 @@ function App() {
         <section className="personal-app-overview" aria-label={`${bundle.title} overview`}>
           <article className="glass-panel personal-app-overview-prime">
             <div className="revamp-kicker">Overview</div>
-            <h3>Connected workflow, packaged like an app.</h3>
+            <h3>Connected workflow, packaged as a Skill.</h3>
             <p>{bundle.overview}</p>
           </article>
           <article className="glass-panel personal-app-purpose">
-            <div className="revamp-kicker">Template Purpose</div>
+            <div className="revamp-kicker">Skill Purpose</div>
             <p>{bundle.template.purpose}</p>
           </article>
           <article className="glass-panel personal-app-signals">
@@ -1930,11 +2082,48 @@ function App() {
           </article>
         </section>
 
+        {bundle.skillFlow ? (
+          <section className="skill-builder-grid" aria-label={`${bundle.title} onboarding builder`}>
+            <article className="glass-panel skill-question-panel">
+              <div className="revamp-kicker">User Onboarding Questions</div>
+              <h3>Answers that fill in the generated Skill.</h3>
+              <div className="skill-question-list">
+                {bundle.skillFlow.onboardingQuestions.map((question, index) => (
+                  <label key={question} className="skill-question-field">
+                    <span>{question}</span>
+                    <textarea
+                      value={answers[index] ?? ''}
+                      onChange={(event) => updateSkillAnswer(bundle.page, index, event.target.value)}
+                      placeholder="User answer goes here"
+                      rows={3}
+                    />
+                  </label>
+                ))}
+              </div>
+            </article>
+            <article className="glass-panel skill-generated-panel">
+              <div className="skill-generated-head">
+                <div>
+                  <div className="revamp-kicker">Generated Skill.md</div>
+                  <h3>OpenClaw setup preview</h3>
+                </div>
+                <button
+                  className={skillEnabled ? 'revamp-command-btn solid' : 'revamp-command-btn'}
+                  onClick={() => enableSkill(bundle.page)}
+                >
+                  {skillEnabled ? 'Skill enabled' : 'Enable Skill'}
+                </button>
+              </div>
+              <pre>{generatedSkillMarkdown}</pre>
+            </article>
+          </section>
+        ) : null}
+
         <section className="personal-app-template" aria-label={`${bundle.title} template details`}>
           <div className="personal-app-template-head">
             <div>
-              <div className="revamp-kicker">Reusable Template</div>
-              <h3>Everything another OpenClaw needs to install this app cleanly.</h3>
+              <div className="revamp-kicker">{bundle.skillFlow ? 'Skill Flow' : 'Reusable Template'}</div>
+              <h3>{bundle.skillFlow ? 'Everything needed to review and enable this coaching Skill.' : 'Everything another OpenClaw needs to install this Skill cleanly.'}</h3>
             </div>
             <span>{PAGE_ROUTES[bundle.page]}</span>
           </div>
@@ -3758,7 +3947,7 @@ function App() {
                 )
               })}
             </section>
-            <div className="home-app-dock" aria-label="MyAIgent apps">
+            <div className="home-app-dock" aria-label="MyAIgent skills">
               {PERSONAL_APP_BUNDLES.map((bundle) => (
                 <button
                   key={bundle.page}

@@ -1325,6 +1325,88 @@ button {
   gap: 14px;
 }
 
+.skill-builder-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(320px, 1.08fr);
+  gap: 14px;
+}
+
+.skill-question-panel,
+.skill-generated-panel {
+  min-height: 420px;
+  border-radius: 10px;
+  padding: 18px;
+}
+
+.skill-question-panel h3,
+.skill-generated-panel h3 {
+  margin: 6px 0 0;
+  color: var(--text);
+  font-size: 1.14rem;
+  letter-spacing: 0;
+}
+
+.skill-question-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.skill-question-field {
+  display: grid;
+  gap: 8px;
+}
+
+.skill-question-field span {
+  color: var(--silver);
+  font-size: 0.85rem;
+  line-height: 1.35;
+}
+
+.skill-question-field textarea {
+  width: 100%;
+  min-height: 76px;
+  resize: vertical;
+  border: 1px solid rgba(124, 168, 226, 0.2);
+  border-radius: 8px;
+  background: rgba(4, 9, 16, 0.82);
+  color: var(--text);
+  padding: 10px 12px;
+  font: inherit;
+  line-height: 1.38;
+}
+
+.skill-question-field textarea:focus {
+  border-color: rgba(107, 216, 200, 0.58);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(107, 216, 200, 0.1);
+}
+
+.skill-generated-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.skill-generated-head button {
+  flex: 0 0 auto;
+}
+
+.skill-generated-panel pre {
+  max-height: 520px;
+  overflow: auto;
+  margin: 16px 0 0;
+  border: 1px solid rgba(124, 168, 226, 0.16);
+  border-radius: 8px;
+  background: rgba(3, 7, 13, 0.86);
+  color: #dbe8ff;
+  padding: 14px;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+
 .personal-app-template-head {
   display: flex;
   justify-content: space-between;
@@ -6195,6 +6277,7 @@ button {
   }
 
   .personal-app-overview,
+  .skill-builder-grid,
   .personal-app-template-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -6998,6 +7081,7 @@ button {
 
   .personal-app-hero,
   .personal-app-overview,
+  .skill-builder-grid,
   .personal-app-template-grid {
     grid-template-columns: 1fr;
   }
@@ -7022,9 +7106,20 @@ button {
   }
 
   .personal-app-overview article,
+  .skill-question-panel,
+  .skill-generated-panel,
   .personal-app-template-card {
     min-height: auto;
     padding: 14px;
+  }
+
+  .skill-generated-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .skill-generated-head button {
+    width: 100%;
   }
 
   .personal-app-template-head {

@@ -3,8 +3,8 @@ import { attachProjectedDashboard } from '../data/projectedDashboardModel'
 import type { ProjectedSection, ProjectionSnapshot } from '../data/projectedTypes'
 
 export const generatedProjectionSnapshot: ProjectionSnapshot = {
-  "generatedAt": "2026-07-27T20:53:44.541Z",
-  "generatedAtLabel": "Jul 27, 2026, 4:53 PM EDT",
+  "generatedAt": "2026-07-28T07:10:02.866Z",
+  "generatedAtLabel": "Jul 28, 2026, 3:10 AM EDT",
   "source": "PunkRecords",
   "updateMode": "Nightly static projection"
 } as ProjectionSnapshot
@@ -131,6 +131,10 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         {
           "label": "Jul 27",
           "score": 5.3
+        },
+        {
+          "label": "Jul 28",
+          "score": 5.3
         }
       ],
       "nightlyChanges": [
@@ -150,7 +154,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "reason": "Personal Decision Engine / Ideal Self refreshed; current gap: Habits Overview — phone elimination protocol"
         }
       ],
-      "lastUpdatedLabel": "Nightly source refresh: Jul 27"
+      "lastUpdatedLabel": "Nightly source refresh: Jul 28"
     }
   },
   "vessel": {
@@ -164,13 +168,13 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Workout log source",
         "value": "Workout log available",
-        "note": "Latest workout file: 2026-07-24.",
+        "note": "Latest workout file: 2026-07-27.",
         "stale": false
       },
       {
         "label": "Nutrition log source",
-        "value": "75g protein",
-        "note": "630 kcal logged. Latest nutrition file: 2026-07-27.",
+        "value": "172g protein",
+        "note": "1,320 kcal logged. Latest nutrition file: 2026-07-27.",
         "stale": false
       },
       {
@@ -185,7 +189,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       }
     ],
     "highlights": [
-      "Latest workout evidence: 2026-07-24",
+      "Latest workout evidence: 2026-07-27",
       "Latest nutrition evidence: 2026-07-27",
       "Cut / recomp, not lean bulk",
       "Mental priority: focus, attention span, meditation, and phone friction",
@@ -193,7 +197,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "freshness": {
       "label": "Vessel evidence",
-      "ageDays": 0,
+      "ageDays": 1,
       "stale": false
     },
     "vessel": {
@@ -202,9 +206,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "back",
           "label": "Back",
           "priority": "V-taper priority",
-          "recentSets": 28,
-          "lastHit": "2026-07-24",
-          "lastHitLabel": "3 days ago",
+          "recentSets": 27,
+          "lastHit": "2026-07-27",
+          "lastHitLabel": "1 day ago",
           "heat": "hot",
           "recommendation": "Keep one vertical pull and one row pattern active each week."
         },
@@ -212,9 +216,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "shoulders",
           "label": "Shoulders",
           "priority": "Width priority",
-          "recentSets": 14,
+          "recentSets": 12,
           "lastHit": "2026-07-24",
-          "lastHitLabel": "3 days ago",
+          "lastHitLabel": "4 days ago",
           "heat": "hot",
           "recommendation": "Keep lateral delts and rear delts visible for the shoulder-width goal."
         },
@@ -222,9 +226,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "chest",
           "label": "Chest",
           "priority": "Upper-chest priority",
-          "recentSets": 14,
-          "lastHit": "2026-07-24",
-          "lastHitLabel": "3 days ago",
+          "recentSets": 17,
+          "lastHit": "2026-07-27",
+          "lastHitLabel": "1 day ago",
           "heat": "hot",
           "recommendation": "Add pressing or fly work if chest has not shown up recently."
         },
@@ -232,9 +236,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "biceps",
           "label": "Biceps",
           "priority": "Arm detail",
-          "recentSets": 12,
+          "recentSets": 10,
           "lastHit": "2026-07-21",
-          "lastHitLabel": "6 days ago",
+          "lastHitLabel": "7 days ago",
           "heat": "hot",
           "recommendation": "Keep curls in the rotation, but do not let arms crowd out chest or legs."
         },
@@ -242,9 +246,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "triceps",
           "label": "Triceps",
           "priority": "Arm mass",
-          "recentSets": 11,
+          "recentSets": 8,
           "lastHit": "2026-07-20",
-          "lastHitLabel": "7 days ago",
+          "lastHitLabel": "8 days ago",
           "heat": "hot",
           "recommendation": "Use pushdowns or overhead work to keep arms full while cutting."
         },
@@ -252,9 +256,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "abs",
           "label": "Abs",
           "priority": "Lean-look priority",
-          "recentSets": 11,
+          "recentSets": 10,
           "lastHit": "2026-07-21",
-          "lastHitLabel": "6 days ago",
+          "lastHitLabel": "7 days ago",
           "heat": "hot",
           "recommendation": "Keep direct core work frequent while the cut reveals definition."
         },
@@ -264,7 +268,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "Balance priority",
           "recentSets": 5,
           "lastHit": "2026-07-21",
-          "lastHitLabel": "6 days ago",
+          "lastHitLabel": "7 days ago",
           "heat": "touched",
           "recommendation": "Do not let the aesthetics push turn into skipping legs."
         },
@@ -272,9 +276,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "cardio",
           "label": "Cardio",
           "priority": "Cut support",
-          "recentSets": 3,
-          "lastHit": "2026-07-24",
-          "lastHitLabel": "3 days ago",
+          "recentSets": 7,
+          "lastHit": "2026-07-27",
+          "lastHitLabel": "1 day ago",
           "heat": "hot",
           "recommendation": "Add Zone 2 when fat-loss support is missing from the week."
         }
@@ -314,12 +318,12 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Current",
         "value": "4",
-        "note": "Meal prep for the week"
+        "note": "Complete CS7641 Problem Set extra credit"
       },
       {
         "label": "Cleanup",
         "value": "5",
-        "note": "O-27 needs reschedule or close"
+        "note": "HV-09 needs reschedule or close"
       },
       {
         "label": "Waiting",
@@ -354,21 +358,21 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     },
     "blockers": [
       {
-        "label": "O-27",
-        "value": "Schedule oil change",
-        "detail": "Operations / NOW / Weekend of 2026-07-25",
+        "label": "HV-09",
+        "value": "Update the Batter Up app",
+        "detail": "High ROI Ventures / NEXT / Prep today 2026-07-27; weekly meeting 2026-07-28",
         "severity": "stale"
       },
       {
-        "label": "O-29",
-        "value": "Return trimmer to Costco",
-        "detail": "Operations / NOW / Weekend of 2026-07-25",
+        "label": "HV-13",
+        "value": "Build the photobooth competition web app before convention",
+        "detail": "High ROI Ventures / NEXT / Send update today 2026-07-27; broader deadline before convention",
         "severity": "stale"
       },
       {
-        "label": "O-23",
-        "value": "Book Apple appointment to fix AirPod",
-        "detail": "Operations / NOW / 2026-07-22 6:00 PM",
+        "label": "V-08",
+        "value": "Meal prep for the week",
+        "detail": "Vessel / NOW / 2026-07-27",
         "severity": "stale"
       }
     ],
@@ -377,25 +381,13 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       "operatingMode": "Simple task triage",
       "pressureLabel": "Cleanup needed",
       "closureRate": 0,
-      "staleAction": "O-27",
+      "staleAction": "HV-09",
       "automationPosture": {
         "label": "Read-only",
         "detail": "Source rows only.",
         "nextUpgrade": "Direct edits later."
       },
       "topFocus": [
-        {
-          "id": "V-08",
-          "title": "Meal prep for the week",
-          "domain": "Vessel",
-          "lane": "now",
-          "status": "Not started",
-          "dueReview": "2026-07-27",
-          "source": "[[Meal Planning]], [[Nutrition Overview]]",
-          "notes": "Minimum viable meal prep: cook enough protein + carb base for several meals so the cut does not drift after the school deadline push.",
-          "stale": false,
-          "quick": false
-        },
         {
           "id": "E-10",
           "title": "Complete CS7641 Problem Set extra credit",
@@ -431,6 +423,18 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "notes": "Cumulative closed-book digital exam via Canvas and Honorlock.",
           "stale": false,
           "quick": true
+        },
+        {
+          "id": "V-02",
+          "title": "Maintain 3x/week gym consistency during the cut / recomp phase",
+          "domain": "Vessel",
+          "lane": "now",
+          "status": "In progress",
+          "dueReview": "2026-09-01",
+          "source": "[[Fitness Overview]], [[Training Program]], [[Goals Overview]]",
+          "notes": "Workout today, 2026-07-27. Current durable target is the 145 to 148 lb by September cut / recomp goal. Keep logging workouts and make 3x/week training the baseline habit rather than anchoring this task to the already-passed brother's-proposal milestone.",
+          "stale": false,
+          "quick": false
         }
       ],
       "nextQueue": [
@@ -621,6 +625,42 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       ],
       "staleItems": [
         {
+          "id": "HV-09",
+          "title": "Update the Batter Up app",
+          "domain": "High ROI Ventures",
+          "lane": "next",
+          "status": "In progress",
+          "dueReview": "Prep today 2026-07-27; weekly meeting 2026-07-28",
+          "source": "[[Project Tracker]]",
+          "notes": "Prep the weekly meeting: agenda, demo talking points, current blockers, and next asks. Add user emails, finalize the database schema, and show real frontend behavior connected to the backend.",
+          "stale": true,
+          "quick": false
+        },
+        {
+          "id": "HV-13",
+          "title": "Build the photobooth competition web app before convention",
+          "domain": "High ROI Ventures",
+          "lane": "next",
+          "status": "In progress",
+          "dueReview": "Send update today 2026-07-27; broader deadline before convention",
+          "source": "Photobooth competition / collaboration with Nicole",
+          "notes": "Send a Photo Booth update today before the Batter Up prep block. Nicole coordination started 2026-07-24. This is a high-visibility convention-facing product, not a tiny demo. It must support around 1,000 picture uploads and be good enough for the entire convention to see. Prioritize production-readiness: upload UX, storage/backups, performance under load, moderation or approval, failure recovery, clean display/gallery flow, mobile friendliness, and a polished visual identity.",
+          "stale": true,
+          "quick": false
+        },
+        {
+          "id": "V-08",
+          "title": "Meal prep for the week",
+          "domain": "Vessel",
+          "lane": "now",
+          "status": "Not started",
+          "dueReview": "2026-07-27",
+          "source": "[[Meal Planning]], [[Nutrition Overview]]",
+          "notes": "Minimum viable meal prep: cook enough protein + carb base for several meals so the cut does not drift after the school deadline push.",
+          "stale": true,
+          "quick": false
+        },
+        {
           "id": "O-27",
           "title": "Schedule oil change",
           "domain": "Operations",
@@ -641,42 +681,6 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "dueReview": "Weekend of 2026-07-25",
           "source": "Personal logistics / Costco return",
           "notes": "Return the trimmer to Costco during the next errand run. Bring the item, membership/card if needed, and any receipt/order info.",
-          "stale": true,
-          "quick": true
-        },
-        {
-          "id": "O-23",
-          "title": "Book Apple appointment to fix AirPod",
-          "domain": "Operations",
-          "lane": "now",
-          "status": "Scheduled",
-          "dueReview": "2026-07-22 6:00 PM",
-          "source": "Personal logistics",
-          "notes": "Apple / Genius Bar appointment for AirPods is scheduled for Wednesday, 2026-07-22 at 6:00 PM.",
-          "stale": true,
-          "quick": true
-        },
-        {
-          "id": "O-12",
-          "title": "[P] Set up fully automated agent business",
-          "domain": "Operations",
-          "lane": "next",
-          "status": "Planning",
-          "dueReview": "2026-07-18",
-          "source": "[[AI Tycoon]], [[Agent Dashboard]]",
-          "notes": "Current concrete step: continue the business model canvas for the AI-agent business. Do only if today's hard deadlines are handled, otherwise make this the focused flight work block on 2026-07-18.",
-          "stale": true,
-          "quick": false
-        },
-        {
-          "id": "O-25",
-          "title": "Buy suit pants this weekend",
-          "domain": "Operations",
-          "lane": "now",
-          "status": "Not started",
-          "dueReview": "2026-07-14",
-          "source": "Personal logistics / wardrobe",
-          "notes": "First try on current suit/travel clothes. Buy replacement clothes Monday or Tuesday only if the current suit/clothes do not fit or look right.",
           "stale": true,
           "quick": true
         }
