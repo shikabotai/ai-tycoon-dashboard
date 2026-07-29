@@ -3,8 +3,8 @@ import { attachProjectedDashboard } from '../data/projectedDashboardModel'
 import type { ProjectedSection, ProjectionSnapshot } from '../data/projectedTypes'
 
 export const generatedProjectionSnapshot: ProjectionSnapshot = {
-  "generatedAt": "2026-07-28T21:39:26.987Z",
-  "generatedAtLabel": "Jul 28, 2026, 5:39 PM EDT",
+  "generatedAt": "2026-07-29T07:15:33.618Z",
+  "generatedAtLabel": "Jul 29, 2026, 3:15 AM EDT",
   "source": "PunkRecords",
   "updateMode": "Nightly static projection"
 } as ProjectionSnapshot
@@ -109,10 +109,6 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       ],
       "scoreHistory": [
         {
-          "label": "Jul 22",
-          "score": 5.3
-        },
-        {
           "label": "Jul 23",
           "score": 5.3
         },
@@ -135,6 +131,10 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
         {
           "label": "Jul 28",
           "score": 5.3
+        },
+        {
+          "label": "Jul 29",
+          "score": 5.3
         }
       ],
       "nightlyChanges": [
@@ -154,7 +154,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "reason": "Personal Decision Engine / Ideal Self refreshed; current gap: Habits Overview — phone elimination protocol"
         }
       ],
-      "lastUpdatedLabel": "Nightly source refresh: Jul 28"
+      "lastUpdatedLabel": "Nightly source refresh: Jul 29"
     }
   },
   "vessel": {
@@ -197,7 +197,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "freshness": {
       "label": "Vessel evidence",
-      "ageDays": 0,
+      "ageDays": 1,
       "stale": false
     },
     "vessel": {
@@ -206,9 +206,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "back",
           "label": "Back",
           "priority": "V-taper priority",
-          "recentSets": 27,
+          "recentSets": 25,
           "lastHit": "2026-07-27",
-          "lastHitLabel": "1 day ago",
+          "lastHitLabel": "2 days ago",
           "heat": "hot",
           "recommendation": "Keep one vertical pull and one row pattern active each week."
         },
@@ -216,9 +216,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "shoulders",
           "label": "Shoulders",
           "priority": "Width priority",
-          "recentSets": 12,
+          "recentSets": 11,
           "lastHit": "2026-07-24",
-          "lastHitLabel": "4 days ago",
+          "lastHitLabel": "5 days ago",
           "heat": "hot",
           "recommendation": "Keep lateral delts and rear delts visible for the shoulder-width goal."
         },
@@ -226,9 +226,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "chest",
           "label": "Chest",
           "priority": "Upper-chest priority",
-          "recentSets": 17,
+          "recentSets": 16,
           "lastHit": "2026-07-27",
-          "lastHitLabel": "1 day ago",
+          "lastHitLabel": "2 days ago",
           "heat": "hot",
           "recommendation": "Add pressing or fly work if chest has not shown up recently."
         },
@@ -236,9 +236,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "biceps",
           "label": "Biceps",
           "priority": "Arm detail",
-          "recentSets": 10,
+          "recentSets": 8,
           "lastHit": "2026-07-21",
-          "lastHitLabel": "7 days ago",
+          "lastHitLabel": "8 days ago",
           "heat": "hot",
           "recommendation": "Keep curls in the rotation, but do not let arms crowd out chest or legs."
         },
@@ -248,7 +248,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "Arm mass",
           "recentSets": 8,
           "lastHit": "2026-07-20",
-          "lastHitLabel": "8 days ago",
+          "lastHitLabel": "9 days ago",
           "heat": "hot",
           "recommendation": "Use pushdowns or overhead work to keep arms full while cutting."
         },
@@ -256,9 +256,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "abs",
           "label": "Abs",
           "priority": "Lean-look priority",
-          "recentSets": 10,
+          "recentSets": 8,
           "lastHit": "2026-07-21",
-          "lastHitLabel": "7 days ago",
+          "lastHitLabel": "8 days ago",
           "heat": "hot",
           "recommendation": "Keep direct core work frequent while the cut reveals definition."
         },
@@ -266,9 +266,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "legs",
           "label": "Legs",
           "priority": "Balance priority",
-          "recentSets": 5,
+          "recentSets": 4,
           "lastHit": "2026-07-21",
-          "lastHitLabel": "7 days ago",
+          "lastHitLabel": "8 days ago",
           "heat": "touched",
           "recommendation": "Do not let the aesthetics push turn into skipping legs."
         },
@@ -278,7 +278,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "priority": "Cut support",
           "recentSets": 7,
           "lastHit": "2026-07-27",
-          "lastHitLabel": "1 day ago",
+          "lastHitLabel": "2 days ago",
           "heat": "hot",
           "recommendation": "Add Zone 2 when fat-loss support is missing from the week."
         }
@@ -353,14 +353,14 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "freshness": {
       "label": "Operations board evidence",
-      "ageDays": 1,
+      "ageDays": 0,
       "stale": false
     },
     "blockers": [
       {
         "label": "HV-09",
         "value": "Update the Batter Up app",
-        "detail": "High ROI Ventures / NEXT / Prep today 2026-07-27; weekly meeting 2026-07-28",
+        "detail": "High ROI Ventures / NEXT / Active post-meeting follow-up after 2026-07-28 Batter Up meeting",
         "severity": "stale"
       },
       {
@@ -630,9 +630,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "domain": "High ROI Ventures",
           "lane": "next",
           "status": "In progress",
-          "dueReview": "Prep today 2026-07-27; weekly meeting 2026-07-28",
+          "dueReview": "Active post-meeting follow-up after 2026-07-28 Batter Up meeting",
           "source": "[[Project Tracker]]",
-          "notes": "Prep the weekly meeting: agenda, demo talking points, current blockers, and next asks. Add user emails, finalize the database schema, and show real frontend behavior connected to the backend.",
+          "notes": "2026-07-28 meeting went well. Mitchell reported $5k total payment ($2.5k paid upfront, $2.5k due after app completion) plus 25% equity; Alvin reportedly has 25% and Chandler 50%. Potential parent-company sale could be over $50k. New requirement: Android compatibility in addition to iOS. Next priority: get payment/equity/scope/completion criteria in writing, add Android path, and keep building beta seriously.",
           "stale": true,
           "quick": false
         },
