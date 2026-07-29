@@ -3,8 +3,8 @@ import { attachProjectedDashboard } from '../data/projectedDashboardModel'
 import type { ProjectedSection, ProjectionSnapshot } from '../data/projectedTypes'
 
 export const generatedProjectionSnapshot: ProjectionSnapshot = {
-  "generatedAt": "2026-07-29T07:15:33.618Z",
-  "generatedAtLabel": "Jul 29, 2026, 3:15 AM EDT",
+  "generatedAt": "2026-07-29T22:03:16.296Z",
+  "generatedAtLabel": "Jul 29, 2026, 6:03 PM EDT",
   "source": "PunkRecords",
   "updateMode": "Nightly static projection"
 } as ProjectionSnapshot
@@ -168,13 +168,13 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       {
         "label": "Workout log source",
         "value": "Workout log available",
-        "note": "Latest workout file: 2026-07-27.",
+        "note": "Latest workout file: 2026-07-28.",
         "stale": false
       },
       {
         "label": "Nutrition log source",
-        "value": "92g protein",
-        "note": "760 kcal logged. Latest nutrition file: 2026-07-28.",
+        "value": "88g protein",
+        "note": "560 kcal logged. Latest nutrition file: 2026-07-29.",
         "stale": false
       },
       {
@@ -189,15 +189,15 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
       }
     ],
     "highlights": [
-      "Latest workout evidence: 2026-07-27",
-      "Latest nutrition evidence: 2026-07-28",
+      "Latest workout evidence: 2026-07-28",
+      "Latest nutrition evidence: 2026-07-29",
       "Cut / recomp, not lean bulk",
       "Mental priority: focus, attention span, meditation, and phone friction",
       "Looks priority: grooming, skin, hair, style, and event readiness"
     ],
     "freshness": {
       "label": "Vessel evidence",
-      "ageDays": 1,
+      "ageDays": 0,
       "stale": false
     },
     "vessel": {
@@ -206,9 +206,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "back",
           "label": "Back",
           "priority": "V-taper priority",
-          "recentSets": 25,
-          "lastHit": "2026-07-27",
-          "lastHitLabel": "2 days ago",
+          "recentSets": 28,
+          "lastHit": "2026-07-28",
+          "lastHitLabel": "1 day ago",
           "heat": "hot",
           "recommendation": "Keep one vertical pull and one row pattern active each week."
         },
@@ -216,9 +216,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "shoulders",
           "label": "Shoulders",
           "priority": "Width priority",
-          "recentSets": 11,
-          "lastHit": "2026-07-24",
-          "lastHitLabel": "5 days ago",
+          "recentSets": 15,
+          "lastHit": "2026-07-28",
+          "lastHitLabel": "1 day ago",
           "heat": "hot",
           "recommendation": "Keep lateral delts and rear delts visible for the shoulder-width goal."
         },
@@ -226,9 +226,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "chest",
           "label": "Chest",
           "priority": "Upper-chest priority",
-          "recentSets": 16,
-          "lastHit": "2026-07-27",
-          "lastHitLabel": "2 days ago",
+          "recentSets": 20,
+          "lastHit": "2026-07-28",
+          "lastHitLabel": "1 day ago",
           "heat": "hot",
           "recommendation": "Add pressing or fly work if chest has not shown up recently."
         },
@@ -236,9 +236,9 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "id": "biceps",
           "label": "Biceps",
           "priority": "Arm detail",
-          "recentSets": 8,
-          "lastHit": "2026-07-21",
-          "lastHitLabel": "8 days ago",
+          "recentSets": 11,
+          "lastHit": "2026-07-28",
+          "lastHitLabel": "1 day ago",
           "heat": "hot",
           "recommendation": "Keep curls in the rotation, but do not let arms crowd out chest or legs."
         },
@@ -784,7 +784,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
     ],
     "freshness": {
       "label": "Ventures planning docs",
-      "ageDays": 103,
+      "ageDays": 104,
       "stale": true
     },
     "ventures": {
@@ -1853,7 +1853,7 @@ export const generatedProjectedSections: Partial<Record<PersonalProjectionKey, P
           "dueAt": "2026-08-03T07:59:00-04:00",
           "internalTarget": "2026-08-02T23:59:00-04:00",
           "kind": "discussion",
-          "status": "soon"
+          "status": "urgent"
         },
         {
           "id": "cs7641-final-exam-2026-08-06t23-59-00-04-00",
