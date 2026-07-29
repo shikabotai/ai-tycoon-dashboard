@@ -1203,7 +1203,7 @@ button {
 
 .home-assistant-button {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 14px;
   align-items: center;
   width: 100%;
@@ -1243,6 +1243,18 @@ button {
   display: grid;
   gap: 4px;
   min-width: 0;
+}
+
+.home-assistant-open {
+  justify-self: end;
+  border: 1px solid rgba(154, 190, 247, 0.28);
+  border-radius: 999px;
+  background: rgba(134, 175, 241, 0.08);
+  color: rgba(230, 237, 248, 0.76);
+  padding: 7px 10px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
 .home-assistant-button strong {
@@ -1435,6 +1447,7 @@ button {
 }
 
 .personal-assistant-section-head > span {
+  white-space: nowrap;
   color: rgba(203, 211, 223, 0.6);
   font-size: 0.78rem;
 }
@@ -6524,7 +6537,7 @@ button {
 }
 
 .home-app-dock.assistant-only {
-  width: min(640px, calc(100% - 34px));
+  width: min(760px, calc(100% - 34px));
   padding: 7px;
   border-radius: 12px;
   border-color: rgba(186, 204, 232, 0.22);
@@ -6539,7 +6552,7 @@ button {
 
 .home-assistant-button {
   position: relative;
-  min-height: 86px;
+  min-height: 92px;
   overflow: hidden;
   border-radius: 8px;
   border-color: rgba(164, 199, 255, 0.52);
@@ -6566,16 +6579,22 @@ button {
 }
 
 .home-assistant-glyph {
-  width: 62px;
+  width: 68px;
+  font-size: 1.1rem;
 }
 
 .home-assistant-button strong {
   color: #f9fbff;
-  font-size: clamp(1.08rem, 2vw, 1.34rem);
+  font-size: clamp(1.05rem, 1.6vw, 1.28rem);
 }
 
 .home-assistant-button small {
   color: rgba(214, 224, 238, 0.78);
+}
+
+.home-assistant-open {
+  position: relative;
+  z-index: 1;
 }
 
 .personal-assistant-page {
@@ -6584,26 +6603,45 @@ button {
 
 .personal-assistant-skills {
   order: -1;
-  padding: 14px 16px 12px;
+  padding: 14px 16px 10px;
   border-radius: 8px;
   background:
-    linear-gradient(90deg, rgba(34, 104, 255, 0.16), transparent 44%),
+    linear-gradient(90deg, rgba(34, 104, 255, 0.2), transparent 48%),
     rgba(3, 6, 12, 0.68);
 }
 
+.personal-assistant-section-head {
+  align-items: center;
+}
+
+.personal-assistant-section-head h3 {
+  margin-top: 3px;
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+}
+
+.personal-assistant-section-head > span {
+  border: 1px solid rgba(136, 176, 236, 0.22);
+  border-radius: 999px;
+  background: rgba(136, 176, 236, 0.08);
+  color: rgba(225, 234, 248, 0.74);
+  padding: 7px 10px;
+  font-weight: 800;
+}
+
 .assistant-skill-dock {
-  gap: 16px;
+  gap: 10px;
   margin-top: 12px;
-  padding: 10px 4px 12px;
+  padding: 8px 4px 10px;
 }
 
 .assistant-skill-icon {
-  flex: 0 0 106px;
-  min-width: 106px;
+  flex: 0 0 112px;
+  min-width: 112px;
+  border-radius: 8px;
 }
 
 .assistant-skill-icon span {
-  width: 58px;
+  width: 54px;
 }
 
 .assistant-skill-icon strong {
@@ -7621,6 +7659,10 @@ button {
   .home-assistant-button {
     grid-template-columns: auto minmax(0, 1fr);
     padding: 10px 12px;
+  }
+
+  .home-assistant-open {
+    display: none;
   }
 
   .home-assistant-glyph {

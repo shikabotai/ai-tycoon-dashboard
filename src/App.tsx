@@ -30,7 +30,7 @@ const AvatarModelScene = lazy(async () => {
 type AppMode = 'personal' | 'business'
 type PersonalSection = 'home' | 'vessel' | 'identity' | 'career' | 'wealth' | 'ventures' | 'systems' | 'education' | 'relationships' | 'knowledge'
 type PersonalAssistantPage = 'personal-assistant'
-type PersonalAppPage = 'task-manager-app' | 'workout-log-app' | 'nutrition-log-app' | 'mindset-coach-app' | 'personal-finance-coach-app'
+type PersonalAppPage = 'task-manager-app' | 'workout-log-app' | 'nutrition-log-app' | 'mindset-coach-app' | 'personal-finance-coach-app' | 'relationship-manager-app' | 'school-counselor-app'
 type BusinessPanel = 'overview' | 'agents' | 'review'
 type BusinessPage = 'business-command' | 'agents' | 'review-dock' | 'runtime-trail'
 type AppPage = PersonalSection | PersonalAssistantPage | PersonalAppPage | BusinessPage
@@ -171,6 +171,8 @@ const PERSONAL_APP_ROUTES: Record<PersonalAppPage, string> = {
   'nutrition-log-app': '/skills/nutrition-coach',
   'mindset-coach-app': '/skills/mindset-coach',
   'personal-finance-coach-app': '/skills/personal-finance-coach',
+  'relationship-manager-app': '/skills/relationship-manager',
+  'school-counselor-app': '/skills/school-counselor',
 }
 
 const BUSINESS_ROUTES: Record<BusinessPage, string> = {
@@ -684,6 +686,183 @@ const PERSONAL_APP_BUNDLES: PersonalAppBundle[] = [
       ],
     },
   },
+  {
+    page: 'relationship-manager-app',
+    title: 'Relationship Manager',
+    icon: 'RM',
+    accent: 'teal',
+    tagline: 'A reusable Skill that helps the assistant track relationship context, thoughtful follow-ups, touchpoints, drafts, and personal CRM notes.',
+    overview: 'Relationship Manager packages people, open loops, important dates, conversation context, gift ideas, introductions, and care actions into a Skill flow: collect onboarding answers, preview the generated SKILL.md/workflow, define the tools it can use, then enable it for relationship follow-through and daily summary prompts.',
+    connectedSignals: ['Connections dashboard', 'Daily memory', 'Open loops', 'Important dates', 'Telegram drafts', 'Weekly touchpoint review'],
+    skillFlow: {
+      description: [
+        'Turns contact notes, follow-ups, birthdays, gift ideas, introductions, apologies, thank-yous, and conversation prep into a repeatable relationship-management routine.',
+        'The Skill helps OpenClaw keep relationships actionable while respecting privacy, approval boundaries, and the difference between facts, inferences, and drafts.',
+      ],
+      onboardingQuestions: [
+        'Which relationship lanes should this Skill track: family, close friends, dating, networking, mentors, coworkers, clients, local community, or custom lanes?',
+        'What details are okay to remember for each person: preferences, dates, last interaction, promises, sensitivities, gift ideas, or nothing unless explicitly captured?',
+        'What follow-up cadence should the assistant use for different lanes and people?',
+        'What kinds of drafts should it prepare: check-ins, thank-yous, apologies, introductions, birthday notes, plans, or conversation prep?',
+        'What privacy and approval boundaries should it follow before saving notes, messaging anyone, or surfacing sensitive context?',
+      ],
+      workflowPreview: [
+        'Complete SKILL.md uses onboarding answers to fill in relationship lanes, allowed memory fields, touchpoint cadence, draft types, review rhythm, and approval boundaries.',
+        'The workflow starts by identifying the relationship objective, gathers approved context, finds open loops and next touchpoints, then returns the smallest useful action.',
+        'Generated templates cover contact notes, follow-up review, message drafts, conversation prep, birthday/gift planning, and weekly relationship-health review.',
+      ],
+      permissionsAndTools: [
+        'Read and write Relationship Manager Skill files, safe contact notes, follow-up lists, templates, and relationship review logs in the user hub repo',
+        'Read Connections dashboard context, daily memory, user-approved relationship notes, and prior drafts when relevant',
+        'Use Telegram for quick capture, message drafting, touchpoint review, and follow-up requests',
+        'Ask before sending messages, saving sensitive details, contacting anyone, sharing private information, or treating guesses as facts',
+      ],
+      enableSteps: [
+        'Create the Relationship Manager Skill folder and generated SKILL.md preview',
+        'Answer onboarding questions and seed lanes, allowed fields, touchpoint cadence, and privacy boundaries',
+        'Review Telegram capture, dashboard modules, memory policy, and external-send approval rules',
+        'Enable the Skill for contact prep, follow-up review, thoughtful drafts, and weekly touchpoint planning',
+        'Pin Relationship Manager to the Connections dashboard and daily summary',
+      ],
+    },
+    template: {
+      purpose: 'Manage relationship context, follow-ups, thoughtful touchpoints, message drafts, and personal CRM notes without over-collecting sensitive information.',
+      setupInputs: [
+        'Relationship lanes and contact categories',
+        'Allowed memory fields, sensitive boundaries, and approval rules',
+        'Follow-up cadence, important dates, open-loop rules, and review rhythm',
+        'Preferred draft styles for check-ins, thank-yous, apologies, introductions, and planning messages',
+      ],
+      repoFiles: [
+        'skills/relationship-manager/SKILL.md',
+        'skills/relationship-manager/context.md',
+        'skills/relationship-manager/data/people.md',
+        'skills/relationship-manager/data/follow-ups.md',
+        'skills/relationship-manager/templates/message-draft.md',
+        'skills/relationship-manager/templates/touchpoint-review.md',
+        'skills/relationship-manager/dashboard.json',
+      ],
+      telegramFlows: [
+        'Capture a relationship note or follow-up by plain text',
+        'Prepare a message draft for a specific person and wait for approval before sending',
+        'Ask who needs a touchpoint, what open loops exist, or how to prepare for a conversation',
+      ],
+      dashboardModules: [
+        'Next touchpoints queue',
+        'Open relationship loops',
+        'Important dates panel',
+        'Drafts waiting for approval',
+        'Weekly connections review',
+      ],
+      automations: [
+        'Daily Summary integration for important touchpoints and owed replies',
+        'Weekly relationship review by lane',
+        'Reminder prompts for user-approved important dates and follow-ups',
+      ],
+      permissions: [
+        'Read and write relationship Skill files in the user hub repo',
+        'Read Connections dashboard context and user-approved relationship notes',
+        'Ask before sending messages, saving sensitive details, or sharing private information',
+      ],
+      installChecklist: [
+        'Create Skill folder in the hub repo',
+        'Run relationship onboarding',
+        'Seed lanes, allowed memory fields, cadence, and privacy boundaries',
+        'Enable Telegram note capture and draft requests',
+        'Add Connections dashboard modules',
+        'Add Relationship Manager section to daily summary generation',
+      ],
+    },
+  },
+  {
+    page: 'school-counselor-app',
+    title: 'School Counselor',
+    icon: 'SC',
+    accent: 'blue',
+    tagline: 'A reusable Skill that helps the assistant handle academic planning, deadlines, course decisions, applications, and student support navigation.',
+    overview: 'School Counselor packages school context, program requirements, courses, deadlines, advisor questions, applications, scholarships, study routines, and support-office navigation into a Skill flow: collect onboarding answers, preview the generated SKILL.md/workflow, define the tools it can use, then enable it for education planning and daily summary reminders.',
+    connectedSignals: ['Education dashboard', 'Calendar deadlines', 'Course plans', 'Advisor questions', 'Applications', 'Daily summary'],
+    skillFlow: {
+      description: [
+        'Turns academic requirements, course planning, applications, scholarships, study routines, and advisor questions into a practical school-support workflow.',
+        'The Skill helps OpenClaw separate confirmed requirements from assumptions and verify school-specific dates or policies when stakes are high.',
+      ],
+      onboardingQuestions: [
+        'What school, program, degree, term, and academic standing should this Skill understand?',
+        'What current courses, requirements, prerequisites, credits, deadlines, and graduation targets should it track?',
+        'What school workflows matter most: course planning, assignments, applications, scholarships, financial aid, accommodations, study routines, or advisor emails?',
+        'Which official sources should be treated as primary for requirements, calendars, forms, and policies?',
+        'What boundaries should it follow around official advice, financial aid, disability, immigration, medical, or mental-health topics?',
+      ],
+      workflowPreview: [
+        'Complete SKILL.md uses onboarding answers to fill in school context, tracked requirements, deadline sources, planning cadence, output formats, and professional-boundary rules.',
+        'The workflow starts by identifying the school decision or deadline, gathers local context, verifies official requirements when needed, then produces the next forms, emails, questions, and dates.',
+        'Generated templates cover course planning, advisor email drafts, deadline reviews, application checklists, scholarship planning, study routines, and support-office navigation.',
+      ],
+      permissionsAndTools: [
+        'Read and write School Counselor Skill files, course plans, deadline lists, advisor questions, and academic templates in the user hub repo',
+        'Read Education dashboard context, calendar/deadline notes, user-provided school documents, and official school pages when current rules matter',
+        'Use Telegram for academic questions, quick deadline capture, study planning, and email draft review',
+        'Ask before sending emails, submitting forms, changing calendars, sharing student information, or presenting advice as official school guidance',
+      ],
+      enableSteps: [
+        'Create the School Counselor Skill folder and generated SKILL.md preview',
+        'Answer onboarding questions and seed school, program, tracked workflows, official sources, and boundaries',
+        'Review file permissions, official-source verification rules, Telegram flows, and dashboard modules',
+        'Enable the Skill for course planning, deadline review, advisor drafts, and academic support navigation',
+        'Pin School Counselor to the Education dashboard and daily summary',
+      ],
+    },
+    template: {
+      purpose: 'Support academic planning, school decisions, deadlines, advisor questions, applications, scholarships, and student support navigation.',
+      setupInputs: [
+        'Institution, program, term, current standing, degree path, and graduation target',
+        'Current courses, prerequisites, credits, assignments, applications, and deadlines',
+        'Official source URLs for calendars, requirements, forms, and policies',
+        'Boundaries for official, legal, financial aid, disability, immigration, medical, and mental-health topics',
+      ],
+      repoFiles: [
+        'skills/school-counselor/SKILL.md',
+        'skills/school-counselor/context.md',
+        'skills/school-counselor/data/deadlines.md',
+        'skills/school-counselor/data/course-plan.md',
+        'skills/school-counselor/templates/advisor-email.md',
+        'skills/school-counselor/templates/deadline-review.md',
+        'skills/school-counselor/dashboard.json',
+      ],
+      telegramFlows: [
+        'Capture an academic deadline, course question, assignment risk, or advisor follow-up',
+        'Draft advisor, professor, registrar, financial aid, or support-office emails for approval',
+        'Ask for course plan review, application checklist, scholarship timeline, or study routine',
+      ],
+      dashboardModules: [
+        'Upcoming academic deadlines',
+        'Course and credit plan',
+        'Advisor questions queue',
+        'Application checklist',
+        'Study focus panel',
+      ],
+      automations: [
+        'Daily Summary integration for school deadlines and next academic action',
+        'Weekly course/deadline review',
+        'Reminder prompts for user-approved academic dates',
+      ],
+      permissions: [
+        'Read and write school Skill files in the user hub repo',
+        'Read Education dashboard context and user-provided academic notes',
+        'Browse official school sources when current requirements, dates, forms, or policies matter',
+        'Ask before sending emails, submitting forms, changing calendars, or sharing student information',
+      ],
+      installChecklist: [
+        'Create Skill folder in the hub repo',
+        'Run school onboarding',
+        'Seed school context, program requirements, deadlines, and official sources',
+        'Enable Telegram academic capture and draft requests',
+        'Add Education dashboard modules',
+        'Add School Counselor section to daily summary generation',
+      ],
+    },
+  },
 ]
 
 const PERSONAL_APP_NAV_ITEMS: NavItem[] = PERSONAL_APP_BUNDLES.map((bundle) => ({
@@ -782,6 +961,18 @@ const PAGE_DIRECTIVES: Record<AppPage, PageDirective> = {
     system: 'A modular Skill for read-only Plaid finance context, net worth, cashflow, spending, budgets, goals, and review rhythms.',
     usefulFor: 'Connecting the Wealth dashboard to practical budget reviews, goal progress, and safer money decisions.',
     cadence: 'Daily pulse, weekly review, and monthly net worth snapshot',
+  },
+  'relationship-manager-app': {
+    outcome: 'Keep relationships actionable',
+    system: 'A modular Skill for relationship context, follow-ups, thoughtful touchpoints, message drafts, and personal CRM notes.',
+    usefulFor: 'Connecting the Connections dashboard to real follow-through without over-collecting private context.',
+    cadence: 'Weekly review and important touchpoints',
+  },
+  'school-counselor-app': {
+    outcome: 'Keep school decisions on track',
+    system: 'A modular Skill for academic planning, deadlines, course decisions, applications, advisor questions, and student support navigation.',
+    usefulFor: 'Connecting the Education dashboard to requirements, deadlines, official sources, and next academic actions.',
+    cadence: 'Deadline review and term planning',
   },
   'personal-assistant': {
     outcome: 'Run the day from one assistant',
@@ -4343,11 +4534,12 @@ function App() {
                 aria-label="Open Personal Assistant"
                 onClick={() => navigateToPage('personal-assistant')}
               >
-                <span className="home-assistant-glyph" aria-hidden="true">S</span>
+                <span className="home-assistant-glyph" aria-hidden="true">PA</span>
                 <span className="home-assistant-copy">
-                  <strong>Shika</strong>
-                  <small>Personal Assistant, Skills, summaries, follow-through</small>
+                  <strong>Personal Assistant</strong>
+                  <small>Shika skills, summaries, follow-through</small>
                 </span>
+                <span className="home-assistant-open" aria-hidden="true">Open</span>
               </button>
             </div>
           </main>
