@@ -30,7 +30,7 @@ const AvatarModelScene = lazy(async () => {
 type AppMode = 'personal' | 'business'
 type PersonalSection = 'home' | 'vessel' | 'identity' | 'career' | 'wealth' | 'ventures' | 'systems' | 'education' | 'relationships' | 'knowledge'
 type PersonalAssistantPage = 'personal-assistant'
-type PersonalAppPage = 'task-manager-app' | 'workout-log-app' | 'nutrition-log-app' | 'mindset-coach-app' | 'personal-finance-coach-app' | 'relationship-manager-app' | 'school-counselor-app'
+type PersonalAppPage = 'task-manager-app' | 'workout-log-app' | 'nutrition-log-app' | 'mindset-coach-app' | 'personal-finance-coach-app' | 'relationship-manager-app' | 'sleep-coach-app' | 'school-counselor-app'
 type BusinessPanel = 'overview' | 'agents' | 'review'
 type BusinessPage = 'business-command' | 'agents' | 'review-dock' | 'runtime-trail'
 type AppPage = PersonalSection | PersonalAssistantPage | PersonalAppPage | BusinessPage
@@ -172,6 +172,7 @@ const PERSONAL_APP_ROUTES: Record<PersonalAppPage, string> = {
   'mindset-coach-app': '/skills/mindset-coach',
   'personal-finance-coach-app': '/skills/personal-finance-coach',
   'relationship-manager-app': '/skills/relationship-manager',
+  'sleep-coach-app': '/skills/sleep-coach',
   'school-counselor-app': '/skills/school-counselor',
 }
 
@@ -775,6 +776,108 @@ const PERSONAL_APP_BUNDLES: PersonalAppBundle[] = [
     },
   },
   {
+    page: 'sleep-coach-app',
+    title: 'Sleep Coach',
+    icon: 'SL',
+    accent: 'indigo',
+    tagline: 'A reusable Skill that helps the assistant coach sleep, recovery, circadian habits, and morning readiness with optional Oura Ring tracking.',
+    overview: 'Sleep Coach packages bedtime routines, wake targets, recovery signals, Oura Ring sleep data, manual sleep logs, caffeine/alcohol notes, naps, and daily readiness into a Skill flow: collect onboarding answers, preview the generated SKILL.md/workflow, define the tools it can use, then enable it for automatic or manual sleep tracking.',
+    connectedSignals: ['Vessel recovery', 'Oura Ring sleep', 'Manual sleep logs', 'Daily readiness', 'Evening routines', 'Morning summary'],
+    skillFlow: {
+      description: [
+        'Turns sleep windows, bedtime habits, wake consistency, recovery signals, Oura Ring summaries, and manual logs into a practical sleep-coaching routine.',
+        'The Skill supports two setup paths: connect Oura with read-only OAuth access for automatic sleep tracking, or use manual sleep entries when no ring is available.',
+      ],
+      onboardingQuestions: [
+        'What sleep goal should this Skill optimize for: consistent wake time, longer sleep, better recovery, fewer late nights, energy, training readiness, or school/work performance?',
+        'Do you want automatic Oura Ring tracking, manual sleep logging, or both as a backup?',
+        'For Oura setup, what redirect URL, client/app ownership, scope boundaries, token storage location, and refresh-token handling should be used?',
+        'For manual tracking, what fields should be logged: bedtime, wake time, estimated sleep duration, sleep quality, awakenings, naps, caffeine, alcohol, stress, screens, workout, and notes?',
+        'What coaching cadence should run: bedtime wind-down, morning readiness summary, missed-log recovery, weekly sleep review, or training-day recovery check?',
+        'What health boundaries should the assistant follow before interpreting sleep problems, medical symptoms, supplements, medications, or clinical sleep advice?',
+      ],
+      workflowPreview: [
+        'Complete SKILL.md uses onboarding answers to fill in sleep goals, tracking mode, Oura OAuth setup, manual log schema, coaching cadence, dashboard modules, and health-boundary rules.',
+        'Automatic path: create an Oura developer app, use OAuth2 with least-privilege scopes such as daily sleep/readiness access, store tokens securely on the server side, refresh tokens safely, and pull sleep summaries into the Sleep Coach data files or API layer.',
+        'Manual path: capture sleep entries by Telegram or dashboard form, normalize them into bedtime, wake time, duration, subjective quality, disruptions, naps, and context tags, then use those entries for coaching.',
+        'Hybrid path: prefer Oura when fresh, fall back to manual entries for missing nights, travel, ring-off nights, or subjective context Oura cannot infer.',
+        'Generated templates cover Oura setup, manual sleep log capture, morning readiness review, bedtime reset, weekly trend review, and missed-sleep recovery.',
+      ],
+      permissionsAndTools: [
+        'Read and write Sleep Coach Skill files, Oura setup notes, manual sleep logs, weekly reviews, and dashboard modules in the user hub repo',
+        'Read Vessel dashboard context, workout context, daily memory, calendar pressure, user-provided sleep notes, and Oura sleep/readiness summaries when connected',
+        'Use Oura OAuth2 or an approved backend token flow for read-only sleep tracking; never ask Mitchell to paste raw long-lived tokens into chat',
+        'Use Telegram and dashboard capture for manual bedtime, wake time, quality, naps, caffeine, alcohol, stress, and note entries',
+        'Ask before sharing health information, changing calendars, contacting anyone, buying supplements, or presenting guidance as medical advice',
+      ],
+      enableSteps: [
+        'Create the Sleep Coach Skill folder and generated SKILL.md preview',
+        'Choose Oura automatic tracking, manual logging, or hybrid tracking',
+        'If using Oura, create the Oura app, configure redirect URL, request the minimal sleep/readiness scopes, and store tokens server-side',
+        'If using manual tracking, seed the sleep log fields, preferred capture flow, and reminder cadence',
+        'Review health boundaries, Telegram capture, dashboard modules, and daily summary handoff',
+        'Enable the Skill for sleep capture, morning readiness, bedtime planning, and weekly review',
+        'Pin Sleep Coach to the Vessel dashboard and daily summary',
+      ],
+    },
+    template: {
+      purpose: 'Coach sleep and recovery using optional Oura Ring data plus manual sleep logs, with clear health boundaries and practical next actions.',
+      setupInputs: [
+        'Primary sleep goal, target bedtime, target wake time, and weekday/weekend constraints',
+        'Tracking mode: Oura automatic tracking, manual logging, or hybrid fallback',
+        'Oura app credentials ownership, redirect URL, OAuth scopes, server-side token storage, and refresh policy',
+        'Manual log fields for bedtime, wake time, duration, quality, awakenings, naps, caffeine, alcohol, stress, screens, workout, and notes',
+        'Coaching cadence for bedtime wind-down, morning readiness, missed-log recovery, and weekly trend review',
+      ],
+      repoFiles: [
+        'skills/sleep-coach/SKILL.md',
+        'skills/sleep-coach/context.md',
+        'skills/sleep-coach/data/sleep-log.md',
+        'skills/sleep-coach/data/oura-connection.md',
+        'skills/sleep-coach/templates/manual-sleep-log.md',
+        'skills/sleep-coach/templates/oura-setup.md',
+        'skills/sleep-coach/templates/weekly-review.md',
+        'skills/sleep-coach/dashboard.json',
+      ],
+      telegramFlows: [
+        'Log sleep manually with bedtime, wake time, duration, quality, disruptions, naps, and notes',
+        'Ask for morning readiness based on Oura data when connected or manual logs when not connected',
+        'Request a bedtime plan, missed-sleep recovery plan, or weekly sleep trend review',
+      ],
+      dashboardModules: [
+        'Oura connection status',
+        'Last sleep summary',
+        'Manual sleep log form',
+        'Readiness and recovery panel',
+        'Bedtime consistency trend',
+        'Weekly sleep review',
+      ],
+      automations: [
+        'Morning Daily Summary integration with sleep, readiness, recovery, and first adjustment',
+        'Evening wind-down prompt at user-selected times',
+        'Fallback manual-log prompt when Oura data is missing or stale',
+        'Weekly sleep consistency and recovery review',
+      ],
+      permissions: [
+        'Read and write Sleep Coach files in the user hub repo',
+        'Read Vessel dashboard context, workout context, daily memory, and user-provided sleep notes',
+        'Read Oura sleep/readiness data only after explicit OAuth setup with minimal necessary scopes',
+        'Never request raw long-lived tokens in chat; store credentials and refresh tokens server-side',
+        'Ask before sharing health information or treating sleep guidance as medical advice',
+      ],
+      installChecklist: [
+        'Create Skill folder in the hub repo',
+        'Run sleep onboarding',
+        'Choose Oura, manual, or hybrid tracking',
+        'Configure Oura OAuth app and redirect URL if automatic tracking is enabled',
+        'Seed manual sleep log schema and reminder cadence',
+        'Enable Telegram sleep capture',
+        'Add Vessel dashboard sleep modules',
+        'Add Sleep Coach section to daily summary generation',
+      ],
+    },
+  },
+  {
     page: 'school-counselor-app',
     title: 'School Counselor',
     icon: 'SC',
@@ -968,6 +1071,12 @@ const PAGE_DIRECTIVES: Record<AppPage, PageDirective> = {
     usefulFor: 'Connecting the Connections dashboard to real follow-through without over-collecting private context.',
     cadence: 'Weekly review and important touchpoints',
   },
+  'sleep-coach-app': {
+    outcome: 'Make sleep and recovery coachable',
+    system: 'A modular Skill for Oura-backed sleep tracking, manual sleep logs, readiness summaries, bedtime routines, and weekly recovery review.',
+    usefulFor: 'Connecting Vessel recovery to practical sleep habits without requiring an Oura Ring for users who prefer manual tracking.',
+    cadence: 'Morning readiness, bedtime planning, and weekly review',
+  },
   'school-counselor-app': {
     outcome: 'Keep school decisions on track',
     system: 'A modular Skill for academic planning, deadlines, course decisions, applications, advisor questions, and student support navigation.',
@@ -1040,7 +1149,7 @@ function isPersonalAssistantPage(page: AppPage): page is PersonalAssistantPage {
 }
 
 function isPersonalAppPage(page: AppPage): page is PersonalAppPage {
-  return page === 'task-manager-app' || page === 'workout-log-app' || page === 'nutrition-log-app' || page === 'mindset-coach-app' || page === 'personal-finance-coach-app'
+  return page === 'task-manager-app' || page === 'workout-log-app' || page === 'nutrition-log-app' || page === 'mindset-coach-app' || page === 'personal-finance-coach-app' || page === 'relationship-manager-app' || page === 'sleep-coach-app' || page === 'school-counselor-app'
 }
 
 function businessPanelFromPage(page: BusinessPage): BusinessPanel {
