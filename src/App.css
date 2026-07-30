@@ -1403,7 +1403,8 @@ button {
 }
 
 .personal-assistant-summary,
-.personal-assistant-skills {
+.personal-assistant-skills,
+.personal-assistant-automations {
   border: 1px solid rgba(124, 168, 226, 0.18);
   border-radius: 8px;
   padding: 18px;
@@ -1431,6 +1432,126 @@ button {
   color: var(--silver);
   padding: 7px 10px;
   font-size: 0.78rem;
+}
+
+.personal-assistant-automation-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: start;
+}
+
+.personal-assistant-automation-head h3 {
+  margin: 6px 0 0;
+  color: var(--text);
+  letter-spacing: 0;
+}
+
+.personal-assistant-automation-head > span {
+  white-space: nowrap;
+  border: 1px solid rgba(107, 216, 200, 0.22);
+  border-radius: 999px;
+  background: rgba(107, 216, 200, 0.08);
+  color: rgba(225, 243, 241, 0.78);
+  padding: 7px 10px;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.assistant-automation-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.assistant-automation-card {
+  display: grid;
+  gap: 12px;
+  min-height: 260px;
+  border: 1px solid rgba(124, 168, 226, 0.16);
+  border-radius: 8px;
+  padding: 14px;
+  background:
+    linear-gradient(180deg, rgba(18, 25, 37, 0.82), rgba(4, 7, 12, 0.92)),
+    rgba(4, 7, 12, 0.8);
+}
+
+.assistant-automation-card.active {
+  border-color: rgba(107, 216, 200, 0.3);
+}
+
+.assistant-automation-card.ready {
+  border-color: rgba(159, 184, 224, 0.26);
+}
+
+.assistant-automation-card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.assistant-automation-card-top span {
+  border: 1px solid rgba(107, 216, 200, 0.28);
+  border-radius: 999px;
+  background: rgba(107, 216, 200, 0.09);
+  color: rgba(224, 250, 247, 0.84);
+  padding: 5px 8px;
+  font-size: 0.7rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.assistant-automation-card-top small {
+  color: rgba(190, 203, 224, 0.58);
+  font-size: 0.7rem;
+  text-align: right;
+}
+
+.assistant-automation-card h4 {
+  margin: 0;
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.assistant-automation-card p {
+  margin: 0;
+  color: var(--silver);
+  line-height: 1.45;
+  font-size: 0.88rem;
+}
+
+.assistant-automation-card dl {
+  display: grid;
+  gap: 8px;
+  margin: auto 0 0;
+}
+
+.assistant-automation-card dl > div {
+  display: grid;
+  gap: 2px;
+  border-top: 1px solid rgba(124, 168, 226, 0.12);
+  padding-top: 8px;
+}
+
+.assistant-automation-card dt,
+.assistant-automation-card dd {
+  margin: 0;
+}
+
+.assistant-automation-card dt {
+  color: rgba(150, 178, 218, 0.64);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+}
+
+.assistant-automation-card dd {
+  color: rgba(231, 238, 249, 0.84);
+  font-size: 0.8rem;
+  line-height: 1.25;
 }
 
 .personal-assistant-section-head {
@@ -6446,6 +6567,7 @@ button {
 .section-utility-card,
 .personal-assistant-summary,
 .personal-assistant-skills,
+.personal-assistant-automations,
 .personal-app-template-head,
 .skill-question-panel,
 .skill-generated-panel,
@@ -6865,6 +6987,7 @@ button {
   }
 
   .personal-assistant-skills,
+  .assistant-automation-grid,
   .personal-app-overview,
   .skill-builder-grid,
   .personal-app-template-grid {
@@ -7687,6 +7810,15 @@ button {
     justify-content: flex-start;
   }
 
+  .personal-assistant-automation-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .assistant-automation-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .personal-assistant-operating-lines > div {
     grid-template-columns: 1fr;
     gap: 8px;
@@ -7748,6 +7880,7 @@ button {
 
   .personal-assistant-skills,
   .personal-assistant-summary,
+  .personal-assistant-automations,
   .personal-app-overview article,
   .skill-question-panel,
   .skill-generated-panel,
@@ -7763,6 +7896,14 @@ button {
 
   .skill-generated-head button {
     width: 100%;
+  }
+
+  .assistant-automation-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .assistant-automation-card {
+    min-height: auto;
   }
 
   .personal-app-template-head {

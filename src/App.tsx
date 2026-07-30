@@ -66,6 +66,15 @@ type HomeConstellationNode = {
 }
 type NavItem = { page: AppPage; label: string; description: string }
 type PageDirective = { outcome: string; system: string; usefulFor: string; cadence: string }
+type AssistantAutomation = {
+  name: string
+  status: 'Active' | 'Ready' | 'Planned'
+  cadence: string
+  channel: string
+  owner: string
+  detail: string
+  source: string
+}
 type PersonalAppBundle = {
   page: PersonalAppPage
   title: string
@@ -973,6 +982,54 @@ const PERSONAL_APP_NAV_ITEMS: NavItem[] = PERSONAL_APP_BUNDLES.map((bundle) => (
   label: bundle.title,
   description: bundle.tagline,
 }))
+
+const ASSISTANT_AUTOMATIONS: AssistantAutomation[] = [
+  {
+    name: 'Morning Summary',
+    status: 'Active',
+    cadence: 'Daily morning',
+    channel: 'Telegram',
+    owner: 'Shika',
+    detail: 'Starts the day with priorities, reminders, open loops, enabled Skill sections, and the most useful next action.',
+    source: 'Personal assistant routine',
+  },
+  {
+    name: '6pm Summary',
+    status: 'Active',
+    cadence: 'Daily at 6:00 PM',
+    channel: 'Telegram',
+    owner: 'Shika',
+    detail: 'Evening checkpoint for what moved, what is still open, and what needs a reset before the day closes.',
+    source: 'Personal assistant routine',
+  },
+  {
+    name: 'Nightly Dashboard Projection Refresh',
+    status: 'Active',
+    cadence: 'Daily at 3:15 AM ET',
+    channel: 'Cloudflare Pages + Telegram',
+    owner: 'Dashboard cron',
+    detail: 'Regenerates dashboard projection data from local PunkRecords context, builds the site, deploys it, and reports the result.',
+    source: 'OpenClaw cron job',
+  },
+  {
+    name: 'Heartbeat Work Loop',
+    status: 'Active',
+    cadence: 'Recurring heartbeat',
+    channel: 'OpenClaw',
+    owner: 'Senku',
+    detail: 'Checks the persistent task selector and advances explicitly active long-running build work without reviving old tasks.',
+    source: 'Workspace HEARTBEAT.md',
+  },
+  {
+    name: 'Enabled Skill Summary Blocks',
+    status: 'Ready',
+    cadence: 'Runs with daily summaries',
+    channel: 'Personal Assistant',
+    owner: 'Enabled Skills',
+    detail: 'When a Skill is enabled, it becomes a daily summary section and can add prompts, review blocks, and next actions.',
+    source: 'Personal Assistant page',
+  },
+]
 
 const PAGE_DIRECTIVES: Record<AppPage, PageDirective> = {
   home: {
@@ -2642,6 +2699,7 @@ function App() {
   function renderPersonalAssistantPage() {
     const enabledCount = enabledSkills.length
     const dailySummarySections = PERSONAL_APP_BUNDLES.filter((bundle) => enabledSkills.includes(bundle.page))
+    const activeAutomations = ASSISTANT_AUTOMATIONS.filter((automation) => automation.status === 'Active').length
 
     return (
       <main className="revamp-detail-page personal-assistant-page">
@@ -2695,6 +2753,42 @@ function App() {
             {dailySummarySections.length ? dailySummarySections.map((bundle) => (
               <span key={bundle.page}>{bundle.title}</span>
             )) : <span>Open a Skill, answer onboarding, then enable it.</span>}
+          </div>
+        </section>
+
+        <section className="personal-assistant-automations" aria-label="Current Personal Assistant automations">
+          <div className="personal-assistant-automation-head">
+            <div>
+              <div className="revamp-kicker">Current Automations</div>
+              <h3>Scheduled assistant work that runs without a manual prompt.</h3>
+            </div>
+            <span>{activeAutomations}/{ASSISTANT_AUTOMATIONS.length} active</span>
+          </div>
+          <div className="assistant-automation-grid">
+            {ASSISTANT_AUTOMATIONS.map((automation) => (
+              <article key={automation.name} className={`assistant-automation-card ${automation.status.toLowerCase()}`}>
+                <div className="assistant-automation-card-top">
+                  <span>{automation.status}</span>
+                  <small>{automation.source}</small>
+                </div>
+                <h4>{automation.name}</h4>
+                <p>{automation.detail}</p>
+                <dl>
+                  <div>
+                    <dt>Cadence</dt>
+                    <dd>{automation.cadence}</dd>
+                  </div>
+                  <div>
+                    <dt>Channel</dt>
+                    <dd>{automation.channel}</dd>
+                  </div>
+                  <div>
+                    <dt>Owner</dt>
+                    <dd>{automation.owner}</dd>
+                  </div>
+                </dl>
+              </article>
+            ))}
           </div>
         </section>
 
